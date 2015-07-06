@@ -1,4 +1,4 @@
-import re
+import os
 
 from django.db import models
 from django.core.mail import send_mail
@@ -13,7 +13,7 @@ from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
-
+from settings.settings import BASE_DIR
 #
 # def modify_fields(**kwargs):
 #     def wrap(cls):
@@ -48,6 +48,9 @@ class Customer(AbstractBaseUser):
     email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
     mobile = models.EmailField(_('mobile number'), max_length=15, null=True, blank=True,
                                validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
+
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),related_name=_('primary address'))
+
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
                                     blank=True, help_text=_('The groups this user belongs to. A customer will '
@@ -136,12 +139,26 @@ def create_password(sender, instance=None, created=False, **kwargs):
         instance.generate_password()
 
 
+def get_id_photo_front_path(instance, filename):
+    filename = '%s_front' % (instance.id)
+    path = os.path.join(BASE_DIR, "id_photo", filename)
+    return path
+
+
+def get_id_photo_back_path(instance, filename):
+    filename = '%s_back' % (instance.id)
+    path = os.path.join(BASE_DIR, "id_photo", filename)
+    return path
+
+
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     mobile = models.EmailField(_('mobile number'), max_length=15, null=False, blank=False,
                                validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid'), ])
     address = models.CharField(verbose_name='address', max_length=50, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name='customer')
+    id_photo_front = models.FileField(upload_to=get_id_photo_front_path, blank=True, null=True, verbose_name=_('ID Front'))
+    id_photo_back = models.FileField(upload_to=get_id_photo_back_path, blank=True, null=True, verbose_name=_('ID Back'))
     remarks = models.CharField(verbose_name='remarks', max_length=500, null=True, blank=True)
 
     class Meta:
