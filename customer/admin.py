@@ -1,5 +1,6 @@
 from django.contrib import admin
 from customer.models import Customer, Address, InterestTag
+from form import CustomerAddForm
 # Register your models here.
 
 class AddressInline(admin.TabularInline):
@@ -23,19 +24,33 @@ class CustomerAdmin(admin.ModelAdmin):
     search_fields = ('name', 'mobile')
 
     def add_view(self, request, form_url='', extra_context=None):
-        self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
+        self.exclude = ['password', 'groups', 'user_permissions', 'last_login', 'primary_address']
         self.inlines = [AddressInline, ]
+        self.form = CustomerAddForm
+
         return super(CustomerAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        self.exclude = ['password', 'groups', 'user_permissions']
+        self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
         self.inlines = [AddressInline, ]
+        self.form = CustomerAddForm
         return super(CustomerAdmin, self).change_view(request, object_id, form_url, extra_context)
+
+    def save_model(self, request, obj, form, change):
+        """
+        Given a model instance save it to the database.
+        """
+        obj.save()
 
 
 admin.site.register(Customer, CustomerAdmin)
 
-admin.site.register(Address)
+
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ('name', 'mobile', 'address', 'customer', 'id_photo_front_link')
+
+
+admin.site.register(Address, AddressAdmin)
 
 admin.site.register(InterestTag)
 

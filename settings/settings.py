@@ -94,4 +94,11 @@ TIME_FORMAT = 'H:i:s'
 
 STATIC_URL = '/static/'
 
+TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(__file__), 'templates'),
+)
+
 AUTH_USER_MODEL = 'seller.Seller'
+
+
+ID_PHOTO_FOLDER='id_photo'

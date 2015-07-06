@@ -13,7 +13,7 @@ from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
-from settings.settings import BASE_DIR
+from settings.settings import BASE_DIR, ID_PHOTO_FOLDER
 #
 # def modify_fields(**kwargs):
 #     def wrap(cls):
@@ -46,10 +46,10 @@ class InterestTag(models.Model):
 class Customer(AbstractBaseUser):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
-    mobile = models.EmailField(_('mobile number'), max_length=15, null=True, blank=True,
-                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
+    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
+                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
 
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),related_name=_('primary address'))
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'), related_name=_('primary address'))
 
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
@@ -140,26 +140,29 @@ def create_password(sender, instance=None, created=False, **kwargs):
 
 
 def get_id_photo_front_path(instance, filename):
-    filename = '%s_front' % (instance.id)
-    path = os.path.join(BASE_DIR, "id_photo", filename)
+    ext = filename.split('.')[-1]
+    count = Address.objects.filter(customer=instance.customer).count()
+    filename = '%s_%s_front.%s' % (instance.customer.id, count, ext)
+    path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER, filename)
     return path
 
 
 def get_id_photo_back_path(instance, filename):
-    filename = '%s_back' % (instance.id)
-    path = os.path.join(BASE_DIR, "id_photo", filename)
+    ext = filename.split('.')[-1]
+    count = Address.objects.filter(customer=instance.customer).count()
+    filename = '%s_%s_back.%s' % (instance.customer.id, count, ext)
+    path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER, filename)
     return path
 
 
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    mobile = models.EmailField(_('mobile number'), max_length=15, null=False, blank=False,
-                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid'), ])
+    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
+                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
     address = models.CharField(verbose_name='address', max_length=50, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name='customer')
     id_photo_front = models.FileField(upload_to=get_id_photo_front_path, blank=True, null=True, verbose_name=_('ID Front'))
     id_photo_back = models.FileField(upload_to=get_id_photo_back_path, blank=True, null=True, verbose_name=_('ID Back'))
-    remarks = models.CharField(verbose_name='remarks', max_length=500, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = _('Address')
@@ -167,4 +170,36 @@ class Address(models.Model):
 
     def __unicode__(self):
         return '[A]%s,%s,%s' % (self.name, self.mobile, self.address)
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        addr_set = Address.objects.filter(customer=self.customer)
+        count = addr_set.count()
+        super(Address, self).save(force_insert, force_update, using, update_fields)
+
+        if not count:
+            super(Address, self).save(force_insert, force_update, using, update_fields)
+            self.customer.primary_address = self
+            self.customer.save()
+
+    def id_photo_front_link(self):
+        if self.id_photo_front:
+            folder_path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/')
+            url = '/id_photo%s' % str(self.id_photo_front).replace(folder_path, '').replace('\\', '/')
+            return "<a href='%s'>%s</a>" % (url, os.path.basename(str(self.id_photo_front)))
+        else:
+            return ""
+
+    id_photo_front_link.allow_tags = True
+    id_photo_front_link.short_description = 'ID_photo_front'
+
+    def id_photo_back_link(self):
+        if self.id_photo_back:
+            folder_path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/')
+            url = '/id_photo%s' % str(self.id_photo_back).replace(folder_path, '').replace('\\', '/')
+            return "<a href='%s'>%s</a>" % (url, os.path.basename(str(self.id_photo_back)))
+        else:
+            return ""
+
+    id_photo_back_link.allow_tags = True
+    id_photo_back_link.short_description = 'ID_photo_back'
 
