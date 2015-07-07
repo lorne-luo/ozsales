@@ -20,6 +20,10 @@ class Command(BaseCommand):
         'Germany': 'DE',
     }
 
+    # todo brand
+    # todo product category
+    # todo interest tags
+
     def handle(self, *args, **options):
 
         for full_name, short_name in self.countries.items():

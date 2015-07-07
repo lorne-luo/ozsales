@@ -132,6 +132,8 @@ class Customer(AbstractBaseUser):
         '''
         self.password = get_random_string(8, 'abcdefghjklmnpqrstuvwxyz0123456789')
 
+    # todo add order link in list display
+
 
 @receiver(pre_save, sender=Customer)
 def create_password(sender, instance=None, created=False, **kwargs):
