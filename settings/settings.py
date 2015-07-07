@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'apps.product',
     'apps.order',
     'apps.store',
+    'apps.common',
 )
 
 MIDDLEWARE_CLASSES = (
