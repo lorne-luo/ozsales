@@ -1,4 +1,9 @@
 from django.contrib import admin
 from models import Country
 
-admin.site.register(Country)
+
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name')
+
+
+admin.site.register(Country, CountryAdmin)
