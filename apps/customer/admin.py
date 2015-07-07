@@ -1,5 +1,5 @@
 from django.contrib import admin
-from customer.models import Customer, Address, InterestTag
+from models import Customer, Address, InterestTag
 from form import CustomerAddForm
 # Register your models here.
 

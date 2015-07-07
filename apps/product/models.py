@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
-from store.models import Page
+from apps.store.models import Page
 
 class Category(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)

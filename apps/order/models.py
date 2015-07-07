@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
-from product.models import Product
-from customer.models import Customer
+from apps.product.models import Product
+from apps.customer.models import Customer
 
 
 class OrderProduct(models.Model):

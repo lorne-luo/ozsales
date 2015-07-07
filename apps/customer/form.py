@@ -3,9 +3,11 @@ from models import Address,Customer
 from django import forms
 
 class CustomerAddForm(forms.ModelForm):
+    
     class Meta:
         model = Customer
-
+        fields = '__all__'
+        
     def __init__(self, *args, **kwargs):
         super(CustomerAddForm, self).__init__(*args, **kwargs)
         # for add
