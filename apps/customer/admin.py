@@ -47,7 +47,7 @@ admin.site.register(Customer, CustomerAdmin)
 
 
 class AddressAdmin(admin.ModelAdmin):
-    list_display = ('name', 'mobile', 'address', 'customer', 'id_photo_front_link')
+    list_display = ('name', 'mobile', 'address', 'customer', 'id_photo_link')
 
 
 admin.site.register(Address, AddressAdmin)

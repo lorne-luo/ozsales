@@ -181,24 +181,33 @@ class Address(models.Model):
             self.customer.primary_address = self
             self.customer.save()
 
+    def id_photo_link(self):
+
+        return self.id_photo_front_link() + self.id_photo_back_link()
+
+    id_photo_link.allow_tags = True
+    id_photo_link.short_description = 'ID_photo'
+
     def id_photo_front_link(self):
         if self.id_photo_front:
-            folder_path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/')
-            url = '/id_photo%s' % str(self.id_photo_front).replace(folder_path, '').replace('\\', '/')
-            return "<a href='%s'>%s</a>" % (url, os.path.basename(str(self.id_photo_front)))
+            file_path = str(self.id_photo_front)
+            base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
+            url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
-            return ""
+            return ''
 
     id_photo_front_link.allow_tags = True
     id_photo_front_link.short_description = 'ID_photo_front'
 
     def id_photo_back_link(self):
         if self.id_photo_back:
-            folder_path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/')
-            url = '/id_photo%s' % str(self.id_photo_back).replace(folder_path, '').replace('\\', '/')
-            return "<a href='%s'>%s</a>" % (url, os.path.basename(str(self.id_photo_back)))
+            file_path = str(self.id_photo_back)
+            base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
+            url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
-            return ""
+            return ''
 
     id_photo_back_link.allow_tags = True
     id_photo_back_link.short_description = 'ID_photo_back'
