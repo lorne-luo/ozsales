@@ -3,8 +3,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from apps.product.models import Product
 from apps.customer.models import Customer, Address
+from django.utils.encoding import python_2_unicode_compatible
 
 
+@python_2_unicode_compatible
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('Customer'))
     address = models.ForeignKey(Address, blank=False, null=False, verbose_name=_('Address'))
@@ -18,10 +20,11 @@ class Order(models.Model):
     total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '[%s]%s' % (self.id, self.customer.name)
 
 
+@python_2_unicode_compatible
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'))
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
@@ -31,7 +34,7 @@ class OrderProduct(models.Model):
     total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return '[OP]%s X %s' % (self.product.name_cn, self.amount)
 
 

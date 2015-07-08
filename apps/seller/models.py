@@ -10,8 +10,10 @@ from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.utils.http import urlquote
+from django.utils.encoding import python_2_unicode_compatible
 
 
+@python_2_unicode_compatible
 class Seller(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(_('username'), max_length=30, unique=True, db_index=True, null=False, blank=False,
                                 help_text=_('Required. 30 characters or fewer. Letters, numbers and '
@@ -41,6 +43,9 @@ class Seller(AbstractBaseUser, PermissionsMixin):
         permissions = (
 
         )
+
+    def __str__(self):
+        return '[S]%s' % self.name
 
     def get_full_name(self):
         return self.name.strip()

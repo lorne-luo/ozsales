@@ -14,7 +14,10 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER
-#
+from django.utils.encoding import python_2_unicode_compatible
+
+
+
 # def modify_fields(**kwargs):
 #     def wrap(cls):
 #         for field, prop_dict in kwargs.items():
@@ -29,7 +32,7 @@ from settings.settings import BASE_DIR, ID_PHOTO_FOLDER
 #                        'related_name': "customer_set",
 #                        'related_query_name': "customer"})
 
-
+@python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     remarks = models.CharField(verbose_name='remarks', max_length=500, null=True, blank=True)
@@ -39,10 +42,10 @@ class InterestTag(models.Model):
         verbose_name_plural = _('InterestTags')
         verbose_name = _('InterestTag')
 
-    def __unicode__(self):
+    def __str__(self):
         return '[T]%s' % self.name
 
-
+@python_2_unicode_compatible
 class Customer(AbstractBaseUser):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
@@ -80,7 +83,7 @@ class Customer(AbstractBaseUser):
     #     # Adding content to the form
     #     self.fields['groups'].verbose_name = 'customer groups'
 
-    def __unicode__(self):
+    def __str__(self):
         return '[C]%s' % self.name
 
     def get_full_name(self):
@@ -156,7 +159,7 @@ def get_id_photo_back_path(instance, filename):
     path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER, filename)
     return path
 
-
+@python_2_unicode_compatible
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
@@ -170,7 +173,7 @@ class Address(models.Model):
         verbose_name_plural = _('Address')
         verbose_name = _('Address')
 
-    def __unicode__(self):
+    def __str__(self):
         return '[A]%s,%s,%s' % (self.name, self.mobile, self.address)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
