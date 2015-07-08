@@ -1,16 +1,28 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
-from apps.product.models import Product
-from apps.customer.models import Customer, Address
+from ..product.models import Product
+from ..customer.models import Customer, Address
 from django.utils.encoding import python_2_unicode_compatible
+from ..utils.enum import Enum
+
+ORDER_STATUS = Enum('CREATED', 'PURCHASED', 'DELIVERED', 'RECEIVED', 'FINISHED')
+
+ORDER_STATUS_CHOICES = (
+    (ORDER_STATUS.CREATED, ORDER_STATUS.CREATED),
+    (ORDER_STATUS.PURCHASED, ORDER_STATUS.PURCHASED),
+    (ORDER_STATUS.DELIVERED, ORDER_STATUS.DELIVERED),
+    (ORDER_STATUS.RECEIVED, ORDER_STATUS.RECEIVED),
+    (ORDER_STATUS.FINISHED, ORDER_STATUS.FINISHED),
+)
 
 
 @python_2_unicode_compatible
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('Customer'))
     address = models.ForeignKey(Address, blank=False, null=False, verbose_name=_('Address'))
-    # products = models.ManyToManyField(OrderProduct, blank=False, null=False, verbose_name=_('Product'))
+    status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED)
+
     total_amount = models.IntegerField(_(u'amount'), default=0, blank=False, null=False)
 
     total_product_price_aud = models.DecimalField(_(u'Product price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
