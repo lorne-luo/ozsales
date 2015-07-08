@@ -13,9 +13,9 @@ from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
-from settings.settings import BASE_DIR, ID_PHOTO_FOLDER
+from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.core.urlresolvers import reverse
 
 
 # def modify_fields(**kwargs):
@@ -44,6 +44,7 @@ class InterestTag(models.Model):
 
     def __str__(self):
         return '[T]%s' % self.name
+
 
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
@@ -135,7 +136,14 @@ class Customer(AbstractBaseUser):
         '''
         self.password = get_random_string(8, 'abcdefghjklmnpqrstuvwxyz0123456789')
 
-    # todo add order link in list display
+    def add_order_link(self):
+        # order_root = reverse('admin:app_list', kwargs={'app_label': 'order'})
+        url = reverse('admin:%s_%s_add' % ('order', 'order'))
+        url = '%s?customer_id=%s' % (url, self.id)
+        return '<a href="%s">New Order</a>' % url
+
+    add_order_link.allow_tags = True
+    add_order_link.short_description = 'Add Order'
 
 
 @receiver(pre_save, sender=Customer)
@@ -147,17 +155,16 @@ def create_password(sender, instance=None, created=False, **kwargs):
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s_%s_front.%s' % (instance.customer.id, count, ext)
-    path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER, filename)
-    return path
+    filename = '%s\\%s_%s_front.%s' % (ID_PHOTO_FOLDER, instance.customer.id, count, ext)
+    return filename
 
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
     count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s_%s_back.%s' % (instance.customer.id, count, ext)
-    path = os.path.join(BASE_DIR, ID_PHOTO_FOLDER, filename)
-    return path
+    filename = '%s\\%s_%s_back.%s' % (ID_PHOTO_FOLDER, instance.customer.id, count, ext)
+    return filename
+
 
 @python_2_unicode_compatible
 class Address(models.Model):
@@ -166,8 +173,8 @@ class Address(models.Model):
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
     address = models.CharField(verbose_name='address', max_length=50, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name='customer')
-    id_photo_front = models.FileField(upload_to=get_id_photo_front_path, blank=True, null=True, verbose_name=_('ID Front'))
-    id_photo_back = models.FileField(upload_to=get_id_photo_back_path, blank=True, null=True, verbose_name=_('ID Back'))
+    id_photo_front = models.ImageField(upload_to=get_id_photo_front_path, blank=True, null=True, verbose_name=_('ID Front'))
+    id_photo_back = models.ImageField(upload_to=get_id_photo_back_path, blank=True, null=True, verbose_name=_('ID Back'))
 
     class Meta:
         verbose_name_plural = _('Address')

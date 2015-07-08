@@ -1,7 +1,8 @@
+from django.forms import ModelForm
 from django.contrib import admin
 from models import Customer, Address, InterestTag
 from form import CustomerAddForm
-# Register your models here.
+
 
 class AddressInline(admin.TabularInline):
     model = Address
@@ -20,20 +21,20 @@ class InterestTagInline(admin.TabularInline):
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'mobile')
+    list_display = ('name', 'mobile', 'add_order_link')
     search_fields = ('name', 'mobile')
+    inlines = [AddressInline, ]
 
     def add_view(self, request, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login', 'primary_address']
-        self.inlines = [AddressInline, ]
-        self.form = CustomerAddForm
+        self.form = ModelForm
 
         return super(CustomerAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
-        self.inlines = [AddressInline, ]
         self.form = CustomerAddForm
+
         return super(CustomerAdmin, self).change_view(request, object_id, form_url, extra_context)
 
     def save_model(self, request, obj, form, change):

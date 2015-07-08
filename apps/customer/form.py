@@ -16,6 +16,6 @@ class CustomerAddForm(forms.ModelForm):
         # for change
         elif 'instance' in kwargs and kwargs['instance']:
             self.fields['primary_address'].queryset = Address.objects.filter(customer=kwargs['instance'].id)
-            self.fields['primary_address'].empty_label = None
+            # self.fields['primary_address'].empty_label = None
             self.fields['primary_address'].empty_value = []
 
