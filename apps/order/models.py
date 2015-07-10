@@ -4,9 +4,9 @@ from django.core import validators
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from django.utils.encoding import python_2_unicode_compatible
-from ..utils.enum import Enum
+from utils.enum import enum
 
-ORDER_STATUS = Enum('CREATED', 'PURCHASED', 'DELIVERED', 'RECEIVED', 'FINISHED')
+ORDER_STATUS = enum('CREATED', 'PURCHASED', 'DELIVERED', 'RECEIVED', 'FINISHED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, ORDER_STATUS.CREATED),
