@@ -64,6 +64,7 @@ class OrderProduct(models.Model):
 @python_2_unicode_compatible
 class ExpressCompany(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
+    search_url = models.UrlField(_(u'search url'),  blank=True, null=True)
     rate = models.DecimalField(_(u'rate'), max_digits=4, decimal_places=6, blank=True, null=True)
 
     def __str__(self):
@@ -80,6 +81,15 @@ class ExpressOrder(models.Model):
                                        blank=True, null=True)
     weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True,
                                  null=True)
+    remarks = models.TextField(verbose_name='remarks', max_length=500, null=True, blank=True)
 
     def __str__(self):
         return '[EX]%s' % self.name
+
+    def get_track_url(self):
+        if carrier.search_url.find('%s')>-1:
+            return carrier.search_url % self.ticket_id
+        else:
+            return '%sid=%s' % (carrier.search_url, self.ticket_id)
+
+
