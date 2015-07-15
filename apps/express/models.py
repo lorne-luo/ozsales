@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from ..order.models import Order
 from ..customer.models import Address
 
+
 @python_2_unicode_compatible
 class ExpressCarrier(models.Model):
     name_cn = models.CharField(_(u'name_cn'), max_length=50, null=False, blank=False)
@@ -54,8 +55,8 @@ class ExpressOrder(models.Model):
     get_tracking_link.short_description = 'ID'
 
     def get_order_link(self):
-          url = reverse('admin:%s_%s_change' %('order',  'order'),  args=[self.order.id] )
-          return u'<a href="%s">Order #%s</a>' %(url,  self.order.id)
+        url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.order.id])
+        return u'<a href="%s">Order #%s</a>' % (url, self.order.id)
 
     get_order_link.allow_tags = True
 
