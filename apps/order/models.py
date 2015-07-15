@@ -19,10 +19,10 @@ ORDER_STATUS_CHOICES = (
 
 @python_2_unicode_compatible
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('Customer'))
-    address = models.ForeignKey(Address, blank=False, null=False, verbose_name=_('Address'))
+    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
+    # address = models.ForeignKey(Address, blank=False, null=False, verbose_name=_('address'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES,
-                              default=ORDER_STATUS.CREATED)
+                              default=ORDER_STATUS.CREATED, verbose_name=_('status'))
     total_amount = models.IntegerField(_(u'amount'), default=0, blank=False, null=False)
     total_product_price_aud = models.DecimalField(_(u'Product price AUD'), max_digits=8,
                                                   decimal_places=2, blank=True, null=True)
@@ -61,35 +61,5 @@ class OrderProduct(models.Model):
         return '[OP]%s X %s' % (self.product.name_cn, self.amount)
 
 
-@python_2_unicode_compatible
-class ExpressCompany(models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    search_url = models.UrlField(_(u'search url'),  blank=True, null=True)
-    rate = models.DecimalField(_(u'rate'), max_digits=4, decimal_places=6, blank=True, null=True)
-
-    def __str__(self):
-        return '[EC]%s' % self.name
-
-
-@python_2_unicode_compatible
-class ExpressOrder(models.Model):
-    carrier = models.ForeignKey(ExpressCompany, blank=False, null=False, verbose_name=_(u'carrier'))
-    ticket_id = models.CharField(_(u'ticket id'), max_length=30, null=False, blank=False)
-    order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_(u'Order'))
-    rate = models.DecimalField(_(u'rate'), max_digits=4, decimal_places=6, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'shipping fee'), max_digits=8, decimal_places=2,
-                                       blank=True, null=True)
-    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True,
-                                 null=True)
-    remarks = models.TextField(verbose_name='remarks', max_length=500, null=True, blank=True)
-
-    def __str__(self):
-        return '[EX]%s' % self.name
-
-    def get_track_url(self):
-        if carrier.search_url.find('%s')>-1:
-            return carrier.search_url % self.ticket_id
-        else:
-            return '%sid=%s' % (carrier.search_url, self.ticket_id)
 
 

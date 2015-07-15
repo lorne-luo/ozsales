@@ -9,7 +9,7 @@ from django.utils.encoding import python_2_unicode_compatible
 @python_2_unicode_compatible
 class Category(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    parent_category = models.ForeignKey('Category', default=None, blank=True, null=True, verbose_name=_('Parent_Cate'))
+    parent_category = models.ForeignKey('Category', default=None, blank=True, null=True, verbose_name=_('parent cate'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=500, null=True, blank=True)
 
     class Meta:
@@ -23,8 +23,8 @@ class Category(models.Model):
 @python_2_unicode_compatible
 class Brand(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('Country'))
-    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('Category'))
+    country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
+    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
 
     class Meta:
         verbose_name_plural = _('Brand')
@@ -38,8 +38,8 @@ class Brand(models.Model):
 class Product(models.Model):
     name_cn = models.CharField(_(u'name'), max_length=254, null=False, blank=False)
     name_en = models.CharField(_(u'name'), max_length=254, null=True, blank=True)
-    brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('Brand'))
-    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('Category'))
+    brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
+    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     page = models.ManyToManyField(Page, verbose_name=_('Page'), null=True, blank=True)
 

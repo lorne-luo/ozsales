@@ -19,7 +19,6 @@ class OrderAdmin(admin.ModelAdmin):
     def add_view(self, request, form_url='', extra_context=None):
         self.exclude = ['total_amount', 'total_product_price_aud', 'total_product_price_rmb', 'shipping_fee', 'status', 'total_price_aud', 'total_price_rmb']
         self.form = OrderAddForm
-
         return super(OrderAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
@@ -29,4 +28,5 @@ class OrderAdmin(admin.ModelAdmin):
 
 admin.site.register(Order, OrderAdmin)
 admin.site.register(OrderProduct)
+
 
