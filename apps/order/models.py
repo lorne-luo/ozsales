@@ -20,7 +20,7 @@ ORDER_STATUS_CHOICES = (
 @python_2_unicode_compatible
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
-    # address = models.ForeignKey(Address, blank=False, null=False, verbose_name=_('address'))
+    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES,
                               default=ORDER_STATUS.CREATED, verbose_name=_('status'))
     total_amount = models.IntegerField(_(u'amount'), default=0, blank=False, null=False)

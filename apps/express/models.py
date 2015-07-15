@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.core.urlresolvers import reverse
 
 from ..order.models import Order
-
+from ..customer.models import Address
 
 @python_2_unicode_compatible
 class ExpressCarrier(models.Model):
@@ -46,8 +47,17 @@ class ExpressOrder(models.Model):
         else:
             return '%s?id=%s' % (self.carrier.search_url, self.ticket_id)
 
-    def tracking_link(self):
+    def get_tracking_link(self):
         return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.id_number)
 
-    tracking_link.allow_tags = True
-    tracking_link.short_description = 'ID'
+    get_tracking_link.allow_tags = True
+    get_tracking_link.short_description = 'ID'
+
+    def get_order_link(self):
+          url = reverse('admin:%s_%s_change' %('order',  'order'),  args=[self.order.id] )
+          return u'<a href="%s">Order #%s</a>' %(url,  self.order.id)
+
+    get_order_link.allow_tags = True
+
+    def get_address(self):
+        return self.order.address
