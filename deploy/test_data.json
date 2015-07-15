@@ -1,0 +1,119 @@
+[
+{
+  "fields": {
+    "product": 1,
+    "total_price_rmb": "122.00",
+    "price_rmb": "122.00",
+    "price_aud": "12.00",
+    "total_price_aud": "12.00",
+    "amount": 1,
+    "order": 1
+  },
+  "model": "order.orderproduct",
+  "pk": 1
+},
+{
+  "fields": {
+    "remarks": "Footwear",
+    "parent_category": null,
+    "name": "Footwear"
+  },
+  "model": "product.category",
+  "pk": 1
+},
+{
+  "fields": {
+    "category": 1,
+    "country": 2,
+    "name_en": "New Balance",
+    "name_cn": "xinbailun",
+    "remarks": ""
+  },
+  "model": "product.brand",
+  "pk": 1
+},
+{
+  "fields": {
+    "category": 1,
+    "brand": 1,
+    "name_cn": "NB W890",
+    "bargain_price": "40.00",
+    "name_en": "NB W890",
+    "page": []
+  },
+  "model": "product.product",
+  "pk": 1
+},
+{
+  "fields": {
+    "remarks": "naifen",
+    "name": "naifen"
+  },
+  "model": "customer.interesttag",
+  "pk": 1
+},
+{
+  "fields": {
+    "remarks": "",
+    "name": "baojianpin"
+  },
+  "model": "customer.interesttag",
+  "pk": 2
+},
+{
+  "fields": {
+    "name": "Luo Tao",
+    "tags": [],
+    "mobile": "0413725868",
+    "primary_address": 1,
+    "groups": [],
+    "user_permissions": [],
+    "last_login": "2015-07-15T06:55:51Z",
+    "password": "pbkdf2_sha256$12000$Yf2ZMSmIIjIQ$h/jCOtX17vcl9QRacb8Xgfuv5IrELdKYlb558OJCkBU=",
+    "email": "www@luotao.net",
+    "date_joined": "2015-07-15T06:55:51Z"
+  },
+  "model": "customer.customer",
+  "pk": 1
+},
+{
+  "fields": {
+    "customer": 1,
+    "name": "Luo Tao",
+    "mobile": "0413725868",
+    "address": "2/13 Allens RD Heathmont",
+    "id_photo_front": "",
+    "id_photo_back": ""
+  },
+  "model": "customer.address",
+  "pk": 1
+},
+{
+  "fields": {
+    "website": "http://www.emms.com.au/",
+    "search_url": "http://www.emms.com.au/",
+    "name_en": "EMMS",
+    "name_cn": "EMMS",
+    "rate": "7.00"
+  },
+  "model": "express.expresscarrier",
+  "pk": 1
+},
+{
+  "fields": {
+    "customer": 1,
+    "status": "CREATED",
+    "ship_time": null,
+    "total_product_price_aud": null,
+    "total_amount": 0,
+    "total_price_aud": null,
+    "total_product_price_rmb": null,
+    "create_time": "2015-07-15T07:03:21Z",
+    "address": 1,
+    "shipping_fee": null,
+    "total_price_rmb": null
+  },
+  "model": "order.order",
+  "pk": 1
+}
+]
