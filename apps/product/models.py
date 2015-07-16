@@ -17,13 +17,13 @@ class Category(models.Model):
         verbose_name = _('Category')
 
     def __str__(self):
-        return '[Cate]%s' % self.name
+        return '[CT]%s' % self.name
 
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_cn = models.CharField(_(u'name_cn'), max_length=50, null=False, blank=False)
-    name_en = models.CharField(_(u'name_en'), max_length=50, null=True, blank=True)
+    name_en = models.CharField(_(u'name_en'), max_length=50, null=False, blank=False)
+    name_cn = models.CharField(_(u'name_cn'), max_length=50, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
     category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
@@ -38,9 +38,12 @@ class Brand(models.Model):
 
 @python_2_unicode_compatible
 class Product(models.Model):
+    name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
-    name_en = models.CharField(_(u'name_en'), max_length=128, null=True, blank=True)
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
+    spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
+    spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
+    spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
     category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
@@ -51,7 +54,14 @@ class Product(models.Model):
         verbose_name = _('Product')
 
     def __str__(self):
-        return '[P]%s' % self.name_en
+        spec = ''
+        if self.spec1:
+            spec += ' ' + self.spec1
+        if self.spec2:
+            spec += ' ' + self.spec2
+        if self.spec3:
+            spec += ' ' + self.spec3
+        return '[P]%s %s' % (self.name_en, spec)
 
 
 
