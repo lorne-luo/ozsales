@@ -23,7 +23,7 @@
 },
 {
   "fields": {
-    "category": 1,
+    "category": [1],
     "country": 2,
     "name_en": "New Balance",
     "name_cn": "xinbailun",
@@ -34,7 +34,7 @@
 },
 {
   "fields": {
-    "category": 1,
+    "category": [1],
     "brand": 1,
     "name_cn": "NB W890",
     "bargain_price": "40.00",
