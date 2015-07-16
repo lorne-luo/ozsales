@@ -104,14 +104,14 @@
     "customer": 1,
     "status": "CREATED",
     "ship_time": null,
-    "total_product_price_aud": null,
+    "product_cost_aud": null,
     "total_amount": 0,
-    "total_price_aud": null,
-    "total_product_price_rmb": null,
+    "total_cost_aud": null,
+    "product_cost_rmb": null,
     "create_time": "2015-07-15T07:03:21Z",
     "address": 1,
     "shipping_fee": null,
-    "total_price_rmb": null
+    "sell_price": null
   },
   "model": "order.order",
   "pk": 1
