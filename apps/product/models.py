@@ -17,7 +17,10 @@ class Category(models.Model):
         verbose_name = _('Category')
 
     def __str__(self):
-        return '[CT]%s' % self.name
+        if self.parent_category:
+            return '[%s]%s' % (self.parent_category.name, self.name)
+        else:
+            return self.name
 
 
 @python_2_unicode_compatible
@@ -25,7 +28,7 @@ class Brand(models.Model):
     name_en = models.CharField(_(u'name_en'), max_length=50, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=50, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
-    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
 
     class Meta:
@@ -44,7 +47,7 @@ class Product(models.Model):
     spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
-    category = models.ForeignKey(Category, blank=True, null=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
 
