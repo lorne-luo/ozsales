@@ -46,6 +46,12 @@ def get_product_pic_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = instance.brand.name_en + '_' if instance.brand.name_en else ''
     filename = '%s%s' % (filename, instance.name_en)
+    if instance.spec1:
+        filename = '%s_%s' % (filename, instance.spec1)
+    if instance.spec2:
+        filename = '%s_%s' % (filename, instance.spec2)
+    if instance.spec3:
+        filename = '%s_%s' % (filename, instance.spec3)
     filename = filename.replace(' ', '-').replace('', '')
     filename = '%s%s%s.%s' % (PRODUCT_PHOTO_FOLDER, os.sep, filename, ext)
     return filename

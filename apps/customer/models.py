@@ -198,6 +198,13 @@ class Address(models.Model):
             self.customer.primary_address = self
             self.customer.save()
 
+    def get_customer_link(self):
+        url = reverse('admin:%s_%s_change' % ('customer', 'customer'))
+        return '<a href="%s">%s</a>' % (url, self.customer)
+
+    get_customer_link.allow_tags = True
+    get_customer_link.short_description = 'Customer'
+
     def id_photo_link(self):
 
         return self.id_photo_front_link() + self.id_photo_back_link()
