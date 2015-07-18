@@ -102,6 +102,7 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
+    name = models.CharField(_(u'name'), max_length=128, null=True, blank=True)
     cost_price_aud = models.DecimalField(_(u'cost price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price_rmb = models.DecimalField(_(u'sell price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.IntegerField(_(u'amount'), default=0, blank=False, null=False, )

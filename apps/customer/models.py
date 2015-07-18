@@ -13,7 +13,7 @@ from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
-from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
+from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 
@@ -34,8 +34,8 @@ from django.core.urlresolvers import reverse
 
 @python_2_unicode_compatible
 class InterestTag(models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    remarks = models.CharField(verbose_name='remarks', max_length=500, null=True, blank=True)
+    name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
+    remarks = models.CharField(_('remarks'), max_length=254, null=True, blank=True)
     # tags = models.ManyToManyField(Customer, verbose_name=_('mobile number'), null=True, blank=True)
 
     class Meta:
@@ -51,11 +51,14 @@ class Customer(AbstractBaseUser):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
+                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
+                                                                    'invalid')])
 
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'), related_name=_('primary address'))
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),
+                                        related_name=_('primary address'))
 
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
+    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
                                     blank=True, help_text=_('The groups this user belongs to. A customer will '
                                                             'get all permissions granted to each of '
@@ -170,11 +173,13 @@ def get_id_photo_back_path(instance, filename):
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'), 'invalid')])
+                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
+                                                                    'invalid')])
     address = models.CharField(_('address'), max_length=50, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
-    id_photo_front = models.ImageField(upload_to=get_id_photo_front_path, blank=True, null=True, verbose_name=_('ID Front'))
-    id_photo_back = models.ImageField(upload_to=get_id_photo_back_path, blank=True, null=True, verbose_name=_('ID Back'))
+    id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
+    id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
+    id_photo_back = models.ImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = _('Address')
@@ -203,8 +208,9 @@ class Address(models.Model):
     def id_photo_front_link(self):
         if self.id_photo_front:
             file_path = str(self.id_photo_front)
-            base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
-            url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            # base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
+            # url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            url = '%s%s' % (MEDIA_URL, file_path)
             return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
             return ''
@@ -215,8 +221,9 @@ class Address(models.Model):
     def id_photo_back_link(self):
         if self.id_photo_back:
             file_path = str(self.id_photo_back)
-            base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
-            url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            # base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
+            # url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            url = '%s%s' % (MEDIA_URL, file_path)
             return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
             return ''

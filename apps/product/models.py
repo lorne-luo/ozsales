@@ -4,6 +4,7 @@ from django.core import validators
 from apps.store.models import Page
 from apps.common.models import Country
 from django.utils.encoding import python_2_unicode_compatible
+from settings.settings import PRODUCT_PHOTO_FOLDER
 
 
 @python_2_unicode_compatible
@@ -25,8 +26,8 @@ class Category(models.Model):
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_en = models.CharField(_(u'name_en'), max_length=50, null=False, blank=False)
-    name_cn = models.CharField(_(u'name_cn'), max_length=50, null=True, blank=True)
+    name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
+    name_cn = models.CharField(_(u'name_cn'), max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
     category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
@@ -39,10 +40,20 @@ class Brand(models.Model):
         return '[B]%s' % self.name_en
 
 
+def get_product_pic_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = instance.brand.name_en + '_' if instance.brand.name_en else ''
+    filename = '%s%s' % (filename, instance.name_en)
+    filename = filename.replace(' ', '-').replace('', '')
+    filename = '%s\\%s.%s' % (PRODUCT_PHOTO_FOLDER, filename, ext)
+    return filename
+
+
 @python_2_unicode_compatible
 class Product(models.Model):
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
+    pic = models.ImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'))
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
     spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
@@ -50,7 +61,7 @@ class Product(models.Model):
     category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    safe_sale_price = models.DecimalField(_(u'safe sale price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
 
 
