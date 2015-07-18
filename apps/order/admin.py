@@ -33,8 +33,6 @@ class OrderAdmin(admin.ModelAdmin):
         self.exclude = ['total_amount', 'total_product_price_aud', 'total_product_price_rmb', 'shipping_fee', 'status',
                         'total_price_aud', 'total_price_rmb', 'profit_rmb']
         self.form = OrderAddForm
-        #if request.method == 'POST':
-        #    self.save_related()
         return super(OrderAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
