@@ -17,7 +17,7 @@ class ExpressOrderAddInline(admin.TabularInline):
 class ExpressOrderChangeInline(admin.TabularInline):
     model = ExpressOrder
     can_delete = True
-    extra = 1
+    extra = 0
     # max_num = 1
     verbose_name_plural = 'ExpressOrder'
 

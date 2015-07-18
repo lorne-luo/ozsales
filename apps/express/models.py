@@ -41,7 +41,7 @@ class ExpressOrder(models.Model):
         verbose_name = _('Express Order')
 
     def __str__(self):
-        return '[%s]%s' % (self.carrier.name_cn, self.name)
+        return '[%s]%s' % (self.carrier.name_cn, self.express_id)
 
     def get_track_url(self):
         if '%s' in self.carrier.search_url:

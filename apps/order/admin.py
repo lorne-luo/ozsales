@@ -9,14 +9,14 @@ from ..express.form import ExpressOrderAddInline, ExpressOrderChangeInline
 class OrderProductAddInline(admin.TabularInline):
     exclude = ['total_price_aud', 'total_price_rmb']
     model = OrderProduct
-    extra = 2
+    extra = 3
     # max_num = 1
     verbose_name_plural = 'OrderProduct'
 
 
 class OrderProductChangeInline(admin.TabularInline):
     model = OrderProduct
-    extra = 1
+    extra = 0
     can_delete = True
     # max_num = 1
     verbose_name_plural = 'OrderProduct'
