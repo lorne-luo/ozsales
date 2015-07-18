@@ -7,9 +7,10 @@ from django.utils.encoding import python_2_unicode_compatible
 @python_2_unicode_compatible
 class Store(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    short_name = models.CharField(_(u'short_name'), max_length=30, null=True, blank=True)
-    domain = models.URLField(_(u'domain'), null=False, blank=False)
-    search_url = models.URLField(_(u'Search URL'), null=False, blank=False)
+    short_name = models.CharField(_(u'short name'), max_length=30, null=True, blank=True)
+    address = models.CharField(_(u'address'), max_length=128, null=True, blank=True)
+    domain = models.URLField(_(u'domain'), null=True, blank=True)
+    search_url = models.URLField(_(u'Search URL'), null=True, blank=True)
     shipping_rate = models.CharField(_(u'Shipping Rate'), max_length=30, null=True, blank=True)
 
     class Meta:

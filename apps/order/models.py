@@ -1,12 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
-from ..product.models import Product
-from ..customer.models import Customer, Address
+from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
+
 from utils.enum import enum
 from settings.settings import RATE
-from django.core.urlresolvers import reverse
+from ..product.models import Product
+from ..customer.models import Customer, Address
+from ..store.models import Store
 
 ORDER_STATUS = enum('CREATED', 'PAID', 'SHIPPED', 'DELIVERED', 'FINISHED')
 
@@ -100,15 +102,12 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
-    price_aud = models.DecimalField(_(u'price AUD'), max_digits=8, decimal_places=2, blank=True,
-                                    null=True)
-    price_rmb = models.DecimalField(_(u'price RMB'), max_digits=8, decimal_places=2, blank=True,
-                                    null=True)
+    cost_price_aud = models.DecimalField(_(u'cost price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_(u'sell price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.IntegerField(_(u'amount'), default=0, blank=False, null=False, )
-    total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2,
-                                          blank=True, null=True)
-    total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2,
-                                          blank=True, null=True)
+    store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
+    total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return '[OP]%s X %s' % (self.product.name_cn, self.amount)
