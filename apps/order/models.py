@@ -119,6 +119,9 @@ class OrderProduct(models.Model):
         self.total_price_aud = self.price_aud * self.amount
         self.total_price_rmb = self.price_rmb * self.amount
 
+        if self.product and not self.name:
+            self.name = self.product.get_name_cn()
+
         super(OrderProduct, self).save()
         self.order.sum_cost_save()
 

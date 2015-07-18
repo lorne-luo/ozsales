@@ -100,4 +100,14 @@ class Product(models.Model):
     get_pic_link.allow_tags = True
     get_pic_link.short_description = 'Pic'
 
+    def get_name_cn(self):
+        spec = ''
+        if self.spec1:
+            spec += ' ' + self.spec1
+        if self.spec2:
+            spec += ' ' + self.spec2
+        if self.spec3:
+            spec += ' ' + self.spec3
+        return '%s%s' % (self.name_cn, spec)
+
 
