@@ -70,8 +70,8 @@ class Order(models.Model):
         products = self.products.all()
         for p in products:
             self.total_amount += p.amount
-            self.product_cost_aud += p.amount * p.price_aud
-            self.product_cost_rmb += p.amount * p.price_rmb
+            self.product_cost_aud += p.amount * p.cost_price_aud
+            self.product_cost_rmb += p.amount * p.sell_price_rmb
 
     def sum_cost_save(self):
         self.sum_cost()
@@ -116,8 +116,8 @@ class OrderProduct(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        self.total_price_aud = self.price_aud * self.amount
-        self.total_price_rmb = self.price_rmb * self.amount
+        self.total_price_aud = self.cost_price_aud * self.amount
+        self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product and not self.name:
             self.name = self.product.get_name_cn()
