@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -45,7 +47,7 @@ def get_product_pic_path(instance, filename):
     filename = instance.brand.name_en + '_' if instance.brand.name_en else ''
     filename = '%s%s' % (filename, instance.name_en)
     filename = filename.replace(' ', '-').replace('', '')
-    filename = '%s\\%s.%s' % (PRODUCT_PHOTO_FOLDER, filename, ext)
+    filename = '%s%s%s.%s' % (PRODUCT_PHOTO_FOLDER, os.sep, filename, ext)
     return filename
 
 
