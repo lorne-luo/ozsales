@@ -32,7 +32,8 @@ class ExpressOrder(models.Model):
                                        blank=True, null=True)
     weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True,
                                  null=True)
-    remarks = models.TextField(verbose_name='remarks', max_length=500, null=True, blank=True)
+    remarks = models.TextField(_('remarks'), max_length=500, null=True, blank=True)
+    id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     create_time = models.DateTimeField(_(u'create time'), auto_now_add=True, editable=True)
 
     class Meta:

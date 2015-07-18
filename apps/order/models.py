@@ -108,6 +108,7 @@ class OrderProduct(models.Model):
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
     total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    create_time = models.DateTimeField(_(u'create time'), auto_now_add=True, editable=True)
 
     def __str__(self):
         return '[OP]%s X %s' % (self.product.name_cn, self.amount)
