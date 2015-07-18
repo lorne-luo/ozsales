@@ -312,22 +312,5 @@
   },
   "model": "product.brand",
   "pk": 13
-},
-{
-  "fields": {
-    "category": [
-      1
-    ],
-    "brand": 1,
-    "name_cn": "NB W890",
-    "page": [],
-    "bargain_price": "40.00",
-    "name_en": "NB W890",
-    "spec2": null,
-    "spec3": null,
-    "spec1": null
-  },
-  "model": "product.product",
-  "pk": 1
 }
 ]
