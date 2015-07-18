@@ -206,7 +206,6 @@ class Address(models.Model):
     get_customer_link.short_description = 'Customer'
 
     def id_photo_link(self):
-
         return self.id_photo_front_link() + self.id_photo_back_link()
 
     id_photo_link.allow_tags = True

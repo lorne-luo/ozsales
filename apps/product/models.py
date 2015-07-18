@@ -6,7 +6,7 @@ from django.core import validators
 from apps.store.models import Page
 from apps.common.models import Country
 from django.utils.encoding import python_2_unicode_compatible
-from settings.settings import PRODUCT_PHOTO_FOLDER
+from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 
 @python_2_unicode_compatible
@@ -87,5 +87,17 @@ class Product(models.Model):
             spec += ' ' + self.spec3
         return '[P]%s %s' % (self.name_en, spec)
 
+    def get_pic_link(self):
+        if self.pic:
+            file_path = str(self.pic)
+            # base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
+            # url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
+            url = '%s%s' % (MEDIA_URL, file_path)
+            return '<a target="_blank" href="%s"><img height="60px" src="%s"></a>' % (url, url)
+        else:
+            return ''
+
+    get_pic_link.allow_tags = True
+    get_pic_link.short_description = 'Pic'
 
 
