@@ -13,6 +13,10 @@ class Command(BaseCommand):
 
     permissions = {
         # Group name
+        'Admin': [
+            ('add_address', 'customer', 'address'),
+            ('change_address', 'customer', 'address')
+        ],
         'Seller': [
             # Permission codename, app name, model name
             ('add_address', 'customer', 'address'),
@@ -22,10 +26,7 @@ class Command(BaseCommand):
             ('add_address', 'customer', 'address'),
             ('change_address', 'customer', 'address')
         ],
-        'Admin': [
-            ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address')
-        ],
+
     }
 
     def handle(self, *args, **options):

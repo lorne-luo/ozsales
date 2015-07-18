@@ -1,0 +1,27 @@
+[
+{
+  "fields": {
+    "username": "admin",
+    "name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2015-07-15T06:31:56Z",
+    "groups": [1],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$12000$lZfpY1hZE11N$AmNnC27kE9VgoKe0xeqcuKmQZQz1vyhF7Ua9f9m6mqg=",
+    "email": "1@1.com",
+    "date_joined": "2015-07-15T06:30:40Z"
+  },
+  "model": "seller.seller",
+  "pk": 1
+},
+{
+  "fields": {
+    "expire_date": "2015-07-29T06:31:56Z",
+    "session_data": "ZTFkMzU0MDRjNTQ4OTI0N2I0OTRkM2RjY2E5ZThmOGNhYWY0YWExYjp7Il9hdXRoX3VzZXJfaGFzaCI6IjFmNjNhMjc4ODZiNDMwN2EzZmIwMDEwYzE3ZjhlMzcyYzAyMDM2ZGQiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOjF9"
+  },
+  "model": "sessions.session",
+  "pk": "rj3eo4xfsy4ibsyx1vc4bbsk3kxad625"
+}
+]
