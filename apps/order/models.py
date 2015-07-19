@@ -82,15 +82,10 @@ class Order(models.Model):
         for ex_order in express_orders:
             self.ship_time = ex_order.create_time
             if ex_order.fee:
-				self.shipping_fee += ex_order.fee
+                self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * RATE
-
-        # if self.shipping_fee and self.product_cost_rmb:
-        #     self.origin_sell_rmb = self.product_cost_rmb + self.shipping_fee * RATE
-        # else:
-        #     self.origin_sell_rmb = self.product_cost_rmb
 
         if not self.sell_price_rmb or self.sell_price_rmb == 0:
             self.sell_price_rmb = self.origin_sell_rmb
@@ -119,6 +114,15 @@ class Order(models.Model):
 
     status_button.allow_tags = True
     status_button.short_description = 'Status'
+
+    def get_id_upload(self):
+        express_orders = self.express_orders.all()
+        for ex_order in express_orders:
+            if not ex_order.id_upload:
+                return 'NO'
+        return 'YES'
+
+    get_id_upload.short_description = 'ID Upload'
 
 
 @python_2_unicode_compatible
