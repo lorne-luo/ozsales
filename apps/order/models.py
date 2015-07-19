@@ -80,8 +80,9 @@ class Order(models.Model):
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
-            self.shipping_fee += ex_order.fee
             self.ship_time = ex_order.create_time
+            if ex_order.fee:
+				self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * RATE
