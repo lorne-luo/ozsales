@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
+from django.dispatch import receiver
+from django.db.models.signals import post_save, post_delete
 
 from ..order.models import Order
 from ..customer.models import Address
@@ -26,15 +28,15 @@ class ExpressCarrier(models.Model):
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=False, null=False, verbose_name=_(u'carrier'))
-    express_id = models.CharField(_(u'express id'), max_length=30, null=False, blank=False)
-    order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_(u'order'))
-    shipping_fee = models.DecimalField(_(u'shipping fee'), max_digits=8, decimal_places=2,
-                                       blank=True, null=True)
-    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True,
+    express_id = models.CharField(_(u'express ID'), max_length=30, null=False, blank=False)
+    order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_(u'order'), related_name='express_orders')
+    fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2,
+                              blank=True, null=True)
+    weight = models.DecimalField(_(u'Weight'), max_digits=8, decimal_places=2, blank=True,
                                  null=True)
-    remarks = models.TextField(_('remarks'), max_length=500, null=True, blank=True)
+    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
-    create_time = models.DateTimeField(_(u'create time'), auto_now_add=True, editable=True)
+    create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
 
     class Meta:
         verbose_name_plural = _('Express Order')
@@ -63,3 +65,11 @@ class ExpressOrder(models.Model):
 
     def get_address(self):
         return self.order.address
+
+
+@receiver(post_save, sender=ExpressOrder)
+@receiver(post_delete, sender=ExpressOrder)
+def update_order_price(sender, instance=None, created=False, **kwargs):
+    if instance.order.id:
+        instance.order.update_price()
+
