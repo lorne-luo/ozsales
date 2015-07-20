@@ -95,13 +95,17 @@ class Order(models.Model):
 
         self.save()
 
-    def status_button(self):
+    def get_status_button(self):
+        current_status = self.status
         next_status = ''
         if self.status == ORDER_STATUS.CREATED:
             next_status = ORDER_STATUS.PAID
         elif self.status == ORDER_STATUS.PAID:
             next_status = ORDER_STATUS.SHIPPED
         elif self.status == ORDER_STATUS.SHIPPED:
+            express_orders = self.express_orders.all()
+            if express_orders.count():
+                current_status = self.express_orders[0].get_tracking_link()
             next_status = ORDER_STATUS.DELIVERED
         elif self.status == ORDER_STATUS.DELIVERED:
             next_status = ORDER_STATUS.FINISHED
@@ -109,11 +113,11 @@ class Order(models.Model):
             return ORDER_STATUS.FINISHED
 
         url = reverse('change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
-        btn = '%s => <a href="%s">%s</a>' % (self.status, url, next_status)
+        btn = '%s => <a href="%s">%s</a>' % (current_status, url, next_status)
         return btn
 
-    status_button.allow_tags = True
-    status_button.short_description = 'Status'
+    get_status_button.allow_tags = True
+    get_status_button.short_description = 'Status'
 
     def get_id_upload(self):
         express_orders = self.express_orders.all()

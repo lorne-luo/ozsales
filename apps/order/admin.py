@@ -23,7 +23,7 @@ class OrderProductChangeInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'total_amount', 'status_button', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb',
+    list_display = ('customer', 'total_amount', 'get_status_button', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb',
                     'total_cost_aud', 'sell_price_rmb', 'profit_rmb','get_id_upload', 'create_time')
     list_filter = ['status']
     inlines = []

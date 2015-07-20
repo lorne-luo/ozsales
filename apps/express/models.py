@@ -28,7 +28,7 @@ class ExpressCarrier(models.Model):
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=False, null=False, verbose_name=_(u'carrier'))
-    express_id = models.CharField(_(u'express ID'), max_length=30, null=False, blank=False)
+    track_id = models.CharField(_(u'Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_(u'order'), related_name='express_orders')
     fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2,
                               blank=True, null=True)
@@ -43,19 +43,19 @@ class ExpressOrder(models.Model):
         verbose_name = _('Express Order')
 
     def __str__(self):
-        return '[%s]%s' % (self.carrier.name_cn, self.express_id)
+        return '[%s]%s' % (self.carrier.name_cn, self.track_id)
 
     def get_track_url(self):
         if '%s' in self.carrier.search_url:
             return self.carrier.search_url % self.ticket_id
         else:
-            return '%s?id=%s' % (self.carrier.search_url, self.ticket_id)
+            return '%s?id=%s' % (self.carrier.search_url, self.track_id)
 
     def get_tracking_link(self):
-        return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.id_number)
+        return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
 
     get_tracking_link.allow_tags = True
-    get_tracking_link.short_description = 'ID'
+    get_tracking_link.short_description = 'Express Track'
 
     def get_order_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.order.id])
