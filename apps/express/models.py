@@ -52,7 +52,10 @@ class ExpressOrder(models.Model):
             return '%s?id=%s' % (self.carrier.search_url, self.track_id)
 
     def get_tracking_link(self):
-        return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
+        if self.track_id:
+            return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
+        else:
+            return 'No Track ID'
 
     get_tracking_link.allow_tags = True
     get_tracking_link.short_description = 'Express Track'

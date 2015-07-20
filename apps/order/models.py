@@ -105,7 +105,10 @@ class Order(models.Model):
         elif self.status == ORDER_STATUS.SHIPPED:
             express_orders = self.express_orders.all()
             if express_orders.count():
-                current_status = self.express_orders[0].get_tracking_link()
+                current_status = ''
+                for ex in express_orders:
+                    current_status += ex.get_tracking_link() + '<br/>'
+                current_status = current_status.strip('<br/>')
             next_status = ORDER_STATUS.DELIVERED
         elif self.status == ORDER_STATUS.DELIVERED:
             next_status = ORDER_STATUS.FINISHED
