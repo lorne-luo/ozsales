@@ -59,8 +59,11 @@ class Order(models.Model):
             self.total_cost_aud = self.product_cost_aud + self.shipping_fee
             self.cost_rmb = self.total_cost_aud * RATE
 
-        if self.total_cost_aud and self.sell_price_rmb:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
+        if not self.sell_price_rmb:
+            self.sell_price_rmb = self.origin_sell_rmb
+        if self.sell_price_rmb < self.total_cost_rmb:
+            self.sell_price_rmb = self.total_cost_rmb
+        self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
 
         return super(Order, self).save()
 
@@ -87,11 +90,11 @@ class Order(models.Model):
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * RATE
 
-        if not self.sell_price_rmb or self.sell_price_rmb == 0:
+        if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
-
-        if self.sell_price_rmb:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
+        if self.sell_price_rmb < self.total_cost_rmb:
+            self.sell_price_rmb = self.total_cost_rmb
+        self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
         self.save()
 
