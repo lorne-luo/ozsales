@@ -49,7 +49,7 @@ class InterestTag(models.Model):
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
+    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
                                                                     'invalid')])
