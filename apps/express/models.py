@@ -47,7 +47,7 @@ class ExpressOrder(models.Model):
 
     def get_track_url(self):
         if '%s' in self.carrier.search_url:
-            return self.carrier.search_url % self.ticket_id
+            return self.carrier.search_url % self.track_id
         else:
             return '%s?id=%s' % (self.carrier.search_url, self.track_id)
 
@@ -62,7 +62,8 @@ class ExpressOrder(models.Model):
 
     def get_order_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.order.id])
-        return u'<a href="%s">Order #%s</a>' % (url, self.order.id)
+        name = '[#%s]%s' % (self.order.id, self.order.customer.name)
+        return u'<a href="%s">%s</a>' % (url, name)
 
     get_order_link.allow_tags = True
 
