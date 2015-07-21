@@ -13,7 +13,7 @@ admin.site.register(Brand, BrandAdmin)
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('brand', 'name_cn', 'get_pic_link', 'normal_price', 'bargain_price', 'safe_sell_price')
+    list_display = ('get_name_cn', 'get_pic_link', 'safe_sell_price', 'normal_price', 'bargain_price')
 
 
 admin.site.register(Product, ProductAdmin)
