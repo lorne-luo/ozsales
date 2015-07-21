@@ -63,7 +63,8 @@ class Order(models.Model):
             self.sell_price_rmb = self.origin_sell_rmb
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
-        self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
+        if self.sell_price_rmb and self.total_cost_aud:
+			self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
 
         return super(Order, self).save()
 
@@ -148,7 +149,7 @@ class OrderProduct(models.Model):
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
-        return '[OP]%s X %s' % (self.product.name_cn, self.amount)
+        return '[OP]%s X %s' % (self.name, self.amount)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
