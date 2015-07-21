@@ -63,7 +63,8 @@ class Order(models.Model):
             self.sell_price_rmb = self.origin_sell_rmb
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
-        self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
+        if self.sell_price_rmb and self.total_cost_aud:
+			self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
 
         return super(Order, self).save()
 
@@ -140,15 +141,15 @@ class OrderProduct(models.Model):
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     name = models.CharField(_(u'Name'), max_length=128, null=True, blank=True)
     amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False, )
-    cost_price_aud = models.DecimalField(_(u'Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
-    total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    cost_price_aud = models.DecimalField(_(u'Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
-        return '[OP]%s X %s' % (self.product.name_cn, self.amount)
+        return '[OP]%s X %s' % (self.name, self.amount)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
