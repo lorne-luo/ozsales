@@ -90,6 +90,12 @@ class Customer(AbstractBaseUser):
     def __str__(self):
         return '[C]%s' % self.name
 
+    def get_link(self):
+        url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
+        name = '[#%s]%s' % (self.id, self.name)
+        return u'<a href="%s">%s</a>' % (url, name)
+
+
     def get_full_name(self):
         return self.name.strip()
 

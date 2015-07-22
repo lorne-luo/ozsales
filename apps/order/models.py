@@ -68,10 +68,11 @@ class Order(models.Model):
 
         return super(Order, self).save()
 
-    def get_order_link(self):
+    def get_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
         name = '[#%s]%s' % (self.id, self.customer.name)
         return u'<a href="%s">%s</a>' % (url, name)
+
 
     def update_price(self):
         self.total_amount = 0
@@ -139,6 +140,12 @@ class Order(models.Model):
 
     get_id_upload.short_description = 'ID Upload'
     get_id_upload.allow_tags = True
+
+    def get_customer_link(self):
+        return self.customer.get_link()
+
+    get_customer_link.allow_tags = True
+    get_customer_link.short_description = 'Customer'
 
 
 @python_2_unicode_compatible

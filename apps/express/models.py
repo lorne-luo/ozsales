@@ -61,9 +61,10 @@ class ExpressOrder(models.Model):
     get_tracking_link.short_description = 'Express Track'
 
     def get_order_link(self):
-        return self.order.get_order_link()
+        return self.order.get_link()
 
     get_order_link.allow_tags = True
+    get_order_link.short_description = 'Order'
 
     def get_address(self):
         return self.order.address

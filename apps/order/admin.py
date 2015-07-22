@@ -24,7 +24,7 @@ class OrderProductChangeInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'total_amount', 'get_status_button', 'product_cost_aud', 'shipping_fee',
+    list_display = ('id', 'get_customer_link', 'total_amount', 'get_status_button', 'product_cost_aud', 'shipping_fee',
                     'origin_sell_rmb', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb',
                     'get_id_upload', 'create_time')
     list_filter = ['status']
@@ -32,6 +32,8 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee',
                        'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'profit_rmb', 'create_time']
     exclude = ['ship_time', ]
+    list_display_links = ['id', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb', 'total_cost_aud',
+                          'total_cost_rmb', 'sell_price_rmb', 'profit_rmb']
 
     def add_view(self, request, form_url='', extra_context=None):
         self.inlines = [OrderProductAddInline, ExpressOrderAddInline]
