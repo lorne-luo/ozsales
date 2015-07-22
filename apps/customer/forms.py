@@ -1,6 +1,8 @@
 __author__ = 'Lorne'
-from models import Address,Customer
 from django import forms
+from django.contrib import admin
+
+from models import Address,Customer,InterestTag
 
 class CustomerAddForm(forms.ModelForm):
     
@@ -19,3 +21,23 @@ class CustomerAddForm(forms.ModelForm):
             # self.fields['primary_address'].empty_label = None
             self.fields['primary_address'].empty_value = []
 
+class AddressAddInline(admin.TabularInline):
+    model = Address
+    extra = 1
+    can_delete = True
+    # max_num = 1
+    verbose_name_plural = 'Address'
+
+class AddressChangeInline(admin.TabularInline):
+    model = Address
+    extra = 0
+    can_delete = True
+    # max_num = 1
+    verbose_name_plural = 'Address'
+
+class InterestTagInline(admin.TabularInline):
+    model = InterestTag
+    extra = 1
+    can_delete = True
+    # max_num = 1
+    verbose_name_plural = 'Tag'
