@@ -134,10 +134,11 @@ class Order(models.Model):
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
             if not ex_order.id_upload:
-                return '<a target="_blank" herf="%s">%s</a>' % (ex_order.carrier.website, 'NO')
+                return '<a target="_blank" href="%s">%s</a>' % (ex_order.carrier.website, 'NO')
         return 'DONE'
 
     get_id_upload.short_description = 'ID Upload'
+    get_id_upload.allow_tags = True
 
 
 @python_2_unicode_compatible
