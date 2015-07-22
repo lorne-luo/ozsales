@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.forms import ModelForm
 
 from models import Order, OrderProduct
-from form import OrderForm
-from ..express.form import ExpressOrderAddInline, ExpressOrderChangeInline
+from forms import OrderForm
+from ..express.forms import ExpressOrderAddInline, ExpressOrderChangeInline
 
 
 class OrderProductAddInline(admin.TabularInline):
@@ -12,7 +12,7 @@ class OrderProductAddInline(admin.TabularInline):
     extra = 1
     # max_num = 1
     can_delete = True
-    verbose_name_plural = 'OrderProduct'
+    verbose_name_plural = 'Order Products'
 
 
 class OrderProductChangeInline(admin.TabularInline):
@@ -20,7 +20,7 @@ class OrderProductChangeInline(admin.TabularInline):
     extra = 0
     can_delete = True
     # max_num = 1
-    verbose_name_plural = 'OrderProduct'
+    verbose_name_plural = 'Order Products'
 
 
 class OrderAdmin(admin.ModelAdmin):

@@ -1,40 +1,26 @@
 from django.forms import ModelForm
 from django.contrib import admin
 from models import Customer, Address, InterestTag
-from form import CustomerAddForm
-
-
-class AddressInline(admin.TabularInline):
-    model = Address
-    extra = 1
-    can_delete = True
-    # max_num = 1
-    verbose_name_plural = 'Address'
-
-
-class InterestTagInline(admin.TabularInline):
-    model = InterestTag
-    extra = 1
-    can_delete = True
-    # max_num = 1
-    verbose_name_plural = 'Tag'
+from forms import CustomerAddForm, AddressAddInline, AddressChangeInline, InterestTagInline
+from ..order.forms import OrderInline
 
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name', 'mobile', 'add_order_link')
     search_fields = ('name', 'mobile')
-    inlines = [AddressInline, ]
+    inlines = [AddressAddInline, ]
 
     def add_view(self, request, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login', 'primary_address']
         self.form = ModelForm
+        self.inlines = [AddressAddInline]
 
         return super(CustomerAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
         self.form = CustomerAddForm
-
+        self.inlines = [AddressChangeInline, OrderInline]
         return super(CustomerAdmin, self).change_view(request, object_id, form_url, extra_context)
 
     def save_model(self, request, obj, form, change):
