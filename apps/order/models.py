@@ -64,9 +64,14 @@ class Order(models.Model):
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
         if self.sell_price_rmb and self.total_cost_aud:
-			self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
 
         return super(Order, self).save()
+
+    def get_order_link(self):
+        url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
+        name = '[#%s]%s' % (self.id, self.customer.name)
+        return u'<a href="%s">%s</a>' % (url, name)
 
     def update_price(self):
         self.total_amount = 0
@@ -129,8 +134,8 @@ class Order(models.Model):
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
             if not ex_order.id_upload:
-                return 'NO'
-        return 'YES'
+                return '<a target="_blank" herf="%s">%s</a>' % (ex_order.carrier.website, 'NO')
+        return 'DONE'
 
     get_id_upload.short_description = 'ID Upload'
 

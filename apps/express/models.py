@@ -61,9 +61,7 @@ class ExpressOrder(models.Model):
     get_tracking_link.short_description = 'Express Track'
 
     def get_order_link(self):
-        url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.order.id])
-        name = '[#%s]%s' % (self.order.id, self.order.customer.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return self.order.get_order_link()
 
     get_order_link.allow_tags = True
 
