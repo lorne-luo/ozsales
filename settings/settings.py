@@ -118,7 +118,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
 
 TEMPLATE_DIRS = (
-    os.path.join(os.path.dirname(__file__), 'templates'),
+    os.path.join(BASE_DIR, 'templates'),
 )
 
 AUTH_USER_MODEL = 'seller.Seller'
