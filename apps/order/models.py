@@ -50,8 +50,7 @@ class Order(models.Model):
     def __str__(self):
         return '[%s]%s' % (self.id, self.customer.name)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
             self.product_cost_rmb = self.product_cost_aud * RATE
 

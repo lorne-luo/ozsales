@@ -30,6 +30,7 @@ class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=False, null=False, verbose_name=_(u'carrier'))
     track_id = models.CharField(_(u'Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_(u'order'), related_name='express_orders')
+    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2,
                               blank=True, null=True)
     weight = models.DecimalField(_(u'Weight'), max_digits=8, decimal_places=2, blank=True,
@@ -45,6 +46,11 @@ class ExpressOrder(models.Model):
     def __str__(self):
         return '[%s]%s' % (self.carrier.name_cn, self.track_id)
 
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if not self.address and self.order and self.order.address:
+            self.address=self.order.address
+        return super(ExpressOrder, self).save()
+
     def get_track_url(self):
         if '%s' in self.carrier.search_url:
             return self.carrier.search_url % self.track_id
@@ -53,7 +59,7 @@ class ExpressOrder(models.Model):
 
     def get_tracking_link(self):
         if self.track_id:
-            return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
+            return 'Track => <a target="_blank" href="%s">#%s</a>' % (self.get_track_url(), self.track_id)
         else:
             return 'No Track ID'
 
