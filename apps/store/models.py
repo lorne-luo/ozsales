@@ -18,7 +18,7 @@ class Store(models.Model):
         verbose_name = _('Store')
 
     def __str__(self):
-        return '[S]%s' % self.short_name
+        return '%s' % self.short_name
 
 
 @python_2_unicode_compatible
