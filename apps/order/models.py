@@ -161,7 +161,7 @@ class OrderProduct(models.Model):
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
-        return '[OP]%s X %s' % (self.name, self.amount)
+        return '%s X %s' % (self.name, self.amount)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):

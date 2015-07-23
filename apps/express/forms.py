@@ -10,13 +10,14 @@ from models import ExpressOrder
 class ExpressOrderAddInline(admin.TabularInline):
     exclude = ['id_upload', 'create_time']
     model = ExpressOrder
+    can_delete = True
     extra = 1
     # max_num = 1
     verbose_name_plural = 'ExpressOrder'
 
 class ExpressOrderChangeInline(admin.TabularInline):
     model = ExpressOrder
-    can_delete = True
+    can_delete = False
     extra = 0
     # max_num = 1
     verbose_name_plural = 'ExpressOrder'
