@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'django_extensions',
+    'django_extensions',
     'apps',
     'apps.seller',
     'apps.express',
@@ -96,8 +96,8 @@ USE_L10N = False
 
 USE_TZ = True
 
-DATE_FORMAT = 'j/m/Y'
-DATETIME_FORMAT = 'j/m/Y H:i:s'
+DATE_FORMAT = 'Y/m/j'
+DATETIME_FORMAT = 'Y/m/j H:i:s'
 TIME_FORMAT = 'H:i:s'
 
 # Static files (CSS, JavaScript, Images)
