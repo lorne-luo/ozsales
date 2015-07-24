@@ -37,16 +37,16 @@ jQuery(document).ready(function($) {
     jQuery("#id_products-9-store").attr('style','width:100px').chosen();
     jQuery("#id_products-10-store").attr('style','width:100px').chosen();
 
-    jQuery("#id_express_orders-0-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-1-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-2-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-3-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-4-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-5-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-6-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-7-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-8-carrier").attr('style','width:100px').chosen();
-    jQuery("#id_express_orders-9-carrier").attr('style','width:100px').chosen();
+    jQuery("#id_express_orders-0-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-1-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-2-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-3-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-4-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-5-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-6-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-7-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-8-carrier").attr('style','width:150px').chosen();
+    jQuery("#id_express_orders-9-carrier").attr('style','width:150px').chosen();
 
 
 });

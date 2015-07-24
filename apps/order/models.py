@@ -48,7 +48,7 @@ class Order(models.Model):
     finish_time = models.DateTimeField(_(u'Finish Time'), auto_now_add=True, editable=False)
 
     def __str__(self):
-        return '[%s]%s' % (self.id, self.customer.name)
+        return '[#%s]%s' % (self.id, self.customer.name)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
@@ -132,9 +132,12 @@ class Order(models.Model):
 
     def get_id_upload(self):
         express_orders = self.express_orders.all()
+
         for ex_order in express_orders:
             if not ex_order.id_upload:
-                return '<a target="_blank" href="%s">%s</a>' % (ex_order.carrier.website, 'NO')
+                return '<a target="_blank" href="%s"><b>UPLOAD</b></a>' % ex_order.carrier.website
+        if not express_orders.count():
+            return 'No Shipping'
         return 'DONE'
 
     get_id_upload.short_description = 'ID Upload'
