@@ -35,8 +35,8 @@ class ExpressOrder(models.Model):
                               blank=True, null=True)
     weight = models.DecimalField(_(u'Weight'), max_digits=8, decimal_places=2, blank=True,
                                  null=True)
-    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
+    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
 
     class Meta:
@@ -48,7 +48,7 @@ class ExpressOrder(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.order and self.order.address:
-            self.address=self.order.address
+            self.address = self.order.address
         return super(ExpressOrder, self).save()
 
     def get_track_url(self):
