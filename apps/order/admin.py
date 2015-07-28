@@ -28,6 +28,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'origin_sell_rmb', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb',
                     'get_id_upload', 'create_time')
     list_filter = ['status']
+    ordering = ['create_time']
     inlines = []
     readonly_fields = ['total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee',
                        'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'profit_rmb', 'create_time']

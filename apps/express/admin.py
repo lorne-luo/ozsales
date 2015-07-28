@@ -7,7 +7,7 @@ admin.site.register(ExpressCarrier)
 
 class ExpressOrderAdmin(admin.ModelAdmin):
     list_display = ('carrier', 'get_tracking_link', 'get_order_link', 'address', 'fee', 'weight', 'create_time')
-
+    ordering = ['create_time']
 
 admin.site.register(ExpressOrder, ExpressOrderAdmin)
 

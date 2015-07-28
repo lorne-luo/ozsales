@@ -14,6 +14,6 @@ admin.site.register(Brand, BrandAdmin)
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'get_pic_link', 'get_name_cn', 'safe_sell_price', 'normal_price', 'bargain_price')
-
+    ordering = ['brand']
 
 admin.site.register(Product, ProductAdmin)
