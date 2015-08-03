@@ -17,5 +17,5 @@ python manage.py loaddata deploy/init_express.json
 
 
 #python manage.py loaddata deploy/test_data.json
-#python manage.py collectstatic
+#python manage.py collectstatic --link --noinput
 # && python manage.py createsuperuser
