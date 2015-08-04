@@ -59,7 +59,7 @@ class ExpressOrder(models.Model):
 
     def get_tracking_link(self):
         if self.track_id:
-            return 'Track => <a target="_blank" href="%s">#%s</a>' % (self.get_track_url(), self.track_id)
+            return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
         else:
             return 'No Track ID'
 
