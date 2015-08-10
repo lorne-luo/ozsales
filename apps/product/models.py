@@ -111,5 +111,5 @@ class Product(models.Model):
         return '%s %s %s' % (self.brand.name_en, self.name_cn, spec)
 
     def sell_price_text(self):
-		return '%srmb' % self.safe_sell_price
+        return '%srmb' % self.safe_sell_price
 
