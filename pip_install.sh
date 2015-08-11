@@ -1,1 +1,1 @@
-pip install -r env/requirements.txt
+pip install -r deploy/requirements.txt
