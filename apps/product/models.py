@@ -39,7 +39,7 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
-        return '[B]%s' % self.name_en
+        return '%s' % self.name_en
 
 
 def get_product_pic_path(instance, filename):
