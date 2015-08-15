@@ -85,7 +85,11 @@ class Product(models.Model):
             spec += ' ' + self.spec2
         if self.spec3:
             spec += ' ' + self.spec3
-        return '%s %s %s' % (self.brand.name_en, self.name_cn, spec)
+
+        if self.brand:
+            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+        else:
+            return '%s%s' % (self.name_cn, spec)
 
     def get_pic_link(self):
         if self.pic:
