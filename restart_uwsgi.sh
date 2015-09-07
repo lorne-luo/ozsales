@@ -5,3 +5,4 @@ sudo -u luotao uwsgi --ini settings/uwsgi.ini
 
 #supervisorctl update
 #supervisorctl start ozsales
+#uwsgi --chdir=/data/django/ozsales --module=settings.wsgi:application --env DJANGO_SETTINGS_MODULE=settings.settings --master --pidfile=/tmp/uwsgi-ozsales.pid --socket=/tmp/uwsgi.sock --processes=1 --harakiri=20 --max-requests=500 --vacuum --strict --chmod-socket=666
