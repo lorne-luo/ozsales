@@ -43,7 +43,7 @@ class InterestTag(models.Model):
         verbose_name = _('InterestTag')
 
     def __str__(self):
-        return '[T]%s' % self.name
+        return '%s' % self.name
 
 
 @python_2_unicode_compatible
@@ -88,7 +88,7 @@ class Customer(AbstractBaseUser):
     #     self.fields['groups'].verbose_name = 'customer groups'
 
     def __str__(self):
-        return '[C]%s' % self.name
+        return '%s' % self.name
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
@@ -192,7 +192,7 @@ class Address(models.Model):
         verbose_name = _('Address')
 
     def __str__(self):
-        return '[A]%s,%s,%s' % (self.name, self.mobile, self.address)
+        return '%s,%s,%s' % (self.name, self.mobile, self.address)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         addr_set = Address.objects.filter(customer=self.customer)

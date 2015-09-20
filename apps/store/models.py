@@ -34,4 +34,4 @@ class Page(models.Model):
         verbose_name = _('Page')
 
     def __str__(self):
-        return '[PB]%s' % self.title
+        return '%s' % self.title
