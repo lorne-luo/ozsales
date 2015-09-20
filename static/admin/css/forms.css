@@ -312,7 +312,7 @@ body.popup .submit-row {
 }
 
 .inline-group .tabular tr.has_original td {
-    padding-top: 2em;
+    padding-top: 0;
 }
 
 .inline-group .tabular tr td.original {
