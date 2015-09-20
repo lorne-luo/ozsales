@@ -168,10 +168,13 @@ class OrderProduct(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        if self.cost_price_aud:
-            self.total_price_aud = self.cost_price_aud * self.amount
-        if self.sell_price_rmb:
-            self.total_price_rmb = self.sell_price_rmb * self.amount
+        if not self.cost_price_aud:
+            self.cost_price_aud = self.product.normal_price
+        self.total_price_aud = self.cost_price_aud * self.amount
+        
+        if not self.sell_price_rmb:
+            self.sell_price_rmb = self.product.safe_sell_price
+        self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product and not self.name:
             self.name = self.product.get_name_cn()
