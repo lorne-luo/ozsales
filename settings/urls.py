@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     # url('^store/', 'store.urls'),
     # url('^product/', 'product.urls'),
     # url('^seller/', 'seller.urls'),
+	(r'^settings/', include('dbsettings.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

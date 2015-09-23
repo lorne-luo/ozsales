@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import datetime
 from decimal import Decimal
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -39,6 +40,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+	'dbsettings',
+	'djcelery',
+	'kombu.transport.django',
     'apps',
     'apps.seller',
     'apps.express',
@@ -127,3 +131,27 @@ ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'
 
 RATE = Decimal('4.6')
+
+
+import djcelery
+djcelery.setup_loader()
+
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+BROKER_TRANSPORT = 'redis'
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+
+CELERY_TASK_RESULT_EXPIRES = datetime.timedelta(days=1)  # Take note of the CleanUp task in middleware/tasks.py
+CELERY_MAX_CACHED_RESULTS = 1000
+CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERY_TRACK_STARTED = True
+CELERY_SEND_EVENTS = True
+CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+
+REDIS_CONNECT_RETRY = True
+REDIS_DB = 0
+
+import dbsettings
+class ForexRate(dbsettings.Group):
+	aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate',default=4.6)
+
+rate = ForexRate()
