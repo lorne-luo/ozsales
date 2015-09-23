@@ -40,9 +40,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-	'dbsettings',
-	'djcelery',
-	'kombu.transport.django',
+    'dbsettings',
+    'djcelery',
+    'kombu.transport.django',
     'apps',
     'apps.seller',
     'apps.express',
@@ -132,8 +132,8 @@ PRODUCT_PHOTO_FOLDER = 'product'
 
 RATE = Decimal('4.6')
 
-
 import djcelery
+
 djcelery.setup_loader()
 
 CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
@@ -151,7 +151,10 @@ REDIS_CONNECT_RETRY = True
 REDIS_DB = 0
 
 import dbsettings
+
+
 class ForexRate(dbsettings.Group):
-	aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate',default=4.6)
+    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=4.6)
+
 
 rate = ForexRate()
