@@ -130,7 +130,6 @@ AUTH_USER_MODEL = 'seller.Seller'
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'
 
-RATE = Decimal('4.6')
 
 import djcelery
 

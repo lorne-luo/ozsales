@@ -7,7 +7,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 
 from utils.enum import enum
-from settings.settings import RATE
+from settings.settings import rate
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
@@ -52,18 +52,18 @@ class Order(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
-            self.product_cost_rmb = self.product_cost_aud * RATE
+            self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
 
         if self.shipping_fee:
             self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-            self.cost_rmb = self.total_cost_aud * RATE
+            self.cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
 
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
         if self.sell_price_rmb and self.total_cost_aud:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * RATE
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * rate.aud_rmb_rate
 
         return super(Order, self).save()
 
@@ -84,7 +84,7 @@ class Order(models.Model):
         for p in products:
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
-            self.product_cost_rmb += self.product_cost_aud * RATE
+            self.product_cost_rmb += self.product_cost_aud * rate.aud_rmb_rate
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
 
         express_orders = self.express_orders.all()
@@ -94,7 +94,7 @@ class Order(models.Model):
                 self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * RATE
+        self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
 
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
