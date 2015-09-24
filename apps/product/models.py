@@ -70,8 +70,10 @@ class Product(models.Model):
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    tb_url = models.URLField(_(u'TB URL'), null=True, blank=True)
+    wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
+    wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
-
 
     class Meta:
         verbose_name_plural = _('Product')
