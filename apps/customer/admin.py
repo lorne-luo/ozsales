@@ -6,7 +6,7 @@ from ..order.forms import OrderInline
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'mobile', 'add_order_link')
+    list_display = ('name', 'add_order_link', 'mobile', 'order_count', 'last_order_time')
     search_fields = ('name', 'mobile')
     inlines = [AddressAddInline, ]
 
