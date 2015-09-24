@@ -62,8 +62,8 @@ class Order(models.Model):
             self.sell_price_rmb = self.origin_sell_rmb
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
-        if self.sell_price_rmb and self.total_cost_aud:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_aud * rate.aud_rmb_rate
+        if self.sell_price_rmb and self.total_cost_rmb:
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
         return super(Order, self).save()
 
