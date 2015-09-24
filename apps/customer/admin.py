@@ -9,6 +9,7 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name', 'add_order_link', 'mobile', 'order_count', 'last_order_time')
     search_fields = ('name', 'mobile')
     inlines = [AddressAddInline, ]
+    ordering = ['-last_order_time']
 
     def add_view(self, request, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login', 'primary_address']
