@@ -53,10 +53,10 @@ class Customer(AbstractBaseUser):
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
                                                                     'invalid')])
-
+    order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
+    last_order_time = models.DateTimeField(_('last order time'), auto_now_add=True, null=True)
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),
                                         related_name=_('primary address'))
-
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
