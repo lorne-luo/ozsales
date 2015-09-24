@@ -19,8 +19,8 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-@periodic_task(run_every=crontab(minute="*/1"))
-def get_aud_rmb_rate():
+@periodic_task(run_every=crontab(hour="*/4"))
+def get_aud_rmb():
     url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
     content = urllib.urlopen(url).read()
     try:
@@ -28,5 +28,8 @@ def get_aud_rmb_rate():
             infos = content.split(',')
             r = Decimal(infos[1])
             rate.aud_rmb_rate = r
+            return r
+            #rate.save()
     except:
-        pass
+        #print(0)
+        return 0
