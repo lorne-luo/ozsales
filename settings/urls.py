@@ -3,6 +3,7 @@ import os
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
+from utils.custom_admin_site import member_site
 
 urlpatterns = patterns('',
     # Examples:
@@ -10,6 +11,8 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^', include(admin.site.urls)),
+    url(r'^', include(member_site.urls)),
+
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
 
