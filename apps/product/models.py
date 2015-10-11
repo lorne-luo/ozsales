@@ -116,6 +116,9 @@ class Product(models.Model):
             spec += ' ' + self.spec3
         return '%s %s %s' % (self.brand.name_en, self.name_cn, spec)
 
+    get_name_cn.allow_tags = True
+    get_name_cn.short_description = 'CN Name'
+
     def sell_price_text(self):
         return '%srmb' % self.safe_sell_price
 
