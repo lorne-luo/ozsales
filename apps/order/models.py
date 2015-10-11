@@ -107,16 +107,15 @@ class Order(models.Model):
     def get_status_button(self):
         current_status = self.status
         next_status = ''
+        express_orders = self.express_orders.all()
+        if express_orders.count():
+            for ex in express_orders:
+                current_status = ex.get_tracking_link() + '<br/>' + current_status
         if self.status == ORDER_STATUS.CREATED:
             next_status = ORDER_STATUS.PAID
         elif self.status == ORDER_STATUS.PAID:
             next_status = ORDER_STATUS.SHIPPED
         elif self.status == ORDER_STATUS.SHIPPED:
-            express_orders = self.express_orders.all()
-            if express_orders.count():
-                current_status = ''
-                for ex in express_orders:
-                    current_status += ex.get_tracking_link() + '<br/>'
             next_status = ORDER_STATUS.DELIVERED
         elif self.status == ORDER_STATUS.DELIVERED:
             next_status = ORDER_STATUS.FINISHED
