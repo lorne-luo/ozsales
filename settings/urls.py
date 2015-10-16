@@ -14,7 +14,7 @@ def if_installed(appname, *args, **kwargs):
 
 # Member frontend
 member_urlpatterns = patterns('',
-    url(r'^seller/', include('apps.seller.urls')),
+    url(r'^member/', include('apps.member.urls')),
     # if_installed('apps.customer', r'^customer/', include('apps.customer.urls', namespace='customer')),
     # if_installed('apps.product', r'^product/', include('apps.product.urls', namespace='product')),
     # if_installed('apps.order', r'^order/', include('apps.order.urls', namespace='order')),
@@ -30,7 +30,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^member/', include(member_urlpatterns)),
+    url(r'^/', include(member_urlpatterns)),
 
 
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),

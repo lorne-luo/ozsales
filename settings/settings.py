@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
     'apps',
-    'apps.seller',
+    'apps.member',
     'apps.express',
     'apps.customer',
     'apps.product',
@@ -125,7 +125,7 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
-AUTH_USER_MODEL = 'seller.Seller'
+AUTH_USER_MODEL = 'member.Seller'
 
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'

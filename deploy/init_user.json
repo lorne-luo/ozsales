@@ -13,7 +13,7 @@
     "email": "1@1.com",
     "date_joined": "2015-07-15T06:30:40Z"
   },
-  "model": "seller.seller",
+  "model": "member.seller",
   "pk": 1
 },
 {

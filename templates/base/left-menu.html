@@ -1,0 +1,145 @@
+{% load i18n %}
+{% load activelink %}
+{% load in_group %}
+
+{% if not user|in_group:"Chef" %}
+  <div id="sidebar" class="nav-collapse collapse">
+    <div class="sidebar-toggler hidden-phone"></div>
+    <div class="navbar-inverse"></div>
+    <ul class="sidebar-menu">
+      {% if user.is_authenticated %}
+      <li>
+        <a href="{% url 'accounts-dashboard' %}"><span class="icon-box"><i class="icon-dashboard"></i></span>Dashboard</a>
+      </li>
+      {% endif %}
+
+      {% if perms.accounts.add_omniscreenuser or perms.accounts.add_billingaccount %}
+      <li class="has-sub {% ifstartswith "/admin/accounts/" %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"><i class="icon-user"></i></span> Accounts
+          <span class="arrow {% ifstartswith "/admin/accounts/" %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith "/admin/accounts/" %}style='display:block;'{% endifstartswith %}>
+          {% if perms.accounts.add_omniscreenuser %}
+            <li><a href="{% url 'user-index' %}">User accounts</a></li>
+          {%endif%}
+          {% if perms.accounts.add_billingaccount %}
+            <li><a href="{% url 'billingaccount' %}">Billing accounts</a></li>
+          {%endif%}
+        </ul>
+      </li>
+      {%endif%}
+
+      {% if perms.products.add_product %}
+      <li class="has-sub {% ifstartswith '/admin/products/' %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"><i class="icon-briefcase"></i></span> Products
+          <span class="arrow {% ifstartswith '/admin/products/' %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith '/admin/products/' %}style='display:block;'{% endifstartswith %}>
+            <li><a href="{% url 'products:channelpackage-index' %}">Channel Packages</a></li>
+        </ul>
+      </li>
+      {%endif%}
+
+
+      {% if perms.channels.add_channel or perms.channels.add_event or perms.radio.add_service  or perms.vod.record_event %}
+      <li class="has-sub {% ifstartswith "/admin/channels/" %}open{% endifstartswith %}{% ifstartswith "/admin/radio/" %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"><i class="icon-facetime-video"></i></span> Channels
+          <span class="arrow {% ifstartswith "/admin/channels/" %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith "/admin/channels/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/radio/" %}style='display:block;'{% endifstartswith %}>
+          {% if perms.channels.add_channel  %}
+            <li><a href="{% url 'channels-index' %}">Channel List</a></li>
+            <li><a href="{% url 'events-index' %}">EPG Events</a></li>
+          {% elif perms.vod.record_event %}
+            <li><a href="{% url 'events-index' %}">EPG Events</a></li>
+          {%endif%}
+          {% if perms.radio.add_service %}
+            <li><a href="{% url 'radio:radio-index' %}">Radio Services</a></li>
+          {%endif%}
+        </ul>
+      </li>
+      {%endif%}
+
+      {% if perms.vod.view_vodvideo or perms.vod.view_uservideo or perms.vod.view_recordingvideo or perms.photo.view_album %}
+      <li class="has-sub {% ifstartswith "/admin/recorder/" %}open{% endifstartswith %}{% ifstartswith "/admin/vod/" %}open{% endifstartswith %}{% ifstartswith "/admin/photo/" %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"> <i class="icon-film"></i></span> Media
+          <span class="arrow {% ifstartswith "/admin/recorder/" %}open{% endifstartswith %}{% ifstartswith "/admin/vod/" %}open{% endifstartswith %}{% ifstartswith "/admin/photo/" %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith "/admin/recorder/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/vod/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/photo/" %}style='display:block;'{% endifstartswith %}>
+          {% if perms.vod.view_vodvideo %}<li><a href="{% url 'vod:vodvideo-list' %}">Movies</a></li>{% endif %}
+          {% if perms.vod.view_all_video %}<li><a href="{% url 'vod:video-all' %}">All Videos</a></li>{% endif %}
+          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'recorder-search' %}">Channel monitoring</a></li>{% endif %}
+          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'recorder-list' %}">My Recordings</a></li>{% endif %}
+          {% if perms.vod.view_uservideo %}<li><a href="{% url 'vod:uservideo-own' %}">My Videos</a></li>{% endif %}
+          {% if perms.photo.view_album %}<li><a href="{% url 'photo-index' %}">My Photos</a></li>{% endif %}
+        </ul>
+      </li>
+      {% endif %}
+      {% if perms.device.add_device or perms.device.add_devicegroup or perms.device.add_schedule %}
+      <li class="has-sub {% ifstartswith "/admin/device/" %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"> <i class="icon-hdd"></i></span> Devices
+          <span class="arrow {% ifstartswith "/admin/device/" %}open{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith "/admin/device/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}style='display:block;'{% endifstartswith %}>
+          {% if perms.device.add_device %}<li><a href="{% url 'device-list-all' %}">Device List</a></li>{% endif %}
+          {% if perms.device.add_devicegroup  %}<li><a href="{% url 'device-group-list' %}">Groups</a></li>{% endif %}
+          {% if perms.device.add_location  %}<li><a href="{% url 'location-list' %}">Locations</a></li>{% endif %}
+          {% if perms.device.add_level  %}<li><a href="{% url 'level-list' %}">Levels</a></li>{% endif %}
+          {% if perms.device.add_zone  %}<li><a href="{% url 'zone-list' %}">Zones</a></li>{% endif %}
+          {% if perms.schedules.add_schedule %}<li><a href="{% url 'schedules:schedule-list' %}">Schedules</a></li>{% endif %}
+          {% if perms.device.add_message %}<li><a href="{% url 'device-messages' %}">Notifications</a></li>{% endif %}
+        </ul>
+      </li>
+      {% endif %}
+      {% if perms.meals.add_meals or perms.news.add_news or perms.activities.add_activity or perms.accounts.view_twitter or perms.accounts.view_feed or perms.signage.add_slide %}
+      <li class="has-sub {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"> <i class="icon-th"></i></span> Applications
+          <span class="arrow {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith "/admin/activities/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/news/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/signage/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/meals/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/feed/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}style='display:block;'{% endifstartswith %}">
+          {% if perms.activities.add_activity %}<li><a href="{% url 'activities-index' %}">Activities</a></li>{% endif %}
+          {% if perms.news.add_news %}<li><a href="{% url 'news-index' %}">Announcements</a></li>{% endif %}
+          {% if perms.signage.add_slide %}<li><a href="{% url 'signage-slide-list-all' %}">Digital Signage</a></li>{% endif %}
+          {% if perms.meals.add_meal %}<li><a href="{% url 'meals-index' %}">Dining Menu</a></li>{% endif %}
+          {% if perms.accounts.view_feed %}<li><a href="{% url 'feed-index' %}">RSS</a></li>{% endif %}
+          {% if perms.accounts.view_twitter %}<li><a href="{% url 'twitter-index' %}">Twitter</a></li>{% endif %}
+
+        </ul>
+      </li>
+      {% endif %}
+      {% if perms.accounts.can_export or perms.settings.view_network_configuration or user.is_superuser or perms.skin_add_setting or perms.mediasource.add_streamingprotocol or perms.mediasource.add_streamingserver or perms.mediasource.add_network or perms.ldap_auth.add_ldapconfig or perms.parental_control.add_rule or perms.categories.add_category %}
+        <li class="has-sub">
+            <a href="javascript:;">
+                <span class="icon-box"> <i class="icon-cogs"></i></span> Configuration
+                <span class="arrow"></span>
+            </a>
+            <ul class="sub">
+              {% if perms.can_export %}<li><a href="{% url 'backup:index' %}">Backup</a></li>{% endif %}
+              {% if perms.categories.add_category %}<li><a href="{% url 'categories:index' %}">Categories</a></li>{% endif %}
+              {% if perms.ldap_auth.add_ldapconfig %}<li><a href="{% url 'ldap-config' %}">LDAP Authentication</a></li>{% endif %}
+              {% if perms.mediasource.add_network %}<li><a href="{% url 'mediasource-network' %}">Networks</a></li>{% endif %}
+              {% if perms.settings.view_network_configuration %}<li><a href="{% url 'settings-network-setup' %}">Network Setup</a></li>{% endif %}
+              {% if perms.parental_control.add_rule %}
+                    {% if user|in_group:"Admin" or user.is_superuser %}
+                    <li><a href="{% url 'parental-control:list' %}">Censorship</a></li>
+                    {% else %}
+                    <li><a href="{% url 'parental-control:list' %}">Parental Control</a></li>
+                    {% endif %}
+              {% endif %}
+              {% if perms.skin_add_setting %}<li><a href="{% url 'settings-list' %}">Settings</a></li>{% endif %}
+              {% if perms.skin_add_setting %}<li><a href="{% url 'skin-settings-edit' %}">Skin Settings</a></li>{% endif %}
+              {% if perms.mediasource.add_streamingserver %}<li><a href="{% url 'mediasource-streamingserver' %}">Streaming Servers</a></li>{% endif %}
+              {% if perms.mediasource.add_streamingprotocol %}<li><a href="{% url 'mediasource-protocol' %}">Streaming Protocols</a></li>{% endif %}
+              {% if user.is_superuser %}<li><a href="{% url 'admin:index' %}">Super Admin</a></li>{% endif %}
+            </ul>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+{% endif %}

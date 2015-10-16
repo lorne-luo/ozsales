@@ -1,0 +1,48 @@
+{% load i18n %}
+{% load activelink %}
+{% load in_group %}
+{% load staticfiles %}
+{% load in_group %}
+{% load url from future %}
+{% load current from navigation %}
+
+<div id="header" class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="brand" href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" alt="Omniscreen"></a>
+          {% if user.is_authenticated %}
+          <a data-target=".nav-collapse" data-toggle="collapse" id="main_menu_trigger" class="btn btn-navbar collapsed">
+            <i class="icon-chevron-down"></i>
+          </a>
+          {% endif %}
+          <div class="nav notify-row" id="top_menu">
+        </div>
+          {% if user.is_authenticated %}
+          <div class="top-nav ">
+            <ul class="nav pull-right top-menu" >
+              <li class="dropdown mtop5 hidden-phone">
+                <a class="dropdown-toggle element" data-placement="bottom" data-toggle="tooltip" href="https://combitel.zendesk.com" target="_blank" data-original-title="Support">
+                  <i class="icon-question-sign"></i>
+                </a>
+              </li>
+              <li class="dropdown user-header-details">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {% if user.avatar %}
+                  <img src="{{user.avatar.url}}" class="hidden-phone" alt="user avatar">
+                {% else %}
+                  <img src="{% static 'img/avatar-mini.png' %}" class="hidden-phone" alt="">
+                {% endif %}
+                  <span class="username"> {% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}</span>
+                <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="{% url 'user-edit' %}"><i class="icon-user"></i> My Profile</a></li>
+                  <li><a href="{% url 'accounts-logout' %}"><i class="icon-key"></i> Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
