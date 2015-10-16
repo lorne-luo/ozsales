@@ -4,6 +4,7 @@ import json
 from urllib import urlencode
 from StringIO import StringIO
 
+
 class MessageSender(object):
     CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
     CONSUMER_SECRET = "AUbyh8CJy8gASog1"
@@ -61,7 +62,11 @@ class MessageSender(object):
         msg_id = data['messageId']
         print msg_id
 
+    def send_to_me(self, content):
+        my_number = '0478543891'
+        self.send_sms(my_number, content)
+
 
 if __name__ == '__main__':
     m = MessageSender()
-    m.send_sms('0478543891', 'hello boy')
+    m.send_to_me('hello boy')

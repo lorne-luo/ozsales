@@ -149,6 +149,10 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 REDIS_CONNECT_RETRY = True
 REDIS_DB = 0
 
+BROKER_POOL_LIMIT = 2
+CELERYD_CONCURRENCY = 1
+CELERYD_TASK_TIME_LIMIT = 600
+
 import dbsettings
 
 

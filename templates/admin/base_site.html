@@ -7,16 +7,16 @@
     <a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>
 </h1>
     <div style="display:inline-block">
-        <span><a href="/">Home</a></span> |
-        <span><a href="/seller/seller/">Seller</a></span> |
-        <span><a href="/customer/customer/">Customer</a></span> |
-        <span><a href="/customer/address/">Address</a></span> |
-        <span><a href="/order/order/?status__in=SHIPPED,CREATED,PAID,DELIVERED">Orders</a></span> |
-        <span><a href="/express/expressorder/">Express</a></span> |
-        <span><a href="/product/brand/">Brand</a></span> |
-        <span><a href="/product/product/">Product</a></span> |
-        <span><a href="/store/store/">Store</a></span> |
-        <span><a href="/settings/">Settings</a></span>
+        <span><a href="/admin">Home</a></span> |
+        <span><a href="/admin/seller/seller/">Seller</a></span> |
+        <span><a href="/admin/customer/customer/">Customer</a></span> |
+        <span><a href="/admin/customer/address/">Address</a></span> |
+        <span><a href="/admin/order/order/?status__in=SHIPPED,CREATED,PAID,DELIVERED">Orders</a></span> |
+        <span><a href="/admin/express/expressorder/">Express</a></span> |
+        <span><a href="/admin/product/brand/">Brand</a></span> |
+        <span><a href="/admin/product/product/">Product</a></span> |
+        <span><a href="/admin/store/store/">Store</a></span> |
+        <span><a href="/admin/settings/">Settings</a></span>
     </div>
 {% endblock %}
 
