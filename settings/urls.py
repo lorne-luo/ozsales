@@ -41,7 +41,7 @@ urlpatterns = patterns('',
     # url('^customer/', 'customer.urls'),
     # url('^store/', 'store.urls'),
     # url('^product/', 'product.urls'),
-    # url('^seller/', 'seller.urls'),
+    # url('^seller/', 'member.urls'),
 	(r'^settings/', include('dbsettings.urls')),
 
 )
