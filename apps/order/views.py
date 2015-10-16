@@ -13,5 +13,5 @@ def change_order_status(request, order_id, status_str):
             order.finish_time = datetime.datetime.now()
             order.customer.last_order_time = order.create_time
         order.save()
-
-    return HttpResponseRedirect(reverse('admin:%s_%s_changelist' % ('order', 'order')))
+    referer = request.META.get('HTTP_REFERER')
+    return HttpResponseRedirect(referer)
