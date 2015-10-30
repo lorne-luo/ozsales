@@ -42,7 +42,7 @@ urlpatterns = patterns('',
     # url('^store/', 'store.urls'),
     # url('^product/', 'product.urls'),
     # url('^seller/', 'member.urls'),
-	(r'^settings/', include('dbsettings.urls')),
+	(r'^admin/settings/', include('dbsettings.urls')),
 
 )
 
