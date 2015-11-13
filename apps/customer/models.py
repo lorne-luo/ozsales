@@ -181,7 +181,7 @@ class Address(models.Model):
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
                                                                     'invalid')])
-    address = models.CharField(_('address'), max_length=50, null=False, blank=False)
+    address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
