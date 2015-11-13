@@ -1,0 +1,94 @@
+{% extends 'base/base.html' %}
+{% comment %}
+Copyright (c) 2013 O7 Technologies Pty Ltd trading as Omniscreen. All Rights Reserved.
+
+O7 Technologies Pty Ltd trading as Omniscreen ("Omniscreen") retains copyright
+on all text, source and binary code contained in this software and documentation.
+Omniscreen grants Licensee a limited license to use this software,
+provided that this copyright notice and license appear on all copies of the software.
+The software source code is provided for reference, compilation and porting purposes only
+and may not be copied, modified or distributed in any manner and by any means
+without prior written permission from Omniscreen.
+
+THIS SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS,"
+WITHOUT ANY WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
+REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED.
+OMNISCREEN SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
+AS A RESULT OF USING OR MODIFYING THE SOFTWARE OR ITS DERIVATIVES.
+
+IN NO EVENT WILL OMNISCREEN BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA,
+OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES,
+HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
+ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE,
+EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+{% endcomment %}
+{% load in_group %}
+{% load staticfiles %}
+{% load breadcrumbs %}
+{% block page_id %}user-edit{%endblock%}
+{% block breadcrumbs %}
+   {% if perms.accounts.add_omniscreenuser %}
+      {% breadcrumb_url 'All Users' 'member-home' %}
+  {% endif %}
+  {% if edit_user %}
+    {% if edit_user != user %} {# Note 'user' variable is autopopulated with request.user #}
+      {% breadcrumb_last edit_user.username %}
+    {% else %}
+      {% breadcrumb_last 'Edit profile' %}
+    {% endif %}
+  {% else %}
+    {% breadcrumb_last 'Create user' %}
+  {% endif %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget">
+            <div class="widget-title">
+                <h4><i class="icon-user"></i> {{edit_user.username }}</h4>
+                {% if edit_user %}
+                <div class="actions">
+                    <a class="btn btn-mini" data-toggle="modal" href="#PasswordRestModel"><i class="icon-lock"></i> Change Password</a>
+                    {% if perms.accounts.delete_omniscreenuser and edit_user and edit_user != user%}
+                    <a class="btn btn-danger btn-mini" data-toggle="modal" href="#UserDeleteModal"><i class=" icon-trash"></i> Delete</a>
+                    {% endif%}
+                </div>
+                {% endif %}
+            </div>
+            <div class="widget-body">
+                <div class="tabbable tabbable-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="profile" class="tab-pane active">
+                            {% include "tabs/account_profile.html" with form=form edit_user=edit_user %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if edit_user %}
+    {% include "modal/password_reset.html" with edit_user=edit_user form=resetpasswordform %}
+    {% include "modal/confirm_delete.html" with modal_name="User" modal_title="Are you sure?" modal_body="Please confirm that you want to delete this user. Once deleted the user will not be able to login, any user data will also be deleted permanently." modal_url='user-delete' modal_url_param=edit_user.pk %}
+{% endif %}
+{% endblock %}
+
+
+{% block js %}
+  <script type="text/javascript" src="{% static 'assets/chosen/chosen.jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/jquery-ui/jquery-ui-1.9.2.custom.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/member/profile-save.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link type="text/css" rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.10.0.custom.css' %}">
+  <link type="text/css" rel="stylesheet" href="{% static 'assets/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/chosen/chosen.css' %}" />
+{% endblock %}

@@ -1,17 +1,24 @@
-from django.shortcuts import render
-
-# Create your views here.
+import logging
 from django.core.context_processors import csrf
+from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect, HttpResponseForbidden
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
+from django.views.generic import TemplateView
+from braces.views import PermissionRequiredMixin
+from smtplib import SMTPException, SMTPConnectError
+import socket
+
+from .models import Seller
+from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm
+
+log = logging.getLogger(__name__)
 
 
-def loginview(request):
-
+def member_login(request):
     if request.method == 'GET':
         c = csrf(request)
         if request.GET.get('next'):
@@ -33,13 +40,99 @@ def loginview(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                if bool(request.user.groups.filter(name="Chef")) and request.user.has_perm('meals.view_meal'):
-                    next_page = reverse('meals-index')
-                else:
-                    next_page = reverse('accounts-dashboard')
+                next_page = reverse('profile-edit')
 
             return HttpResponseRedirect(next_page)
 
         else:
             messages.error(request, 'Login failed. Please try again.')
-            return redirect('accounts-login')
+            return redirect('member-login')
+
+def member_home(request):
+    return HttpResponse('123')
+
+def member_logout(request):
+    return HttpResponse('123')
+
+class Profile(PermissionRequiredMixin, TemplateView):
+    template_name = 'member/profile.html'
+    permission_required = 'accounts.change_omniscreenuser'
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', '')
+        if pk:  # Admin editing other user's profile
+            try:
+                user = Seller.objects.get(pk=pk)
+            except Seller.DoesNotExist:
+                log.error("No user pk %s." % pk)
+                raise Http404()
+        else:  # Editing own profile
+            user = request.user
+        if request.user.has_perm('member.add_seller'):
+            form = SellerProfileForm(username_readonly=False)
+        else:
+            form = SellerProfileForm(username_readonly=True)
+
+        context = {
+            'edit_user': user,
+            'form': form,
+            'resetpasswordform': _reset_password_form(user, request),
+        }
+
+        return self.render_to_response(context)
+
+
+def user_password_reset(request, pk):
+    user = get_object_or_404(Seller, pk=pk)
+    allowed_change_other = (request.user.groups.filter(name='Admin').exists() or
+                            request.user.is_superuser or
+                            request.user.has_perm('member.add_seller'))
+    if not request.user == user and not allowed_change_other:
+        log.error('Response forbidden, lacking permission to change other users.')
+        return HttpResponseForbidden()
+
+    form = _reset_password_form(user, request)
+    if request.method == "POST":
+        form = _reset_password_form(user, request, request.POST)
+
+        if form.is_valid():
+            try:
+                form.save()
+            except SMTPException, (value, message):
+                messages.error(request, 'SMTP error while sending user notification: Error %s (%s)' % (value, message))
+            except (SMTPConnectError, socket.error), (value, message):
+                messages.error(request, 'Error while connecting to SMTP server: Error %s (%s)' % (value, message))
+
+            # user.renew_token()
+            if request.user == user:
+                return redirect('profile-edit')
+            else:
+                return redirect('admin-user-edit', pk=user.pk)
+    return render_to_response('member/user-reset-password.html', {
+        'form': form,
+        'edit_user': user
+    }, RequestContext(request))
+
+
+def _reset_password_form(user, request, POST=False):
+    if user == request.user:
+        form = UserResetPasswordForm(user)
+        if POST:
+            form = UserResetPasswordForm(user, POST)
+    elif request.user.has_perm('accounts.change_omniscreenuser'):
+        form = ResetPasswordEmailForm(user)
+        if POST:
+            form = ResetPasswordEmailForm(user, POST)
+    else:
+        log.error('Lacking permission to change user.')
+        raise Http404
+
+    return form
+
+@permission_required('accounts.delete_omniscreenuser', raise_exception=True)
+def user_delete(request, pk):
+    try:
+        Seller.objects.get(pk=pk).delete()
+    except Seller.DoesNotExist:
+        pass
+    return redirect('user-index')
