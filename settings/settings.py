@@ -51,6 +51,13 @@ INSTALLED_APPS = (
     'apps.order',
     'apps.store',
     'apps.common',
+    'utils',
+
+    'activelink',
+    'rest_framework',
+    'rest_framework.authtoken', # must come after accounts for migrations to work
+    'taggit',
+    'easy_thumbnails',
 )
 
 MIDDLEWARE_CLASSES = (
