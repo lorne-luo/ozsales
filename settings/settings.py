@@ -137,6 +137,7 @@ AUTH_USER_MODEL = 'member.Seller'
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'
 
+# ----------------------------------------- CELERY -----------------------------------------------
 
 import djcelery
 
@@ -155,13 +156,54 @@ CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
 REDIS_CONNECT_RETRY = True
 REDIS_DB = 0
-
 BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
 
-import dbsettings
+# ----------------------------------------- DBSETTINGS -----------------------------------------------
 
+REST_FRAMEWORK = {
+    #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
+    'PAGINATE_BY': 100, # Default to 100
+    'PAGINATE_BY_PARAM': 'limit', # Allow client to override, using `?limit=xxx`.
+    'MAX_PAGINATE_BY': 999, # Maximum limit allowed when using `?limit=xxx`.
+
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        #'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.DjangoObjectPermissions',
+        'utils.api.permission.IsOwnerAdminOrSuperuser',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+        #'rest_framework.filters.DjangoObjectPermissionsFilter', #Will exclusively use guardian tables for access
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FileUploadParser',
+    ],
+    'TEST_REQUEST_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.XMLRenderer',
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework_csv.renderers.CSVRenderer',
+    )
+}
+
+# ----------------------------------------- DBSETTINGS -----------------------------------------------
+
+import dbsettings
 
 class ForexRate(dbsettings.Group):
     aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=4.6)

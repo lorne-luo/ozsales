@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.fields.related import ForeignKey
 from rest_framework import permissions
-from middleware.apps.accounts.models import OmniscreenUser
+from apps.member.models import Seller
 
 
 log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class IsOwnerAdminOrSuperuser(permissions.DjangoObjectPermissions):
          This can lead to wrong results when the model has more than one user FK.
         '''
         for f in obj.__class__._meta.fields:
-            if isinstance(f, ForeignKey) and f.rel.to == OmniscreenUser:
+            if isinstance(f, ForeignKey) and f.rel.to == Seller:
                 return getattr(obj, f.name)
         return False
 

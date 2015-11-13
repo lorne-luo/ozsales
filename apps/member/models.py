@@ -81,6 +81,9 @@ class Seller(AbstractBaseUser, PermissionsMixin):
 
         return token
 
+    def is_admin(self):
+        return self.is_superuser or self.is_member('Admin')
+
     def is_member(self, group_name):
         return self.groups.filter(name=group_name).exists()
 
