@@ -20,6 +20,3 @@ pytz==2015.2
 redis==2.10.3
 supervisor
 django-dbsettings==0.8.2
-django-celery==3.1.16
-celery==3.1.18
-
