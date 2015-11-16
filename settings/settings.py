@@ -143,8 +143,7 @@ import djcelery
 
 djcelery.setup_loader()
 
-REDIS_PWD = 'redis-luotao'
-BROKER_URL = 'redis://:%s@127.0.0.1:6379' % REDIS_PWD
+BROKER_URL = 'redis://127.0.0.1:6379'
 BROKER_TRANSPORT = 'redis'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
 CELERY_RESULT_BACKEND = BROKER_URL
