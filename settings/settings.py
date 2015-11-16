@@ -135,9 +135,11 @@ import djcelery
 
 djcelery.setup_loader()
 
-CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
+REDIS_PWD = 'redis-luotao'
+BROKER_URL = 'redis://:%s@127.0.0.1:6379' % REDIS_PWD
 BROKER_TRANSPORT = 'redis'
 BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+CELERY_RESULT_BACKEND = BROKER_URL
 
 CELERY_TASK_RESULT_EXPIRES = datetime.timedelta(days=1)  # Take note of the CleanUp task in middleware/tasks.py
 CELERY_MAX_CACHED_RESULTS = 1000
