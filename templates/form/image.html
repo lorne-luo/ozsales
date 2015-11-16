@@ -1,0 +1,14 @@
+<div class="control-group">
+	
+	<label for="id_{{input.name}}" class="control-label">{% if title %}{{title}}{% else %}{{input.name}}{% endif %}</label>
+	
+	<div class="controls">
+  		<input type="file" value="{{input.value}}" accept="image/png, image/jpeg" class="hide" name="{{input.name}}" id="id_{{input.name}}">
+  		<div class="input-append">
+    		<input type="text" value="{{input.value}}" placeholder="JPG and PNG only" disabled="" class="" data-fileplaceholder="logo" id="id_{{input.name}}_dummy">
+  		</div>
+      <span class="help-inline"><a class="{{input.name}}_browse">Browse</a><a class="thumb-remove {{input.name}}_delete {% if not input.value %}hide{% endif %}">Remove</a></span>
+
+  		<span class="help-inline hide" id="{{input.name}}-error">{{errors|striptags}}</span>
+	</div>
+</div>

@@ -1,0 +1,2 @@
+Derived from: https://github.com/javiertoledo/bootstrap-rating-input
+Replaced the 'glyphicon' class with just 'icon' as we still use Bootstrap 2 not 3.

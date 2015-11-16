@@ -24,6 +24,7 @@ class Seller(AbstractBaseUser, PermissionsMixin):
                                 ])
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
+    mobile = models.CharField(max_length=18, null=True, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
                                    help_text=_('Designates whether the user can log into this admin '
                                                'site.'))
@@ -79,6 +80,9 @@ class Seller(AbstractBaseUser, PermissionsMixin):
             token, _created = Token.objects.get_or_create(user=self)
 
         return token
+
+    def is_admin(self):
+        return self.is_superuser or self.is_member('Admin')
 
     def is_member(self, group_name):
         return self.groups.filter(name=group_name).exists()

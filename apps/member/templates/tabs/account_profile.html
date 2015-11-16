@@ -1,0 +1,84 @@
+{% load staticfiles %}
+<form method="post" id='form' data-pk='{{edit_user.pk|default:""}}' action="." class="form-horizontal">
+    {% csrf_token %}
+    {% include "form/header_error.html" %}
+    <div class="row-fluid">
+        <div class="span4">
+            <div class="text-center profile-pic">
+                <div class="well">
+                    <div class="control-group control-group-centered">
+                        <img id='avatar_preview' src="{% static 'img/profile-pic.jpg' %}"/>
+                        <input id="id_avatar" name="avatar" type="file" class="hide" accept="image/png, image/jpeg"/>
+                        <div class="clearfix"></div>
+                        <div class="space10"></div>
+                        <button type='button' class="avatar_browse btn btn-file"><i id="icon" class="icon-edit"></i>
+                          Change
+                        </button>
+                        <button type='button' class="btn btn-danger avatar_delete hide"><i class="icon-remove"></i></button>
+                    </div>
+                    <span id="avatar-error" class="help-inline alert-error hide"></span>
+                </div>
+            </div>
+        </div>
+        <div class="span8">
+            {% include "form/input.html" with title="Username" errors=edit_user.errors.username input=form.username %}
+            {% if edit_user %}
+                {% include "form/input.html" with title="Pin" errors=edit_user.errors.pin input=form.pin %}
+            {% endif %}
+            {% include "form/input.html" with title="Full Name" errors=form.errors.full_name input=form.full_name %}
+            {% include "form/input.html" with title="Short Name" errors=form.errors.short_name input=form.short_name %}
+            {% include "form/input.html" with title="Email" errors=form.errors.email input=form.email %}
+            {% include "form/input.html" with title="Mobile" errors=form.errors.mobile input=form.mobile %}
+            {% include "form/input.html" with title="Timezone" errors=form.errors.timezone input=form.timezone %}
+
+            {% if perms.accounts.add_omniscreenuser %}
+                {% if not edit_user %} {# only show when creating a new user #}
+                    {% include "form/input.html" with title="New Password" errors=form.errors.password input=form.password %}
+                    {% include "form/input.html" with title="Confirm Password" errors=form.errors.password2 input=form.password2 %}
+                {% endif %}
+
+                <div class="control-group">
+                    <label class="control-label">Active:</label>
+                    <div class="controls input-icon">
+                        {% if edit_user != user %} {# dont allow to change these on oneself, as it might lead to logout/loss of privileges to undo it #}
+                        <div class="info-toggle-button is_active">
+                            {{form.is_active}}
+                        </div>
+                        {% else %}
+                            <i class="{% if edit_user.is_active %}icon-ok icon-success{%else%}icon-remove{% endif %}"></i>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.is_superuser %}
+                    <div class="control-group">
+                        <label class="control-label">Superuser:</label>
+                        <div class="controls input-icon">
+                            <i class="{% if edit_user.is_superuser%}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="control-group">
+                    <label class="control-label">Role:</label>
+                    <div class="controls input-icon">
+                      {% if perms.accounts.add_omniscreenuser %}
+                        {% if edit_user == user %}
+                          {{edit_user.groups.all|join:", "|default:'<i>None</i>'}}
+                        {% else %}
+                          {{form.groups}}
+                        {% endif %}
+                      {% else %}
+                        {{edit_user.groups.all|join:", "|default:'<i>None</i>'}}
+                      {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+            <div id="server-error" class="alert alert-error hide">Server error, please try again later!</div>
+        </div>
+        <div class=" span12 form-actions">
+            <button class="btn btn-primary" type="submit"><i class="icon-ok"></i> Save</button>
+            <a class="btn" href="{% url "member-home"  %}">Cancel</a>
+        </div>
+    </div>
+</form>

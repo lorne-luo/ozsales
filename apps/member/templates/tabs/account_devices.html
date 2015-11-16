@@ -1,0 +1,47 @@
+{% if edit_user.device_set.all %}
+<table class="table table-striped table-list devices">
+    <thead>
+        <tr>
+            <th>Mac</th>
+            <th class="hidden-phone">IP</th>
+            <th class="hidden-phone">Model</th>
+            <th class="hidden-phone">Version</th>
+            <th class="hidden-phone">Location</th>
+            {% if perms.accounts.change_omniscreenuser and perms.device.change_device%}
+            <th class="hidden-phone"></th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+    {% for device in edit_user.device_set.all %}
+        <tr class="odd gradeX">
+            <td>
+            {% if perms.device.change_device %}
+            <a href="{% url 'device-edit' device_id=device.id %}">{{device.mac}}</a>
+            {% else %}
+            {{device.mac}}
+            {% endif %}</td>
+            <td class="hidden-phone">{{device.ip}}</td>
+            <td class="hidden-phone">{{device.model}}</td>
+            <td class="hidden-phone">{{device.version}}</td>
+            <td class="hidden-phone">{{device.location}}</td>
+            <td>
+              {% if perms.accounts.change_omniscreenuser and perms.device.change_device %}
+              <a data-placement="right" data-original-title="Remove device" href="{% url 'user-device-remove' device_id=device.id pk=edit_user.pk %}" role="button" class="btn btn-danger btn-mini tooltips">Remove</a>
+              {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <div class="alert alert-block">
+      <strong>Attention!</strong> User has no devices attached.
+    </div>
+{% endif %}
+{% if perms.accounts.change_omniscreenuser and perms.device.change_device %}
+<div class="form-actions">
+    <a href="#DeviceModel" data-toggle="modal" class="btn btn-primary">Add Device</a>
+</div>
+{#{% include "modal/device_view.html" with devices=all_devices modal_url='user-device-add' modal_url_param1=edit_user.pk %}#}
+{% endif %}

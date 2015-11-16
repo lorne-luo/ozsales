@@ -23,6 +23,19 @@ member_urlpatterns = patterns('',
     # if_installed('apps.express', r'^express/', include('apps.express.urls', namespace='express')),
 )
 
+# REST API
+api_urlpatterns = patterns('',
+    # if_installed('middleware.apps.activities', r'^activities/', include('middleware.apps.activities.api.urls')),
+    # if_installed('middleware.apps.news', r'^news/', include('middleware.apps.news.api.urls')),
+    # if_installed('middleware.apps.channels', r'^channels/', include('middleware.apps.channels.api.urls')),
+    # if_installed('middleware.apps.meals', r'^meals/', include('middleware.apps.meals.api.urls')),
+    # if_installed('middleware.apps.device', r'^device/', include('middleware.apps.device.api.urls')),
+    if_installed('apps.member', r'^member/', include('apps.member.api.urls')),
+
+    # url(r'^version/$', views.Version.as_view(), name='version')
+)
+
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'ecosway.views.home', name='home'),
@@ -31,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^', include(member_urlpatterns)),
+    url(r'^api/', include(api_urlpatterns, namespace='api')),
 
 
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),

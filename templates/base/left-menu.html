@@ -9,7 +9,7 @@
     <ul class="sidebar-menu">
       {% if user.is_authenticated %}
       <li>
-        <a href="{% url 'accounts-dashboard' %}"><span class="icon-box"><i class="icon-dashboard"></i></span>Dashboard</a>
+        <a href="{% url 'member-home' %}"><span class="icon-box"><i class="icon-dashboard"></i></span>Dashboard</a>
       </li>
       {% endif %}
 
@@ -21,10 +21,7 @@
         </a>
         <ul class="sub" {% ifstartswith "/admin/accounts/" %}style='display:block;'{% endifstartswith %}>
           {% if perms.accounts.add_omniscreenuser %}
-            <li><a href="{% url 'user-index' %}">User accounts</a></li>
-          {%endif%}
-          {% if perms.accounts.add_billingaccount %}
-            <li><a href="{% url 'billingaccount' %}">Billing accounts</a></li>
+            <li><a href="{% url 'member-home' %}">User accounts</a></li>
           {%endif%}
         </ul>
       </li>
@@ -37,7 +34,7 @@
           <span class="arrow {% ifstartswith '/admin/products/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/admin/products/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'products:channelpackage-index' %}">Channel Packages</a></li>
+            <li><a href="{% url 'member-home' %}">Channel Packages</a></li>
         </ul>
       </li>
       {%endif%}
@@ -51,13 +48,13 @@
         </a>
         <ul class="sub" {% ifstartswith "/admin/channels/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/radio/" %}style='display:block;'{% endifstartswith %}>
           {% if perms.channels.add_channel  %}
-            <li><a href="{% url 'channels-index' %}">Channel List</a></li>
-            <li><a href="{% url 'events-index' %}">EPG Events</a></li>
+            <li><a href="{% url 'member-home' %}">Channel List</a></li>
+            <li><a href="{% url 'member-home' %}">EPG Events</a></li>
           {% elif perms.vod.record_event %}
-            <li><a href="{% url 'events-index' %}">EPG Events</a></li>
+            <li><a href="{% url 'member-home' %}">EPG Events</a></li>
           {%endif%}
           {% if perms.radio.add_service %}
-            <li><a href="{% url 'radio:radio-index' %}">Radio Services</a></li>
+            <li><a href="{% url 'member-home' %}">Radio Services</a></li>
           {%endif%}
         </ul>
       </li>
@@ -70,12 +67,12 @@
           <span class="arrow {% ifstartswith "/admin/recorder/" %}open{% endifstartswith %}{% ifstartswith "/admin/vod/" %}open{% endifstartswith %}{% ifstartswith "/admin/photo/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/recorder/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/vod/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/photo/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.vod.view_vodvideo %}<li><a href="{% url 'vod:vodvideo-list' %}">Movies</a></li>{% endif %}
-          {% if perms.vod.view_all_video %}<li><a href="{% url 'vod:video-all' %}">All Videos</a></li>{% endif %}
-          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'recorder-search' %}">Channel monitoring</a></li>{% endif %}
-          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'recorder-list' %}">My Recordings</a></li>{% endif %}
-          {% if perms.vod.view_uservideo %}<li><a href="{% url 'vod:uservideo-own' %}">My Videos</a></li>{% endif %}
-          {% if perms.photo.view_album %}<li><a href="{% url 'photo-index' %}">My Photos</a></li>{% endif %}
+          {% if perms.vod.view_vodvideo %}<li><a href="{% url 'member-home' %}">Movies</a></li>{% endif %}
+          {% if perms.vod.view_all_video %}<li><a href="{% url 'member-home' %}">All Videos</a></li>{% endif %}
+          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'member-home' %}">Channel monitoring</a></li>{% endif %}
+          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'member-home' %}">My Recordings</a></li>{% endif %}
+          {% if perms.vod.view_uservideo %}<li><a href="{% url 'member-home' %}">My Videos</a></li>{% endif %}
+          {% if perms.photo.view_album %}<li><a href="{% url 'member-home' %}">My Photos</a></li>{% endif %}
         </ul>
       </li>
       {% endif %}
@@ -86,13 +83,10 @@
           <span class="arrow {% ifstartswith "/admin/device/" %}open{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/device/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.device.add_device %}<li><a href="{% url 'device-list-all' %}">Device List</a></li>{% endif %}
-          {% if perms.device.add_devicegroup  %}<li><a href="{% url 'device-group-list' %}">Groups</a></li>{% endif %}
-          {% if perms.device.add_location  %}<li><a href="{% url 'location-list' %}">Locations</a></li>{% endif %}
-          {% if perms.device.add_level  %}<li><a href="{% url 'level-list' %}">Levels</a></li>{% endif %}
-          {% if perms.device.add_zone  %}<li><a href="{% url 'zone-list' %}">Zones</a></li>{% endif %}
-          {% if perms.schedules.add_schedule %}<li><a href="{% url 'schedules:schedule-list' %}">Schedules</a></li>{% endif %}
-          {% if perms.device.add_message %}<li><a href="{% url 'device-messages' %}">Notifications</a></li>{% endif %}
+          {% if perms.device.add_device %}<li><a href="{% url 'member-home' %}">Device List</a></li>{% endif %}
+          {% if perms.device.add_devicegroup  %}<li><a href="{% url 'member-home' %}">Groups</a></li>{% endif %}
+          {% if perms.schedules.add_schedule %}<li><a href="{% url 'member-home' %}">Schedules</a></li>{% endif %}
+          {% if perms.device.add_message %}<li><a href="{% url 'member-home' %}">Notifications</a></li>{% endif %}
         </ul>
       </li>
       {% endif %}
@@ -103,12 +97,8 @@
           <span class="arrow {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/activities/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/news/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/signage/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/meals/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/feed/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}style='display:block;'{% endifstartswith %}">
-          {% if perms.activities.add_activity %}<li><a href="{% url 'activities-index' %}">Activities</a></li>{% endif %}
-          {% if perms.news.add_news %}<li><a href="{% url 'news-index' %}">Announcements</a></li>{% endif %}
-          {% if perms.signage.add_slide %}<li><a href="{% url 'signage-slide-list-all' %}">Digital Signage</a></li>{% endif %}
-          {% if perms.meals.add_meal %}<li><a href="{% url 'meals-index' %}">Dining Menu</a></li>{% endif %}
-          {% if perms.accounts.view_feed %}<li><a href="{% url 'feed-index' %}">RSS</a></li>{% endif %}
-          {% if perms.accounts.view_twitter %}<li><a href="{% url 'twitter-index' %}">Twitter</a></li>{% endif %}
+          {% if perms.activities.add_activity %}<li><a href="{% url 'member-home' %}">Activities</a></li>{% endif %}
+          {% if perms.news.add_news %}<li><a href="{% url 'member-home' %}">Announcements</a></li>{% endif %}
 
         </ul>
       </li>
@@ -120,23 +110,9 @@
                 <span class="arrow"></span>
             </a>
             <ul class="sub">
-              {% if perms.can_export %}<li><a href="{% url 'backup:index' %}">Backup</a></li>{% endif %}
-              {% if perms.categories.add_category %}<li><a href="{% url 'categories:index' %}">Categories</a></li>{% endif %}
-              {% if perms.ldap_auth.add_ldapconfig %}<li><a href="{% url 'ldap-config' %}">LDAP Authentication</a></li>{% endif %}
-              {% if perms.mediasource.add_network %}<li><a href="{% url 'mediasource-network' %}">Networks</a></li>{% endif %}
-              {% if perms.settings.view_network_configuration %}<li><a href="{% url 'settings-network-setup' %}">Network Setup</a></li>{% endif %}
-              {% if perms.parental_control.add_rule %}
-                    {% if user|in_group:"Admin" or user.is_superuser %}
-                    <li><a href="{% url 'parental-control:list' %}">Censorship</a></li>
-                    {% else %}
-                    <li><a href="{% url 'parental-control:list' %}">Parental Control</a></li>
-                    {% endif %}
-              {% endif %}
-              {% if perms.skin_add_setting %}<li><a href="{% url 'settings-list' %}">Settings</a></li>{% endif %}
-              {% if perms.skin_add_setting %}<li><a href="{% url 'skin-settings-edit' %}">Skin Settings</a></li>{% endif %}
-              {% if perms.mediasource.add_streamingserver %}<li><a href="{% url 'mediasource-streamingserver' %}">Streaming Servers</a></li>{% endif %}
-              {% if perms.mediasource.add_streamingprotocol %}<li><a href="{% url 'mediasource-protocol' %}">Streaming Protocols</a></li>{% endif %}
-              {% if user.is_superuser %}<li><a href="{% url 'admin:index' %}">Super Admin</a></li>{% endif %}
+              {% if perms.can_export %}<li><a href="{% url 'member-home' %}">Backup</a></li>{% endif %}
+              {% if perms.categories.add_category %}<li><a href="{% url 'member-home' %}">Categories</a></li>{% endif %}
+              {% if perms.ldap_auth.add_ldapconfig %}<li><a href="{% url 'member-home' %}">LDAP Authentication</a></li>{% endif %}
             </ul>
         </li>
       {% endif %}
