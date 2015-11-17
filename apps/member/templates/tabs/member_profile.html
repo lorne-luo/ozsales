@@ -3,35 +3,16 @@
     {% csrf_token %}
     {% include "form/header_error.html" %}
     <div class="row-fluid">
-        <div class="span4">
-            <div class="text-center profile-pic">
-                <div class="well">
-                    <div class="control-group control-group-centered">
-                        <img id='avatar_preview' src="{% static 'img/profile-pic.jpg' %}"/>
-                        <input id="id_avatar" name="avatar" type="file" class="hide" accept="image/png, image/jpeg"/>
-                        <div class="clearfix"></div>
-                        <div class="space10"></div>
-                        <button type='button' class="avatar_browse btn btn-file"><i id="icon" class="icon-edit"></i>
-                          Change
-                        </button>
-                        <button type='button' class="btn btn-danger avatar_delete hide"><i class="icon-remove"></i></button>
-                    </div>
-                    <span id="avatar-error" class="help-inline alert-error hide"></span>
-                </div>
-            </div>
+        <div class="span1">
         </div>
         <div class="span8">
+
             {% include "form/input.html" with title="Username" errors=edit_user.errors.username input=form.username %}
-            {% if edit_user %}
-                {% include "form/input.html" with title="Pin" errors=edit_user.errors.pin input=form.pin %}
-            {% endif %}
-            {% include "form/input.html" with title="Full Name" errors=form.errors.full_name input=form.full_name %}
-            {% include "form/input.html" with title="Short Name" errors=form.errors.short_name input=form.short_name %}
+            {% include "form/input.html" with title="Name" errors=form.errors.full_name input=form.name %}
             {% include "form/input.html" with title="Email" errors=form.errors.email input=form.email %}
             {% include "form/input.html" with title="Mobile" errors=form.errors.mobile input=form.mobile %}
-            {% include "form/input.html" with title="Timezone" errors=form.errors.timezone input=form.timezone %}
 
-            {% if perms.accounts.add_omniscreenuser %}
+            {% if perms.member.add_seller %}
                 {% if not edit_user %} {# only show when creating a new user #}
                     {% include "form/input.html" with title="New Password" errors=form.errors.password input=form.password %}
                     {% include "form/input.html" with title="Confirm Password" errors=form.errors.password2 input=form.password2 %}
@@ -50,7 +31,7 @@
                     </div>
                 </div>
 
-                {% if user.is_superuser %}
+                {% if user.is_admin %}
                     <div class="control-group">
                         <label class="control-label">Superuser:</label>
                         <div class="controls input-icon">
