@@ -2,7 +2,8 @@
  * Javascript module for the news add/edit page.
  */
 (function(self, $, undefined) {
-  self.url = '/api/member/user/';
+  self.url = '/api/member/profile/';
+  self.save_url = '/api/member/user/';
   self.avatar = undefined; // set to '' to clear on submit
   self.initialize = function() {
     /**
@@ -12,7 +13,7 @@
     // For edititing existing instance, load data from the api
     var pk = $('#form').attr('data-pk');
     if (pk) {
-      $.getJSON(self.url + pk + '/', self._populate_form);
+      $.getJSON(self.url, self._populate_form);
     }
 
     $('#form').submit(function (e) {
@@ -77,11 +78,10 @@
     if($('#form').attr('data-pk')){
       data.append('pk', $('#form').attr('data-pk'));
     }
-    if (self.avatar!== undefined) {// Allow '' to reset image field
-      data.append('avatar', self.avatar);
-    }
-    data.append('full_name', $('#id_full_name').val());
-    data.append('short_name', $('#id_short_name').val());
+    data.append('name', $('#id_name').val());
+    data.append('email', $('#id_email').val());
+    data.append('mobile', $('#id_mobile').val());
+
     if($('#id_username').length){
       data.append('username', $('#id_username').val());
     }
@@ -94,10 +94,6 @@
     if($('#id_password2').length){
       data.append('password2', $('#id_password2').val());
     }
-
-    data.append('email', $('#id_email').val());
-    data.append('mobile', $('#id_mobile').val());
-    data.append('timezone', $('#id_timezone').val());
 
     if ($('#id_groups').length != 0) {
       if($('#id_groups option:selected').length === 0){
@@ -114,7 +110,7 @@
   };
 
   self.save = function(pk) {
-    var url = self.url;
+    var url = self.save_url;
     var type = 'POST';
     if (pk) {
       url += pk + '/';
@@ -138,7 +134,7 @@
           window.location.reload();
         }
         else if(xhr.status === 201){
-          window.location = '/admin/accounts/users/';
+          window.location = '/admin/member/users/';
         }
         else{
           omniscreenCommon.display_errors(data.responseText);

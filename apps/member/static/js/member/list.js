@@ -2,7 +2,7 @@
  * Javascript module for the news add/edit page.
  */
 (function(self, $, undefined) {
-    self.url = '/api/accounts/user/';
+    self.url = '/api/member/user/';
     self.users = [];
 
     self.initialize = function(purchase) {

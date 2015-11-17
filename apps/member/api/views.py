@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 class OmniscreenUserViewSet(PaginateMaxModelViewSet):
     """ A viewset for viewing and editing user instances. """
-    serializer_class = serializers.OmniscreenUserSerializer
+    serializer_class = serializers.SellerUserSerializer
     permission_required = 'member.change_seller'
     # Exclude restframework's anonymous user which can cause 500s in url-versing due to its negative pk
     queryset = Seller.objects.exclude(username='AnonymousUser').exclude(pk__lt=0)
@@ -25,10 +25,11 @@ class OmniscreenUserViewSet(PaginateMaxModelViewSet):
 class Profile(generics.GenericAPIView):
     ''' Return current users's profile '''
     model = Seller
+    queryset = Seller.objects.all()
     permission_required = 'member.view_seller'
 
     def get(self, request):
-        return Response({'user': serializers.OmniscreenUserSerializer(request.user).data})
+        return Response(serializers.SellerUserSerializer(request.user).data)
 
 
 class GroupsAndUsersList(generics.GenericAPIView):

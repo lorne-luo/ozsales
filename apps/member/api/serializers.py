@@ -50,7 +50,7 @@ class GroupPermissionSerializer(serializers.ModelSerializer):
         model = Group
 
 
-class OmniscreenUserSerializer(serializers.ModelSerializer):
+class SellerUserSerializer(serializers.ModelSerializer):
     ''' Serializer for class OmniscreenUser '''
     groups = FormDataPrimaryKeyRelatedField(many=True, read_only=True, required=False)
     groups_display = DisplayNestedFKField('groups', serializer=GroupPermissionSerializer)
@@ -61,28 +61,28 @@ class OmniscreenUserSerializer(serializers.ModelSerializer):
         model = Seller
         write_only_fields = ['password']
 
-    def validate_groups(self, attrs, source):
+    def validate_groups(self, source):
         user = self.context['request'].user
-        if not user.has_perm('accounts.add_omniscreenuser'):
+        if not user.has_perm('member.add_seller'):
             raise serializers.ValidationError("This user cannot change group memberships.")
-        return attrs
+        return source
 
-    def validate_username(self, attrs, source):
+    def validate_username(self, source):
         user = self.context['request'].user
-        username = attrs[source]
+        username = source
 
-        if (not user.has_perm('accounts.add_omniscreenuser')) and self.object.username != username:
+        if (not user.has_perm('member.add_seller')) and user.username != username:
                 raise serializers.ValidationError("This user cannot change usernames.")
 
-        return attrs
+        return source
 
     #Even though email is not required field in model, we make it required in here.
     #Will not be an issue when multitenancy is merged.
-    def validate_email(self, attrs, source):
-        if len(attrs[source]) == 0:
+    def validate_email(self, source):
+        if len(source) == 0:
             raise serializers.ValidationError("Email cannot be empty.")
 
-        return attrs
+        return source
 
     def validate_password2(self, attrs, source):
         password2 = attrs.pop(source)
@@ -94,7 +94,7 @@ class OmniscreenUserSerializer(serializers.ModelSerializer):
     def to_native(self, obj):
         if 'password2' in self.fields:
             self.fields.pop('password2')
-        return super(OmniscreenUserSerializer, self).to_native(obj)
+        return super(SellerUserSerializer, self).to_native(obj)
 
     def validate_password(self, attrs, source):
         if len(attrs[source]) < 4:
