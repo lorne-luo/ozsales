@@ -1,27 +1,3 @@
-{% comment %}
-Copyright (c) 2013 O7 Technologies Pty Ltd trading as Omniscreen. All Rights Reserved.
-
-O7 Technologies Pty Ltd trading as Omniscreen ("Omniscreen") retains copyright
-on all text, source and binary code contained in this software and documentation.
-Omniscreen grants Licensee a limited license to use this software,
-provided that this copyright notice and license appear on all copies of the software.
-The software source code is provided for reference, compilation and porting purposes only
-and may not be copied, modified or distributed in any manner and by any means
-without prior written permission from Omniscreen.
-
-THIS SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS,"
-WITHOUT ANY WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
-REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED.
-OMNISCREEN SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
-AS A RESULT OF USING OR MODIFYING THE SOFTWARE OR ITS DERIVATIVES.
-
-IN NO EVENT WILL OMNISCREEN BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA,
-OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES,
-HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
-ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE,
-EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-{% endcomment %}
 {% load staticfiles %}
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
@@ -29,19 +5,21 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
-  <meta charset="utf-8" />
-  <title>Omniscreen - Login</title>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta content="" name="description" />
   <meta content="" name="author" />
   <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <title>Omniscreen - Login</title>
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
   <link href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
   <link href="{% static 'assets/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
   <link href="{% static 'css/template-style.css' %}" rel="stylesheet" />
   <link href="{% static 'css/style_responsive.css' %}" rel="stylesheet" />
   <link href="{% static 'css/style_default.css' %}" rel="stylesheet" id="style_color" />
-  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
-  <link rel="apple-touch-icon" href="{% static 'apple-touch-icon.png' %}" />
+  <link rel="apple-touch-icon" href="{% static 'img/avatar-mini.png' %}" />
 </head>
 <!-- END HEAD -->
 <!-- BEGIN BODY -->
@@ -87,7 +65,7 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                           <input type="checkbox" id=""> Remember Me
                       </div>
                       <div class="block-hint pull-right">
-                          <a href="javascript:;" class="" id="forget-password">Forgot Password?</a>
+                          <a href="javascript:;" class="hide" id="forget-password">Forgot Password?</a>
                       </div>
                   </div>
 
