@@ -56,7 +56,7 @@ def member_logout(request):
 
 class Profile(PermissionRequiredMixin, TemplateView):
     template_name = 'member/profile.html'
-    permission_required = 'accounts.change_omniscreenuser'
+    permission_required = 'member.change_seller'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
@@ -119,7 +119,7 @@ def _reset_password_form(user, request, POST=False):
         form = UserResetPasswordForm(user)
         if POST:
             form = UserResetPasswordForm(user, POST)
-    elif request.user.has_perm('accounts.change_omniscreenuser'):
+    elif request.user.has_perm('member.change_seller'):
         form = ResetPasswordEmailForm(user)
         if POST:
             form = ResetPasswordEmailForm(user, POST)
@@ -129,7 +129,7 @@ def _reset_password_form(user, request, POST=False):
 
     return form
 
-@permission_required('accounts.delete_omniscreenuser', raise_exception=True)
+@permission_required('member.delete_seller', raise_exception=True)
 def user_delete(request, pk):
     try:
         Seller.objects.get(pk=pk).delete()

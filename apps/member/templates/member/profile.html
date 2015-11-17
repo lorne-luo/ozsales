@@ -28,7 +28,7 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 {% load breadcrumbs %}
 {% block page_id %}user-edit{%endblock%}
 {% block breadcrumbs %}
-   {% if perms.accounts.add_omniscreenuser %}
+   {% if perms.member.add_seller %}
       {% breadcrumb_url 'All Users' 'member-home' %}
   {% endif %}
   {% if edit_user %}
@@ -51,7 +51,7 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                 {% if edit_user %}
                 <div class="actions">
                     <a class="btn btn-mini" data-toggle="modal" href="#PasswordRestModel"><i class="icon-lock"></i> Change Password</a>
-                    {% if perms.accounts.delete_omniscreenuser and edit_user and edit_user != user%}
+                    {% if perms.member.delete_seller and edit_user and edit_user != user%}
                     <a class="btn btn-danger btn-mini" data-toggle="modal" href="#UserDeleteModal"><i class=" icon-trash"></i> Delete</a>
                     {% endif%}
                 </div>
@@ -61,10 +61,14 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                 <div class="tabbable tabbable-custom">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+                        <li><a data-toggle="tab" href="#profile2">Profile2</a></li>
                     </ul>
                     <div class="tab-content">
                         <div id="profile" class="tab-pane active">
-                            {% include "tabs/account_profile.html" with form=form edit_user=edit_user %}
+                            {% include "tabs/member_profile.html" with form=form edit_user=edit_user %}
+                        </div>
+                        <div id="device" class="tab-pane">
+                            {% include "tabs/member_profile.html" with form=form edit_user=edit_user %}
                         </div>
                     </div>
                 </div>

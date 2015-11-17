@@ -43,7 +43,7 @@
                 <div class="control-group">
                     <label class="control-label">Role:</label>
                     <div class="controls input-icon">
-                      {% if perms.accounts.add_omniscreenuser %}
+                      {% if perms.member.add_seller %}
                         {% if edit_user == user %}
                           {{edit_user.groups.all|join:", "|default:'<i>None</i>'}}
                         {% else %}
