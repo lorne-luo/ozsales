@@ -23,7 +23,7 @@ class Seller(AbstractBaseUser, PermissionsMixin):
                                                                                             '@/./+/-/_ characters are allowed'), 'invalid')
                                 ])
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
+    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
     mobile = models.CharField(max_length=18, null=True, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
                                    help_text=_('Designates whether the user can log into this admin '
