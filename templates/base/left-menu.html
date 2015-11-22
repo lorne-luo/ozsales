@@ -13,15 +13,16 @@
       </li>
       {% endif %}
 
-      {% if perms.accounts.add_omniscreenuser or perms.accounts.add_billingaccount %}
-      <li class="has-sub {% ifstartswith "/admin/accounts/" %}open{% endifstartswith %}">
+      {% if perms.member.add_seller or perms.member.add_seller %}
+      <li class="has-sub {% ifstartswith "/member/" %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="icon-user"></i></span> Accounts
-          <span class="arrow {% ifstartswith "/admin/accounts/" %}open{% endifstartswith %}"></span>
+          <span class="icon-box"><i class="icon-user"></i></span> Members
+          <span class="arrow {% ifstartswith "/member/" %}open{% endifstartswith %}"></span>
         </a>
-        <ul class="sub" {% ifstartswith "/admin/accounts/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.accounts.add_omniscreenuser %}
-            <li><a href="{% url 'member-home' %}">User accounts</a></li>
+        <ul class="sub" {% ifstartswith "/member/" %}style='display:block;'{% endifstartswith %}>
+            <li><a href="{% url 'member-profile' %}">User Profile</a></li>
+          {% if perms.member.add_seller %}
+            <li><a href="{% url 'member-home' %}">Member User</a></li>
           {%endif%}
         </ul>
       </li>

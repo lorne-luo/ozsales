@@ -48,11 +48,14 @@ def member_login(request):
             messages.error(request, 'Login failed. Please try again.')
             return redirect('member-login')
 
+
 def member_home(request):
     return HttpResponse('123')
 
+
 def member_logout(request):
     return HttpResponse('123')
+
 
 class Profile(PermissionRequiredMixin, TemplateView):
     template_name = 'member/profile.html'
@@ -74,6 +77,7 @@ class Profile(PermissionRequiredMixin, TemplateView):
             form = SellerProfileForm(username_readonly=True)
 
         context = {
+            'request': request,
             'edit_user': user,
             'form': form,
             'resetpasswordform': _reset_password_form(user, request),
