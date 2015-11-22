@@ -29,7 +29,7 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 {% block page_id %}user-edit{%endblock%}
 {% block breadcrumbs %}
    {% if perms.member.add_seller %}
-      {% breadcrumb_url 'All Users' 'member-home' %}
+      {% breadcrumb_url 'All Users' 'seller-index' %}
   {% endif %}
   {% if edit_user %}
     {% if edit_user != user %} {# Note 'user' variable is autopopulated with request.user #}

@@ -5,18 +5,13 @@
     self.url = '/api/member/user/';
     self.users = [];
 
-    self.initialize = function(purchase) {
-        self.purchase = purchase;
-
+    self.initialize = function() {
         $('#AddPackage').click(function(e){
             e.preventDefault();
             var users = self._selected_users();
             if (users.length === 0){
                 return $.publish('alert-user', ['Please select users first.', 'error']);
             }
-            $('#AddPackageModal').trigger('click');
-            self.purchase.setUsers(users);
-            omniscreenChannelPackage.initialize(self.purchase);
         });
     };
 
@@ -36,5 +31,5 @@
  * On ready.
  */
 $(document).ready(function() {
-    omniscreenAccountList.initialize(opPurchase);
+    omniscreenAccountList.initialize();
 });

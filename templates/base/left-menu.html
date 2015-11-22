@@ -22,7 +22,7 @@
         <ul class="sub" {% ifstartswith "/member/" %}style='display:block;'{% endifstartswith %}>
             <li><a href="{% url 'member-profile' %}">User Profile</a></li>
           {% if perms.member.add_seller %}
-            <li><a href="{% url 'member-home' %}">Member User</a></li>
+            <li><a href="{% url 'seller-index' %}">Member User</a></li>
           {%endif%}
         </ul>
       </li>

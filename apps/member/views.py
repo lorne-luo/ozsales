@@ -86,6 +86,19 @@ class Profile(PermissionRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
+@permission_required('member.add_seller', raise_exception=True)
+def seller_index(request):
+    if request.user.is_superuser:
+        users = Seller.objects.all()
+    elif request.user.is_member('Admin'):
+        users = Seller.objects.exclude(is_superuser=True)
+    else:
+        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True)
+
+    return render_to_response('member/user-list.html', {'users': users, 'request': request},
+                              RequestContext(request))
+
+
 def user_password_reset(request, pk):
     user = get_object_or_404(Seller, pk=pk)
     allowed_change_other = (request.user.groups.filter(name='Admin').exists() or
@@ -132,6 +145,7 @@ def _reset_password_form(user, request, POST=False):
         raise Http404
 
     return form
+
 
 @permission_required('member.delete_seller', raise_exception=True)
 def user_delete(request, pk):
