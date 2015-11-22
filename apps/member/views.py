@@ -40,7 +40,7 @@ def member_login(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                next_page = reverse('profile-edit')
+                next_page = reverse('member-profile')
 
             return HttpResponseRedirect(next_page)
 
@@ -105,7 +105,7 @@ def user_password_reset(request, pk):
 
             # user.renew_token()
             if request.user == user:
-                return redirect('profile-edit')
+                return redirect('member-profile')
             else:
                 return redirect('admin-user-edit', pk=user.pk)
     return render_to_response('member/user-reset-password.html', {
