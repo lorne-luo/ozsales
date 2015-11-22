@@ -42,6 +42,10 @@ ul.faq-list li a:hover, ul.faq-list li a.active{
     background: url("../img/side-bar-list-bg.png");
 }
 
+#sidebar > ul > li.open > a{
+    background: url("../img/side-bar-list-bg.png");
+}
+
 #sidebar > ul > li.active > a{
     background: url("../img/side-bar-list-bg.png");
 }
