@@ -54,7 +54,17 @@ def member_home(request):
 
 
 def member_logout(request):
-    return HttpResponse('123')
+    logout(request)
+    return redirect('member-login')
+
+
+class CreateUser(PermissionRequiredMixin, TemplateView):
+    template_name = 'member/user-edit.html'
+    permission_required = 'member.add_seller'
+
+    def get(self, request, *args, **kwargs):
+        context = {'form': SellerProfileForm(username_readonly=False)}
+        return self.render_to_response(context)
 
 
 class Profile(PermissionRequiredMixin, TemplateView):
