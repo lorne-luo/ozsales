@@ -1,0 +1,164 @@
+{% extends 'base/base.html' %}
+{% comment %}
+Copyright (c) 2013 O7 Technologies Pty Ltd trading as Omniscreen. All Rights Reserved.
+
+O7 Technologies Pty Ltd trading as Omniscreen ("Omniscreen") retains copyright
+on all text, source and binary code contained in this software and documentation.
+Omniscreen grants Licensee a limited license to use this software,
+provided that this copyright notice and license appear on all copies of the software.
+The software source code is provided for reference, compilation and porting purposes only
+and may not be copied, modified or distributed in any manner and by any means
+without prior written permission from Omniscreen.
+
+THIS SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS,"
+WITHOUT ANY WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
+REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED.
+OMNISCREEN SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
+AS A RESULT OF USING OR MODIFYING THE SOFTWARE OR ITS DERIVATIVES.
+
+IN NO EVENT WILL OMNISCREEN BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA,
+OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES,
+HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
+ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE,
+EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+{% endcomment %}
+{% load staticfiles %}
+{% load breadcrumbs %}
+{% block page_id %}user-list{%endblock%}
+{% block page_title %}All Users{%endblock%}
+{% block page_description %}{%endblock%}
+{% block breadcrumbs %}
+  {% breadcrumb_last 'All Users' %}
+{% endblock %}
+
+{% block body %}
+
+<form action="." method="POST">
+{% csrf_token %}
+<div class="row-fluid">
+  <div class="span12">
+    <div class="widget">
+      <div class="widget-title">
+        <h4><i class="icon-user"></i> Users</h4>
+
+        <div class="actions">
+            <a class="btn btn-success btn-mini" href="{% url 'member-profile' %}"><i class=" icon-plus"></i> Add User</a>
+        </div>
+      </div>
+      <div class="widget-body">
+        {% include "modal/notifications.html" %}
+      	{% if users %}
+        <table class="table table-striped table-list user-list">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="group-checkable" data-set=".checkboxes" /></th>
+                    <th class="hidden-phone"></th>
+                    <th>User</th>
+                    <th>Role</th>
+                    <th class="hidden-phone">Device(s)</th>
+                    <th class="hidden-phone">Last Login</th>
+                    <th>Active</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        	{% for u in users %}{# dont use user, thats autopopulated with authenticated user#}
+                <tr class="odd gradeX">
+                    <td><input type="checkbox" name="user_ids" class="checkboxes" value="{{u.id}}" /></td>
+                    <td class="hidden-phone">
+                      {%if u.avatar%}
+                        <img class="avatar" src="{{u.avatar.url}}" />
+                      {%else%}
+                        <img class="avatar" src="{% static 'img/profile-pic.jpg' %}" alt="">
+                      {%endif%}
+                    </td>
+                    <td><a data-placement="right" data-original-title="Show Profile" href='{% url 'admin-user-edit' pk=u.pk%}' class="tooltips">
+                      {% if u.first_name or u.last_name %}
+                         {{u.first_name}} {{u.last_name}}
+                      {% else %}
+                        {{u.username}}
+                      {% endif %}
+                    </a></td>
+                    <td>
+                    {% for group in u.groups.all %}
+                      {{ group }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        None
+                    {% endfor %}</td>
+                    <td class="hidden-phone">
+                      {% if u.device_set.all.0 %}
+                        <a href="{% url 'member-profile' device_id=u.device_set.all.0.id %}">{{u.device_set.all.0.mac}}</a>
+                        {% if u.device_set.all.1 %}
+                        <a href="#deviceModel{{u.pk}}" role="button" class="btn btn-mini" data-toggle="modal">View All</a>
+                        <div id="deviceModel{{u.pk}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                <h3 id="myModalLabel1">Devices</h3>
+                            </div>
+                            <div class="modal-body">
+                                {% if u.device_set.all %}
+                                <table class="table table-striped" id="table_list">
+                                    <thead>
+                                        <tr>
+                                            <th>Mac</th>
+                                            <th class="hidden-phone">IP</th>
+                                            <th class="hidden-phone">Model</th>
+                                            <th class="hidden-phone">Version</th>
+                                            <th class="hidden-phone">Location</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for device in u.device_set.all %}
+                                        <tr class="odd gradeX">
+                                            <td><a href="{% url 'member-profile' device_id=device.id %}">{{device.mac}}</a></td>
+                                            <td class="hidden-phone">{{device.ip}}</td>
+                                            <td class="hidden-phone">{{device.model}}</td>
+                                            <td class="hidden-phone">{{device.version}}</td>
+                                            <td class="hidden-phone">{{device.location}}</td>
+
+                                        </tr>
+                                    {%endfor%}
+                                    </tbody>
+                                </table>
+                              {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                            </div>
+                        </div>
+                        {% endif %}
+                      {%else%}
+                        None
+                      {% endif %}
+                    </td>
+
+                    <td class="hidden-phone">{{u.last_login}}</td>
+                    <td><i class="{% if u.is_active %}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i></td>
+                    <td>
+                        <div class='pull-right'>
+                        <a data-placement="left" data-original-title="Edit User" href='{% url 'admin-user-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            {%endfor%}
+        	</tbody>
+  		</table>
+       	{%else%}
+        	No Users
+        {%endif%}
+
+	  </div>
+    </div>
+  </div>
+</div>
+</form>
+<div class="clear"></div>
+{% endblock %}
+{%block js%}
+    <script type="text/javascript" src="{% static 'assets/data-tables/jquery.dataTables.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/data-tables/datetime-sorting-moment.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/data-tables/DT_bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/member/list.js' %}"></script>
+{%endblock%}
