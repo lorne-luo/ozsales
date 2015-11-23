@@ -55,8 +55,9 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                     <th><input type="checkbox" class="group-checkable" data-set=".checkboxes" /></th>
                     <th class="hidden-phone"></th>
                     <th>User</th>
-                    <th>Role</th>
-                    <th class="hidden-phone">Device(s)</th>
+                    <th>Name</th>
+                    <th class="hidden-phone">Email</th>
+                    <th class="hidden-phone">Mobile</th>
                     <th class="hidden-phone">Last Login</th>
                     <th>Active</th>
                     <th></th>
@@ -74,65 +75,17 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                       {%endif%}
                     </td>
                     <td><a data-placement="right" data-original-title="Show Profile" href='{% url 'admin-user-edit' pk=u.pk%}' class="tooltips">
-                      {% if u.first_name or u.last_name %}
-                         {{u.first_name}} {{u.last_name}}
-                      {% else %}
-                        {{u.username}}
-                      {% endif %}
+                    {{u.username}}
                     </a></td>
                     <td>
-                    {% for group in u.groups.all %}
-                      {{ group }}{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        None
-                    {% endfor %}</td>
-                    <td class="hidden-phone">
-                      {% if u.device_set.all.0 %}
-                        <a href="{% url 'member-profile' device_id=u.device_set.all.0.id %}">{{u.device_set.all.0.mac}}</a>
-                        {% if u.device_set.all.1 %}
-                        <a href="#deviceModel{{u.pk}}" role="button" class="btn btn-mini" data-toggle="modal">View All</a>
-                        <div id="deviceModel{{u.pk}}" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                <h3 id="myModalLabel1">Devices</h3>
-                            </div>
-                            <div class="modal-body">
-                                {% if u.device_set.all %}
-                                <table class="table table-striped" id="table_list">
-                                    <thead>
-                                        <tr>
-                                            <th>Mac</th>
-                                            <th class="hidden-phone">IP</th>
-                                            <th class="hidden-phone">Model</th>
-                                            <th class="hidden-phone">Version</th>
-                                            <th class="hidden-phone">Location</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for device in u.device_set.all %}
-                                        <tr class="odd gradeX">
-                                            <td><a href="{% url 'member-profile' device_id=device.id %}">{{device.mac}}</a></td>
-                                            <td class="hidden-phone">{{device.ip}}</td>
-                                            <td class="hidden-phone">{{device.model}}</td>
-                                            <td class="hidden-phone">{{device.version}}</td>
-                                            <td class="hidden-phone">{{device.location}}</td>
-
-                                        </tr>
-                                    {%endfor%}
-                                    </tbody>
-                                </table>
-                              {% endif %}
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                            </div>
-                        </div>
-                        {% endif %}
-                      {%else%}
-                        None
-                      {% endif %}
+                    {{u.name}}
                     </td>
-
+                    <td class="hidden-phone">
+                    {{u.email}}
+                    </td>
+                    <td class="hidden-phone">
+                    {{u.mobile}}
+                    </td>
                     <td class="hidden-phone">{{u.last_login}}</td>
                     <td><i class="{% if u.is_active %}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i></td>
                     <td>
