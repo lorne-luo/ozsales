@@ -99,6 +99,9 @@ LANGUAGES = [
     ('cn', 'Chinese'),
 ]
 
+LOGIN_URL = '/member/login'
+LOGOUT_URL = '/member/logout'
+
 TIME_ZONE = 'Australia/Melbourne'
 
 USE_I18N = True
