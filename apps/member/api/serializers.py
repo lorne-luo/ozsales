@@ -26,32 +26,35 @@ from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
 
 from utils.api.fields import (MediaUrlField, DisplayNestedFKField,
-    VariationImageAPIField, VariationUrlField, FormDataPrimaryKeyRelatedField)
+                              VariationImageAPIField, VariationUrlField, FormDataPrimaryKeyRelatedField)
 from ..models import Seller
 
 
 class PermissionSerializer(serializers.ModelSerializer):
     ''' Serializer for class Permission '''
+
     class Meta:
         model = Permission
 
 
 class GroupSimpleSerializer(serializers.ModelSerializer):
     ''' Serializer for class Group only with name '''
+
     class Meta:
-        fields = ['id', 'name',]
+        fields = ['id', 'name', ]
         model = Group
 
 
 class GroupPermissionSerializer(serializers.ModelSerializer):
     ''' Serializer for class Group with nested permissions '''
     permissions_display = DisplayNestedFKField('permissions', serializer=PermissionSerializer)
+
     class Meta:
         model = Group
 
 
 class SellerUserSerializer(serializers.ModelSerializer):
-    ''' Serializer for class OmniscreenUser '''
+    ''' Serializer for class SellUser '''
     groups = FormDataPrimaryKeyRelatedField(many=True, read_only=True, required=False)
     groups_display = DisplayNestedFKField('groups', serializer=GroupPermissionSerializer)
 
@@ -72,7 +75,7 @@ class SellerUserSerializer(serializers.ModelSerializer):
         username = source
 
         if (not user.has_perm('member.add_seller')) and user.username != username:
-                raise serializers.ValidationError("This user cannot change usernames.")
+            raise serializers.ValidationError("This user cannot change usernames.")
 
         return source
 
@@ -84,23 +87,25 @@ class SellerUserSerializer(serializers.ModelSerializer):
 
         return source
 
-    def validate_password2(self, attrs, source):
-        password2 = attrs.pop(source)
-        if attrs['password'] != password2:
+    def validate_password2(self, source):
+        password2 = source
+        password = self.initial_data['password']
+        if password != password2:
             raise serializers.ValidationError('passwords mismatch')
 
-        return attrs
+        return source
 
-    def to_native(self, obj):
+    def to_internal_value(self, obj):
         if 'password2' in self.fields:
             self.fields.pop('password2')
-        return super(SellerUserSerializer, self).to_native(obj)
+        return super(SellerUserSerializer, self).to_internal_value(obj)
 
-    def validate_password(self, attrs, source):
-        if len(attrs[source]) < 4:
+    def validate_password(self, source):
+        password = source
+        if password < 4:
             raise serializers.ValidationError("Must be at least 4 characters.")
 
-        return attrs
+        return source
 
 
 class OmniscreenUserSimpleSerializer(serializers.ModelSerializer):
@@ -114,6 +119,7 @@ class OmniscreenUserSimpleSerializer(serializers.ModelSerializer):
 
 class OmniscreenUserNameSerializer(serializers.ModelSerializer):
     ''' Serializer for class OmniscreenUser only with name '''
+
     class Meta:
         model = Seller
         fields = ['id', 'username']

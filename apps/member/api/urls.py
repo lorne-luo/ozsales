@@ -36,7 +36,7 @@ urlpatterns = patterns('',
 
 router = DefaultRouter()
 router.include_root_view = False
-router.register(r'user', views.OmniscreenUserViewSet)
+router.register(r'user', views.SellerViewSet)
 # router.register(r'billingaccount', views.BillingAccountViewSet)
 
 urlpatterns += router.urls

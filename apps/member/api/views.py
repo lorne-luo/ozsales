@@ -15,7 +15,7 @@ from utils.api.views import PaginateMaxModelViewSet, ContentTypeObjectView
 log = logging.getLogger(__name__)
 
 
-class OmniscreenUserViewSet(PaginateMaxModelViewSet):
+class SellerViewSet(PaginateMaxModelViewSet):
     """ A viewset for viewing and editing user instances. """
     serializer_class = serializers.SellerUserSerializer
     permission_required = 'member.change_seller'

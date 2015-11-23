@@ -63,7 +63,8 @@ class CreateUser(PermissionRequiredMixin, TemplateView):
     permission_required = 'member.add_seller'
 
     def get(self, request, *args, **kwargs):
-        context = {'form': SellerProfileForm(username_readonly=False)}
+        context = {'form': SellerProfileForm(username_readonly=False),
+                   'request': request}
         return self.render_to_response(context)
 
 

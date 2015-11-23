@@ -134,7 +134,7 @@
           window.location.reload();
         }
         else if(xhr.status === 201){
-          window.location = '/admin/member/users/';
+          window.location = '/member/users/';
         }
         else{
           omniscreenCommon.display_errors(data.responseText);
