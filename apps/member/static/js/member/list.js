@@ -6,13 +6,7 @@
     self.users = [];
 
     self.initialize = function() {
-        $('#AddPackage').click(function(e){
-            e.preventDefault();
-            var users = self._selected_users();
-            if (users.length === 0){
-                return $.publish('alert-user', ['Please select users first.', 'error']);
-            }
-        });
+        self.update_event_handlers();
     };
 
     self._selected_users = function(){
@@ -24,7 +18,52 @@
             }
         });
         return users;
-    }
+    };
+
+    self.update_event_handlers = function(){
+        $('button.delete').off('click').click(self._show_delete_modal);
+    };
+
+    self._show_delete_modal = function() {
+        // Event Handler: Show confirmation modal to delete
+        $('#DeleteModal').modal('show');
+        // Identify row and id of where button was clicked:
+        var $row = $(this).closest('tr');
+        var pk = $row.attr('data-pk');
+        $("#DeleteModal button.confirm").off("click").click(
+          self.delete($row, pk)
+        );
+      };
+
+      self.delete = function($row, pk) {
+        // Event handler closure: Deletes single video
+        return function(event){
+          $.ajax({
+            dataType: 'json',
+            url: '/api/member/user/' + pk + '/',
+            type: 'DELETE',
+            headers: {"X-CSRFToken": $.cookie('csrftoken')},
+            complete: self.delete_channel_callback($row)
+          });
+        };
+      };
+
+      self.delete_channel_callback = function($row) {
+        // Event handler closure: Removes table row after a delete.
+        return function(xhr, textStatus){
+          $('#DeleteModal').modal('hide');
+
+          if(xhr.status >= 200 && xhr.status <= 400){
+            // Get dataTable row position and delete it
+            var row_position = $("table.dataTable").dataTable().fnGetPosition($row[0]);
+            $("table.dataTable").dataTable().fnDeleteRow(row_position);
+            self.update_event_handlers();
+          }
+          else{
+            omniscreenCommon.show_server_error();
+          }
+        };
+      };
 
 }(window.omniscreenAccountList = window.omniscreenAccountList || {}, jQuery));
 /**

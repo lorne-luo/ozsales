@@ -41,7 +41,6 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
     <div class="widget">
       <div class="widget-title">
         <h4><i class="icon-user"></i> Users</h4>
-
         <div class="actions">
             <a class="btn btn-success btn-mini" href="{% url 'seller-add' %}"><i class=" icon-plus"></i> Add User</a>
         </div>
@@ -65,7 +64,7 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
             </thead>
             <tbody>
         	{% for u in users %}{# dont use user, thats autopopulated with authenticated user#}
-                <tr class="odd gradeX">
+                <tr class="odd gradeX" data-pk={{u.id}}>
                     <td><input type="checkbox" name="user_ids" class="checkboxes" value="{{u.id}}" /></td>
                     <td class="hidden-phone">
                       {%if u.avatar%}
@@ -90,7 +89,10 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
                     <td><i class="{% if u.is_active %}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i></td>
                     <td>
                         <div class='pull-right'>
-                        <a data-placement="left" data-original-title="Edit User" href='{% url 'admin-user-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+                        <a data-placement="bottom" data-original-title="Edit User" href='{% url 'admin-user-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+                        {% if perms.member.delete_seller %}
+                        <button type='button' data-placement="bottom" data-original-title="Delete Seller" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
+                        {% endif%}
                         </div>
                     </td>
                 </tr>
@@ -107,6 +109,11 @@ EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 </div>
 </form>
 <div class="clear"></div>
+
+{% if perms.member.delete_seller %}
+{% include "modal/confirm_delete_ajax.html" with modal_title="Are you sure?" modal_body="Please confirm that you want to delete this channel permanently." %}
+{% endif%}
+
 {% endblock %}
 {%block js%}
     <script type="text/javascript" src="{% static 'assets/data-tables/jquery.dataTables.js' %}"></script>
