@@ -2,8 +2,7 @@
  * Javascript module for the news add/edit page.
  */
 (function(self, $, undefined) {
-  self.url = '/api/member/profile/';
-  self.save_url = '/api/member/user/';
+  self.url = '/api/member/user/';
   self.avatar = undefined; // set to '' to clear on submit
   self.initialize = function() {
     /**
@@ -13,7 +12,7 @@
     // For edititing existing instance, load data from the api
     var pk = $('#form').attr('data-pk');
     if (pk) {
-      $.getJSON(self.url, self._populate_form);
+//      $.getJSON(self.url + pk + '/', self._populate_form);
     }
 
     $('#form').submit(function (e) {
@@ -60,6 +59,7 @@
         else if(value){
           $(this).val(value);
         }
+
       });
 
       if (data.avatar_display) {
@@ -110,7 +110,7 @@
   };
 
   self.save = function(pk) {
-    var url = self.save_url;
+    var url = self.url;
     var type = 'POST';
     if (pk) {
       url += pk + '/';

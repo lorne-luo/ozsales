@@ -59,7 +59,7 @@ def member_logout(request):
 
 
 class CreateUser(PermissionRequiredMixin, TemplateView):
-    template_name = 'member/user-edit.html'
+    template_name = 'member/profile.html'
     permission_required = 'member.add_seller'
 
     def get(self, request, *args, **kwargs):
@@ -83,9 +83,9 @@ class Profile(PermissionRequiredMixin, TemplateView):
         else:  # Editing own profile
             user = request.user
         if request.user.has_perm('member.add_seller'):
-            form = SellerProfileForm(username_readonly=False)
+            form = SellerProfileForm(username_readonly=False, instance=user)
         else:
-            form = SellerProfileForm(username_readonly=True)
+            form = SellerProfileForm(username_readonly=True, instance=user)
 
         context = {
             'request': request,
@@ -164,4 +164,4 @@ def user_delete(request, pk):
         Seller.objects.get(pk=pk).delete()
     except Seller.DoesNotExist:
         pass
-    return redirect('user-index')
+    return redirect('seller-index')
