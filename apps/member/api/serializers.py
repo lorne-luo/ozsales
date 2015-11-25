@@ -1,27 +1,3 @@
-'''
-Copyright (c) 2013 O7 Technologies Pty Ltd trading as Omniscreen. All Rights Reserved.
-
-O7 Technologies Pty Ltd trading as Omniscreen ("Omniscreen") retains copyright
-on all text, source and binary code contained in this software and documentation.
-Omniscreen grants Licensee a limited license to use this software,
-provided that this copyright notice and license appear on all copies of the software.
-The software source code is provided for reference, compilation and porting purposes only
-and may not be copied, modified or distributed in any manner and by any means
-without prior written permission from Omniscreen.
-
-THIS SOFTWARE AND DOCUMENTATION ARE PROVIDED "AS IS,"
-WITHOUT ANY WARRANTY OF ANY KIND. ALL EXPRESS OR IMPLIED CONDITIONS,
-REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT, ARE HEREBY EXCLUDED.
-OMNISCREEN SHALL NOT BE LIABLE FOR ANY DAMAGES SUFFERED BY LICENSEE
-AS A RESULT OF USING OR MODIFYING THE SOFTWARE OR ITS DERIVATIVES.
-
-IN NO EVENT WILL OMNISCREEN BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA,
-OR FOR DIRECT, INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES,
-HOWEVER CAUSED AND REGARDLESS OF THE THEORY OF LIABILITY,
-ARISING OUT OF THE USE OF OR INABILITY TO USE SOFTWARE,
-EVEN IF OMNISCREEN HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
-'''
 from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
 
@@ -79,7 +55,7 @@ class SellerUserSerializer(serializers.ModelSerializer):
 
         return source
 
-    #Even though email is not required field in model, we make it required in here.
+    # Even though email is not required field in model, we make it required in here.
     #Will not be an issue when multitenancy is merged.
     def validate_email(self, source):
         if len(source) == 0:
@@ -108,17 +84,16 @@ class SellerUserSerializer(serializers.ModelSerializer):
         return source
 
 
-class OmniscreenUserSimpleSerializer(serializers.ModelSerializer):
-    ''' Serializer for class OmniscreenUser without nested groups '''
-    # avatar_display = MediaUrlField('avatar')
-    # avatar_variations = VariationUrlField('avatar') # shows alls image variations
+class MemberUserSimpleSerializer(serializers.ModelSerializer):
+    ''' Serializer for class Seller without nested groups '''
+
     class Meta:
         model = Seller
         exclude = ['password', 'groups']
 
 
-class OmniscreenUserNameSerializer(serializers.ModelSerializer):
-    ''' Serializer for class OmniscreenUser only with name '''
+class MemberUserNameSerializer(serializers.ModelSerializer):
+    ''' Serializer for class Seller only with name '''
 
     class Meta:
         model = Seller

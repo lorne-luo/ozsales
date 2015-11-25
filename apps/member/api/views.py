@@ -74,7 +74,7 @@ class GroupsAndUsersList(generics.GenericAPIView):
             users = users.exclude(pk=self.request.user.pk)
 
         data = {
-            'users': serializers.OmniscreenUserNameSerializer(users, many=True).data,
+            'users': serializers.MemberUserSimpleSerializer(users, many=True).data,
             'groups': serializers.GroupSimpleSerializer(groups, many=True).data
         }
 

@@ -23,7 +23,7 @@
     $('button.avatar_browse').click(function(){$('#id_avatar').click();});
     $('#id_avatar').change(function(e) {
       self.avatar = e.target.files[0];
-      omniscreenCommon.show_thumbnail(this, $('#avatar_preview'));
+      OZCommon.show_thumbnail(this, $('#avatar_preview'));
     });
 
     $('button.avatar_delete').click(function(){
@@ -31,7 +31,7 @@
       $('#id_avatar').wrap('<form>').closest('form').get(0).reset();
       $('#id_avatar').unwrap();
       self.avatar = '';
-      omniscreenCommon.hide_thumbnail($('#avatar_preview'));
+      OZCommon.hide_thumbnail($('#avatar_preview'));
     });
 
     $("#id_timezone").chosen({search_contains:true});
@@ -117,7 +117,7 @@
       type = 'PATCH';
     }
 
-    omniscreenCommon.remove_errors();
+    OZCommon.remove_errors();
 
     $.ajax({
       dataType: 'json',
@@ -137,17 +137,17 @@
           window.location = '/member/users/';
         }
         else{
-          omniscreenCommon.display_errors(data.responseText);
+          OZCommon.display_errors(data.responseText);
         }
       },
-      error: omniscreenCommon._on_form_error_api
+      error: OZCommon._on_form_error_api
     });
   };
 
-}(window.omniscreenProfileSave = window.omniscreenProfileSave || {}, jQuery));
+}(window.OZProfileSave = window.OZProfileSave || {}, jQuery));
 /**
  * On ready.
  */
 $(document).ready(function() {
-  omniscreenProfileSave.initialize();
+  OZProfileSave.initialize();
 });

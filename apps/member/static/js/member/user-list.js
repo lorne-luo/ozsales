@@ -126,15 +126,15 @@
           window.location = document.URL;
         }
         else{
-          omniscreenCommon.show_server_error();
+          OZCommon.show_server_error();
             $.publish('alert-user', ['User deleting failed.', 'error']);
         }
     }
 
-}(window.omniscreenAccountList = window.omniscreenAccountList || {}, jQuery));
+}(window.OZMemberList = window.OZMemberList || {}, jQuery));
 /**
  * On ready.
  */
 $(document).ready(function() {
-    omniscreenAccountList.initialize();
+    OZMemberList.initialize();
 });

@@ -272,7 +272,7 @@ $.subscribe('alert-user', function(_, message, level, container, data) {
     });
   };
 
-}(window.omniscreenCommon = window.omniscreenCommon || {}, jQuery));
+}(window.OZCommon = window.OZCommon || {}, jQuery));
 
 
 /*
