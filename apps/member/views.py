@@ -100,11 +100,12 @@ class Profile(PermissionRequiredMixin, TemplateView):
 @permission_required('member.add_seller', raise_exception=True)
 def seller_index(request):
     if request.user.is_superuser:
-        users = Seller.objects.all()
+        users = Seller.objects.all().exclude(username=request.user.username)
     elif request.user.is_member('Admin'):
-        users = Seller.objects.exclude(is_superuser=True)
+        users = Seller.objects.exclude(is_superuser=True).exclude(username=request.user.username)
     else:
-        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True)
+        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(
+            username=request.user.username)
 
     return render_to_response('member/user-list.html', {'users': users, 'request': request},
                               RequestContext(request))
