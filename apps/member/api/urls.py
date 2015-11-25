@@ -29,9 +29,8 @@ import views
 
 urlpatterns = patterns('',
 	url(r'^profile/$', views.Profile.as_view(), name='profile'),
-	# url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token', name='login'),
-	# url(r'^groups_and_users/$', views.GroupsAndUsersList.as_view(), name='groups-and-users'),
-	# url(r'^share/(?P<content_type>[-\w]+)/(?P<pk>\d+)/$', views.ShareObject.as_view(), name='share'),
+	url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token', name='login-token'),
+	url(r'^groups_and_users/$', views.GroupsAndUsersList.as_view(), name='groups-and-users'),
 )
 
 router = DefaultRouter()

@@ -39,6 +39,7 @@ class GroupsAndUsersList(generics.GenericAPIView):
      Since this is not handling a single model/object, we add a custom
      has_permission method.
     '''
+    permission_required = 'member.add_seller'
 
     def has_permission(self, request, view):
         '''
