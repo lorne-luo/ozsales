@@ -59,9 +59,10 @@
             var row_position = $("table.dataTable").dataTable().fnGetPosition($row[0]);
             $("table.dataTable").dataTable().fnDeleteRow(row_position);
             self.update_event_handlers();
+            return $.publish('alert-user', ['User deleted successfully.', 'success']);
           }
           else{
-            omniscreenCommon.show_server_error();
+              return $.publish('alert-user', ['User deleting failed.', 'error']);
           }
         };
       };
@@ -105,7 +106,8 @@
                   }
                   else {	// there was mistake during deleting previous object, stop process
                       self.urls_to_delete = [];
-                      $.publish('alert-user', ['Delete user failed.', 'error']);
+                      $('#DeleteModal').modal('hide');
+                      $.publish('alert-user', ['User deleting failed.', 'error']);
                   }
 
                   if(self.urls_to_delete.length == 0) {
@@ -125,6 +127,7 @@
         }
         else{
           omniscreenCommon.show_server_error();
+            $.publish('alert-user', ['User deleting failed.', 'error']);
         }
     }
 
