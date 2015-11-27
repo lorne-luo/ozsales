@@ -154,6 +154,13 @@ class Customer(AbstractBaseUser):
     add_order_link.allow_tags = True
     add_order_link.short_description = 'Add Order'
 
+    def get_primary_address(self):
+        addr = self.primary_address.get_address() if self.primary_address else None
+        return addr
+
+    get_primary_address.allow_tags = False
+    get_primary_address.short_description = 'Primary Addr'
+
 
 @receiver(pre_save, sender=Customer)
 def create_password(sender, instance=None, created=False, **kwargs):
@@ -242,4 +249,7 @@ class Address(models.Model):
 
     id_photo_back_link.allow_tags = True
     id_photo_back_link.short_description = 'ID_photo_back'
+
+    def get_address(self):
+        return '%s,%s,%s' % (self.name, self.mobile, self.address)
 
