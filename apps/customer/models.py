@@ -155,7 +155,13 @@ class Customer(AbstractBaseUser):
     add_order_link.short_description = 'Add Order'
 
     def get_primary_address(self):
-        addr = self.primary_address.get_address() if self.primary_address else None
+        if self.primary_address:
+            addr = self.primary_address.get_address()
+        elif self.address_set.count():
+            addr = self.address_set.all()[0].get_address()
+        else:
+            addr = None
+
         return addr
 
     get_primary_address.allow_tags = False
