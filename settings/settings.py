@@ -179,7 +179,7 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.AllowAny',
         #'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.DjangoObjectPermissions',
-        'utils.api.permission.IsOwnerAdminOrSuperuser',
+        'utils.api.permission.ObjectPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

@@ -45,7 +45,7 @@ class GroupsAndUsersList(generics.GenericAPIView):
         '''
          For non admins, limit it to users of billing account.
          Allow access to this view if any of these permissions are set
-         Note: this is only called when our custom IsOwnerAdminOrSuperuser
+         Note: this is only called when our custom ObjectPermissions
          permission class is active.
         '''
         allow = any((request.user.has_perm('photo.share_image'),
