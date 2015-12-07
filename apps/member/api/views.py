@@ -41,24 +41,10 @@ class GroupsAndUsersList(generics.GenericAPIView):
     '''
     permission_required = 'member.add_seller'
 
-    def has_permission(self, request, view):
-        '''
-         For non admins, limit it to users of billing account.
-         Allow access to this view if any of these permissions are set
-         Note: this is only called when our custom ObjectPermissions
-         permission class is active.
-        '''
-        allow = any((request.user.has_perm('photo.share_image'),
-                     request.user.has_perm('vod.share_vodvideo'),
-                     request.user.has_perm('vod.share_recordingvideo'),
-                     request.user.has_perm('vod.share_uservideo'),
-                     request.user.has_perm('parental_control.add_rule')))
-        return allow
-
     def get(self, *args, **kwargs):
         users = Seller.objects.filter(is_active=True, is_superuser=False).exclude(
             username='AnonymousUser').exclude(pk__lt=0)
-        if self.request.user.is_admin():
+        if self.request.user.is_admin:
             groups = Group.objects.order_by('name')
         else:
             # f = Q(billingaccount_user__in=self.request.user.billingaccount_admin.all()) | \

@@ -101,7 +101,7 @@ class Profile(PermissionRequiredMixin, TemplateView):
 def seller_index(request):
     if request.user.is_superuser:
         users = Seller.objects.all().exclude(username=request.user.username)
-    elif request.user.is_member('Admin'):
+    elif request.user.is_group('Admin'):
         users = Seller.objects.exclude(is_superuser=True).exclude(username=request.user.username)
     else:
         users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(

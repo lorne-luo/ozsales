@@ -129,9 +129,6 @@ class Customer(AbstractBaseUser):
 
         return token
 
-    def is_member(self, group_name):
-        return self.groups.filter(name=group_name).exists()
-
     def get_absolute_url(self):
         return "/customer/%s" % urlquote(self.email)
 

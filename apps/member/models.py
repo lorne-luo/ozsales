@@ -20,7 +20,8 @@ class Seller(AbstractBaseUser, PermissionsMixin):
                                             '@/./+/-/_ characters'),
                                 validators=[
                                     validators.RegexValidator(re.compile(r'^[\w.@+-]+$'), _('Only letters, numbers and '
-                                                                                            '@/./+/-/_ characters are allowed'), 'invalid')
+                                                                                            '@/./+/-/_ characters are allowed'),
+                                                              'invalid')
                                 ])
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
@@ -81,10 +82,11 @@ class Seller(AbstractBaseUser, PermissionsMixin):
 
         return token
 
+    @property
     def is_admin(self):
-        return self.is_superuser or self.is_member('Admin')
+        return self.is_superuser or self.is_group('Admin')
 
-    def is_member(self, group_name):
+    def is_group(self, group_name):
         return self.groups.filter(name=group_name).exists()
 
     def get_absolute_url(self):
