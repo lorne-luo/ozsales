@@ -1,4 +1,4 @@
-''' Base API view classes shared by apps. '''
+""" Base API view classes shared by apps. """
 import ast
 import logging
 
@@ -7,20 +7,22 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
 from guardian.shortcuts import get_objects_for_user
 from rest_framework import generics, viewsets, mixins
-from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
+from rest_framework.exceptions import ParseError
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
 log = logging.getLogger(__name__)
 MAX_ITEMS = 100
 
+
 class PaginateMaxModelViewSet(PaginateByMaxMixin, viewsets.ModelViewSet):
-    ''' ModelViewSet which allows ?limit=max to show all records. '''
+    """ ModelViewSet which allows ?limit=max to show all records. """
     max_paginate_by = MAX_ITEMS
 
 
 class PaginateMaxReadOnlyModelViewSet(PaginateByMaxMixin,
                                       viewsets.ReadOnlyModelViewSet):
-    ''' ReadOnlyModelViewSet which allows ?limit=max to show all records. '''
+    """ ReadOnlyModelViewSet which allows ?limit=max to show all records. """
     max_paginate_by = MAX_ITEMS
 
 
@@ -30,45 +32,55 @@ class PaginateMaxReadUpdateDeleteModelViewSet(PaginateByMaxMixin,
                                               mixins.DestroyModelMixin,
                                               mixins.ListModelMixin,
                                               viewsets.GenericViewSet):
-    ''' Does not allow to create records, only GET, PUT, PATCH + pagination. '''
+    """ Does not allow to create records, only GET, PUT, PATCH + pagination. """
     max_paginate_by = MAX_ITEMS
 
 
 class PaginateMaxListAPIView(PaginateByMaxMixin, generics.ListAPIView):
-    ''' ListApiView which allows ?limit=max to show all records. '''
+    """ ListApiView which allows ?limit=max to show all records. """
     max_paginate_by = MAX_ITEMS
 
 
-class ContentTypeObjectView(APIView):
-    '''
+class ContentTypeObjectView(GenericAPIView):
+    """
      Abstract base view for identifying an object in a url like: .../<content_type_name>/<pk>
      The view will allow access based on the object of interest and independent
      of the model it actually creates/returns.
      e.g. to read/set Tags of a UserVideo the user needs object permission to
      view/change the UserVideo not to view/change Tags.
-    '''
-    def identify_object(self):
-        ''' Get object (access permissions are already checked at this point) '''
+    """
+
+    def get_queryset(self):
+        if 'content_type_name' not in self.kwargs or 'pk' not in self.kwargs:
+            raise ParseError('bad request, missed parameter content_type_name and pk')
+
         content_type_name = self.kwargs.get('content_type_name')
         object_id = self.kwargs.get('pk')
         try:
             content_type = ContentType.objects.get(model=content_type_name)
-            return content_type.model_class().objects.get(pk=object_id), content_type
+            return content_type.model_class().objects.get(pk=object_id)
         except ContentType.DoesNotExist:
-            log.error("No content type with name '%s' found." % content_type_name)
-            raise Http404
+            error_detail = "No content type with name '%s' found." % content_type_name
+            log.error(error_detail)
+            raise ParseError(error_detail)
         except ObjectDoesNotExist:
             log.error("Object with id '%s' and content type name '%s' not found."
                       % (object_id, content_type_name))
             raise Http404
 
+    def get_object(self):
+        obj = self.get_queryset()
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
 
 class SharedObjectsList(PaginateMaxListAPIView):
-    '''
+    """
      Show list of one model's objects which are shared with current user.
      Set ?use_groups=False if you want to exclude objects which are not shared
      with the user itself but only with one of his groups.
-    '''
+    """
+
     def get_queryset(self):
         use_groups = self.request.GET.get('use_groups')
         if use_groups != None:
