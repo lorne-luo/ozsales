@@ -140,6 +140,9 @@ AUTH_USER_MODEL = 'member.Seller'
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'
 
+# for django-guardian
+ANONYMOUS_USER_ID = -1
+
 # ----------------------------------------- CELERY -----------------------------------------------
 
 import djcelery
@@ -164,7 +167,7 @@ BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
 
-# ----------------------------------------- DBSETTINGS -----------------------------------------------
+# ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
