@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
             name='Order',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('status', models.CharField(default=b'CREATED', max_length=20, verbose_name='status', choices=[(b'CREATED', b'CREATED'), (b'PAID', b'PAID'), (b'SHIPPED', b'SHIPPED'), (b'DELIVERED', b'DELIVERED'), (b'FINISHED', b'FINISHED')])),
+                ('status', models.CharField(default=b'CREATED', max_length=20, verbose_name='status', choices=[(b'CREATED', b'CREATED'), (b'PAID', b'PAID'), (b'SHIPPING', b'SHIPPING'), (b'DELIVERED', b'DELIVERED'), (b'FINISHED', b'FINISHED')])),
                 ('total_amount', models.IntegerField(default=0, verbose_name='Total Amount')),
                 ('product_cost_aud', models.DecimalField(null=True, verbose_name='Product Cost AUD', max_digits=8, decimal_places=2, blank=True)),
                 ('product_cost_rmb', models.DecimalField(null=True, verbose_name='Product Cost RMB', max_digits=8, decimal_places=2, blank=True)),
