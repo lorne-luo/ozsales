@@ -12,12 +12,12 @@ from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
 
-ORDER_STATUS = enum('CREATED', 'PAID', 'SHIPPED', 'DELIVERED', 'FINISHED')
+ORDER_STATUS = enum('CREATED', 'PAID', 'SHIPPING', 'DELIVERED', 'FINISHED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, ORDER_STATUS.CREATED),
     (ORDER_STATUS.PAID, ORDER_STATUS.PAID),
-    (ORDER_STATUS.SHIPPED, ORDER_STATUS.SHIPPED),
+    (ORDER_STATUS.SHIPPING, ORDER_STATUS.SHIPPING),
     (ORDER_STATUS.DELIVERED, ORDER_STATUS.DELIVERED),
     # (ORDER_STATUS.RECEIVED, ORDER_STATUS.RECEIVED),
     (ORDER_STATUS.FINISHED, ORDER_STATUS.FINISHED),
@@ -114,8 +114,8 @@ class Order(models.Model):
         if self.status == ORDER_STATUS.CREATED:
             next_status = ORDER_STATUS.PAID
         elif self.status == ORDER_STATUS.PAID:
-            next_status = ORDER_STATUS.SHIPPED
-        elif self.status == ORDER_STATUS.SHIPPED:
+            next_status = ORDER_STATUS.SHIPPING
+        elif self.status == ORDER_STATUS.SHIPPING:
             next_status = ORDER_STATUS.DELIVERED
         elif self.status == ORDER_STATUS.DELIVERED:
             next_status = ORDER_STATUS.FINISHED
