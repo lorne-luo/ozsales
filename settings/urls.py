@@ -15,6 +15,7 @@ def if_installed(appname, *args, **kwargs):
 # Member frontend
 member_urlpatterns = patterns('',
     url(r'^member/', include('apps.member.urls')),
+    url(r'^order/', include('apps.order.urls')),
     # if_installed('apps.customer', r'^customer/', include('apps.customer.urls', namespace='customer')),
     # if_installed('apps.product', r'^product/', include('apps.product.urls', namespace='product')),
     # if_installed('apps.order', r'^order/', include('apps.order.urls', namespace='order')),

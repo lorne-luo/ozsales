@@ -1,7 +1,10 @@
 import datetime
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView
 from django.core.urlresolvers import reverse
+from braces.views import MultiplePermissionsRequiredMixin
+
 from models import Order, ORDER_STATUS
 
 
@@ -16,3 +19,10 @@ def change_order_status(request, order_id, status_str):
         order.save()
     referer = request.META.get('HTTP_REFERER')
     return HttpResponseRedirect(referer)
+
+class OrderIndex(MultiplePermissionsRequiredMixin, TemplateView):
+    ''' List of order. '''
+    template_name = 'order/order-list.html'
+    permissions = {
+        "any": ("order.add_order", "order.view_order")
+    }

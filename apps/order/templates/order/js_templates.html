@@ -1,0 +1,39 @@
+{% verbatim %}
+<!-- Handlebar Javascript Templates -->
+
+
+<!-- Used for one table row in the channels table -->
+<script id="channel_table_row" type="text/x-handlebars-template">
+  <tr class="odd gradeX" data-pk={{id}}>
+    <td class="hidden-phone">
+      {{#if logo_display }}
+        <img class="avatar" src="{{logo_display}}"></img>
+      {{/if}}
+    </td>
+    <td class="hidden-phone">{{number}}</td>
+    <td><a href='{{edit_url}}'>{{name}}</a></td>
+
+    <td class="hidden-phone">
+      <span class="badge badge-success"><a href="{{event_list_url}}">{{num_events}}</a></span>
+    </td>
+    <td class="hidden-phone">
+      {{#if epg_events_updated_at }}
+        {{epg_events_updated_at}}
+      {{else}}
+        Never
+      {{/if}}
+    </td>
+    <td>
+        <i class="{{#if is_hidden }}icon-ok icon-success{{else}}icon-remove icon-danger{{/if}}"></i>
+    </td>
+    <td>
+        <i class="{{#if service_active }}icon-ok icon-success{{else}}icon-remove icon-danger{{/if}}"></i>
+    </td>
+    <td>
+        <a data-placement="right" data-original-title="Edit channel" href='{{edit_url}}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+        <button type='button' data-placement="right" data-original-title="Delete channel" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
+    </td>
+  </tr>
+</script>
+
+{% endverbatim %}
