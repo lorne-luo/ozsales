@@ -63,8 +63,7 @@ class CreateUser(PermissionRequiredMixin, TemplateView):
     permission_required = 'member.add_seller'
 
     def get(self, request, *args, **kwargs):
-        context = {'form': SellerProfileForm(username_readonly=False),
-                   'request': request}
+        context = {'form': SellerProfileForm(username_readonly=False)}
         return self.render_to_response(context)
 
 
@@ -88,7 +87,6 @@ class Profile(PermissionRequiredMixin, TemplateView):
             form = SellerProfileForm(username_readonly=True, instance=user)
 
         context = {
-            'request': request,
             'edit_user': user,
             'form': form,
             'resetpasswordform': _reset_password_form(user, request),
@@ -107,7 +105,7 @@ def seller_index(request):
         users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(
             username=request.user.username)
 
-    return render_to_response('member/user-list.html', {'users': users, 'request': request},
+    return render_to_response('member/user-list.html', {'users': users},
                               RequestContext(request))
 
 
