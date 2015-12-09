@@ -28,14 +28,15 @@
       </li>
       {%endif%}
 
-      {% if perms.products.add_product %}
-      <li class="has-sub {% ifstartswith '/admin/products/' %}open{% endifstartswith %}">
+      {% if perms.products.add_order or perms.products.view_order %}
+      <li class="has-sub {% ifstartswith '/order/' %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="icon-briefcase"></i></span> Products
-          <span class="arrow {% ifstartswith '/admin/products/' %}open{% endifstartswith %}"></span>
+          <span class="icon-box"><i class="icon-briefcase"></i></span> Orders
+          <span class="arrow {% ifstartswith '/order/' %}open{% endifstartswith %}"></span>
         </a>
-        <ul class="sub" {% ifstartswith '/admin/products/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'member-home' %}">Channel Packages</a></li>
+        <ul class="sub" {% ifstartswith '/order/' %}style='display:block;'{% endifstartswith %}>
+            <li><a href="{% url 'order-add' %}">Add New Order</a></li>
+            <li><a href="{% url 'order-index' %}">Order List</a></li>
         </ul>
       </li>
       {%endif%}

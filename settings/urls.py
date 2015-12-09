@@ -26,14 +26,9 @@ member_urlpatterns = patterns('',
 
 # REST API
 api_urlpatterns = patterns('',
-    # if_installed('middleware.apps.activities', r'^activities/', include('middleware.apps.activities.api.urls')),
-    # if_installed('middleware.apps.news', r'^news/', include('middleware.apps.news.api.urls')),
-    # if_installed('middleware.apps.channels', r'^channels/', include('middleware.apps.channels.api.urls')),
-    # if_installed('middleware.apps.meals', r'^meals/', include('middleware.apps.meals.api.urls')),
-    # if_installed('middleware.apps.device', r'^device/', include('middleware.apps.device.api.urls')),
     if_installed('apps.member', r'^member/', include('apps.member.api.urls')),
+    if_installed('apps.order', r'^order/', include('apps.order.api.urls')),
 
-    # url(r'^version/$', views.Version.as_view(), name='version')
 )
 
 

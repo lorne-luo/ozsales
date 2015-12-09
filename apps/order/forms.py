@@ -44,3 +44,14 @@ class OrderInline(admin.TabularInline):
 
     def has_add_permission(self, request, obj=None):
         return False
+
+class OrderForm2(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        # self.user = kwargs.pop('user')
+        super(OrderForm2, self).__init__(*args, **kwargs)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+        # exclude = ['epg_events_updated_at']

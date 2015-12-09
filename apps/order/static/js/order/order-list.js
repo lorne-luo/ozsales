@@ -6,31 +6,28 @@
     /**
     * Initializes the module and everything on the page.
     */
-
-    // Load handlebar templates
-    omniscreenTmpl.load();
-
-    $.getJSON('/api/channels/channel/?limit=max',
-      self._load_callback
-    );
-  };
-
-  self._load_callback = function(video_list){
-    // Receives list of channels
-    if (video_list.results.length === 0) {
-        $("#no_records").show();
-        $("table.dataTable").hide();
-        return;
-    }
-
-    $(video_list.results).each(function(i, entry){
-      var row = omniscreenTmpl.channel_table_row(entry);
-      $('table.table-list').DataTable().row.add($(row)).draw();
-    });
-
-    // Hook up new delete buttons etc.
     self.update_event_handlers();
+    //$.getJSON('/api/channels/channel/?limit=max',
+    //  self._load_callback
+    //);
   };
+
+  //self._load_callback = function(video_list){
+  //  // Receives list of channels
+  //  if (video_list.results.length === 0) {
+  //      $("#no_records").show();
+  //      $("table.dataTable").hide();
+  //      return;
+  //  }
+  //
+  //  $(video_list.results).each(function(i, entry){
+  //    var row = omniscreenTmpl.channel_table_row(entry);
+  //    $('table.table-list').DataTable().row.add($(row)).draw();
+  //  });
+  //
+  //  // Hook up new delete buttons etc.
+  //  self.update_event_handlers();
+  //};
 
 
   self.update_event_handlers = function(){
@@ -53,15 +50,15 @@
     return function(event){
       $.ajax({
         dataType: 'json',
-        url: '/api/channels/channel/' + pk + '/',
+        url: '/api/order/order/' + pk + '/',
         type: 'DELETE',
         headers: {"X-CSRFToken": $.cookie('csrftoken')},
-        complete: self.delete_channel_callback($row)
+        complete: self.delete_order_callback($row)
       });
     };
   };
 
-  self.delete_channel_callback = function($row) {
+  self.delete_order_callback = function($row) {
     // Event handler closure: Removes table row after a delete.
     return function(xhr, textStatus){
       $('#DeleteModal').modal('hide');
@@ -73,15 +70,15 @@
         self.update_event_handlers();
       }
       else{
-        omniscreenCommon.show_server_error();
+        OZCommon.show_server_error();
       }
     };
   };
 
-}(window.omniscreenChannelList = window.omniscreenChannelList || {}, jQuery));
+}(window.OZOrderList = window.OZOrderList || {}, jQuery));
 /**
  * On ready.
  */
 $(document).ready(function() {
-  omniscreenChannelList.initialize();
+  OZOrderList.initialize();
 });
