@@ -37,7 +37,7 @@ class OrderIndex(MultiplePermissionsRequiredMixin, TemplateView):
 
 
 class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
-    ''' Add/Edit a channel. '''
+    ''' Add/Edit a order. '''
     template_name = 'order/order-edit.html'
     permissions = {
         "any": ("order.add_order", "order.view_order")
@@ -45,14 +45,9 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-
         context = {'form': OrderForm2(), }
-
         if pk:
             order = get_object_or_404(Order, id=pk)
-            # mediasource_form = ChannelMediaSourceForm(content_type="channel",
-            # object_id=channel.pk)
             context['order'] = order
-            # context['mediasource_form'] = mediasource_form
 
         return self.render_to_response(context)

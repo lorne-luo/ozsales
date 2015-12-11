@@ -5,7 +5,7 @@ from utils.api.fields import (MediaUrlField, DisplayNestedFKField,
                                         FormDataPrimaryKeyRelatedField)
 
 class OrderSerializer(serializers.ModelSerializer):
-    ''' Serializer for class Order '''
+    ''' Serializer for class '''
     customer_display = serializers.CharField(source='customer')
     address_display = serializers.CharField(source='address')
 
