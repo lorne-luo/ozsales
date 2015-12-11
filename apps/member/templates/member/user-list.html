@@ -16,11 +16,11 @@
   <div class="span12">
     <div class="widget">
       <div class="widget-title">
-        <h4><i class="icon-user"></i> Users</h4>
+        <h4><i class="fa fa-user"></i> Users</h4>
         <div class="actions">
-            <a class="btn btn-success btn-mini tooltips" href="{% url 'seller-add' %}"  data-placement="bottom" data-original-title="Add a User"><i class=" icon-plus"></i> Add User</a>
+            <a class="btn btn-success btn-mini tooltips" href="{% url 'seller-add' %}"  data-placement="bottom" data-original-title="Add a User"><i class="fa fa-plus"></i> Add User</a>
             {% if users and perms.member.delete_seller %}
-                <button type='button' class="delete-selected btn btn-danger btn-mini tooltips" data-placement="bottom" data-original-title="Delete Selected User"><i class=" icon-trash"></i> Delete Selected</button>
+                <button type='button' class="delete-selected btn btn-danger btn-mini tooltips" data-placement="bottom" data-original-title="Delete Selected User"><i class="fa fa-trash"></i> Delete Selected</button>
             {% endif %}
         </div>
       </div>
@@ -65,12 +65,12 @@
                     {{u.mobile}}
                     </td>
                     <td class="hidden-phone">{{u.last_login}}</td>
-                    <td><i class="{% if u.is_active %}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i></td>
+                    <td><i class="fa {% if u.is_active %}fa-check icon-success{%else%}fa-remove text-danger{% endif %}"></i></td>
                     <td>
                         <div class='pull-right'>
-                        <a data-placement="bottom" data-original-title="Edit User" href='{% url 'admin-user-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+                        <a data-placement="bottom" data-original-title="Edit User" href='{% url 'admin-user-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
                         {% if perms.member.delete_seller %}
-                        <button type='button' data-placement="bottom" data-original-title="Delete Seller" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
+                        <button type='button' data-placement="bottom" data-original-title="Delete Seller" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
                         {% endif%}
                         </div>
                     </td>

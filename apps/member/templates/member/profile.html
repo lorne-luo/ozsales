@@ -23,12 +23,12 @@
     <div class="span12">
         <div class="widget">
             <div class="widget-title">
-                <h4><i class="icon-user"></i> {{edit_user.username }}</h4>
+                <h4><i class="fa fa-user"></i> {{edit_user.username }}</h4>
                 {% if edit_user %}
                 <div class="actions">
-                    <a class="btn btn-mini" data-toggle="modal" href="#PasswordRestModel"><i class="icon-lock"></i> Change Password</a>
+                    <a class="btn btn-mini" data-toggle="modal" href="#PasswordRestModel"><i class="fa fa-lock"></i> Change Password</a>
                     {% if perms.member.delete_seller and edit_user and edit_user != user%}
-                    <a class="btn btn-danger btn-mini" data-toggle="modal" href="#UserDeleteModal"><i class=" icon-trash"></i> Delete</a>
+                    <a class="btn btn-danger btn-mini" data-toggle="modal" href="#UserDeleteModal"><i class="fa fa-trash"></i> Delete</a>
                     {% endif%}
                 </div>
                 {% endif %}

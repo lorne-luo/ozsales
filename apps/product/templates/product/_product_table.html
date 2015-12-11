@@ -30,8 +30,8 @@
           {%endif%}
         </td>
         <td>
-            <a data-placement="bottom" data-original-title="{{ product.name_cn }}" href='{% url 'product-edit' pk=product.pk%}' class="tooltips">
-            {{product.customer.name}}
+            <a href="{% url 'product-edit' pk=product.pk%}" class="tooltips">
+            {{product.name_cn}}
             </a>
         </td>
         <td class="hidden-phone">{{product.spec1|default:""}}{{product.spec2|default:""}}{{product.spec3|default:""}}</td>
@@ -40,15 +40,15 @@
         <td class="hidden-phone">{{product.bargain_price}}</td>
         <td>
             {%if product.wx_url%}
-              <a data-placement="bottom" data-original-title="Edit Product" href="{{ product.wx_url }}" role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+              <a data-placement="bottom" data-original-title="Weixin URL" href="{{ product.wx_url }}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
             {%endif%}
             {%if product.tb_url%}
-              <a data-placement="bottom" data-original-title="Edit Product" href="{{ product.tb_url }}" role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+              <a data-placement="bottom" data-original-title="Taobao URL" href="{{ product.tb_url }}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
             {%endif%}
         </td>
         <td class="hidden-phone">
-            <button type='button' data-placement="bottom" data-original-title="Delete Product" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
-            <a data-placement="bottom" data-original-title="Edit Product" href="{% url 'product-edit' pk=product.pk%}" role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+            <button type='button' data-placement="bottom" data-original-title="Delete Product" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
+            <a data-placement="bottom" data-original-title="Edit Product" href="{% url 'product-edit' pk=product.pk%}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
         </td>
       </tr>
   {%endfor%}

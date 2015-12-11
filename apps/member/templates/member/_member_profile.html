@@ -26,7 +26,7 @@
                             {{form.is_active}}
                         </div>
                         {% else %}
-                            <i class="{% if edit_user.is_active %}icon-ok icon-success{%else%}icon-remove{% endif %}"></i>
+                            <i class="fa {% if edit_user.is_active %}fa-check icon-success{%else%}fa fa-times{% endif %}"></i>
                         {% endif %}
                     </div>
                 </div>
@@ -35,7 +35,7 @@
                     <div class="control-group">
                         <label class="control-label">Superuser:</label>
                         <div class="controls input-icon">
-                            <i class="{% if edit_user.is_superuser%}icon-ok icon-success{%else%}icon-remove icon-danger{% endif %}"></i>
+                            <i class="fa {% if edit_user.is_superuser%}fa-check icon-success{%else%}fa-remove text-danger{% endif %}"></i>
                         </div>
                     </div>
                 {% endif %}
@@ -58,7 +58,7 @@
             <div id="server-error" class="alert alert-error hide">Server error, please try again later!</div>
         </div>
         <div class=" span12 form-actions">
-            <button class="btn btn-primary" type="submit"><i class="icon-ok"></i> Save</button>
+            <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> Save</button>
             <a class="btn" href="{% url "seller-index"  %}">Cancel</a>
         </div>
     </div>

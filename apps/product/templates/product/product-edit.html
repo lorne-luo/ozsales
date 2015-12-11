@@ -27,10 +27,10 @@
           <div class="span12">
             <div class="widget">
                 <div class="widget-title">
-                  <h4><i class="icon-facetime-video"></i> {% if order %}{{order.id}}#{{order.customer.name}} Order Detail{% else %}Add Order{% endif %}</h4>
+                  <h4><i class="fa fa-video-camera"></i> {% if order %}{{order.id}}#{{order.customer.name}} Order Detail{% else %}Add Order{% endif %}</h4>
                   {% if order %}
                   <div class="actions">
-                    <a type='button' class="delete btn btn-danger btn-mini"><i class=" icon-trash"></i> Delete</a>
+                    <a type='button' class="delete btn btn-danger btn-mini"><i class="fa fa-trash"></i> Delete</a>
                   </div>
                   {% endif %}
                 </div>
@@ -62,7 +62,7 @@
                         <div class="controls">
                           {{form.number}}
                           {% if form.number.errors %}
-                          <span class="input-error error"><i class="icon-exclamation-sign"></i></span>
+                          <span class="input-error error"><i class="fa fa-exclamation-circle"></i></span>
                           <span class="help-inline error">{{form.number.errors}}</span>
                           {% endif %}
 
@@ -74,7 +74,7 @@
                         <div class="controls">
                           {{form.categories }}
                           {% if form.categories.errors %}
-                          <span class="input-error error"><i class="icon-exclamation-sign"></i></span>
+                          <span class="input-error error"><i class="fa fa-exclamation-circle"></i></span>
                           <span class="help-inline error">{{form.categories.errors}}</span>
                           {% endif %}
                         </div>
@@ -100,8 +100,8 @@
                       </div>
 
                         <div class="form-actions">
-                          <button type="submit" class="btn btn-success"><i class="icon-ok"></i> Save</button>
-                          <a href="{% url 'order-index' %}" type="button" class="btn btn-info"><i class=" icon-remove"></i> Cancel</a>
+                          <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Save</button>
+                          <a href="{% url 'order-index' %}" type="button" class="btn btn-info"><i class="fa fa-remove"></i> Cancel</a>
                         </div>
                       </div>
                     <div class="span4 ">

@@ -21,7 +21,7 @@
       <tr class="odd gradeX">
         <td class="hidden-phone">{{order.pk}}</td>
         <td>
-            <a data-placement="bottom" data-original-title="Order #{{ order.id }}" href='{% url 'order-edit' pk=order.pk%}' class="tooltips">
+            <a href="{% url 'order-edit' pk=order.pk%}" class="tooltips">
             {{order.customer.name}}
             </a>
         </td>
@@ -32,8 +32,8 @@
         <td>{{order.get_id_upload | safe}}</td>
         <td class="hidden-phone">{{order.create_time}}</td>
         <td class="hidden-phone">
-            <button type='button' data-placement="bottom" data-original-title="Delete Order" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
-            <a data-placement="bottom" data-original-title="Edit Order" href='{% url 'order-edit' pk=order.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+            <button type='button' data-placement="bottom" data-original-title="Delete Order" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
+            <a data-placement="bottom" data-original-title="Edit Order" href='{% url 'order-edit' pk=order.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
         </td>
       </tr>
   {%endfor%}

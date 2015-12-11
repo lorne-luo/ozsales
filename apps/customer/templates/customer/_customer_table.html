@@ -34,8 +34,8 @@
         <td class="hidden-phone">{{customer.last_order_time}}</td>
         <td></td>
         <td class="hidden-phone">
-            <button type='button' data-placement="bottom" data-original-title="Delete Customer" class="delete btn btn-danger btn-mini tooltips"><i class="icon-trash icon-white"></i></button>
-            <a data-placement="bottom" data-original-title="Edit Customer" href="{% url 'customer-edit' pk=customer.pk%}" role="button" class="btn btn-warning btn-mini tooltips"><i class="icon-pencil icon-white"></i></a>
+            <button type='button' data-placement="bottom" data-original-title="Delete Customer" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
+            <a data-placement="bottom" data-original-title="Edit Customer" href="{% url 'customer-edit' pk=customer.pk%}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
         </td>
       </tr>
   {%endfor%}

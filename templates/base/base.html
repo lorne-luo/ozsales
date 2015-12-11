@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap-responsive.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap-fileupload.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'css/template-style.css' %}">
     <link rel="stylesheet" href="{% static 'css/style_responsive.css' %}">
     <link rel="stylesheet" href="{% static 'css/style_default.css' %}" id="style_color">
@@ -70,7 +70,7 @@
               <h3 class="page-title">{% block page_title %}{% endblock %}<small class="hidden-phone"> {% block page_description %}{% endblock %} </small></h3>
               <ul class="breadcrumb">
                 <li>
-                <a href="{% url 'member-home' %}"><i class="icon-home"></i></a><span class="divider">&nbsp;</span>
+                <a href="{% url 'member-home' %}"><i class="fa fa-home"></i></a><span class="divider">&nbsp;</span>
                 </li>
                {% block breadcrumbs %}{% endblock %}
               </ul>
@@ -96,7 +96,7 @@
     </div>
     <div id="footer">{%now "Y"%} &copy; OZ SALE by Tao Luo | {{ TAG }}
       <div class="span pull-right">
-        <span class="go-top"><i class="icon-arrow-up"></i></span>
+        <span class="go-top"><i class="fa fa-arrow-up"></i></span>
       </div>
     </div>
   {% block delay_js %}{% endblock %}
