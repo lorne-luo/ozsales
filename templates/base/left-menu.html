@@ -28,6 +28,19 @@
       </li>
       {%endif%}
 
+      {% if perms.customer.add_customer or perms.customer.view_customer %}
+      <li class="has-sub {% ifstartswith '/customer/' %}open{% endifstartswith %}">
+        <a href="javascript:;">
+          <span class="icon-box"><i class="icon-briefcase"></i></span> Customers
+          <span class="arrow {% ifstartswith '/customer/' %}open{% endifstartswith %}"></span>
+        </a>
+        <ul class="sub" {% ifstartswith '/customer/' %}style='display:block;'{% endifstartswith %}>
+            <li><a href="{% url 'customer-add' %}">Add Customer</a></li>
+            <li><a href="{% url 'customer-list' %}">Customer List</a></li>
+        </ul>
+      </li>
+      {%endif%}
+
       {% if perms.order.add_order or perms.order.view_order %}
       <li class="has-sub {% ifstartswith '/order/' %}open{% endifstartswith %}">
         <a href="javascript:;">

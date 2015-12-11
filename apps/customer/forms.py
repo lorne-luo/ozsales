@@ -1,4 +1,3 @@
-__author__ = 'Lorne'
 from django import forms
 from django.contrib import admin
 
@@ -41,3 +40,12 @@ class InterestTagInline(admin.TabularInline):
     can_delete = True
     # max_num = 1
     verbose_name_plural = 'Tag'
+
+from django import forms
+
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+

@@ -17,6 +17,7 @@ member_urlpatterns = patterns('',
     url(r'^member/', include('apps.member.urls')),
     url(r'^order/', include('apps.order.urls')),
     url(r'^product/', include('apps.product.urls')),
+    url(r'^customer/', include('apps.customer.urls')),
     # if_installed('apps.customer', r'^customer/', include('apps.customer.urls', namespace='customer')),
     # if_installed('apps.product', r'^product/', include('apps.product.urls', namespace='product')),
     # if_installed('apps.order', r'^order/', include('apps.order.urls', namespace='order')),
@@ -30,6 +31,7 @@ api_urlpatterns = patterns('',
     if_installed('apps.member', r'^member/', include('apps.member.api.urls')),
     if_installed('apps.order', r'^order/', include('apps.order.api.urls')),
     if_installed('apps.product', r'^product/', include('apps.product.api.urls')),
+    if_installed('apps.customer', r'^customer/', include('apps.customer.api.urls')),
 
 )
 
