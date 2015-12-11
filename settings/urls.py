@@ -16,6 +16,7 @@ def if_installed(appname, *args, **kwargs):
 member_urlpatterns = patterns('',
     url(r'^member/', include('apps.member.urls')),
     url(r'^order/', include('apps.order.urls')),
+    url(r'^product/', include('apps.product.urls')),
     # if_installed('apps.customer', r'^customer/', include('apps.customer.urls', namespace='customer')),
     # if_installed('apps.product', r'^product/', include('apps.product.urls', namespace='product')),
     # if_installed('apps.order', r'^order/', include('apps.order.urls', namespace='order')),
@@ -28,6 +29,7 @@ member_urlpatterns = patterns('',
 api_urlpatterns = patterns('',
     if_installed('apps.member', r'^member/', include('apps.member.api.urls')),
     if_installed('apps.order', r'^order/', include('apps.order.api.urls')),
+    if_installed('apps.product', r'^product/', include('apps.product.api.urls')),
 
 )
 

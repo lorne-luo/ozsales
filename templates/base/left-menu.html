@@ -28,56 +28,32 @@
       </li>
       {%endif%}
 
-      {% if perms.products.add_order or perms.products.view_order %}
+      {% if perms.order.add_order or perms.order.view_order %}
       <li class="has-sub {% ifstartswith '/order/' %}open{% endifstartswith %}">
         <a href="javascript:;">
           <span class="icon-box"><i class="icon-briefcase"></i></span> Orders
           <span class="arrow {% ifstartswith '/order/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/order/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'order-add' %}">Add New Order</a></li>
+            <li><a href="{% url 'order-add' %}">New Order</a></li>
             <li><a href="{% url 'order-index' %}">Order List</a></li>
         </ul>
       </li>
       {%endif%}
 
-
-      {% if perms.channels.add_channel or perms.channels.add_event or perms.radio.add_service  or perms.vod.record_event %}
-      <li class="has-sub {% ifstartswith "/admin/channels/" %}open{% endifstartswith %}{% ifstartswith "/admin/radio/" %}open{% endifstartswith %}">
+      {% if perms.product.add_product or perms.product.view_product %}
+      <li class="has-sub {% ifstartswith '/product/' %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="icon-facetime-video"></i></span> Channels
-          <span class="arrow {% ifstartswith "/admin/channels/" %}open{% endifstartswith %}"></span>
+          <span class="icon-box"><i class="icon-briefcase"></i></span> Products
+          <span class="arrow {% ifstartswith '/product/' %}open{% endifstartswith %}"></span>
         </a>
-        <ul class="sub" {% ifstartswith "/admin/channels/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/radio/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.channels.add_channel  %}
-            <li><a href="{% url 'member-home' %}">Channel List</a></li>
-            <li><a href="{% url 'member-home' %}">EPG Events</a></li>
-          {% elif perms.vod.record_event %}
-            <li><a href="{% url 'member-home' %}">EPG Events</a></li>
-          {%endif%}
-          {% if perms.radio.add_service %}
-            <li><a href="{% url 'member-home' %}">Radio Services</a></li>
-          {%endif%}
+        <ul class="sub" {% ifstartswith '/product/' %}style='display:block;'{% endifstartswith %}>
+            <li><a href="{% url 'product-add' %}">Add Product</a></li>
+            <li><a href="{% url 'product-list' %}">Product List</a></li>
         </ul>
       </li>
       {%endif%}
 
-      {% if perms.vod.view_vodvideo or perms.vod.view_uservideo or perms.vod.view_recordingvideo or perms.photo.view_album %}
-      <li class="has-sub {% ifstartswith "/admin/recorder/" %}open{% endifstartswith %}{% ifstartswith "/admin/vod/" %}open{% endifstartswith %}{% ifstartswith "/admin/photo/" %}open{% endifstartswith %}">
-        <a href="javascript:;">
-          <span class="icon-box"> <i class="icon-film"></i></span> Media
-          <span class="arrow {% ifstartswith "/admin/recorder/" %}open{% endifstartswith %}{% ifstartswith "/admin/vod/" %}open{% endifstartswith %}{% ifstartswith "/admin/photo/" %}open{% endifstartswith %}"></span>
-        </a>
-        <ul class="sub" {% ifstartswith "/admin/recorder/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/vod/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/photo/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.vod.view_vodvideo %}<li><a href="{% url 'member-home' %}">Movies</a></li>{% endif %}
-          {% if perms.vod.view_all_video %}<li><a href="{% url 'member-home' %}">All Videos</a></li>{% endif %}
-          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'member-home' %}">Channel monitoring</a></li>{% endif %}
-          {% if perms.vod.view_recordingvideo %}<li><a href="{% url 'member-home' %}">My Recordings</a></li>{% endif %}
-          {% if perms.vod.view_uservideo %}<li><a href="{% url 'member-home' %}">My Videos</a></li>{% endif %}
-          {% if perms.photo.view_album %}<li><a href="{% url 'member-home' %}">My Photos</a></li>{% endif %}
-        </ul>
-      </li>
-      {% endif %}
       {% if perms.device.add_device or perms.device.add_devicegroup or perms.device.add_schedule %}
       <li class="has-sub {% ifstartswith "/admin/device/" %}open{% endifstartswith %}">
         <a href="javascript:;">
