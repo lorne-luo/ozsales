@@ -31,7 +31,8 @@ class OrderIndex(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        context['orders'] = Order.objects.all().order_by('-create_time')
+        context['processing_orders'] = Order.objects.exclude(status=ORDER_STATUS.FINISHED).order_by('-id')
+        context['finished_orders'] = Order.objects.filter(status=ORDER_STATUS.FINISHED).order_by('-id')
         return self.render_to_response(context)
 
 
@@ -45,7 +46,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
 
-        context = {'form': OrderForm2(user=request.user), }
+        context = {'form': OrderForm2(), }
 
         if pk:
             order = get_object_or_404(Order, id=pk)
