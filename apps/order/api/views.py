@@ -1,7 +1,7 @@
 import logging
 import json
 
-from apps.order.api import serializers
+import serializers
 from ..models import Order
 from utils.api.views import PaginateMaxModelViewSet, PaginateMaxListAPIView
 from utils.api.permission import ModelPermissions

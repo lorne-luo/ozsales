@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from braces.views import MultiplePermissionsRequiredMixin
 
 from models import Product
+from forms import ProductForm
 
 class ProductList(MultiplePermissionsRequiredMixin, TemplateView):
     ''' List of products. '''
@@ -27,7 +28,7 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': Product(), }
+        context = {'form': ProductForm(), }
         if pk:
             product = get_object_or_404(Product, id=pk)
             context['product'] = product
