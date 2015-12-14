@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 import views
+import serializers
 
 urlpatterns = patterns('apps.member.views',
     url(r'^login/', 'member_login', name='member-login'),

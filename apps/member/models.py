@@ -42,9 +42,19 @@ class Seller(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('seller')
         verbose_name_plural = _('sellers')
-        permissions = (
 
-        )
+    class Config:
+        # list_template_name = 'customer/customer_list.html'
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ['username', 'name', 'email', 'mobile', 'is_active', 'date_joined']
+        list_form_fields = ('username', 'name', 'email', 'mobile')
+        filter_fields = ('username', 'name', 'email', 'mobile')
+        search_fields = ('username', 'name', 'email', 'mobile')
+
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Seller.objects.all()
+            return queryset
 
     def __str__(self):
         return '[S]%s' % self.name

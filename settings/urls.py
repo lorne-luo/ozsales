@@ -12,19 +12,16 @@ def if_installed(appname, *args, **kwargs):
         ret.resolve = lambda *args: None
     return ret
 
-# Member frontend
 member_urlpatterns = patterns('',
+    # common api and views
+    url(r'^', include('apps.common.urls')),
+
     url(r'^member/', include('apps.member.urls')),
     url(r'^order/', include('apps.order.urls')),
     url(r'^product/', include('apps.product.urls')),
     url(r'^customer/', include('apps.customer.urls')),
-    # if_installed('apps.customer', r'^customer/', include('apps.customer.urls', namespace='customer')),
-    # if_installed('apps.product', r'^product/', include('apps.product.urls', namespace='product')),
-    # if_installed('apps.order', r'^order/', include('apps.order.urls', namespace='order')),
-    # if_installed('apps.store', r'^store/', include('apps.store.urls', namespace='store')),
-    # if_installed('apps.common', r'^common/', include('apps.common.urls', namespace='common')),
-    # if_installed('apps.express', r'^express/', include('apps.express.urls', namespace='express')),
 )
+# Member frontend
 
 # REST API
 api_urlpatterns = patterns('',
@@ -38,9 +35,8 @@ api_urlpatterns = patterns('',
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'ecosway.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
+    url(r'^accounts/', include('registration.backends.hmac.urls')),
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^', include(member_urlpatterns)),

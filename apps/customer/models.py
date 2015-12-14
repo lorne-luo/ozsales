@@ -19,10 +19,10 @@ from django.core.urlresolvers import reverse
 
 
 # def modify_fields(**kwargs):
-#     def wrap(cls):
-#         for field, prop_dict in kwargs.items():
-#             for prop, val in prop_dict.items():
-#                 setattr(cls._meta.get_field(field), prop, val)
+# def wrap(cls):
+# for field, prop_dict in kwargs.items():
+# for prop, val in prop_dict.items():
+# setattr(cls._meta.get_field(field), prop, val)
 #         return cls
 #
 #     return wrap
@@ -77,15 +77,19 @@ class Customer(AbstractBaseUser):
     class Meta:
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
-        permissions = (
 
-        )
+    class Config:
+        # list_template_name = 'customer/customer_list.html'
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ('name', 'email', 'mobile', 'order_count', 'last_order_time', 'primary_address')
+        list_form_fields = ('name', 'email', 'mobile', 'primary_address')
+        filter_fields = ('name', 'email', 'mobile')
+        search_fields = ('name', 'email', 'mobile')
 
-    # def __init__(self, *args, **kwargs):
-    #     super(Customer, self).__init__(*args, **kwargs)
-    #     # snip the other fields for the sake of brevity
-    #     # Adding content to the form
-    #     self.fields['groups'].verbose_name = 'customer groups'
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Customer.objects.all()
+            return queryset
 
     def __str__(self):
         return '%s' % self.name
