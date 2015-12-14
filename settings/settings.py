@@ -40,10 +40,14 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_webtest',
+    'django_nose',
+    'registration',
     'dbsettings',
     'djcelery',
     'kombu.transport.django',
     'apps',
+
     'apps.member',
     'apps.express',
     'apps.customer',
@@ -58,6 +62,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken', # must come after accounts for migrations to work
     'taggit',
     'easy_thumbnails',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -160,6 +165,13 @@ PRODUCT_PHOTO_FOLDER = 'product'
 
 # for django-guardian
 ANONYMOUS_USER_ID = -1
+# registration
+# ACCOUNT_ACTIVATION_DAYS=7
+# REGISTRATION_OPEN=True
+# REGISTRATION_SALT='IH*&^AGBIovalaft1AXbas2213klsd73'
+
+# test
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # ----------------------------------------- CELERY -----------------------------------------------
 
@@ -189,9 +201,10 @@ CELERYD_TASK_TIME_LIMIT = 600
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGINATE_BY': 100, # Default to 100
+    'PAGINATE_BY': 20, # Default to 100
     'PAGINATE_BY_PARAM': 'limit', # Allow client to override, using `?limit=xxx`.
     'MAX_PAGINATE_BY': 999, # Maximum limit allowed when using `?limit=xxx`.
+    'UNICODE_JSON': True,
 
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
