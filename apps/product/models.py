@@ -4,10 +4,22 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from apps.store.models import Page
-from apps.common.models import Country
 from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
+
+
+@python_2_unicode_compatible
+class Country(models.Model):
+    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
+    short_name = models.CharField(_(u'short_name'), max_length=30, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = _('Country')
+        verbose_name = _('Country')
+
+    def __str__(self):
+        return '[%s]' % self.short_name
 
 @python_2_unicode_compatible
 class Category(models.Model):
