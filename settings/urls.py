@@ -49,6 +49,9 @@ urlpatterns = patterns('',
 
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),
+
+    # for js reverse
+    url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

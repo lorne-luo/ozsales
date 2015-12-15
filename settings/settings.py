@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,17 +45,20 @@ INSTALLED_APPS = (
     'dbsettings',
     'djcelery',
     'kombu.transport.django',
-    'apps',
 
+    'apps',
+    'apps.common',
     'apps.member',
     'apps.express',
     'apps.customer',
     'apps.product',
     'apps.order',
     'apps.store',
-    'apps.common',
     'utils',
 
+    # third_app
+    'mptt',
+    'django_js_reverse',
     'activelink',
     'rest_framework',
     'rest_framework.authtoken', # must come after accounts for migrations to work
@@ -64,6 +66,7 @@ INSTALLED_APPS = (
     'easy_thumbnails',
 
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
