@@ -3,9 +3,16 @@
 import sys
 from rest_framework import filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, GenericAPIView
+from django.contrib.contenttypes.models import ContentType
 
-from .views import get_app_model_name, get_model_content_type
 
+def get_app_model_name(kwargs):
+    app_name = kwargs.get('app_name').lower()
+    model_name = kwargs.get('model_name').lower()
+    return app_name, model_name
+
+def get_model_content_type(app_name, model_name):
+    return ContentType.objects.get(app_label=app_name, model=model_name)
 
 class ContentTypeObjectView(GenericAPIView):
 
