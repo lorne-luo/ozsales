@@ -41,7 +41,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_webtest',
     'django_nose',
-    'registration',
     'dbsettings',
     'djcelery',
     'kombu.transport.django',
