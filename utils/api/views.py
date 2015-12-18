@@ -11,7 +11,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import ParseError
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 
-log = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 MAX_ITEMS = 100
 
 
@@ -55,24 +55,14 @@ class ContentTypeObjectView(GenericAPIView):
             raise ParseError('bad request, missed parameter content_type_name and pk')
 
         content_type_name = self.kwargs.get('content_type_name')
-        object_id = self.kwargs.get('pk')
         try:
             content_type = ContentType.objects.get(model=content_type_name)
-            return content_type.model_class().objects.get(pk=object_id)
+            return content_type.model_class().objects.all()
         except ContentType.DoesNotExist:
             error_detail = "No content type with name '%s' found." % content_type_name
-            log.error(error_detail)
+            logger.error(error_detail)
             raise ParseError(error_detail)
-        except ObjectDoesNotExist:
-            log.error("Object with id '%s' and content type name '%s' not found."
-                      % (object_id, content_type_name))
-            raise Http404
 
-    def get_object(self):
-        obj = self.get_queryset()
-        # May raise a permission denied
-        self.check_object_permissions(self.request, obj)
-        return obj
 
 class SharedObjectsList(PaginateMaxListAPIView):
     """
@@ -88,7 +78,7 @@ class SharedObjectsList(PaginateMaxListAPIView):
                 # Turn string 'False' or 'True' to boolean
                 use_groups = ast.literal_eval(use_groups)
             except ValueError:
-                log.info("Invalid parameter for use_groups, use 'True' or 'False'.")
+                logger.info("Invalid parameter for use_groups, use 'True' or 'False'.")
                 use_groups = True
         else:
             use_groups = True
