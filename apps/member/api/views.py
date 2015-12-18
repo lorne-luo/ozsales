@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 import serializers
 from ..models import Seller
-from utils.api.views import PaginateMaxModelViewSet, ContentTypeObjectView
+from utils.api.views import PaginateMaxModelViewSet
 
 
 log = logging.getLogger(__name__)
