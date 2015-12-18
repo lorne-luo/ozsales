@@ -30,7 +30,7 @@ class Order(models.Model):
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
-    total_amount = models.IntegerField(_(u'Total Amount'), default=0, blank=False, null=False)
+    total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
     product_cost_aud = models.DecimalField(_(u'Product Cost AUD'), max_digits=8, decimal_places=2, blank=True,
                                            null=True)
     product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
