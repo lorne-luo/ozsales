@@ -12,8 +12,11 @@
     {% block blockrobots %}
     {% endblock %}
     {% include "adminlte/includes/style.html" %}
-    {% block base_head_style %}
-    {% endblock %}
+    {% block header_base_style %}{% endblock %}
+    {% include "adminlte/includes/global_header_script.html" %}
+    {% block header_base_script %}{% endblock %}
+    {% block header_page_script %}{% endblock %}
+
     <!--[if lt IE 9]>
         <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
         <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
@@ -78,11 +81,10 @@
         </div>
     {% endblock %}
 
-    {% include "adminlte/includes/footer_script.html" %}
-    {% block base_foot_script %}
-    {% endblock %}
-    {% block base_foot_page_script %}
-    {% endblock %}
+    {% include "adminlte/includes/global_footer_script.html" %}
+
+    {% block footer_base_script %}{% endblock %}
+    {% block footer_page_script %}{% endblock %}
     </body>
 {% endblock %}
 </html>

@@ -1,4 +1,5 @@
 {% extends "adminlte/base.html" %}
+{% load staticfiles %}
 
 {% block content_title %}
     {% if object %}
@@ -45,7 +46,18 @@
     </div>
 {% endblock %}
 
-{% block base_foot_script %}
+{% block header_page_script %}
+    <link rel="stylesheet" type="text/css" href="{% static "assets/jquery-chosen/chosen.css" %}" />
+    <script type="text/javascript" src="{% static "assets/jquery-chosen/chosen.jquery.min.js" %}"></script>
+
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        $("select[class$='form-control']").chosen({search_contains: true,disable_search_threshold: 10});
+    });
+    </script>
+{% endblock %}
+
+{% block footer_page_script %}
     <script type="text/javascript">
         $('#commonForm input:text').addClass('form-control');
         $('#commonForm select').addClass('form-control');
