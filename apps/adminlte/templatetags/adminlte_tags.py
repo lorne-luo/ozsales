@@ -4,7 +4,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 from datetime import datetime
 from django import template
 from django.db.models import ImageField
-from utils.convertor import format_datetime
+from utils.converter import format_datetime
 
 
 register = template.Library()
