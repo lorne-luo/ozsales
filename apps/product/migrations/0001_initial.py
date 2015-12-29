@@ -9,7 +9,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('store', '0001_initial'),
-        ('common', '0001_initial'),
     ]
 
     operations = [

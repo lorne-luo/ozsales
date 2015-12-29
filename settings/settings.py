@@ -46,7 +46,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     'apps',
-    'apps.common',
+    'apps.adminlte',
     'apps.member',
     'apps.express',
     'apps.customer',

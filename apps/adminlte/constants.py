@@ -1,7 +1,5 @@
 # coding=utf-8
 
-__author__ = 'lyhapple'
-
 
 DEFAULT_DASHBOARD_TITLE = u'首页'
 

@@ -51,7 +51,7 @@
                                     {% if page_title != default_dashboard_title %}
                                     <li class="active">
                                         {% if page_app_name and page_model_name %}
-                                            <a href="{% url 'common:common_list_page' page_app_name page_model_name %}">
+                                            <a href="{% url 'adminlte:common_list_page' page_app_name page_model_name %}">
                                                 {{ page_title }}
                                             </a>
                                         {% else %}

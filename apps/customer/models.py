@@ -48,17 +48,17 @@ class InterestTag(models.Model):
 
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
-    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
+    name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
+    email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
+    mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
                                                                     'invalid')])
     order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
-    last_order_time = models.DateTimeField(_('last order time'), auto_now_add=True, null=True)
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),
+    last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
                                         related_name=_('primary address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
-    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
+    remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
                                     blank=True, help_text=_('The groups this user belongs to. A customer will '
                                                             'get all permissions granted to each of '

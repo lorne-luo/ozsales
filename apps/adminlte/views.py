@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
-from apps.common import constants
+from apps.adminlte import constants
 # from apps.adminlte.models import Menu, SystemConfig, Permission
 from settings import settings
 # from apps.messageset.models import Notification, Task
