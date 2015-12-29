@@ -643,3 +643,12 @@ ul#id_apps input[type="checkbox"]{
     width:70%;
     height: 100px;
 }
+
+#sidebar > ul > li > a .module_name{
+    padding-top: 20px;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    vertical-align: text-top;
+}

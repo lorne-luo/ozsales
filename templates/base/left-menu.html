@@ -9,14 +9,18 @@
     <ul class="sidebar-menu">
       {% if user.is_authenticated %}
       <li>
-        <a href="{% url 'member-home' %}"><span class="icon-box"><i class="fa fa-dashboard"></i></span>Dashboard</a>
+        <a href="{% url 'member-home' %}"><span class="icon-box"><i class="fa fa-dashboard"></i></span>
+          <span class="module_name">Dashboard</span>
+        </a>
       </li>
       {% endif %}
 
       {% if perms.member.change_seller or perms.member.view_seller %}
       <li class="has-sub {% ifstartswith "/member/" %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="fa fa-user"></i></span> Members
+          <span class="icon-box"><i class="fa fa-user"></i></span>
+          <span class="module_name">Members</span>
+
           <span class="arrow {% ifstartswith "/member/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/member/" %}style='display:block;'{% endifstartswith %}>
@@ -31,7 +35,8 @@
       {% if perms.customer.add_customer or perms.customer.view_customer %}
       <li class="has-sub {% ifstartswith '/customer/' %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="fa fa-briefcase"></i></span> Customers
+          <span class="icon-box"><i class="fa fa-briefcase"></i></span>
+          <span class="module_name">Customers</span>
           <span class="arrow {% ifstartswith '/customer/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/customer/' %}style='display:block;'{% endifstartswith %}>
@@ -44,7 +49,8 @@
       {% if perms.order.add_order or perms.order.view_order %}
       <li class="has-sub {% ifstartswith '/order/' %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="fa fa-briefcase"></i></span> Orders
+          <span class="icon-box"><i class="fa fa-briefcase"></i></span>
+          <span class="module_name">Orders</span>
           <span class="arrow {% ifstartswith '/order/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/order/' %}style='display:block;'{% endifstartswith %}>
@@ -57,7 +63,8 @@
       {% if perms.product.add_product or perms.product.view_product %}
       <li class="has-sub {% ifstartswith '/product/' %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"><i class="fa fa-briefcase"></i></span> Products
+          <span class="icon-box"><i class="fa fa-briefcase"></i></span>
+          <span class="module_name">Products</span>
           <span class="arrow {% ifstartswith '/product/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/product/' %}style='display:block;'{% endifstartswith %}>
@@ -70,7 +77,8 @@
       {% if perms.device.add_device or perms.device.add_devicegroup or perms.device.add_schedule %}
       <li class="has-sub {% ifstartswith "/admin/device/" %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"> <i class="fa fa-hdd-o"></i></span> Devices
+          <span class="icon-box"> <i class="fa fa-hdd-o"></i></span>
+          <span class="module_name">Devices</span>
           <span class="arrow {% ifstartswith "/admin/device/" %}open{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/device/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}style='display:block;'{% endifstartswith %}>
@@ -84,7 +92,8 @@
       {% if perms.meals.add_meals or perms.news.add_news or perms.activities.add_activity or perms.accounts.view_twitter or perms.accounts.view_feed or perms.signage.add_slide %}
       <li class="has-sub {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}">
         <a href="javascript:;">
-          <span class="icon-box"> <i class="fa fa-th"></i></span> Applications
+          <span class="icon-box"> <i class="fa fa-th"></i></span>
+          <span class="module_name">Applications</span>
           <span class="arrow {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/activities/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/news/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/signage/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/meals/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/feed/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}style='display:block;'{% endifstartswith %}">
@@ -97,7 +106,8 @@
       {% if perms.accounts.can_export or perms.settings.view_network_configuration or user.is_superuser or perms.skin_add_setting or perms.mediasource.add_streamingprotocol or perms.mediasource.add_streamingserver or perms.mediasource.add_network or perms.ldap_auth.add_ldapconfig or perms.parental_control.add_rule or perms.categories.add_category %}
         <li class="has-sub">
             <a href="javascript:;">
-                <span class="icon-box"> <i class="fa fa-cogs"></i></span> Configuration
+                <span class="icon-box"> <i class="fa fa-cogs"></i></span>
+            <span class="module_name">Configuration</span>
                 <span class="arrow"></span>
             </a>
             <ul class="sub">
