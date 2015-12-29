@@ -203,10 +203,24 @@ CELERYD_TASK_TIME_LIMIT = 600
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGINATE_BY': 20, # Default to 100
-    'PAGINATE_BY_PARAM': 'limit', # Allow client to override, using `?limit=xxx`.
-    'MAX_PAGINATE_BY': 999, # Maximum limit allowed when using `?limit=xxx`.
+    'PAGE_SIZE': 10,
+    'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
+    'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
     'UNICODE_JSON': True,
+    'DEFAULT_PAGINATION_CLASS': 'apps.api.pagination.CommonPageNumberPagination',
+
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
+    'DATE_FORMAT': '%Y-%m-%d',
+    'DATE_INPUT_FORMATS': ('%Y-%m-%d',),
+    'TIME_FORMAT': '%H:%M:%S',
+    'TIME_INPUT_FORMATS': ('%H:%M:%S',),
+    'LANGUAGES': (
+        ('zh-hans', 'Simplified Chinese'),
+    ),
+
+    'LANGUAGE_CODE': 'zh-hans',
+    'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
