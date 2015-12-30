@@ -2,25 +2,14 @@
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
 from apps.adminlte import constants
 # from apps.adminlte.models import Menu, SystemConfig, Permission
-from settings import settings
 # from apps.messageset.models import Notification, Task
 # from apps.organization.models import Staff
-
-
-
-def get_app_model_name(kwargs):
-    app_name = kwargs.get('app_name').lower()
-    model_name = kwargs.get('model_name').lower()
-    return app_name, model_name
-
-
-def get_model_content_type(app_name, model_name):
-    return ContentType.objects.get(app_label=app_name, model=model_name)
 
 
 def get_system_config_value(key_name):
@@ -31,6 +20,32 @@ def get_system_config_value(key_name):
 
 
 class CommonPageViewMixin(object):
+    model = None
+
+    @property
+    def app_name(self):
+        if self.model:
+            return self.model._meta.module_name
+        else:
+            raise ViewDoesNotExist
+
+    @property
+    def model_name(self):
+        if self.model:
+            return self.model._meta.model_name
+        else:
+            raise ViewDoesNotExist('No model found.')
+
+    def get_model(self, kwargs):
+        if not self.model:
+            app_name = kwargs.get('app_name').lower()
+            model_name = kwargs.get('model_name').lower()
+            try:
+                model_content_type = ContentType.objects.get(app_label=app_name, model=model_name)
+            except ObjectDoesNotExist:
+                raise ViewDoesNotExist
+            self.model = model_content_type.model_class()
+
     def get_context_data(self, **kwargs):
         context = super(CommonPageViewMixin, self).get_context_data(**kwargs)
         default_dashboard_title = constants.DEFAULT_DASHBOARD_TITLE
@@ -43,8 +58,8 @@ class CommonPageViewMixin(object):
             'default_dashboard_title': default_dashboard_title,
             'page_title': page_title,
             'page_model': getattr(self, 'model', ''),
-            'page_app_name': getattr(self, 'app_name', ''),
-            'page_model_name': getattr(self, 'model_name', ''),
+            'page_app_name': self.model._meta.module_name,
+            'page_model_name': self.model._meta.model_name,
             'page_system_name': get_system_config_value('system_name'),
             'page_system_subhead': get_system_config_value('system_subhead')
         }
@@ -66,9 +81,7 @@ class CommonListPageView(CommonPageViewMixin, ListView):
     template_name = 'adminlte/common_list.html'
 
     def get(self, request, *args, **kwargs):
-        self.app_name, self.model_name = get_app_model_name(kwargs)
-        model_type = get_model_content_type(self.app_name, self.model_name)
-        self.model = model_type.model_class()
+        self.get_model(kwargs)
         if hasattr(self.model.Config, 'list_template_name'):
             self.template_name = self.model.Config.list_template_name
         return super(CommonListPageView, self).get(request, *args, **kwargs)
@@ -99,15 +112,13 @@ class CommonFormPageMixin(CommonPageViewMixin):
     template_name = 'adminlte/common_form.html'
 
     def set_form_page_attributes(self, *args, **kwargs):
-        self.app_name, self.model_name = get_app_model_name(kwargs)
-        model_type = get_model_content_type(self.app_name, self.model_name)
-        self.model = model_type.model_class()
+        self.get_model(kwargs)
         self.fields = self.model.Config.list_form_fields
         self.success_url = reverse(
             'adminlte:common_list_page',
             kwargs={
-                'app_name': self.app_name,
-                'model_name': self.model_name
+                'app_name': self.model._meta.module_name,
+                'model_name': self.model._meta.model_name
             }
         )
         if hasattr(self.model.Config, 'form_template_name'):
@@ -116,7 +127,6 @@ class CommonFormPageMixin(CommonPageViewMixin):
 
 
 class CommonCreatePageView(CommonFormPageMixin, CreateView):
-
     def get(self, request, *args, **kwargs):
         self.object = None
         self.set_form_page_attributes(*args, **kwargs)
@@ -126,7 +136,7 @@ class CommonCreatePageView(CommonFormPageMixin, CreateView):
     def form_valid(self, form):
         form.instance.creator = self.request.user
         return super(CommonCreatePageView, self).form_valid(form)
-    
+
     def post(self, request, *args, **kwargs):
         self.set_form_page_attributes(*args, **kwargs)
         return super(CommonCreatePageView, self).post(request, *args, **kwargs)
@@ -136,9 +146,7 @@ class CommonDetailPageView(CommonPageViewMixin, DetailView):
     template_name = 'adminlte/common_detail.html'
 
     def get(self, request, *args, **kwargs):
-        self.app_name, self.model_name = get_app_model_name(kwargs)
-        model_type = get_model_content_type(self.app_name, self.model_name)
-        self.model = model_type.model_class()
+        self.get_model(kwargs)
         if hasattr(self.model.Config, 'detail_template_name'):
             self.template_name = self.model.Config.list_template_name
         return super(CommonDetailPageView, self).get(request, *args, **kwargs)

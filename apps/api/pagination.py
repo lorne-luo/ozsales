@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.compat import OrderedDict
 
 
-
 class CommonPageNumberPagination(PageNumberPagination):
     def get_paginated_response(self, data):
         count = self.page.paginator.count
