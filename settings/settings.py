@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'apps.product',
     'apps.order',
     'apps.store',
+    'apps.registration',
     'utils',
 
     # third_app
@@ -106,9 +107,6 @@ LANGUAGES = [
     ('cn', 'Chinese'),
 ]
 
-LOGIN_URL = '/member/login'
-LOGOUT_URL = '/member/logout'
-
 TIME_ZONE = 'Australia/Melbourne'
 
 USE_I18N = True
@@ -159,20 +157,32 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'dealer.contrib.django.context_processor',
 )
 
-# Others
+
+# Auth
 AUTH_USER_MODEL = 'member.Seller'
 
-ID_PHOTO_FOLDER = 'id'
-PRODUCT_PHOTO_FOLDER = 'product'
+LOGIN_URL = '/member/login/'
 
-# for django-guardian
-ANONYMOUS_USER_ID = -1
+LOGOUT_URL = '/member/login/'
+
+LOGIN_REDIRECT_URL = '/member/profile/'
+
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
 # REGISTRATION_OPEN=True
 # REGISTRATION_SALT='IH*&^AGBIovalaft1AXbas2213klsd73'
 
-# test
+
+# Others
+ID_PHOTO_FOLDER = 'id'
+
+PRODUCT_PHOTO_FOLDER = 'product'
+
+# for django-guardian
+ANONYMOUS_USER_ID = -1
+
+
+# Test
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # ----------------------------------------- CELERY -----------------------------------------------

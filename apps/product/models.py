@@ -8,7 +8,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 
-
 @python_2_unicode_compatible
 class Country(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
