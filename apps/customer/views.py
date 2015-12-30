@@ -4,8 +4,10 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from braces.views import MultiplePermissionsRequiredMixin
 
+from ..adminlte.views import CommonListPageView
 from models import Customer
 from forms import CustomerForm
+
 
 class CustomerList(MultiplePermissionsRequiredMixin, TemplateView):
     ''' List of objects. '''
@@ -35,3 +37,7 @@ class CustomerAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
             context['customer'] = customer
 
         return self.render_to_response(context)
+
+
+class CustomerListView(CommonListPageView):
+    model = Customer
