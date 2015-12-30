@@ -58,8 +58,8 @@ class CommonPageViewMixin(object):
             'default_dashboard_title': default_dashboard_title,
             'page_title': page_title,
             'page_model': getattr(self, 'model', ''),
-            'page_app_name': self.model._meta.module_name,
-            'page_model_name': self.model._meta.model_name,
+            'page_app_name': self.app_name,
+            'page_model_name': self.model_name,
             'page_system_name': get_system_config_value('system_name'),
             'page_system_subhead': get_system_config_value('system_subhead')
         }
@@ -117,8 +117,8 @@ class CommonFormPageMixin(CommonPageViewMixin):
         self.success_url = reverse(
             'adminlte:common_list_page',
             kwargs={
-                'app_name': self.model._meta.module_name,
-                'model_name': self.model._meta.model_name
+                'app_name': self.app_name,
+                'model_name': self.model_name
             }
         )
         if hasattr(self.model.Config, 'form_template_name'):
