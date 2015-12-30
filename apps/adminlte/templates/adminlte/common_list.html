@@ -62,12 +62,12 @@
                     <table class="table table-hover" id="commonTable">
                         <tbody>
                             <tr>
-                                <th style="text-align: center;width:40px;">
+                                <th class="text-center" style="width:40px;">
                                     <input type="checkbox"
                                            name="checkboxAllRow"
                                            v-on:click="toggleAllBox"/>
                                 </th>
-                                <th style="width:40px;">
+                                <th class="text-center" style="width:40px;">
                                     #
                                 </th>
                                 {% for title in table_titles %}
@@ -82,25 +82,25 @@
                             </tr>
                             <template v-for="item in items">
                                 <tr>
-                                    <td style="width:40px;text-align:center">
+                                    <td class="text-center">
                                         <input type="checkbox" class="minimal"
                                                name="checkboxRow"
                                                value="#[item.id]"/>
                                     </td>
-                                    <td>#[$index+1]</td>
+                                    <td class="text-center">#[$index+1]</td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                                   class="btn btn-info btn-mini"  data-pk="#[item.id]" v-on:click="detail">
+                                                   class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
                                                    <i class="fa fa-hand-pointer-o fa-inverse"></i>
                                                 </a>
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                                   class="btn btn-warning btn-mini" data-pk="#[item.id]" v-on:click="update">
+                                                   class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
                                                     <i class="fa fa-pencil fa-inverse"></i>
                                                 </a>
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                                   class="btn btn-danger btn-mini" data-pk="#[item.id]" v-on:click="removeOne">
+                                                   class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
                                             </td>
