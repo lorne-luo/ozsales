@@ -81,7 +81,7 @@ class Customer(AbstractBaseUser):
     class Config:
         # list_template_name = 'customer/customer_list.html'
         # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address')
+        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
         list_form_fields = ('name', 'email', 'mobile', 'primary_address')
         filter_fields = ('name', 'email', 'mobile')
         search_fields = ('name', 'email', 'mobile')

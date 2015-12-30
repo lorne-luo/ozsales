@@ -27,10 +27,11 @@ var CommonListPageVue = Vue.extend({
             );
         },
         detail: function () {
+            var pk = $(event.target).data('pk');
             window.location.href = Urls['adminlte:common_detail_page'](
                 this.appName,
                 this.modelName,
-                $(event.target).data('pk')
+                pk
             );
         },
         create: function () {
@@ -40,10 +41,11 @@ var CommonListPageVue = Vue.extend({
             );
         },
         update: function (event) {
+            var pk = $(event.target).data('pk');
             window.location.href = Urls['adminlte:common_update_page'](
                 this.appName,
                 this.modelName,
-                $(event.target).data('pk')
+                pk
             );
         },
         remove: function (ids) {
@@ -93,7 +95,8 @@ var CommonListPageVue = Vue.extend({
             this.remove(ids);
         },
         removeOne: function (event) {
-            this.remove($(event.target).data('pk'));
+            var pk = $(event.target).data('pk');
+            this.remove(pk);
         },
         search: function (event) {
             this.loadData(

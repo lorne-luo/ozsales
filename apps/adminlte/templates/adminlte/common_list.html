@@ -62,19 +62,17 @@
                     <table class="table table-hover" id="commonTable">
                         <tbody>
                             <tr>
-                                <th style="width:30px;">
-                                    #
-                                </th>
                                 <th style="text-align: center;width:40px;">
                                     <input type="checkbox"
                                            name="checkboxAllRow"
                                            v-on:click="toggleAllBox"/>
                                 </th>
+                                <th style="width:40px;">
+                                    #
+                                </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
-                                        <th>
-                                            操作
-                                        </th>
+                                        <th></th>
                                     {% else %}
                                         <th>
                                             {{ title }}
@@ -84,29 +82,26 @@
                             </tr>
                             <template v-for="item in items">
                                 <tr>
-                                    <td style="width:30px;">#[$index+1]</td>
                                     <td style="width:40px;text-align:center">
                                         <input type="checkbox" class="minimal"
                                                name="checkboxRow"
                                                value="#[item.id]"/>
                                     </td>
+                                    <td>#[$index+1]</td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
-                                            <td>
-                                                <a href="javascript:void(0);"
-                                                   data-pk="#[item.id]"
-                                                   v-on:click="detail">
-                                                    详情
-                                                </a> |
-                                                <a href="javascript:void(0);"
-                                                   data-pk="#[item.id]"
-                                                   v-on:click="update">
-                                                    修改
-                                                </a> |
-                                                <a href="javascript:void(0);"
-                                                   data-pk="#[item.id]"
-                                                   v-on:click="removeOne">
-                                                    删除
+                                            <td class="text-right">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
+                                                   class="btn btn-info btn-mini"  data-pk="#[item.id]" v-on:click="detail">
+                                                   <i class="fa fa-hand-pointer-o fa-inverse"></i>
+                                                </a>
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
+                                                   class="btn btn-warning btn-mini" data-pk="#[item.id]" v-on:click="update">
+                                                    <i class="fa fa-pencil fa-inverse"></i>
+                                                </a>
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+                                                   class="btn btn-danger btn-mini" data-pk="#[item.id]" v-on:click="removeOne">
+                                                    <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
                                             </td>
                                         {% else %}
