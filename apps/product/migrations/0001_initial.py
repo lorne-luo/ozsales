@@ -13,6 +13,19 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='Country',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=30, verbose_name='name')),
+                ('short_name', models.CharField(max_length=30, null=True, verbose_name='short_name', blank=True)),
+            ],
+            options={
+                'verbose_name': 'Country',
+                'verbose_name_plural': 'Country',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Brand',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -72,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='brand',
             name='country',
-            field=models.ForeignKey(verbose_name='country', blank=True, to='common.Country', null=True),
+            field=models.ForeignKey(verbose_name='country', blank=True, to='product.Country', null=True),
             preserve_default=True,
         ),
     ]

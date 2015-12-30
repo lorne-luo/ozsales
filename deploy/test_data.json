@@ -4,7 +4,7 @@
         "name": "Great British",
         "short_name": "UK"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 1
 },
 {
@@ -12,7 +12,7 @@
         "name": "American",
         "short_name": "US"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 2
 },
 {
@@ -20,7 +20,7 @@
         "name": "Australia",
         "short_name": "AU"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 3
 },
 {
@@ -28,7 +28,7 @@
         "name": "China",
         "short_name": "CN"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 4
 },
 {
@@ -36,7 +36,7 @@
         "name": "Japan",
         "short_name": "JP"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 5
 },
 {
@@ -44,7 +44,7 @@
         "name": "Germany",
         "short_name": "DE"
     },
-    "model": "common.country",
+    "model": "product.country",
     "pk": 6
 },
 {
