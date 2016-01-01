@@ -26,8 +26,16 @@ var CommonListPageVue = Vue.extend({
                 $(event.target).prop('checked')
             );
         },
-        detail: function () {
-            var pk = $(event.target).data('pk');
+        detail: function (event) {
+            var pk;
+            if ($(event.target).data('pk'))
+                pk = $(event.target).data('pk');
+            else if ($(event.target.parentNode).data('pk'))
+                pk = $(event.target.parentNode).data('pk');
+            else{
+                sweetAlert('错误', '无法获取pk', 'error');
+                return;
+            }
             window.location.href = Urls['adminlte:common_detail_page'](
                 this.appName,
                 this.modelName,
@@ -41,7 +49,15 @@ var CommonListPageVue = Vue.extend({
             );
         },
         update: function (event) {
-            var pk = $(event.target).data('pk');
+            var pk;
+            if ($(event.target).data('pk'))
+                pk = $(event.target).data('pk');
+            else if ($(event.target.parentNode).data('pk'))
+                pk = $(event.target.parentNode).data('pk');
+            else{
+                sweetAlert('错误', '无法获取pk', 'error');
+                return;
+            }
             window.location.href = Urls['adminlte:common_update_page'](
                 this.appName,
                 this.modelName,
@@ -95,7 +111,15 @@ var CommonListPageVue = Vue.extend({
             this.remove(ids);
         },
         removeOne: function (event) {
-            var pk = $(event.target).data('pk');
+            var pk;
+            if ($(event.target).data('pk'))
+                pk = $(event.target).data('pk');
+            else if ($(event.target.parentNode).data('pk'))
+                pk = $(event.target.parentNode).data('pk');
+            else{
+                sweetAlert('错误', '无法获取pk', 'error');
+                return;
+            }
             this.remove(pk);
         },
         search: function (event) {
