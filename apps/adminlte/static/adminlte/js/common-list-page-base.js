@@ -33,7 +33,7 @@ var CommonListPageVue = Vue.extend({
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
             else{
-                sweetAlert('错误', '无法获取pk', 'error');
+                swal('错误', '无法获取pk', 'error');
                 return;
             }
             window.location.href = Urls['adminlte:common_detail_page'](
@@ -55,7 +55,7 @@ var CommonListPageVue = Vue.extend({
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
             else{
-                sweetAlert('错误', '无法获取pk', 'error');
+                swal('错误', '无法获取pk', 'error');
                 return;
             }
             window.location.href = Urls['adminlte:common_update_page'](
@@ -76,7 +76,7 @@ var CommonListPageVue = Vue.extend({
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定!",
+                confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 closeOnConfirm: false,
                 showLoaderOnConfirm: true
@@ -117,7 +117,7 @@ var CommonListPageVue = Vue.extend({
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
             else{
-                sweetAlert('错误', '无法获取pk', 'error');
+                swal('错误', '无法获取pk', 'error');
                 return;
             }
             this.remove(pk);
