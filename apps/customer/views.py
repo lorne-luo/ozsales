@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from braces.views import MultiplePermissionsRequiredMixin
 
-from ..adminlte.views import CommonListPageView
+from ..adminlte.views import CommonListPageView, CommonCreatePageView, CommonDetailPageView, CommonUpdatePageView, \
+    CommonDeletePageView
 from models import Customer
 from forms import CustomerForm
 
@@ -40,4 +41,20 @@ class CustomerAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
 
 class CustomerListView(CommonListPageView):
+    model = Customer
+
+
+class CustomerCreateView(CommonCreatePageView):
+    model = Customer
+
+
+class CustomerDetailView(CommonDetailPageView):
+    model = Customer
+
+
+class CustomerUpdateView(CommonUpdatePageView):
+    model = Customer
+
+
+class CustomerDeleteView(CommonDeletePageView):
     model = Customer

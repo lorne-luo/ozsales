@@ -1,4 +1,6 @@
 {% load mptt_tags %}
+{% load activelink %}
+
 <aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
@@ -9,6 +11,35 @@
                     <span>{{ default_dashboard_title }}</span>
                 </a>
             </li>
+            {% if perms.customer.add_customer or perms.customer.view_customer %}
+            <li class="treeview active {% ifstartswith '/customer/' %}active{% endifstartswith %}">
+                <a href="javascript:void(0)">
+                            <i class='fa fa-cloud'></i>
+                            <b>Customer</b>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li class='active'>
+                            <a href="/customer/customer/create">
+                                    <i class="fa fa-circle-o"></i>
+                                    New Customer
+                                </a>
+                            </li>
+                            <li>
+                            <a href="/customer/customer/list">
+                                    <i class="fa fa-circle-o"></i>
+                                    Customer List
+                                </a>
+                            </li>
+                            <li>
+                            <a href="/customer/customer/list">
+                                    <i class="fa fa-circle-o"></i>
+                                    Customer List
+                                </a>
+                            </li>
+                        </ul>
+            </li>
+            {%endif%}
 {#            {% recursetree page_menus %}#}
 {#                <li {% if not node.is_leaf_node %}#}
 {#                        class="treeview {% if node.app_name in request.path_info %} active{% endif %}"#}

@@ -1,6 +1,7 @@
 # coding=utf-8
 
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django.http import JsonResponse
@@ -170,7 +171,7 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
         objects = self.get_object()
         for obj in objects:
             obj.delete()
-        return JsonResponse({'message': u'ok'}, status=200)
+        return JsonResponse({'result': True}, status=200)
 
     def get_queryset(self):
         self.set_form_page_attributes(*self.args, **self.kwargs)
