@@ -90,6 +90,7 @@
                                     <td class="text-center">#[$index+1]</td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
+                                            {% block item_buttons %}
                                             <td class="text-right">
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                                    class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
@@ -104,6 +105,7 @@
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
                                             </td>
+                                            {% endblock %}
                                         {% else %}
                                             <td>
                                                 {!! item.{{ field }} !!}
