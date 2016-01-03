@@ -26,7 +26,7 @@ class ContentTypeObjectView(GenericAPIView):
     @property
     def app_name(self):
         if self.model:
-            return self.model._meta.module_name
+            return self.model._meta.app_label
         else:
             raise ViewDoesNotExist
 
