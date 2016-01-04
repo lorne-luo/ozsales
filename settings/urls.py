@@ -40,12 +40,14 @@ urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
     url(r'^order/(?P<order_id>\d+)/(?P<status_str>\w+)/$', 'apps.order.views.change_order_status', name='change-order-status'),
 
+    # registration
+    url(r'^auth/', include("apps.registration.urls", namespace="registration")),
+
     # for common views
-    url(r'^', include('apps.common.urls', namespace='common')),
+    url(r'^', include('apps.adminlte.urls', namespace='adminlte')),
 
     # for common api
     url(r'^api/v1/', include('apps.api.urls', namespace='common_api')),
-
 
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),

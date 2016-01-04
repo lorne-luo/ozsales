@@ -128,12 +128,12 @@
 {%block js%}
   <script src="{% static 'assets/jquery-ui/jquery-ui-1.9.2.custom.min.js' %}" type="text/javascript"></script>
   <script type="text/javascript" src="{% static 'assets/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js' %}"></script>
-  <script src="{% static 'assets/chosen/chosen.jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/jquery-chosen/chosen.jquery.min.js' %}"></script>
   <script src="{% static 'js/common.js' %}" type="text/javascript"></script>
   <script src="{% static 'js/order/order-edit.js' %}" type="text/javascript"></script>
 {% endblock %}
 
 {% block css %}
   <link rel="stylesheet" href="{% static 'assets/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css' %}" />
-  <link href="{% static 'assets/chosen/chosen.css' %}" type="text/css" rel="stylesheet">
+  <link href="{% static 'assets/jquery-chosen/chosen.css' %}" type="text/css" rel="stylesheet">
 {% endblock %}

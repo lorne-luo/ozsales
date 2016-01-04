@@ -46,13 +46,14 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     'apps',
-    'apps.common',
+    'apps.adminlte',
     'apps.member',
     'apps.express',
     'apps.customer',
     'apps.product',
     'apps.order',
     'apps.store',
+    'apps.registration',
     'utils',
 
     # third_app
@@ -106,9 +107,6 @@ LANGUAGES = [
     ('cn', 'Chinese'),
 ]
 
-LOGIN_URL = '/member/login'
-LOGOUT_URL = '/member/logout'
-
 TIME_ZONE = 'Australia/Melbourne'
 
 USE_I18N = True
@@ -159,20 +157,32 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'dealer.contrib.django.context_processor',
 )
 
-# Others
+
+# Auth
 AUTH_USER_MODEL = 'member.Seller'
 
-ID_PHOTO_FOLDER = 'id'
-PRODUCT_PHOTO_FOLDER = 'product'
+LOGIN_URL = '/member/login/'
 
-# for django-guardian
-ANONYMOUS_USER_ID = -1
+LOGOUT_URL = '/member/login/'
+
+LOGIN_REDIRECT_URL = '/member/profile/'
+
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
 # REGISTRATION_OPEN=True
 # REGISTRATION_SALT='IH*&^AGBIovalaft1AXbas2213klsd73'
 
-# test
+
+# Others
+ID_PHOTO_FOLDER = 'id'
+
+PRODUCT_PHOTO_FOLDER = 'product'
+
+# for django-guardian
+ANONYMOUS_USER_ID = -1
+
+
+# Test
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # ----------------------------------------- CELERY -----------------------------------------------
@@ -203,10 +213,24 @@ CELERYD_TASK_TIME_LIMIT = 600
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGINATE_BY': 20, # Default to 100
-    'PAGINATE_BY_PARAM': 'limit', # Allow client to override, using `?limit=xxx`.
-    'MAX_PAGINATE_BY': 999, # Maximum limit allowed when using `?limit=xxx`.
+    'PAGE_SIZE': 10,
+    'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
+    'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
     'UNICODE_JSON': True,
+    'DEFAULT_PAGINATION_CLASS': 'apps.api.pagination.CommonPageNumberPagination',
+
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
+    'DATE_FORMAT': '%Y-%m-%d',
+    'DATE_INPUT_FORMATS': ('%Y-%m-%d',),
+    'TIME_FORMAT': '%H:%M:%S',
+    'TIME_INPUT_FORMATS': ('%H:%M:%S',),
+    'LANGUAGES': (
+        ('zh-hans', 'Simplified Chinese'),
+    ),
+
+    'LANGUAGE_CODE': 'zh-hans',
+    'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',

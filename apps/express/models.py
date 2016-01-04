@@ -81,6 +81,6 @@ class ExpressOrder(models.Model):
 @receiver(post_save, sender=ExpressOrder)
 @receiver(post_delete, sender=ExpressOrder)
 def update_order_price(sender, instance=None, created=False, **kwargs):
-    if instance.order.id:
+    if instance.order and instance.order.id:
         instance.order.update_price()
 
