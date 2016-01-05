@@ -60,7 +60,7 @@
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover" id="commonTable">
-                        <tbody>
+                        <thead>
                             <tr>
                                 <th class="text-center" style="width:40px;">
                                     <input type="checkbox"
@@ -80,8 +80,13 @@
                                     {% endif %}
                                 {% endfor %}
                             </tr>
-                            <template v-for="item in items">
+                            </thead>
+                            <tfoot>
                                 <tr>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+                                <tr v-for="item in items">
                                     <td class="text-center">
                                         <input type="checkbox" class="minimal"
                                                name="checkboxRow"
@@ -113,8 +118,7 @@
                                         {% endif %}
                                     {% endfor %}
                                 </tr>
-                            </template>
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
                 {% block common_list_pagination %}
