@@ -58,7 +58,7 @@
     };
 
     $.AdminLTE.getApiUrl = function(app, model){
-        return '/api/v1/' + app + '/' + model;
+        return Urls['common_api:listcreate_api'](app, model);
     };
 
     $.AdminLTE.apiGet = function (url, data, callback) {

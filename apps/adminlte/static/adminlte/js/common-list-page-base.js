@@ -136,8 +136,8 @@ var CommonListPageVue = Vue.extend({
             this.loadData({'page': num});
         },
         loadData: function (data) {
-            var self = this,
-                url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
+            var self = this;
+            url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
             if(arguments.length === 2){
                 url = arguments[1];
             }
