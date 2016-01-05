@@ -184,6 +184,7 @@ ANONYMOUS_USER_ID = -1
 
 # Test
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+SOUTH_TESTS_MIGRATE = False
 
 # ----------------------------------------- CELERY -----------------------------------------------
 
@@ -233,7 +234,8 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+        'utils.api.renders.CustomJSONRenderer',
+        # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.AllowAny',
