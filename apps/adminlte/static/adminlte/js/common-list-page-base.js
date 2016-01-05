@@ -65,11 +65,8 @@ var CommonListPageVue = Vue.extend({
             );
         },
         remove: function (ids) {
-            var self = this,
-                delUrl = Urls['adminlte:common_delete_page'](
-                    self.appName,
-                    self.modelName
-                );
+            var self = this;
+            var delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
             swal({
                 title: "确定要删除吗?",
                 text: "您确定要删除所选数据吗?",
@@ -137,7 +134,7 @@ var CommonListPageVue = Vue.extend({
         },
         loadData: function (data) {
             var self = this;
-            url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
+            var url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
             if(arguments.length === 2){
                 url = arguments[1];
             }
