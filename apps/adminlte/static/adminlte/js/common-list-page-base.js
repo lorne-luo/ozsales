@@ -4,6 +4,11 @@ var CommonListPageVue = Vue.extend({
     },
     data: function(){
         return {
+            create_url_tag:undefined,
+            detail_url_tag:undefined,
+            update_url_tag:undefined,
+            delete_url_tag:undefined,
+            list_url_tag:undefined,
             items: [],
             userName: $("#adminlte_page_user_name").val(),
             appName: $("#adminlte_page_app_name").val(),
@@ -36,17 +41,28 @@ var CommonListPageVue = Vue.extend({
                 swal('错误', '无法获取pk', 'error');
                 return;
             }
-            window.location.href = Urls['adminlte:common_detail_page'](
-                this.appName,
-                this.modelName,
-                pk
-            );
+
+            var url;
+            if (this.detail_url_tag)
+                url = Urls[this.detail_url_tag](pk);
+            else
+                url = Urls['adminlte:common_detail_page'](
+                    this.appName,
+                    this.modelName,
+                    pk
+                );
+            window.location.href = url;
         },
         create: function () {
-            window.location.href = Urls['adminlte:common_create_page'](
-                this.appName,
-                this.modelName
-            );
+            var url;
+            if (this.create_url_tag)
+                url = Urls[this.create_url_tag]();
+            else
+                url = Urls['adminlte:common_create_page'](
+                    this.appName,
+                    this.modelName
+                );
+            window.location.href = url;
         },
         update: function (event) {
             var pk;
@@ -58,15 +74,25 @@ var CommonListPageVue = Vue.extend({
                 swal('错误', '无法获取pk', 'error');
                 return;
             }
-            window.location.href = Urls['adminlte:common_update_page'](
-                this.appName,
-                this.modelName,
-                pk
-            );
+
+            var url;
+            if (this.update_url_tag)
+                url = Urls[this.update_url_tag](pk);
+            else
+                url = Urls['adminlte:common_update_page'](
+                    this.appName,
+                    this.modelName,
+                    pk
+                );
+            window.location.href = url;
         },
         remove: function (ids) {
             var self = this;
-            var delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
+            var delUrl;
+            if (this.delete_url_tag)
+                delUrl = Urls[this.delete_url_tag]();
+            else
+                delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
             swal({
                 title: "确定要删除吗?",
                 text: "您确定要删除所选数据吗?",
