@@ -79,7 +79,7 @@ class Customer(AbstractBaseUser):
         verbose_name = _('Customer')
 
     class Config:
-        # list_template_name = 'customer/customer_list.html'
+        list_template_name = 'customer/adminlte-customer-list.html'
         # form_template_name = 'customer/customer_form.html'
         list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
         list_form_fields = ('name', 'email', 'mobile', 'primary_address')
