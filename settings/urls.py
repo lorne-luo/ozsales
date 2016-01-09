@@ -51,6 +51,8 @@ urlpatterns = patterns('',
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': MEDIA_ROOT}),
 
     url(r'^order/(?P<order_id>\d+)/(?P<status_str>\w+)/$', 'apps.order.views.change_order_status', name='change-order-status'),
+    url(r'^order/paid/(?P<order_id>\d+)/$', 'apps.order.views.change_order_paid', name="change-order-paid"),
+
     # url('^order/', 'apps.order.urls'),
     # url('^customer/', 'customer.urls'),
     # url('^store/', 'store.urls'),
