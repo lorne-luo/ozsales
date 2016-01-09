@@ -12,14 +12,12 @@ from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
 
-ORDER_STATUS = enum('CREATED', 'PAID', 'SHIPPING', 'DELIVERED', 'FINISHED')
+ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, ORDER_STATUS.CREATED),
-    (ORDER_STATUS.PAID, ORDER_STATUS.PAID),
     (ORDER_STATUS.SHIPPING, ORDER_STATUS.SHIPPING),
     (ORDER_STATUS.DELIVERED, ORDER_STATUS.DELIVERED),
-    # (ORDER_STATUS.RECEIVED, ORDER_STATUS.RECEIVED),
     (ORDER_STATUS.FINISHED, ORDER_STATUS.FINISHED),
 )
 
@@ -28,6 +26,7 @@ ORDER_STATUS_CHOICES = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    is_paid = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
     total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
@@ -104,6 +103,15 @@ class Order(models.Model):
 
         self.save()
 
+    def get_paid_button(self):
+        if not self.is_paid:
+            url = reverse('change-order-paid', kwargs={'order_id': self.id})
+            return '<a href="%s">UNPAID</a>' % url
+        return 'PAID'
+
+    get_paid_button.allow_tags = True
+    get_paid_button.short_description = 'Paid'
+
     def get_status_button(self):
         current_status = self.status
         next_status = ''
@@ -112,8 +120,6 @@ class Order(models.Model):
             for ex in express_orders:
                 current_status = ex.get_tracking_link() + '<br/>' + current_status
         if self.status == ORDER_STATUS.CREATED:
-            next_status = ORDER_STATUS.PAID
-        elif self.status == ORDER_STATUS.PAID:
             next_status = ORDER_STATUS.SHIPPING
         elif self.status == ORDER_STATUS.SHIPPING:
             next_status = ORDER_STATUS.DELIVERED
@@ -170,7 +176,7 @@ class OrderProduct(models.Model):
         if not self.cost_price_aud:
             self.cost_price_aud = self.product.normal_price
         self.total_price_aud = self.cost_price_aud * self.amount
-        
+
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.product.safe_sell_price
         self.total_price_rmb = self.sell_price_rmb * self.amount
