@@ -24,8 +24,8 @@ class OrderProductChangeInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'create_time', 'get_customer_link', 'total_amount', 'get_status_button', 'get_paid_button',
-                    'sell_price_rmb', 'get_id_upload', 'profit_rmb', 'product_cost_aud', 'shipping_fee',
+    list_display = ('id', 'create_time', 'get_customer_link', 'total_amount', 'get_status_button',
+                    'sell_price_rmb', 'get_id_upload', 'get_paid_button', 'profit_rmb', 'product_cost_aud', 'shipping_fee',
                     'origin_sell_rmb', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb')
     list_filter = ['status']
     ordering = ['-create_time']
