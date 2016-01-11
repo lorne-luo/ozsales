@@ -99,6 +99,19 @@ class Customer(AbstractBaseUser):
         name = '[#%s]%s' % (self.id, self.name)
         return u'<a href="%s">%s</a>' % (url, name)
 
+    def get_edit_link(self):
+        url = reverse('customer-update-view', args=[self.id])
+        name = '#%s %s' % (self.id, self.name)
+        return u'<a href="%s">%s</a>' % (url, name)
+
+    get_edit_link.short_description = 'Name'
+
+    def get_detail_link(self):
+        url = reverse('customer-detail-view', args=[self.id])
+        name = '#%s %s' % (self.id, self.name)
+        return u'<a href="%s">%s</a>' % (url, name)
+
+    get_detail_link.short_description = 'Name'
 
     def get_full_name(self):
         return self.name.strip()
