@@ -1,6 +1,8 @@
 # coding=utf-8
 
+import types
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
@@ -100,12 +102,20 @@ class CommonListPageView(CommonPageViewMixin, ListView):
         meta_names = [mf.name for mf in meta_fields]
         titles = []
         for name in show_fields:
-            if name not in meta_names:
-                t = getattr(self.model, name).field.verbose_name
-                titles.append(t)
-            for mf in meta_fields:
-                if mf.name == name:
-                    titles.append(mf.verbose_name)
+            if name in meta_names:
+                for mf in meta_fields:
+                    if mf.name == name:
+                        titles.append(mf.verbose_name)
+            else:
+                if not hasattr(self.model, name):
+                    raise ImproperlyConfigured('Cant found field %s in %s' % (name, self.model._meta.model_name))
+                field_property = getattr(self.model, name)
+                if hasattr(field_property, '__call__'):
+                    titles.append(field_property.short_description)
+                elif hasattr(field_property, 'field'):
+                    titles.append(field_property.field.verbose_name)
+                else:
+                    titles.append(name)  # add this field in serializer
         return titles, show_fields
 
 
