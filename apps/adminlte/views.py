@@ -141,8 +141,8 @@ class CommonCreatePageView(CommonFormPageMixin, CreateView):
     def get(self, request, *args, **kwargs):
         self.object = None
         self.set_form_page_attributes(*args, **kwargs)
-        resp = super(CommonCreatePageView, self).get(request, *args, **kwargs)
-        return resp
+        return super(CommonCreatePageView, self).get(request, *args, **kwargs)
+
 
     def form_valid(self, form):
         form.instance.creator = self.request.user
