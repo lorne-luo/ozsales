@@ -7,7 +7,7 @@ from braces.views import MultiplePermissionsRequiredMixin
 from ..adminlte.views import CommonListPageView, CommonCreatePageView, CommonDetailPageView, CommonUpdatePageView, \
     CommonDeletePageView
 from models import Customer
-from forms import CustomerForm
+from forms import CustomerEditForm, CustomerAddForm2
 
 
 class CustomerList(MultiplePermissionsRequiredMixin, TemplateView):
@@ -32,7 +32,7 @@ class CustomerAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': CustomerForm(), }
+        context = {'form': CustomerAddForm2(), }
         if pk:
             customer = get_object_or_404(Customer, id=pk)
             context['customer'] = customer
@@ -47,6 +47,13 @@ class CustomerListView(CommonListPageView):
 class CustomerCreateView(CommonCreatePageView):
     model = Customer
 
+    def get(self, request, *args, **kwargs):
+        self.object = None
+        self.set_form_page_attributes(*args, **kwargs)
+        form = CustomerAddForm2()
+        context = self.get_context_data(form=form)
+        return self.render_to_response(context)
+
 
 class CustomerDetailView(CommonDetailPageView):
     model = Customer
@@ -54,6 +61,12 @@ class CustomerDetailView(CommonDetailPageView):
 
 class CustomerUpdateView(CommonUpdatePageView):
     model = Customer
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = CustomerEditForm(instance=self.object)
+        context = self.get_context_data(form=form)
+        return self.render_to_response(context)
 
 
 class CustomerDeleteView(CommonDeletePageView):

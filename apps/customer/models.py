@@ -18,20 +18,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 
 
-# def modify_fields(**kwargs):
-# def wrap(cls):
-# for field, prop_dict in kwargs.items():
-# for prop, val in prop_dict.items():
-# setattr(cls._meta.get_field(field), prop, val)
-#         return cls
-#
-#     return wrap
-#
-#
-# @modify_fields(groups={'verbose_name': _('customer groups'),
-#                        'related_name': "customer_set",
-#                        'related_query_name': "customer"})
-
 @python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
@@ -59,11 +45,8 @@ class Customer(AbstractBaseUser):
                                         related_name=_('primary address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
-    groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
-                                    blank=True, help_text=_('The groups this user belongs to. A customer will '
-                                                            'get all permissions granted to each of '
-                                                            'his/her group.'),
-                                    related_name="customer_set", related_query_name="customer")
+    groups = models.ManyToManyField(Group, verbose_name=_('groups'),
+                                    blank=True, related_name="customer_set", related_query_name="customer")
     user_permissions = models.ManyToManyField(Permission,
                                               verbose_name=_('customer permissions'), blank=True,
                                               help_text=_('Specific permissions for this customer.'),
@@ -82,7 +65,7 @@ class Customer(AbstractBaseUser):
         list_template_name = 'customer/adminlte-customer-list.html'
         # form_template_name = 'customer/customer_form.html'
         list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
-        list_form_fields = ('name', 'email', 'mobile', 'primary_address')
+        list_form_fields = ('name', 'email', 'mobile', 'primary_address', 'groups', 'tags')
         filter_fields = ('name', 'email', 'mobile')
         search_fields = ('name', 'email', 'mobile')
 
@@ -93,6 +76,7 @@ class Customer(AbstractBaseUser):
 
     def __str__(self):
         return '%s' % self.name
+
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
