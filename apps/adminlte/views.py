@@ -22,6 +22,41 @@ def get_system_config_value(key_name):
         return u'未找到 %s 系统配置项' % key_name
 
 
+class CommonContextMixin(object):
+    model = None
+
+    @property
+    def app_name(self):
+        return self.model._meta.app_label
+
+    @property
+    def model_name(self):
+        return self.model._meta.model_name
+
+    def get_context_data(self, **kwargs):
+        context = super(CommonContextMixin, self).get_context_data(**kwargs)
+
+        if not self.model:
+            return context
+
+        default_dashboard_title = constants.DEFAULT_DASHBOARD_TITLE
+        if hasattr(self, 'model'):
+            page_title = self.model._meta.verbose_name
+        else:
+            page_title = default_dashboard_title
+
+        common_dict = {
+            'default_dashboard_title': default_dashboard_title,
+            'page_title': page_title,
+            'page_model': getattr(self, 'model', ''),
+            'page_app_name': self.app_name,
+            'page_model_name': self.model_name,
+            'page_system_name': get_system_config_value('system_name'),
+            'page_system_subhead': get_system_config_value('system_subhead')
+        }
+        context.update(common_dict)
+        return context
+
 class CommonPageViewMixin(object):
     model = None
 
