@@ -1,6 +1,7 @@
 import os
 import sys
 import types
+import inspect
 from django.db import models
 from optparse import make_option
 from django.core.management.base import BaseCommand
@@ -56,55 +57,73 @@ class Command(BaseCommand):
     Example: ./manage.py code apps.product.models.Product
     '''
     module = None
-    model = None
+    model_list = []
 
 
     def handle(self, *args, **options):
         if len(args) < 1:
             self.stderr.write(self.help)
             return
-        mod_str = args[0]
+        self.raw_input = args[0]
+        self.module_str = args[0] if args[0].find('.models') > 0 else args[0] + '.models'
 
         try:
-            self.import_mod_cls(mod_str)
+            self.import_mod_cls(self.module_str)
             self.get_module_folder()
         except AttributeError as e:
             self.stdout.write("Error: %s" % e)
             return
 
-        self.stdout.write(self.module.__file__)
-        self.stdout.write('%s.%s' % (self.model.__module__, self.model.__name__))
+        self.stdout.write('\n############################## info ##############################')
+        self.stdout.write(self.module_str)
+        self.stdout.write(str(self.module))
+        self.stdout.write(self.app_name)
+        # self.stdout.write('%s.%s' % (self.model.__module__, self.model.__name__))
         self.stdout.write(self.module_file)
         self.stdout.write(self.module_path)
 
-        self.stdout.write(self.get_views_content())
+        self.stdout.write('\n############################## models ##############################')
+        for md in self.model_list:
+            self.stdout.write(md.__module__ + '.' + md.__name__)
+        return
+        self.stdout.write('\n############################## views.py ##############################')
+        self.stdout.write(self.get_urls_content())
+        self.stdout.write('\n############################## views.py ##############################')
         self.stdout.write(self.get_views_content())
 
-
-    def import_mod_cls(self, name):
+    def import_from_str(self, name):
         components = name.split('.')
         mod = __import__(components[0])
         for comp in components[1:]:
             mod = getattr(mod, comp)
+        return mod
 
-        if issubclass(mod, models.Model):
-            self.model = mod
-            self.module = sys.modules[mod.__module__]
-        elif isinstance(mod, types.ModuleType):
+    def import_mod_cls(self, name):
+        mod = self.import_from_str(name)
+        if isinstance(mod, types.ModuleType):
             self.module = mod
-            raise AttributeError('%s is not a model' % name)
+            self.import_model(mod)
+        elif issubclass(mod, models.Model):
+            self.model_list.append(mod)
+            self.module = sys.modules[mod.__module__]
         else:
-            raise AttributeError('%s is not a model' % name)
-        self.module_str = name
-        self.app_name = self.model._meta.app_label
+            raise AttributeError('%s is not a model or module' % name)
+
+        if not len(self.model_list):
+            raise AttributeError('Found no model in %s' % name)
+
+        self.app_name = self.model_list[0]._meta.app_label
+
+    def import_model(self, mod):
+        for name, obj in inspect.getmembers(mod, inspect.isclass):
+            if obj.__module__.startswith(self.module_str):
+                if issubclass(obj, models.Model):
+                    self.model_list.append(obj)
+
 
     def get_module_folder(self):
-        if self.model:
-            self.module_file = sys.modules[self.model.__module__].__file__[:-1]
-            self.module_path = os.path.dirname(sys.modules[self.model.__module__].__file__)
-        elif self.module:
-            self.module_file = self.module.__file__[:-1]
-            self.module_path = os.path.dirname(self.module.__file__)
+        self.module_file = self.module.__file__[:-1]
+        self.module_path = os.path.dirname(self.module.__file__)
 
     @property
     def get_views_file(self):
@@ -126,7 +145,7 @@ class Command(BaseCommand):
         with open(file_path, 'w+') as f:
             f.write('content')
 
-    def render_content(self,content):
+    def render_content(self, content):
         return content.replace('<% module_str %>', self.module_str). \
             replace('<% MODEL_NAME %>', self.model.__name__). \
             replace('<% app_name %>', self.app_name). \
@@ -137,7 +156,4 @@ class Command(BaseCommand):
 
     def get_urls_content(self):
         return self.render_content(URLS_MODULE_TEMPLATE)
-
-
-
 
