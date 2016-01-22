@@ -53,20 +53,18 @@ class ContentTypeObjectView(GenericAPIView):
         self.get_model(self.kwargs)
 
         serialize_name = self.model.__name__ + 'Serializer'
-        serializer_module = sys.modules['apps.%s.serializers' % self.app_name]
+        serializer_module_name = 'apps.%s.serializers' % self.app_name
+        serializer_module = sys.modules[serializer_module_name]
         self.serializer_class = getattr(serializer_module, serialize_name)
         return self.serializer_class
 
     def get_queryset(self):
         self.get_model(self.kwargs)
 
-        serialize_name = self.model.__name__ + 'Serializer'
-        serializer_module = sys.modules['apps.%s.serializers' % self.app_name]
-
+        self.serializer_class = self.get_serializer_class()
         self.queryset = self.model.objects.all()
         self.filter_fields = getattr(self.model.Config, 'filter_fields', ())
         self.search_fields = getattr(self.model.Config, 'search_fields', ())
-        self.serializer_class = getattr(serializer_module, serialize_name)
 
         q = super(ContentTypeObjectView, self).get_queryset()
         if hasattr(self.model.Config, 'filter_queryset'):
