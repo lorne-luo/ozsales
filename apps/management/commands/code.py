@@ -69,11 +69,12 @@ class Command(BaseCommand):
         self.module_str = args[0] if args[0].find('.models') > 0 else args[0] + '.models'
 
         try:
-            self.import_mod_cls(self.module_str)
-            self.get_module_folder()
+            self.scan_models(self.module_str)
         except AttributeError as e:
             self.stdout.write("Error: %s" % e)
             return
+
+        self.get_model_context(self.model_list[0])
 
         self.stdout.write('\n############################## info ##############################')
         self.stdout.write(self.module_str)
@@ -81,7 +82,10 @@ class Command(BaseCommand):
         self.stdout.write(self.app_name)
         # self.stdout.write('%s.%s' % (self.model.__module__, self.model.__name__))
         self.stdout.write(self.module_file)
-        self.stdout.write(self.module_path)
+        self.stdout.write(self.module_folder)
+        self.stdout.write(self.js_folder)
+        self.stdout.write(self.templates_folder)
+        self.stdout.write(self.urls_file)
 
         self.stdout.write('\n############################## models ##############################')
         for md in self.model_list:
@@ -92,15 +96,15 @@ class Command(BaseCommand):
         self.stdout.write('\n############################## views.py ##############################')
         self.stdout.write(self.get_views_content())
 
-    def import_from_str(self, name):
+    def import_module(self, name):
         components = name.split('.')
         mod = __import__(components[0])
         for comp in components[1:]:
             mod = getattr(mod, comp)
         return mod
 
-    def import_mod_cls(self, name):
-        mod = self.import_from_str(name)
+    def scan_models(self, name):
+        mod = self.import_module(name)
         if isinstance(mod, types.ModuleType):
             self.module = mod
             self.import_model(mod)
@@ -114,29 +118,19 @@ class Command(BaseCommand):
             raise AttributeError('Found no model in %s' % name)
 
         self.app_name = self.model_list[0]._meta.app_label
+        self.module_file = self.module.__file__[:-1]
+        self.module_folder = os.path.dirname(self.module.__file__)
+        self.serializers_file = os.path.join(self.module_folder, 'serializers.py')
+        self.views_file = os.path.join(self.module_folder, 'views.py')
+        self.urls_file = os.path.join(self.module_folder, 'urls.py')
+        self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name)
+        self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name)
 
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
             if obj.__module__.startswith(self.module_str):
                 if issubclass(obj, models.Model):
                     self.model_list.append(obj)
-
-
-    def get_module_folder(self):
-        self.module_file = self.module.__file__[:-1]
-        self.module_path = os.path.dirname(self.module.__file__)
-
-    @property
-    def get_views_file(self):
-        return os.path.join(self.module_path, 'views.py')
-
-    @property
-    def get_urls_file(self):
-        return os.path.join(self.module_path, 'urls.py')
-
-    @property
-    def get_serializers_file(self):
-        return os.path.join(self.module_path, 'serializers.py')
 
     def create_file(self, file_path, content):
         with open(file_path, 'a') as f:
@@ -151,6 +145,14 @@ class Command(BaseCommand):
             replace('<% MODEL_NAME %>', self.model.__name__). \
             replace('<% app_name %>', self.app_name). \
             replace('<% model_name %>', self.model.__name__.lower())
+
+    def get_model_context(self,model):
+        fields_name=[mf.name for mf in model._meta.fields]
+        fields_title=[mf.verbose_name for mf in model._meta.fields]
+        import pdb;pdb.set_trace()
+
+        print fields_name
+        print fields_title
 
     def get_views_content(self):
         return self.render_content(VIEWS_MODULE_TEMPLATE)
