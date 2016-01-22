@@ -2,7 +2,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView
-from braces.views import MultiplePermissionsRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from apps.adminlte.views import CommonContextMixin
 
 from models import Product
@@ -42,11 +42,13 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = Product
     template_name_suffix = '_list'
+    template_name = 'product_list.html'
     permissions = {
         "all": ("product.view_product",)
     }
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
-        context['now'] = 'now'
+        context['table_titles'] = ['name_cn', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', '']
+        context['table_fields'] = ['name_cn', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context

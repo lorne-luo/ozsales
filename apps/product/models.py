@@ -20,6 +20,7 @@ class Country(models.Model):
     def __str__(self):
         return '[%s]' % self.short_name
 
+
 @python_2_unicode_compatible
 class Category(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
@@ -89,6 +90,21 @@ class Product(models.Model):
     class Meta:
         verbose_name_plural = _('Product')
         verbose_name = _('Product')
+
+    class Config:
+        list_template_name = 'customer/adminlte-customer-list.html'
+
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
+        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
+        filter_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
+        search_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
+
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Product.objects.all()
+            return queryset
+
 
     def __str__(self):
         spec = ''
