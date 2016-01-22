@@ -29,6 +29,7 @@ VIEWS_MODEL_TEMPLATE = '''
 
 URLS_MODULE_TEMPLATE = '''
 from django.conf.urls import patterns, url
+import serializers
 import views
 
 urlpatterns = patterns('',

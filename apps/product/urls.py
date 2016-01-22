@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, url
+import serializers
 
 import views
 
