@@ -5,6 +5,7 @@ from django.views.generic import ListView
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from apps.adminlte.views import CommonContextMixin
 
+from apps.api.views import CommonListCreateAPIView
 from models import Product
 from forms import ProductForm
 
@@ -52,3 +53,12 @@ class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, List
         context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
+class PublicListAPIView(CommonListCreateAPIView):
+    model=Product
+    permission_classes=(AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return Http404

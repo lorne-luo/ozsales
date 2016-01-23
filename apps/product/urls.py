@@ -13,4 +13,5 @@ urlpatterns = patterns('',
     # url(r'^product/(?P<pk>\d+)/$', login_required(views.ProductListView.as_view()), name="product-detail-view"),
     # url(r'^product/(?P<pk>\d+)/edit/$', login_required(views.ProductListView.as_view()), name="product-update-view"),
     # url(r'^product/delete/$', login_required(views.ProductListView.as_view()), name="product-delete-view"),
+    url(r'api/product/list/$', views.PublicListAPIView.as_view(), name='allowany-product-list'),
 )
