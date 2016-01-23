@@ -104,7 +104,7 @@
             {%endif%}
 
             {% if perms.product.add_product or perms.product.view_product %}
-            <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
+            <li class="treeview active {% ifstartswith '/common/product/' %}active{% endifstartswith %}">
                 <a href="javascript:void(0)">
                             <i class='fa fa-cloud'></i>
                             <b>Products</b>

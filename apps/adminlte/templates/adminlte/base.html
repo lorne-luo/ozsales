@@ -26,9 +26,14 @@
     <body class="{% block base_body_class %}skin-blue sidebar-mini{% endblock %}">
     {% block base_body_inner %}
         <div class="wrapper">
-            {% include "adminlte/includes/header.html" %}
 
+            {% block header %}
+            {% include "adminlte/includes/header.html" %}
+            {% endblock %}
+
+            {% block menu %}
             {% include "adminlte/includes/menu.html" %}
+            {% endblock %}
 
             <div class="content-wrapper">
                 {% block base_content_wrapper_inner %}
