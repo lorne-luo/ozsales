@@ -21,7 +21,7 @@ class ProductSerializer(serializers.ModelSerializer):
             return obj.get_edit_link()
         elif request.user.has_perm(view_perm_str):
             return obj.get_detail_link()
-        return obj.name
+        return obj.name_cn
 
     def get_pic_link(self, obj):
         if obj.pic:
