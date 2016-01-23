@@ -1,6 +1,6 @@
 var productListPageVue = new CommonListPageVue({
         data:{
-            url:''
+            url:Urls['allowany-product-list']()
         }
     }
 );
