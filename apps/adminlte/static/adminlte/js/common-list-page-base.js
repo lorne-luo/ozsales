@@ -4,6 +4,7 @@ var CommonListPageVue = Vue.extend({
     },
     data: function(){
         return {
+            url:undefined,
             create_url_tag:undefined,
             detail_url_tag:undefined,
             update_url_tag:undefined,
@@ -160,10 +161,8 @@ var CommonListPageVue = Vue.extend({
         },
         loadData: function (data) {
             var self = this;
-            var url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
-            if(arguments.length === 2){
-                url = arguments[1];
-            }
+            var url = self.url || $.AdminLTE.getApiUrl(self.appName, self.modelName);
+
             $.AdminLTE.apiGet(
                 url,
                 data,
