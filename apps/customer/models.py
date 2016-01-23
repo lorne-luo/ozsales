@@ -80,20 +80,17 @@ class Customer(AbstractBaseUser):
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
-        name = '[#%s]%s' % (self.id, self.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return u'<a href="%s">%s</a>' % (url, self.name)
 
     def get_edit_link(self):
         url = reverse('customer-update-view', args=[self.id])
-        name = '#%s %s' % (self.id, self.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return u'<a href="%s">%s</a>' % (url, self.name)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
         url = reverse('customer-detail-view', args=[self.id])
-        name = '#%s %s' % (self.id, self.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return u'<a href="%s">%s</a>' % (url, self.name)
 
     get_detail_link.short_description = 'Name'
 
