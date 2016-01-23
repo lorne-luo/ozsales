@@ -49,6 +49,6 @@ class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, List
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['name_cn', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', '']
-        context['table_fields'] = ['name_cn', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context

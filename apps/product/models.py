@@ -1,6 +1,7 @@
 import os
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from apps.store.models import Page
@@ -119,6 +120,18 @@ class Product(models.Model):
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
+
+    def get_edit_link(self):
+        url = reverse('product-edit', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+
+    get_edit_link.short_description = 'Name'
+
+    def get_detail_link(self):
+        url = reverse('product-edit', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+
+    get_detail_link.short_description = 'Name'
 
     def get_pic_link(self):
         if self.pic:
