@@ -1,10 +1,11 @@
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
+from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView
+from rest_framework.permissions import AllowAny
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from apps.adminlte.views import CommonContextMixin
-
 from apps.api.views import CommonListCreateAPIView
 from models import Product
 from forms import ProductForm
@@ -47,12 +48,18 @@ class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, List
     permissions = {
         "all": ("product.view_product",)
     }
+    def get_template_names(self):
+        if self.request.user.is_authenticated():
+            return super(ProductListView,self).get_template_names()
+        else:
+            return ['product/allowany_product_list.html']
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
         context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
+
 class PublicListAPIView(CommonListCreateAPIView):
     model=Product
     permission_classes=(AllowAny,)

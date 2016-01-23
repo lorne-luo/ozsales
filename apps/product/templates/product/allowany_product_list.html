@@ -1,0 +1,41 @@
+{% extends "product/product_list.html" %}
+{% load static %}
+{% load activelink %}
+
+{% block menu %}
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+                <a href="/member/home/">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{ default_dashboard_title }}</span>
+                </a>
+            </li>
+
+            <li class="treeview active">
+                <a href="javascript:void(0)">
+                            <i class='fa fa-cloud'></i>
+                            <b>Products</b>
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li>
+                            <a href="/product/product/create">
+                                    <i class="fa fa-circle-o"></i>
+                                    New Product
+                                </a>
+                            </li>
+                            <li>
+                            <a href="/product/product/list">
+                                    <i class="fa fa-circle-o"></i>
+                                    Product List
+                                </a>
+                            </li>
+                        </ul>
+            </li>
+        </ul>
+    </section>
+</aside>
+{% endblock %}
