@@ -41,16 +41,16 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class ProductListView(CommonContextMixin, ListView):  # MultiplePermissionsRequiredMixin
     model = Product
     template_name_suffix = '_list'
     template_name = 'product_list.html'
-    permissions = {
-        "all": ("product.view_product",)
-    }
+    # permissions = {
+    #     "all": ("product.view_product",)
+    # }
     def get_template_names(self):
         if self.request.user.is_authenticated():
-            return super(ProductListView,self).get_template_names()
+            return super(ProductListView, self).get_template_names()
         else:
             return ['product/allowany_product_list.html']
 
@@ -60,9 +60,10 @@ class ProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, List
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
 
+
 class PublicListAPIView(CommonListCreateAPIView):
-    model=Product
-    permission_classes=(AllowAny,)
+    model = Product
+    permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
