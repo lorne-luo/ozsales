@@ -149,7 +149,6 @@ class Command(BaseCommand):
     def get_model_context(self,model):
         fields_name=[mf.name for mf in model._meta.fields]
         fields_title=[mf.verbose_name for mf in model._meta.fields]
-        import pdb;pdb.set_trace()
 
         print fields_name
         print fields_title
