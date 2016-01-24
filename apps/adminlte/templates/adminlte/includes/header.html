@@ -16,8 +16,9 @@
 {#                {% include "adminlte/includes/header_sitemails.html" %}#}
 {#                {% include "adminlte/includes/header_notifications.html" %}#}
 {#                {% include "adminlte/includes/header_tasks.html" %}#}
-
+                {% if request.user.is_authenticated %}
                 {% include "adminlte/includes/header_account.html" %}
+                {% endif %}
 {#                <li>#}
 {#                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>#}
 {#                </li>#}
