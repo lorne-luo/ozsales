@@ -2,7 +2,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import Http404
 from django.http import HttpResponseRedirect
-from django.views.generic import ListView
+from django.views.generic import ListView, CreateView, UpdateView
 from rest_framework.permissions import AllowAny
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from apps.adminlte.views import CommonContextMixin
@@ -41,21 +41,36 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class ProductListView(CommonContextMixin, ListView):  # MultiplePermissionsRequiredMixin
+class ProductListView(CommonContextMixin, ListView):
     model = Product
-    template_name_suffix = '_list'
-    template_name = 'product_list.html'
+    # template_name_suffix = '_list'
+    # template_name = 'product_list.html'
     # permissions = {
-    #     "all": ("product.view_product",)
+    # "all": ("product.view_product",)
     # }
+
     def get_template_names(self):
-        if self.request.user.is_authenticated():
-            return super(ProductListView, self).get_template_names()
-        else:
+        if not self.request.user.is_authenticated():
             return ['product/allowany_product_list.html']
+        return super(ProductListView, self).get_template_names()
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        return context
+
+
+class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    model = Product
+    # template_name_suffix = '_create'
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("product.add_product",)
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductAddView, self).get_context_data(**kwargs)
         context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
@@ -70,3 +85,5 @@ class PublicListAPIView(CommonListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return Http404
+
+
