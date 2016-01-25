@@ -27,6 +27,6 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.pic:
             img = '%s' % obj.pic.url
         else:
-            img = '/media/no_image.gif'
+            img = '/static/img/no_image.jpg'
         return '<a href="%s" target="_blank"><img style="height:60px" src="%s"/></a>' % (img, img)
 
