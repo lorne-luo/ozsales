@@ -122,7 +122,7 @@ class Product(models.Model):
             return '%s%s' % (self.name_cn, spec)
 
     def get_edit_link(self):
-        url = reverse('product-edit', args=[self.id])
+        url = reverse('product-update-view', args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_edit_link.short_description = 'Name'

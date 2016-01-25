@@ -11,6 +11,6 @@ urlpatterns = patterns('',
     url(r'^product/list/$', views.ProductListView.as_view(), name='product-list-view'),
     url(r'^product/add/$', login_required(views.ProductListView.as_view()), name="product-add-view"),
     # url(r'^product/(?P<pk>\d+)/$', login_required(views.ProductListView.as_view()), name="product-detail-view"),
-    # url(r'^product/(?P<pk>\d+)/edit/$', login_required(views.ProductListView.as_view()), name="product-update-view"),
+    url(r'^product/(?P<pk>\d+)/edit/$', login_required(views.ProductUpdateView.as_view()), name="product-update-view"),
     # url(r'^product/delete/$', login_required(views.ProductListView.as_view()), name="product-delete-view"),
 )
