@@ -64,8 +64,14 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
               'safe_sell_price']
 
-    def get_context_data(self, **kwargs):
-        context = super(ProductUpdateView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
-        return context
+
+class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Product
+    # template_name_suffix = '_form'
+    template_name = 'adminlte/common_detail.html'
+    permissions = {
+        "all": ("product.view_product",)
+    }
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
+              'safe_sell_price']
+
