@@ -28,5 +28,5 @@ class ProductSerializer(serializers.ModelSerializer):
             img = '%s' % obj.pic.url
         else:
             img = '/static/img/no_image.jpg'
-        return '<a href="%s" target="_blank"><img style="height:60px" src="%s"/></a>' % (img, img)
+        return '<a href="%s" target="_blank"><img style="height:90px" src="%s"/></a>' % (img, img)
 
