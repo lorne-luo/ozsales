@@ -1,10 +1,10 @@
 var productListPageVue = new CommonListPageVue({
         data:{
-            url:''
+            url:'',
+            create_url_tag:'product-add',
+            detail_url_tag:'product-list-view',
+            update_url_tag:'product-edit',
+            delete_url_tag:'product-add'
         }
     }
 );
-productListPageVue.create_url_tag = 'product-add';
-productListPageVue.detail_url_tag = 'product-list-view';
-productListPageVue.update_url_tag = 'product-edit';
-productListPageVue.delete_url_tag = 'product-add';
