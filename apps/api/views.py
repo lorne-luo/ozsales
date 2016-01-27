@@ -5,6 +5,7 @@ from rest_framework import filters
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
+from django.http import Http404
 
 
 def get_app_model_name(kwargs):
@@ -37,10 +38,10 @@ class ContentTypeObjectView(GenericAPIView):
         else:
             raise ViewDoesNotExist('No model found.')
 
-    def get_model(self, kwargs):
+    def get_model(self):
         if not self.model:
-            app_name = kwargs.get('app_name').lower()
-            model_name = kwargs.get('model_name').lower()
+            app_name = self.kwargs.get('app_name').lower()
+            model_name = self.kwargs.get('model_name').lower()
             try:
                 model_content_type = ContentType.objects.get(app_label=app_name, model=model_name)
             except ObjectDoesNotExist:
@@ -50,7 +51,7 @@ class ContentTypeObjectView(GenericAPIView):
     def get_serializer_class(self):
         if getattr(self, 'serializer_class', None):
             return self.serializer_class
-        self.get_model(self.kwargs)
+        self.get_model()
 
         serialize_name = self.model.__name__ + 'Serializer'
         serializer_module_name = 'apps.%s.serializers' % self.app_name
@@ -59,7 +60,7 @@ class ContentTypeObjectView(GenericAPIView):
         return self.serializer_class
 
     def get_queryset(self):
-        self.get_model(self.kwargs)
+        self.get_model()
 
         self.serializer_class = self.get_serializer_class()
         self.queryset = self.model.objects.all()
