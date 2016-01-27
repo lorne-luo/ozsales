@@ -2,52 +2,14 @@ import os
 import sys
 import types
 import inspect
+import shutil
 from django.db import models
 from optparse import make_option
 from django.core.management.base import BaseCommand
-
-VIEWS_MODULE_TEMPLATE = '''
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
-from <% module_str %> import <% MODEL_NAME %>
-
-class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    model = <% MODEL_NAME %>
-    template_name_suffix = '_list'
-    permissions = {
-        "all": ("<% app_name %>.view_<% model_name %>",)
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>ListView, self).get_context_data(**kwargs)
-        return context
-
-'''
-
-VIEWS_MODEL_TEMPLATE = '''
-
-'''
-
-URLS_MODULE_TEMPLATE = '''
-from django.conf.urls import patterns, url
-import serializers
-import views
-
-urlpatterns = patterns('',
-    url(r'^<% app_name %>/<% model_name %>list/$', views.<% MODEL_NAME %>ListView.as_view(), name='<% model_name %>-list'),
-)
-'''
-
-URLS_MODEL_TEMPLATE = '''
-
-'''
-
-SERIALIZERS_MODULE_TEMPLATE = '''
-
-'''
-
-SERIALIZERS_MODEL_TEMPLATE = '''
-
-'''
+from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
+from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE
+from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
+from templates.templates import LIST_JS, LIST_TEMPLATES
 
 
 class Command(BaseCommand):
@@ -59,6 +21,8 @@ class Command(BaseCommand):
     '''
     module = None
     model_list = []
+    fields = []
+    titles = []
 
 
     def handle(self, *args, **options):
@@ -90,11 +54,14 @@ class Command(BaseCommand):
         self.stdout.write('\n############################## models ##############################')
         for md in self.model_list:
             self.stdout.write(md.__module__ + '.' + md.__name__)
-        return
-        self.stdout.write('\n############################## views.py ##############################')
-        self.stdout.write(self.get_urls_content())
-        self.stdout.write('\n############################## views.py ##############################')
-        self.stdout.write(self.get_views_content())
+
+        # self.stdout.write('\n############################## urls.py ##############################')
+        # self.stdout.write(self.get_urls_content())
+        # self.stdout.write('\n############################## views.py ##############################')
+        # self.stdout.write(self.get_views_content())
+        # self.stdout.write('\n############################## serializers.py ##############################')
+        # self.stdout.write(self.get_serializers_content())
+        self.run()
 
     def import_module(self, name):
         components = name.split('.')
@@ -126,36 +93,90 @@ class Command(BaseCommand):
         self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name)
         self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name)
 
+    def get_fields_and_titles(self, model):
+        return [mf.name for mf in model._meta.fields], [unicode(mf.verbose_name) for mf in model._meta.fields]
+
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
             if obj.__module__.startswith(self.module_str):
                 if issubclass(obj, models.Model):
                     self.model_list.append(obj)
 
+    def create_base_folder(self, path):
+        folder = os.path.dirname(path)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+
     def create_file(self, file_path, content):
-        with open(file_path, 'a') as f:
-            f.write('content')
+        with open(file_path, 'w+') as f:
+            f.write(content)
 
     def append_file(self, file_path, content):
         with open(file_path, 'w+') as f:
-            f.write('content')
+            f.write(content)
 
-    def render_content(self, content):
-        return content.replace('<% module_str %>', self.module_str). \
-            replace('<% MODEL_NAME %>', self.model.__name__). \
-            replace('<% app_name %>', self.app_name). \
-            replace('<% model_name %>', self.model.__name__.lower())
-
-    def get_model_context(self,model):
-        fields_name=[mf.name for mf in model._meta.fields]
-        fields_title=[mf.verbose_name for mf in model._meta.fields]
+    def get_model_context(self, model):
+        fields_name = [mf.name for mf in model._meta.fields]
+        fields_title = [unicode(mf.verbose_name) for mf in model._meta.fields]
 
         print fields_name
         print fields_title
 
-    def get_views_content(self):
-        return self.render_content(VIEWS_MODULE_TEMPLATE)
+    # ============= generate content ==============
+    def render_content(self, content, model):
+        fields, titles = self.get_fields_and_titles(model)
+        all_models = ', '.join([md.__name__ for md in self.model_list])
+
+        return content.replace('<% module_str %>', self.module_str). \
+            replace('<% app_name %>', self.app_name). \
+            replace('<% MODEL_NAME %>', model.__name__). \
+            replace('<% model_name %>', model.__name__.lower()). \
+            replace('<% fields %>', str(fields)). \
+            replace('<% titles %>', str(titles)). \
+            replace('<% ALL_MODELS %>', all_models)
 
     def get_urls_content(self):
-        return self.render_content(URLS_MODULE_TEMPLATE)
+        content = URLS_HEADER
+        for model in self.model_list:
+            content += self.render_content(URLS_MODEL_TEMPLATE, model)
+        self.stdout.write(content)
+        return content
+
+    def get_views_content(self):
+        content = self.render_content(VIEWS_HEADER, self.model_list[0])
+        for model in self.model_list:
+            content += self.render_content(VIEWS_MODEL_TEMPLATE, model)
+        self.stdout.write(content)
+        return content
+
+    def get_serializers_content(self):
+        content = SERIALIZERS_HEADER
+        for model in self.model_list:
+            content += self.render_content(SERIALIZERS_MODEL_TEMPLATE, model)
+        self.stdout.write(content)
+        return content
+
+    def run(self):
+        self.stdout.write('\n######### %s #########' % self.urls_file)
+        self.create_file(self.urls_file, self.get_urls_content())
+        self.stdout.write('\n######### %s #########' % self.views_file)
+        self.create_file(self.views_file, self.get_views_content())
+        self.stdout.write('\n######### %s #########' % self.serializers_file)
+        self.create_file(self.serializers_file, self.get_serializers_content())
+
+        for model in self.model_list:
+            list_js_file = '%s/static/js/%s/%s_list.js' % (self.module_folder, self.app_name, model.__name__.lower())
+            self.create_base_folder(list_js_file)
+            self.stdout.write('\n######### %s #########' % list_js_file)
+            content = self.render_content(LIST_JS, model)
+            self.stdout.write(content)
+            self.create_file(list_js_file, content)
+
+            list_template_file = '%s/templates/%s/%s_list.html' % (
+                self.module_folder, self.app_name, model.__name__.lower())
+            self.create_base_folder(list_template_file)
+            self.stdout.write('\n######### %s #########' % list_template_file)
+            content = self.render_content(LIST_TEMPLATES, model)
+            self.stdout.write(content)
+            self.create_file(list_template_file, content)
 
