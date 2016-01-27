@@ -32,9 +32,9 @@ def render_field_value(obj, a):
         else:
             if hasattr(value, 'field'):
                 if isinstance(value.field, ImageField) and value:
-                    value = "<img src='%s' />" % value.url
+                    value = "<img style=\"height:90px\" src='%s' />" % value.url
                 else:
-                    value = '<img src="%s" alt="求真相" />'
+                    value = '<img style=\"height:90px\" src="/static/img/no_image.jpg" alt="没有图片" />'
             elif hasattr(obj, 'get_%s_display' % a):
                 value = getattr(obj, 'get_%s_display' % a)()
             elif isinstance(value, datetime):

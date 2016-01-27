@@ -87,3 +87,24 @@ class PublicListAPIView(CommonListCreateAPIView):
         return Http404
 
 
+class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Product
+    # template_name_suffix = '_form'
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("product.change_product",)
+    }
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
+              'safe_sell_price']
+
+
+class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Product
+    # template_name_suffix = '_form'
+    template_name = 'adminlte/common_detail.html'
+    permissions = {
+        "all": ("product.view_product",)
+    }
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
+              'safe_sell_price']
+
