@@ -241,7 +241,8 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.AllowAny',
         #'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.DjangoObjectPermissions',
-        'utils.api.permission.ObjectPermissions',
+        # 'utils.api.permission.ObjectPermissions',
+        'utils.api.permission.CommonAPIPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

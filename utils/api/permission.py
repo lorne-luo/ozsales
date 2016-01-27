@@ -1,16 +1,16 @@
 import logging
 
-from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from django.db.models.fields.related import ForeignKey
 from django.contrib.auth import get_user_model
-from rest_framework import permissions
+from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
+from apps.product.models import Product, Country, Brand, Category
+from apps.customer.models import Customer, Address
+from apps.member.models import Seller
 
 log = logging.getLogger(__name__)
 
 
-class AdminOnlyPermissions(permissions.DjangoModelPermissions):
+class AdminOnlyPermissions(DjangoModelPermissions):
     def has_permission(self, request, view):
         if not request.user.is_authenticated():
             return False
@@ -20,7 +20,7 @@ class AdminOnlyPermissions(permissions.DjangoModelPermissions):
         return False
 
 
-class ModelPermissions(permissions.DjangoObjectPermissions):
+class ModelPermissions(DjangoObjectPermissions):
     """
      model level permission
     """
@@ -159,3 +159,30 @@ class ObjectPermissions(ModelPermissions):
         if request.user.has_perms(perms, obj):
             return True
         return False
+
+
+class CommonAPIPermissions(DjangoObjectPermissions):
+    perms_map = {
+        'GET': ['%(app_label)s.view_%(model_name)s'],
+        'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
+        'HEAD': ['%(app_label)s.view_%(model_name)s'],
+        'POST': ['%(app_label)s.add_%(model_name)s'],
+        'PUT': ['%(app_label)s.change_%(model_name)s'],
+        'PATCH': ['%(app_label)s.change_%(model_name)s'],
+        'DELETE': ['%(app_label)s.delete_%(model_name)s'],
+    }
+
+    def has_permission(self, request, view):
+        view.get_model()
+
+        if view.model not in [Seller, Product, Country, Brand, Category, Customer, Address]:
+            raise Http404
+
+        return super(CommonAPIPermissions, self).has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        # only check some model's object level permission
+        if view.model in []:
+            return super(CommonAPIPermissions, self).has_object_permission(request, view, obj)
+
+        return True

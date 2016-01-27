@@ -76,17 +76,6 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         return context
 
 
-class PublicListAPIView(CommonListCreateAPIView):
-    model = Product
-    permission_classes = (AllowAny,)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return Http404
-
-
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
     # template_name_suffix = '_form'
@@ -108,3 +97,14 @@ class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
               'safe_sell_price']
 
+
+class PublicListAPIView(CommonListCreateAPIView):
+    ''' Public API view for Product '''
+    model = Product
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return Http404
