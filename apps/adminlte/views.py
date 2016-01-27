@@ -2,7 +2,7 @@
 
 import types
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ImproperlyConfigured
+from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
@@ -74,10 +74,13 @@ class CommonPageViewMixin(object):
         else:
             raise ViewDoesNotExist('No model found.')
 
-    def get_model(self, kwargs):
+    def get_model(self):
+        if 'app_name' not in self.kwargs or 'model_name' not in self.kwargs:
+            raise SuspiciousOperation('CommonView cant get app_name and model_name.')
+
         if not self.model:
-            app_name = kwargs.get('app_name').lower()
-            model_name = kwargs.get('model_name').lower()
+            app_name = self.kwargs.get('app_name').lower()
+            model_name = self.kwargs.get('model_name').lower()
             try:
                 model_content_type = ContentType.objects.get(app_label=app_name, model=model_name)
             except ObjectDoesNotExist:
@@ -119,7 +122,7 @@ class CommonListPageView(CommonPageViewMixin, ListView):
     template_name = 'adminlte/common_list.html'
 
     def get(self, request, *args, **kwargs):
-        self.get_model(kwargs)
+        self.get_model()
         if hasattr(self.model.Config, 'list_template_name'):
             self.template_name = self.model.Config.list_template_name
         return super(CommonListPageView, self).get(request, *args, **kwargs)
@@ -158,7 +161,7 @@ class CommonFormPageMixin(CommonPageViewMixin):
     template_name = 'adminlte/common_form.html'
 
     def set_form_page_attributes(self, *args, **kwargs):
-        self.get_model(kwargs)
+        self.get_model()
         self.fields = self.model.Config.list_form_fields
         self.success_url = reverse(
             'adminlte:common_list_page',
@@ -192,7 +195,7 @@ class CommonDetailPageView(CommonPageViewMixin, DetailView):
     template_name = 'adminlte/common_detail.html'
 
     def get(self, request, *args, **kwargs):
-        self.get_model(kwargs)
+        self.get_model()
         if hasattr(self.model.Config, 'detail_template_name'):
             self.template_name = self.model.Config.list_template_name
         return super(CommonDetailPageView, self).get(request, *args, **kwargs)
