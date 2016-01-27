@@ -6,6 +6,7 @@ from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermi
 from apps.product.models import Product, Country, Brand, Category
 from apps.customer.models import Customer, Address
 from apps.member.models import Seller
+from apps.store.models import Store, Page
 
 log = logging.getLogger(__name__)
 
@@ -175,7 +176,7 @@ class CommonAPIPermissions(DjangoObjectPermissions):
     def has_permission(self, request, view):
         view.get_model()
 
-        if view.model not in [Seller, Product, Country, Brand, Category, Customer, Address]:
+        if view.model not in [Seller, Product, Country, Brand, Category, Customer, Address, Store, Page]:
             raise Http404
 
         return super(CommonAPIPermissions, self).has_permission(request, view)
