@@ -162,7 +162,8 @@ class CommonFormPageMixin(CommonPageViewMixin):
 
     def set_form_page_attributes(self, *args, **kwargs):
         self.get_model()
-        self.fields = self.model.Config.list_form_fields
+        if not self.fields:
+            self.fields = self.model.Config.list_form_fields
         self.success_url = reverse(
             'adminlte:common_list_page',
             kwargs={
