@@ -5,6 +5,7 @@ import inspect
 import shutil
 from django.db import models
 from optparse import make_option
+from django.core import management
 from django.core.management.base import BaseCommand
 from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
 from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE
@@ -21,16 +22,15 @@ class Command(BaseCommand):
     '''
     module = None
     model_list = []
-    fields = []
-    titles = []
-
 
     def handle(self, *args, **options):
         if len(args) < 1:
             self.stderr.write(self.help)
             return
+
         self.raw_input = args[0]
-        self.module_str = args[0] if args[0].find('.models') > 0 else args[0] + '.models'
+        self.module_str = args[0].replace('.py', '').replace('/', '.').strip('.')
+        self.module_str = self.module_str if '.models' in self.module_str else self.module_str + '.models'
 
         try:
             self.scan_models(self.module_str)
@@ -38,10 +38,9 @@ class Command(BaseCommand):
             self.stdout.write("Error: %s" % e)
             return
 
-        self.get_model_context(self.model_list[0])
-
         self.stdout.write('\n############################## info ##############################')
         self.stdout.write(self.module_str)
+        self.stdout.write(self.app_str)
         self.stdout.write(str(self.module))
         self.stdout.write(self.app_name)
         # self.stdout.write('%s.%s' % (self.model.__module__, self.model.__name__))
@@ -55,12 +54,6 @@ class Command(BaseCommand):
         for md in self.model_list:
             self.stdout.write(md.__module__ + '.' + md.__name__)
 
-        # self.stdout.write('\n############################## urls.py ##############################')
-        # self.stdout.write(self.get_urls_content())
-        # self.stdout.write('\n############################## views.py ##############################')
-        # self.stdout.write(self.get_views_content())
-        # self.stdout.write('\n############################## serializers.py ##############################')
-        # self.stdout.write(self.get_serializers_content())
         self.run()
 
     def import_module(self, name):
@@ -85,6 +78,7 @@ class Command(BaseCommand):
             raise AttributeError('Found no model in %s' % name)
 
         self.app_name = self.model_list[0]._meta.app_label
+        self.app_str = self.module_str.replace('.models', '')
         self.module_file = self.module.__file__[:-1]
         self.module_folder = os.path.dirname(self.module.__file__)
         self.serializers_file = os.path.join(self.module_folder, 'serializers.py')
@@ -92,6 +86,7 @@ class Command(BaseCommand):
         self.urls_file = os.path.join(self.module_folder, 'urls.py')
         self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name)
         self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name)
+        self.all_models_str = ', '.join([md.__name__ for md in self.model_list])
 
     def get_fields_and_titles(self, model):
         return [mf.name for mf in model._meta.fields], [unicode(mf.verbose_name) for mf in model._meta.fields]
@@ -102,7 +97,7 @@ class Command(BaseCommand):
                 if issubclass(obj, models.Model):
                     self.model_list.append(obj)
 
-    def create_base_folder(self, path):
+    def make_folder(self, path):
         folder = os.path.dirname(path)
         if not os.path.exists(folder):
             os.makedirs(folder)
@@ -115,17 +110,11 @@ class Command(BaseCommand):
         with open(file_path, 'w+') as f:
             f.write(content)
 
-    def get_model_context(self, model):
-        fields_name = [mf.name for mf in model._meta.fields]
-        fields_title = [unicode(mf.verbose_name) for mf in model._meta.fields]
-
-        print fields_name
-        print fields_title
-
     # ============= generate content ==============
     def render_content(self, content, model):
         fields, titles = self.get_fields_and_titles(model)
-        all_models = ', '.join([md.__name__ for md in self.model_list])
+        fields.remove(u'id')
+        titles.remove(u'ID')
 
         return content.replace('<% module_str %>', self.module_str). \
             replace('<% app_name %>', self.app_name). \
@@ -133,7 +122,7 @@ class Command(BaseCommand):
             replace('<% model_name %>', model.__name__.lower()). \
             replace('<% fields %>', str(fields)). \
             replace('<% titles %>', str(titles)). \
-            replace('<% ALL_MODELS %>', all_models)
+            replace('<% ALL_MODELS %>', self.all_models_str)
 
     def get_urls_content(self):
         content = URLS_HEADER
@@ -143,14 +132,14 @@ class Command(BaseCommand):
         return content
 
     def get_views_content(self):
-        content = self.render_content(VIEWS_HEADER, self.model_list[0])
+        content = VIEWS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
         for model in self.model_list:
             content += self.render_content(VIEWS_MODEL_TEMPLATE, model)
         self.stdout.write(content)
         return content
 
     def get_serializers_content(self):
-        content = SERIALIZERS_HEADER
+        content = SERIALIZERS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
         for model in self.model_list:
             content += self.render_content(SERIALIZERS_MODEL_TEMPLATE, model)
         self.stdout.write(content)
@@ -166,7 +155,7 @@ class Command(BaseCommand):
 
         for model in self.model_list:
             list_js_file = '%s/static/js/%s/%s_list.js' % (self.module_folder, self.app_name, model.__name__.lower())
-            self.create_base_folder(list_js_file)
+            self.make_folder(list_js_file)
             self.stdout.write('\n######### %s #########' % list_js_file)
             content = self.render_content(LIST_JS, model)
             self.stdout.write(content)
@@ -174,9 +163,17 @@ class Command(BaseCommand):
 
             list_template_file = '%s/templates/%s/%s_list.html' % (
                 self.module_folder, self.app_name, model.__name__.lower())
-            self.create_base_folder(list_template_file)
+            self.make_folder(list_template_file)
             self.stdout.write('\n######### %s #########' % list_template_file)
             content = self.render_content(LIST_TEMPLATES, model)
             self.stdout.write(content)
             self.create_file(list_template_file, content)
 
+        management.call_command('collectstatic_js_reverse')
+        shutil.copyfile('collectstatic/django_js_reverse/js/reverse.js', 'static/django_js_reverse/js/reverse.js')
+        self.stdout.write('')
+        self.stdout.write('')
+        self.stderr.write('# Remember make below step:')
+        self.stdout.write('')
+        self.stderr.write(" * Add 'url(r'^%s/', include('%s.urls')),' into super urls.py" % (self.app_name, self.app_str))
+        self.stderr.write(" * Allow API permission for model [%s] in utils.api.permission" % self.all_models_str)

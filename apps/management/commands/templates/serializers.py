@@ -1,17 +1,17 @@
-SERIALIZERS_HEADER = '''
-from django.core.urlresolvers import reverse
+SERIALIZERS_HEADER = '''from django.core.urlresolvers import reverse
 from rest_framework import serializers
+from models import <% ALL_MODELS %>
+
 '''
 
 SERIALIZERS_MODEL_TEMPLATE = '''
-from models import <% MODEL_NAME %>
-
+# Serializer for <% model_name %>
 class <% MODEL_NAME %>Serializer(serializers.ModelSerializer):
     link = serializers.SerializerMethodField()
 
     class Meta:
         model = <% MODEL_NAME %>
-        fields = <% fields %>
+        fields = ['link'] + <% fields %> + ['id']
         read_only_fields = ['id']
 
     def get_link(self, obj):
@@ -26,4 +26,5 @@ class <% MODEL_NAME %>Serializer(serializers.ModelSerializer):
             url = reverse('<% model_name %>-detail', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Detail Link')
         return None
+
 '''
