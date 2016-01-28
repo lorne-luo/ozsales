@@ -4,11 +4,11 @@ var CommonListPageVue = Vue.extend({
     },
     data: function(){
         return {
-            url:undefined,
+            list_api_tag:undefined,
             create_url_tag:undefined,
             detail_url_tag:undefined,
             update_url_tag:undefined,
-            delete_url_tag:undefined,
+            delete_api_tag:undefined,
             list_url_tag:undefined,
             items: [],
             userName: $("#adminlte_page_user_name").val(),
@@ -90,8 +90,8 @@ var CommonListPageVue = Vue.extend({
         remove: function (ids) {
             var self = this;
             var delUrl;
-            if (this.delete_url_tag)
-                delUrl = Urls[this.delete_url_tag]();
+            if (this.delete_api_tag)
+                delUrl = Urls[this.delete_api_tag]();
             else
                 delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
             swal({
@@ -161,7 +161,11 @@ var CommonListPageVue = Vue.extend({
         },
         loadData: function (data) {
             var self = this;
-            var url = self.url || $.AdminLTE.getApiUrl(self.appName, self.modelName);
+            var url;
+            if (self.list_api_tag)
+                url = Urls[self.list_api_tag]();
+            else
+                url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
             $.AdminLTE.apiGet(
                 url,

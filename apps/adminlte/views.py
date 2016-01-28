@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from rest_framework.generics import GenericAPIView
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
@@ -232,3 +233,14 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
         pk = self.request.POST.get('pk')
         pk = pk.split(',')
         return queryset.filter(pk__in=pk)
+
+
+class CommonDeleteView(GenericAPIView):
+
+    def post(self, request):
+        pk = self.request.POST.get('pk')
+        pk = pk.split(',')
+        objects = self.queryset.filter(pk__in=pk)
+        for obj in objects:
+            obj.delete()
+        return JsonResponse({'result': True}, status=200)
