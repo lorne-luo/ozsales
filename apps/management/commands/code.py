@@ -18,7 +18,14 @@ class Command(BaseCommand):
 
     Usage: ./manage.py code <module_name>
 
-    Example: ./manage.py code apps.product.models.Product
+    Example:
+
+        ./manage.py code apps.product
+
+        ./manage.py code apps.product.models.Product
+
+        ./manage.py code apps/product/
+
     '''
     module = None
     model_list = []
