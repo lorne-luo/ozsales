@@ -16,6 +16,7 @@ urlpatterns += patterns('',
     url(r'^<% app_name %>/<% model_name %>/list/$', login_required(views.<% MODEL_NAME %>ListView.as_view()), name='<% model_name %>-list'),
     url(r'^<% app_name %>/<% model_name %>/(?P<pk>\d+)/$', login_required(views.<% MODEL_NAME %>DetailView.as_view()), name="<% model_name %>-detail"),
     url(r'^<% app_name %>/<% model_name %>/(?P<pk>\d+)/edit/$', login_required(views.<% MODEL_NAME %>UpdateView.as_view()), name="<% model_name %>-update"),
+    url(r'^<% app_name %>/<% model_name %>/delete/$', views.<% MODEL_NAME %>DeleteView.as_view(), name='<% model_name %>-delete'),
 )
 
 # reverse('api-<% model_name %>-list'),reverse('api-<% model_name %>-detail', kwargs={'pk': 1})

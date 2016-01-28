@@ -4,7 +4,7 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, permissions
-from apps.adminlte.views import CommonContextMixin
+from apps.adminlte.views import CommonContextMixin, CommonDeleteView
 from models import <% ALL_MODELS %>
 import serializers
 
@@ -75,4 +75,8 @@ class <% MODEL_NAME %>ViewSet(PaginateByMaxMixin, ModelViewSet):
     queryset = <% MODEL_NAME %>.objects.all()
     filter_fields = <% fields %>
     search_fields = <% fields %>
+
+
+class <% MODEL_NAME %>DeleteView(CommonDeleteView):
+    queryset = <% MODEL_NAME %>.objects.all()
 '''
