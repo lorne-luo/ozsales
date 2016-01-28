@@ -8,7 +8,7 @@ from optparse import make_option
 from django.core import management
 from django.core.management.base import BaseCommand
 from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
-from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE
+from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
 from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
 from templates.templates import LIST_JS, LIST_TEMPLATES
 
@@ -84,8 +84,8 @@ class Command(BaseCommand):
         self.serializers_file = os.path.join(self.module_folder, 'serializers.py')
         self.views_file = os.path.join(self.module_folder, 'views.py')
         self.urls_file = os.path.join(self.module_folder, 'urls.py')
-        self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name)
-        self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name)
+        self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name, '%s_list.js')
+        self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name, '%s_list.html')
         self.all_models_str = ', '.join([md.__name__ for md in self.model_list])
 
     def get_fields_and_titles(self, model):
@@ -128,6 +128,7 @@ class Command(BaseCommand):
         content = URLS_HEADER
         for model in self.model_list:
             content += self.render_content(URLS_MODEL_TEMPLATE, model)
+        content += URLS_FOOTER
         self.stdout.write(content)
         return content
 
@@ -154,15 +155,14 @@ class Command(BaseCommand):
         self.create_file(self.serializers_file, self.get_serializers_content())
 
         for model in self.model_list:
-            list_js_file = '%s/static/js/%s/%s_list.js' % (self.module_folder, self.app_name, model.__name__.lower())
+            list_js_file = self.js_folder % model.__name__.lower()
             self.make_folder(list_js_file)
             self.stdout.write('\n######### %s #########' % list_js_file)
             content = self.render_content(LIST_JS, model)
             self.stdout.write(content)
             self.create_file(list_js_file, content)
 
-            list_template_file = '%s/templates/%s/%s_list.html' % (
-                self.module_folder, self.app_name, model.__name__.lower())
+            list_template_file = self.templates_folder % model.__name__.lower()
             self.make_folder(list_template_file)
             self.stdout.write('\n######### %s #########' % list_template_file)
             content = self.render_content(LIST_TEMPLATES, model)
@@ -177,3 +177,4 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write(" * Add 'url(r'^%s/', include('%s.urls')),' into super urls.py" % (self.app_name, self.app_str))
         self.stderr.write(" * Allow API permission for model [%s] in utils.api.permission" % self.all_models_str)
+        self.stdout.write('')

@@ -10,7 +10,7 @@ LIST_TEMPLATES = '''
 LIST_JS = '''
 var <% model_name %>ListPageVue = new CommonListPageVue({
         data: {
-            url: undefined,
+            url: Urls['api-<% model_name %>-list'](),
             create_url_tag: '<% model_name %>-add',
             detail_url_tag: '<% model_name %>-detail',
             update_url_tag: '<% model_name %>-update',
