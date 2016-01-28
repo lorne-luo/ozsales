@@ -52,6 +52,9 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
     }
     fields = <% fields %>
 
+    def get_success_url(self):
+        return reverse('<% model_name %>-list')
+
 
 class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = <% MODEL_NAME %>
