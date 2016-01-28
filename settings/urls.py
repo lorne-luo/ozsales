@@ -17,7 +17,7 @@ apps_urlpatterns = patterns('',
     url(r'^order/', include('apps.order.urls')),
     url(r'^product/', include('apps.product.urls')),
     url(r'^customer/', include('apps.customer.urls')),
-    url(r'^store/', include('apps.store.urls')),
+    url(r'^', include('apps.store.urls')),
 )
 # Member frontend
 
