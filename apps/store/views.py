@@ -4,7 +4,7 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, permissions
-from apps.adminlte.views import CommonContextMixin
+from apps.adminlte.views import CommonContextMixin, CommonDeleteView
 from models import Page, Store
 import serializers
 
@@ -74,6 +74,10 @@ class PageViewSet(PaginateByMaxMixin, ModelViewSet):
     filter_fields = ['title', 'url', 'store', 'price', 'original_price']
     search_fields = ['title', 'url', 'store', 'price', 'original_price']
 
+
+class PageDeleteView(CommonDeleteView):
+    queryset = Page.objects.all()
+
 # views for Store
 
 class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -138,3 +142,7 @@ class StoreViewSet(PaginateByMaxMixin, ModelViewSet):
     queryset = Store.objects.all()
     filter_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
     search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
+
+
+class StoreDeleteView(CommonDeleteView):
+    queryset = Store.objects.all()

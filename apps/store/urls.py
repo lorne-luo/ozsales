@@ -14,6 +14,7 @@ urlpatterns += patterns('',
     url(r'^store/page/list/$', login_required(views.PageListView.as_view()), name='page-list'),
     url(r'^store/page/(?P<pk>\d+)/$', login_required(views.PageDetailView.as_view()), name="page-detail"),
     url(r'^store/page/(?P<pk>\d+)/edit/$', login_required(views.PageUpdateView.as_view()), name="page-update"),
+    url(r'^store/page/delete/$', views.PageDeleteView.as_view(), name='page-delete'),
 )
 
 # reverse('api-page-list'),reverse('api-page-detail', kwargs={'pk': 1})
@@ -26,6 +27,7 @@ urlpatterns += patterns('',
     url(r'^store/store/list/$', login_required(views.StoreListView.as_view()), name='store-list'),
     url(r'^store/store/(?P<pk>\d+)/$', login_required(views.StoreDetailView.as_view()), name="store-detail"),
     url(r'^store/store/(?P<pk>\d+)/edit/$', login_required(views.StoreUpdateView.as_view()), name="store-update"),
+    url(r'^store/store/delete/$', views.StoreDeleteView.as_view(), name='store-delete'),
 )
 
 # reverse('api-store-list'),reverse('api-store-detail', kwargs={'pk': 1})
