@@ -29,32 +29,23 @@ class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMi
 
 class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = <% MODEL_NAME %>
-    # template_name_suffix = '_create'
+    form_class = forms.<% MODEL_NAME %>AddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("<% model_name %>.add_<% model_name %>",)
     }
-    success_url = '/<% app_name %>/<% model_name %>/list/'
 
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>AddView, self).get_context_data(**kwargs)
-        context.update({'form': forms.<% MODEL_NAME %>AddForm()})
-        return context
+    def get_success_url(self):
+        return reverse('<% model_name %>-list')
 
 
 class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = <% MODEL_NAME %>
-    # template_name_suffix = '_form'
+    form_class = forms.<% MODEL_NAME %>UpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("<% model_name %>.change_<% model_name %>",)
     }
-    fields = <% fields %>
-
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>UpdateView, self).get_context_data(**kwargs)
-        context.update({'form': forms.<% MODEL_NAME %>UpdateForm()})
-        return context
 
     def get_success_url(self):
         return reverse('<% model_name %>-list')
@@ -62,17 +53,11 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
 
 class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = <% MODEL_NAME %>
-    # template_name_suffix = '_form'
+    form_class = forms.<% MODEL_NAME %>DetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
         "all": ("<% model_name %>.view_<% model_name %>",)
     }
-    fields = <% fields %>
-
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>DetailView, self).get_context_data(**kwargs)
-        context.update({'form': forms.<% MODEL_NAME %>DetailForm()})
-        return context
 
 
 # api views for <% MODEL_NAME %>
