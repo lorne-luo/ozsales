@@ -1,10 +1,9 @@
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters, permissions
-from apps.adminlte.views import CommonContextMixin, CommonDeleteView
+from rest_framework import permissions
+from apps.adminlte.views import CommonContextMixin, CommonDeleteView, CommonViewSet
 from models import Page, Store
 import serializers
 import forms
@@ -76,14 +75,10 @@ class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
 
 # api views for Page
 
-class PageViewSet(PaginateByMaxMixin, ModelViewSet):
-    filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
-                       filters.OrderingFilter)
-    max_paginate_by = 200
+class PageViewSet(CommonViewSet):
+    queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    queryset = Page.objects.all()
     filter_fields = ['title', 'url', 'store', 'price', 'original_price']
     search_fields = ['title', 'url', 'store', 'price', 'original_price']
 
@@ -159,14 +154,10 @@ class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
 # api views for Store
 
-class StoreViewSet(PaginateByMaxMixin, ModelViewSet):
-    filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
-                       filters.OrderingFilter)
-    max_paginate_by = 200
+class StoreViewSet(CommonViewSet):
+    queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    queryset = Store.objects.all()
     filter_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
     search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
 
