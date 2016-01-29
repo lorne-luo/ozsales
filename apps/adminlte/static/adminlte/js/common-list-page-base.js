@@ -95,29 +95,28 @@ var CommonListPageVue = Vue.extend({
             else
                 delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
             swal({
-                title: "确定要删除吗?",
-                text: "您确定要删除所选数据吗?",
-                type: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                closeOnConfirm: false,
-                showLoaderOnConfirm: true
-            }, function () {
-                $.AdminLTE.ajaxPost(
-                    delUrl,
-                    {'pk': ids.toString()},
-                    function (resp) {
-                        swal({
-                            title: "删除成功!",
-                            type: "success"
-                        }, function () {
+                    title: "确定要删除吗?",
+                    text: "您确定要删除所选数据吗?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.AdminLTE.ajaxPost(
+                        delUrl,
+                        {'pk': ids.toString()},
+                        function (resp) {
                             self.loadData({});
-                        });
-                    }
-                );
-            });
+                            swal({
+                                title: "删除成功!",
+                                type: "success"
+                            });
+                        }
+                    );
+                });
         },
         removeSelected: function () {
             var ids = [],
