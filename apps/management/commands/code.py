@@ -7,8 +7,10 @@ from django.db import models
 from optparse import make_option
 from django.core import management
 from django.core.management.base import BaseCommand
-from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
+
 from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
+from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
+from templates.forms import FORMS_HEADER, FORMS_MODEL_TEMPLATE
 from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
 from templates.templates import LIST_JS, LIST_TEMPLATES
 
@@ -91,12 +93,24 @@ class Command(BaseCommand):
         self.serializers_file = os.path.join(self.module_folder, 'serializers.py')
         self.views_file = os.path.join(self.module_folder, 'views.py')
         self.urls_file = os.path.join(self.module_folder, 'urls.py')
+        self.forms_file = os.path.join(self.module_folder, 'forms.py')
         self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name, '%s_list.js')
         self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name, '%s_list.html')
         self.all_models_str = ', '.join([md.__name__ for md in self.model_list])
 
     def get_fields_and_titles(self, model):
-        return [mf.name for mf in model._meta.fields], [unicode(mf.verbose_name) for mf in model._meta.fields]
+        titles = []
+        fields = []
+        for mf in model._meta.fields:
+            if mf.name == 'id':
+                continue
+            fields.append(mf.name)
+            title = unicode(mf.verbose_name)
+            if title and title[0].islower():
+                title = title.title()
+            titles.append(title)
+
+        return fields, titles
 
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
@@ -120,8 +134,6 @@ class Command(BaseCommand):
     # ============= generate content ==============
     def render_content(self, content, model):
         fields, titles = self.get_fields_and_titles(model)
-        fields.remove(u'id')
-        titles.remove(u'ID')
 
         return content.replace('<% module_str %>', self.module_str). \
             replace('<% app_name %>', self.app_name). \
@@ -146,6 +158,13 @@ class Command(BaseCommand):
         self.stdout.write(content)
         return content
 
+    def get_forms_content(self):
+        content = FORMS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
+        for model in self.model_list:
+            content += self.render_content(FORMS_MODEL_TEMPLATE, model)
+        self.stdout.write(content)
+        return content
+
     def get_serializers_content(self):
         content = SERIALIZERS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
         for model in self.model_list:
@@ -156,6 +175,8 @@ class Command(BaseCommand):
     def run(self):
         self.stdout.write('\n######### %s #########' % self.urls_file)
         self.create_file(self.urls_file, self.get_urls_content())
+        self.stdout.write('\n######### %s #########' % self.forms_file)
+        self.create_file(self.forms_file, self.get_forms_content())
         self.stdout.write('\n######### %s #########' % self.views_file)
         self.create_file(self.views_file, self.get_views_content())
         self.stdout.write('\n######### %s #########' % self.serializers_file)
@@ -182,6 +203,7 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(" * Add 'url(r'^%s/', include('%s.urls')),' into super urls.py" % (self.app_name, self.app_str))
+        self.stderr.write(
+            " * Add 'url(r'^%s/', include('%s.urls')),' into super urls.py" % (self.app_name, self.app_str))
         self.stderr.write(" * Allow API permission for model [%s] in utils.api.permission" % self.all_models_str)
         self.stdout.write('')

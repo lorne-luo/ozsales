@@ -7,6 +7,7 @@ from rest_framework import filters, permissions
 from apps.adminlte.views import CommonContextMixin, CommonDeleteView
 from models import <% ALL_MODELS %>
 import serializers
+import forms
 
 '''
 
@@ -38,8 +39,7 @@ class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMix
 
     def get_context_data(self, **kwargs):
         context = super(<% MODEL_NAME %>AddView, self).get_context_data(**kwargs)
-        context['table_titles'] = <% titles %>
-        context['table_fields'] = <% fields %>
+        context.update({'form': forms.<% MODEL_NAME %>AddForm()})
         return context
 
 
@@ -51,6 +51,11 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
         "all": ("<% model_name %>.change_<% model_name %>",)
     }
     fields = <% fields %>
+
+    def get_context_data(self, **kwargs):
+        context = super(<% MODEL_NAME %>UpdateView, self).get_context_data(**kwargs)
+        context.update({'form': forms.<% MODEL_NAME %>UpdateForm()})
+        return context
 
     def get_success_url(self):
         return reverse('<% model_name %>-list')
@@ -64,6 +69,11 @@ class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContext
         "all": ("<% model_name %>.view_<% model_name %>",)
     }
     fields = <% fields %>
+
+    def get_context_data(self, **kwargs):
+        context = super(<% MODEL_NAME %>DetailView, self).get_context_data(**kwargs)
+        context.update({'form': forms.<% MODEL_NAME %>DetailForm()})
+        return context
 
 
 # api views for <% MODEL_NAME %>
@@ -82,4 +92,6 @@ class <% MODEL_NAME %>ViewSet(PaginateByMaxMixin, ModelViewSet):
 
 class <% MODEL_NAME %>DeleteView(CommonDeleteView):
     queryset = <% MODEL_NAME %>.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
+
 '''
