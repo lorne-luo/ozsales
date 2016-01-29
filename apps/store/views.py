@@ -7,6 +7,7 @@ from rest_framework import filters, permissions
 from apps.adminlte.views import CommonContextMixin, CommonDeleteView
 from models import Page, Store
 import serializers
+import forms
 
 
 # views for Page
@@ -20,7 +21,7 @@ class PageListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
 
     def get_context_data(self, **kwargs):
         context = super(PageListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'name', u'url', u'Store', u'price', u'original price'] + ['']
+        context['table_titles'] = ['Link'] + [u'Name', u'Url', u'Store', u'Price', u'Original Price'] + ['']
         context['table_fields'] = ['link'] + ['title', 'url', 'store', 'price', 'original_price'] + ['id']
         return context
 
@@ -36,8 +37,7 @@ class PageAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateVi
 
     def get_context_data(self, **kwargs):
         context = super(PageAddView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'name', u'url', u'Store', u'price', u'original price']
-        context['table_fields'] = ['title', 'url', 'store', 'price', 'original_price']
+        context.update({'form': forms.PageAddForm()})
         return context
 
 
@@ -50,6 +50,14 @@ class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
     }
     fields = ['title', 'url', 'store', 'price', 'original_price']
 
+    def get_context_data(self, **kwargs):
+        context = super(PageUpdateView, self).get_context_data(**kwargs)
+        context.update({'form': forms.PageUpdateForm()})
+        return context
+
+    def get_success_url(self):
+        return reverse('page-list')
+
 
 class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Page
@@ -59,6 +67,11 @@ class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
         "all": ("page.view_page",)
     }
     fields = ['title', 'url', 'store', 'price', 'original_price']
+
+    def get_context_data(self, **kwargs):
+        context = super(PageDetailView, self).get_context_data(**kwargs)
+        context.update({'form': forms.PageDetailForm()})
+        return context
 
 
 # api views for Page
@@ -77,6 +90,8 @@ class PageViewSet(PaginateByMaxMixin, ModelViewSet):
 
 class PageDeleteView(CommonDeleteView):
     queryset = Page.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
+
 
 # views for Store
 
@@ -89,7 +104,7 @@ class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 
     def get_context_data(self, **kwargs):
         context = super(StoreListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'name', u'short name', u'address', u'domain', u'Search URL', u'Shipping Rate'] + ['']
+        context['table_titles'] = ['Link'] + [u'Name', u'Short Name', u'Address', u'Domain', u'Search URL', u'Shipping Rate'] + ['']
         context['table_fields'] = ['link'] + ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate'] + ['id']
         return context
 
@@ -105,8 +120,7 @@ class StoreAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
 
     def get_context_data(self, **kwargs):
         context = super(StoreAddView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'name', u'short name', u'address', u'domain', u'Search URL', u'Shipping Rate']
-        context['table_fields'] = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
+        context.update({'form': forms.StoreAddForm()})
         return context
 
 
@@ -119,6 +133,14 @@ class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     }
     fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
 
+    def get_context_data(self, **kwargs):
+        context = super(StoreUpdateView, self).get_context_data(**kwargs)
+        context.update({'form': forms.StoreUpdateForm()})
+        return context
+
+    def get_success_url(self):
+        return reverse('store-list')
+
 
 class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Store
@@ -128,6 +150,11 @@ class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         "all": ("store.view_store",)
     }
     fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
+
+    def get_context_data(self, **kwargs):
+        context = super(StoreDetailView, self).get_context_data(**kwargs)
+        context.update({'form': forms.StoreDetailForm()})
+        return context
 
 
 # api views for Store
@@ -146,3 +173,5 @@ class StoreViewSet(PaginateByMaxMixin, ModelViewSet):
 
 class StoreDeleteView(CommonDeleteView):
     queryset = Store.objects.all()
+    permission_classes = [permissions.DjangoModelPermissions]
+
