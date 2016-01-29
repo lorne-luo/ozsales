@@ -1,15 +1,15 @@
 # coding=utf-8
-
-import types
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
-from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
-from rest_framework.generics import GenericAPIView
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
+from rest_framework.generics import GenericAPIView
+from rest_framework_extensions.mixins import PaginateByMaxMixin
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import filters, permissions
 from apps.adminlte import constants
 # from apps.adminlte.models import Menu, SystemConfig, Permission
 # from apps.messageset.models import Notification, Task
@@ -240,10 +240,20 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
 
 
 class CommonDeleteView(GenericAPIView):
+    permission_classes = [permissions.DjangoModelPermissions]
     def post(self, request):
         pk = self.request.POST.get('pk')
         pk = pk.split(',')
         objects = self.queryset.filter(pk__in=pk)
         for obj in objects:
             obj.delete()
-        return JsonResponse({'result': True}, status=200)
+        return JsonResponse({'success': True}, status=200)
+
+
+class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
+    """ provide list/retrive/patch/delete restful api for model """
+    max_paginate_by = 200
+    filter_backends = (filters.SearchFilter,
+                       filters.DjangoFilterBackend,
+                       filters.OrderingFilter)
+    permission_classes = [permissions.DjangoModelPermissions]

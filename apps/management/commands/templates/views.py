@@ -1,10 +1,9 @@
 VIEWS_HEADER = '''from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import filters, permissions
-from apps.adminlte.views import CommonContextMixin, CommonDeleteView
+from rest_framework import permissions
+from apps.adminlte.views import CommonContextMixin, CommonDeleteView, CommonViewSet
 from models import <% ALL_MODELS %>
 import serializers
 import forms
@@ -78,14 +77,10 @@ class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContext
 
 # api views for <% MODEL_NAME %>
 
-class <% MODEL_NAME %>ViewSet(PaginateByMaxMixin, ModelViewSet):
-    filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
-                       filters.OrderingFilter)
-    max_paginate_by = 200
+class <% MODEL_NAME %>ViewSet(CommonViewSet):
+    queryset = <% MODEL_NAME %>.objects.all()
     serializer_class = serializers.<% MODEL_NAME %>Serializer
     permission_classes = [permissions.DjangoModelPermissions]
-    queryset = <% MODEL_NAME %>.objects.all()
     filter_fields = <% fields %>
     search_fields = <% fields %>
 
