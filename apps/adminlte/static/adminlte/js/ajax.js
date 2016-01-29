@@ -42,16 +42,29 @@
             url: url,
             data: data,
             dataType: 'json',
-            statusCode: {
-                403: function () {
-                    window.location.href = Urls['adminlte:http403']();
-                },
-                400: function () {
-                    alert('未找到资源');
-                },
-                500: function () {
-                    alert('服务器错误');
+            error: function(response) {
+                var text;
+                switch(response.status) {
+                    case 400:
+                        text = '错误请求!';
+                        break;
+                    case 403:
+                        text = '对不起，没有权限进行此操作!';
+                        break;
+                    case 404:
+                        text = '找不到该页面!';
+                        break;
+                    case 500:
+                        text = '服务器错误!';
+                        break;
+                    default:
+                        text = '操作失败，错误码'+response.status;
+                        break;
                 }
+                swal({
+                    title: text,
+                    type: "error"
+                });
             },
             success: callback
         });
@@ -79,16 +92,29 @@
             url: url,
             data: $.param(data),
             dataType: 'json',
-            statusCode: {
-                403: function () {
-                    alert('无权限');
-                },
-                400: function () {
-                    alert('未找到资源');
-                },
-                500: function () {
-                    alert('服务器错误');
+            error: function(response) {
+                var text;
+                switch(response.status) {
+                    case 400:
+                        text = '错误请求!';
+                        break;
+                    case 403:
+                        text = '对不起，没有权限进行此操作!';
+                        break;
+                    case 404:
+                        text = '找不到该页面!';
+                        break;
+                    case 500:
+                        text = '服务器错误!';
+                        break;
+                    default:
+                        text = '操作失败，错误码'+response.status;
+                        break;
                 }
+                swal({
+                    title: text,
+                    type: "error"
+                });
             },
             success: callback
         });
