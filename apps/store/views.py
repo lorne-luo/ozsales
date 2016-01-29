@@ -27,32 +27,23 @@ class PageListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
 
 class PageAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Page
-    # template_name_suffix = '_create'
+    form_class = forms.PageAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("page.add_page",)
     }
-    success_url = '/store/page/list/'
 
-    def get_context_data(self, **kwargs):
-        context = super(PageAddView, self).get_context_data(**kwargs)
-        context.update({'form': forms.PageAddForm()})
-        return context
+    def get_success_url(self):
+        return reverse('page-list')
 
 
 class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Page
-    # template_name_suffix = '_form'
+    form_class = forms.PageUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("page.change_page",)
     }
-    fields = ['title', 'url', 'store', 'price', 'original_price']
-
-    def get_context_data(self, **kwargs):
-        context = super(PageUpdateView, self).get_context_data(**kwargs)
-        context.update({'form': forms.PageUpdateForm()})
-        return context
 
     def get_success_url(self):
         return reverse('page-list')
@@ -60,17 +51,11 @@ class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
 
 class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Page
-    # template_name_suffix = '_form'
+    form_class = forms.PageDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
         "all": ("page.view_page",)
     }
-    fields = ['title', 'url', 'store', 'price', 'original_price']
-
-    def get_context_data(self, **kwargs):
-        context = super(PageDetailView, self).get_context_data(**kwargs)
-        context.update({'form': forms.PageDetailForm()})
-        return context
 
 
 # api views for Page
@@ -106,32 +91,23 @@ class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 
 class StoreAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Store
-    # template_name_suffix = '_create'
+    form_class = forms.StoreAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("store.add_store",)
     }
-    success_url = '/store/store/list/'
 
-    def get_context_data(self, **kwargs):
-        context = super(StoreAddView, self).get_context_data(**kwargs)
-        context.update({'form': forms.StoreAddForm()})
-        return context
+    def get_success_url(self):
+        return reverse('store-list')
 
 
 class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Store
-    # template_name_suffix = '_form'
+    form_class = forms.StoreUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("store.change_store",)
     }
-    fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
-
-    def get_context_data(self, **kwargs):
-        context = super(StoreUpdateView, self).get_context_data(**kwargs)
-        context.update({'form': forms.StoreUpdateForm()})
-        return context
 
     def get_success_url(self):
         return reverse('store-list')
@@ -139,17 +115,11 @@ class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
 class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Store
-    # template_name_suffix = '_form'
+    form_class = forms.StoreDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
         "all": ("store.view_store",)
     }
-    fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
-
-    def get_context_data(self, **kwargs):
-        context = super(StoreDetailView, self).get_context_data(**kwargs)
-        context.update({'form': forms.StoreDetailForm()})
-        return context
 
 
 # api views for Store
