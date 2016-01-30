@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from apps.adminlte.views import CommonContextMixin, CommonDeleteView, CommonViewSet
+from apps.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Page, Store
 import serializers
 import forms
@@ -15,7 +15,7 @@ class PageListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
     model = Page
     template_name_suffix = '_list'  # page/page_list.html
     permissions = {
-        "all": ("store.list_page",)
+        "all": ("store.view_page",)
     }
 
     def get_context_data(self, **kwargs):
@@ -68,18 +68,13 @@ class PageViewSet(CommonViewSet):
     search_fields = ['title', 'url', 'store', 'price', 'original_price']
 
 
-class PageDeleteView(CommonDeleteView):
-    queryset = Page.objects.all()
-    permission_classes = [permissions.DjangoModelPermissions]
-
-
 # views for Store
 
 class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = Store
     template_name_suffix = '_list'  # store/store_list.html
     permissions = {
-        "all": ("store.list_store",)
+        "all": ("store.view_store",)
     }
 
     def get_context_data(self, **kwargs):
@@ -130,9 +125,4 @@ class StoreViewSet(CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
     search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
-
-
-class StoreDeleteView(CommonDeleteView):
-    queryset = Store.objects.all()
-    permission_classes = [permissions.DjangoModelPermissions]
 

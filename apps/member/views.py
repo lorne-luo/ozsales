@@ -69,7 +69,7 @@ class CreateUser(PermissionRequiredMixin, TemplateView):
 
 class Profile(PermissionRequiredMixin, TemplateView):
     template_name = 'member/profile.html'
-    permission_required = 'member.change_seller'
+    permission_required = 'member.view_seller'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
