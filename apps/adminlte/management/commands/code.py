@@ -19,13 +19,13 @@ from templates.templates import LIST_JS, LIST_TEMPLATES
 class Command(BaseCommand):
     help = ''' Create code
 
-    Usage: ./manage.py code <module_name>
+    Usage: ./manage.py code [--overwrite] <module_name>
 
     Example:
 
         ./manage.py code apps.product
 
-        ./manage.py code apps.product.models.Product
+        ./manage.py code -o apps.product.models.Product
 
         ./manage.py code apps/product/
 
