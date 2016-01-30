@@ -75,48 +75,23 @@
     };
 
     $.AdminLTE.apiGet = function (url, data, callback) {
-        sendRequest('GET', url, data, callback)
+        sendRequest('GET', url, data, callback);
     };
 
     $.AdminLTE.apiPost = function (url, data, callback) {
-        sendRequest('POST', url, data, callback)
+        sendRequest('POST', url, data, callback);
     };
 
     $.AdminLTE.apiPatch = function (url, data, callback) {
         sendRequest('PATCH', url, data, callback);
     };
 
-    $.AdminLTE.ajaxPost = function (url, data, callback) {
-        $.ajax({
-            type: 'POST',
-            url: url,
-            data: $.param(data),
-            dataType: 'json',
-            error: function(response) {
-                var text;
-                switch(response.status) {
-                    case 400:
-                        text = '错误请求!';
-                        break;
-                    case 403:
-                        text = '对不起，没有权限进行此操作!';
-                        break;
-                    case 404:
-                        text = '找不到该页面!';
-                        break;
-                    case 500:
-                        text = '服务器错误!';
-                        break;
-                    default:
-                        text = '操作失败，错误码'+response.status;
-                        break;
-                }
-                swal({
-                    title: text,
-                    type: "error"
-                });
-            },
-            success: callback
-        });
+    $.AdminLTE.apiDelete = function (url, data, callback) {
+        sendRequest('DELETE', url, data, callback);
     };
+
+    $.AdminLTE.ajaxPost = function (url, data, callback) {
+        sendRequest('POST', url, $.param(data), callback);
+    };
+
 }(jQuery));
