@@ -47,6 +47,13 @@ class CommonContextMixin(object):
         else:
             page_title = default_dashboard_title
 
+        page_model_perms = {
+            'add': self.request.user.has_perm('%s.add_%s' % (self.app_name, self.model_name)),
+            'change': self.request.user.has_perm('%s.change_%s' % (self.app_name, self.model_name)),
+            'delete': self.request.user.has_perm('%s.delete_%s' % (self.app_name, self.model_name)),
+            'view': self.request.user.has_perm('%s.view_%s' % (self.app_name, self.model_name))
+        }
+
         common_dict = {
             'default_dashboard_title': default_dashboard_title,
             'page_title': page_title,
@@ -54,7 +61,8 @@ class CommonContextMixin(object):
             'page_app_name': self.app_name,
             'page_model_name': self.model_name,
             'page_system_name': get_system_config_value('system_name'),
-            'page_system_subhead': get_system_config_value('system_subhead')
+            'page_system_subhead': get_system_config_value('system_subhead'),
+            'page_model_perms': page_model_perms
         }
         context.update(common_dict)
         return context
@@ -148,7 +156,7 @@ class CommonListPageView(CommonPageViewMixin, ListView):
                     if mf.name == name:
                         titles.append(mf.verbose_name)
             else:
-                if not hasattr(getattr(self, 'model'), name):
+                if not hasattr(getattr(self, 'model', None), name):
                     raise ImproperlyConfigured('Cant found field %s in %s' % (name, self.model._meta.model_name))
                 field_property = getattr(self.model, name)
                 if hasattr(field_property, '__call__'):

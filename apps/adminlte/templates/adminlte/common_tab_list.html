@@ -1,4 +1,8 @@
 {% extends "adminlte/base.html" %}
+{% comment %}
+    Multi-tabs list page for single model
+{% endcomment %}
+
 {% load static %}
 {% block content_title %}
     {{ page_title }}
@@ -22,16 +26,20 @@
                     <div class="row">
                         <div class="col-xs-12 col-sm-6">
                             {% block common_list_buttons %}
+                                {% if page_model_perms.add %}
                                 <button class="btn btn-primary"
                                         v-on:click="create">
                                     <i class="fa fa-plus"></i>
                                     新增
                                 </button>
+                                {% endif %}
+                                {% if page_model_perms.delete %}
                                 <button class="btn btn-danger"
                                         v-on:click="removeSelected">
                                     <i class="fa fa-trash-o"></i>
                                     删除
                                 </button>
+                                {% endif %}
                             {% endblock %}
                         </div>
                         <div class="col-xs-12 col-sm-6">
@@ -109,18 +117,24 @@
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
+                                                {% if page_model_perms.view %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                                    class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
                                                    <i class="fa fa-bars fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
+                                                {% if page_model_perms.change %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
                                                    class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
                                                     <i class="fa fa-pencil fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
+                                                {% if page_model_perms.delete %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
                                                    class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
                                             </td>
                                         {% else %}
                                             <td>
@@ -171,18 +185,24 @@
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
+                                                {% if page_model_perms.view %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                                    class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
                                                    <i class="fa fa-bars fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
+                                                {% if page_model_perms.change %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
                                                    class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
                                                     <i class="fa fa-pencil fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
+                                                {% if page_model_perms.delete %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
                                                    class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
+                                                {% endif %}
                                             </td>
                                         {% else %}
                                             <td>
