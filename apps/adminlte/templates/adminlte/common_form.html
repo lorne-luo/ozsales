@@ -32,40 +32,41 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
             <div class="box box-primary">
-                <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            {% if form.is_multipart %}
-                                <form enctype="multipart/form-data"
-                                      method="post"
-                                      action=""
-                                      role="form" id="commonForm">
-                            {% else %}
-                                <form method="post" action=""
-                                      role="form" id="commonForm">
-                            {% endif %}
-                            {% csrf_token %}
-                            {% for field in form %}
-                                <div class="form-group">
-                                    {{ field.label_tag }}
-                                    {{ field }}
-                                    <p class="help-block">{{ field.help_text }}</p>
-                                </div>
-                            {% endfor %}
-                            <div class="clearfix"></div>
-                            <button type="submit" class="btn btn-primary">
-                                保 存
-                            </button>
-                            </form>
-                        </div>
-                    </div>
+                {% if form.is_multipart %}
+                    <form enctype="multipart/form-data"
+                          method="post"
+                          action=""
+                          role="form" id="commonForm">
+                {% else %}
+                    <form method="post" action=""
+                          role="form" id="commonForm">
+                {% endif %}
+                {% csrf_token %}
+
+                <div class="box-header with-border">
+                  <h3 class="box-title">{{ object }}</h3>
                 </div>
+
+                <div class="box-body">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
+                            <div class="col-sm-6">
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-4">
+                                <p class="help-block">{{ field.help_text }}</p>
+                            </div>
+                        </div>
+                        <br/>
+                    {% endfor %}
+                </div>
+                <div class="box-footer">
+                  <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+                </div>
+            </form>
             </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block header_page_script %}
