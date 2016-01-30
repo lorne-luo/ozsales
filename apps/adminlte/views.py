@@ -280,3 +280,37 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         for obj in objects:
             obj.delete()
         return JsonResponse({'success': True}, status=200)
+#
+# class AbstractViewSet(PaginateByMaxMixin, ModelViewSet):
+#     """ provide list/retrive/patch/delete restful api for model """
+#     max_paginate_by = 200
+#     filter_backends = (filters.SearchFilter,
+#                        filters.DjangoFilterBackend,
+#                        filters.OrderingFilter)
+#     permission_classes = [permissions.DjangoModelPermissions]
+#
+#     def get_queryset(self):
+#         if 'app_name' not in self.kwargs or 'model_name' not in self.kwargs:
+#             raise SuspiciousOperation('CommonView cant get app_name and model_name.')
+#
+#         app_name = self.kwargs.get('app_name').lower()
+#         model_name = self.kwargs.get('model_name').lower()
+#         try:
+#             model_content_type = ContentType.objects.get(app_label=app_name, model=model_name)
+#         except ObjectDoesNotExist:
+#             raise ViewDoesNotExist
+#
+#         self.queryset=model_content_type.model_class().objects.all()
+#         self.serializer_class = model_content_type.model_class()._meta.serializer_class
+#         return self.queryset
+#
+#
+#     @list_route(methods=['post', 'delete'])
+#     def delete(self, request, pk=None):
+#         """ for batch delete """
+#         pk = request.DATA.get('pk')
+#         pk = pk.split(',')
+#         objects = self.queryset.filter(pk__in=pk)
+#         for obj in objects:
+#             obj.delete()
+#         return JsonResponse({'success': True}, status=200)
