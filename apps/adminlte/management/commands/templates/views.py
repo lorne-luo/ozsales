@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from apps.adminlte.views import CommonContextMixin, CommonBatchDeleteView, CommonViewSet
+from apps.adminlte.views import CommonContextMixin, CommonViewSet
 from models import <% ALL_MODELS %>
 import serializers
 import forms
@@ -68,10 +68,5 @@ class <% MODEL_NAME %>ViewSet(CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = <% fields %>
     search_fields = <% fields %>
-
-
-class <% MODEL_NAME %>BatchDeleteView(CommonBatchDeleteView):
-    queryset = <% MODEL_NAME %>.objects.all()
-    permission_classes = [permissions.DjangoModelPermissions]
 
 '''

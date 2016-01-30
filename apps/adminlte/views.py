@@ -9,6 +9,7 @@ from django.views.generic import ListView, CreateView, \
 from rest_framework.generics import GenericAPIView
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
 from apps.adminlte import constants
 # from apps.adminlte.models import Menu, SystemConfig, Permission
@@ -247,16 +248,16 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
         return queryset.filter(pk__in=pk)
 
 
-class CommonBatchDeleteView(GenericAPIView):
-    permission_classes = [permissions.DjangoModelPermissions]
-
-    def post(self, request):
-        pk = self.request.POST.get('pk')
-        pk = pk.split(',')
-        objects = self.queryset.filter(pk__in=pk)
-        for obj in objects:
-            obj.delete()
-        return JsonResponse({'success': True}, status=200)
+# class CommonBatchDeleteView(GenericAPIView):
+#     permission_classes = [permissions.DjangoModelPermissions]
+#
+#     def post(self, request):
+#         pk = self.request.POST.get('pk')
+#         pk = pk.split(',')
+#         objects = self.queryset.filter(pk__in=pk)
+#         for obj in objects:
+#             obj.delete()
+#         return JsonResponse({'success': True}, status=200)
 
 
 class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
@@ -266,3 +267,13 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
                        filters.DjangoFilterBackend,
                        filters.OrderingFilter)
     permission_classes = [permissions.DjangoModelPermissions]
+
+    @list_route(methods=['post', 'delete'])
+    def delete(self, request, pk=None):
+        """ for batch delete """
+        pk = request.DATA.get('pk')
+        pk = pk.split(',')
+        objects = self.queryset.filter(pk__in=pk)
+        for obj in objects:
+            obj.delete()
+        return JsonResponse({'success': True}, status=200)
