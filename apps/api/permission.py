@@ -27,7 +27,7 @@ class AdminOnlyPermissions(DjangoModelPermissions):
         return False
 
 
-class ModelPermissions(DjangoObjectPermissions):
+class ModelPermissions(DjangoModelPermissions):
     """
      model level permission
     """

@@ -2,6 +2,7 @@ import logging
 
 from django.http import Http404
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ImproperlyConfigured
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
 from apps.product.models import Product, Country, Brand, Category
 from apps.customer.models import Customer, Address
@@ -21,7 +22,7 @@ class AdminOnlyPermissions(DjangoModelPermissions):
         return False
 
 
-class ModelPermissions(DjangoObjectPermissions):
+class ModelPermissions(DjangoModelPermissions):
     """
      model level permission
     """
@@ -174,16 +175,24 @@ class CommonAPIPermissions(DjangoObjectPermissions):
     }
 
     def has_permission(self, request, view):
-        view.get_model()
+        if hasattr(view, 'model'):
+            model = view.model
+        elif hasattr(view, 'queryset'):
+            model = view.queryset.model
+        elif hasattr(view, 'get_model'):
+            view.get_model()
+            model = view.model
+        else:
+            raise ImproperlyConfigured('API view not have model or queryset.')
 
-        if view.model not in [Seller, Product, Country, Brand, Category, Customer, Address, Store, Page]:
+        if model not in [Seller, Product, Country, Brand, Category, Customer, Address, Store, Page]:
             raise Http404
 
         return super(CommonAPIPermissions, self).has_permission(request, view)
-
-    def has_object_permission(self, request, view, obj):
-        # only check some model's object level permission
-        if view.model in []:
-            return super(CommonAPIPermissions, self).has_object_permission(request, view, obj)
-
-        return True
+    #
+    # def has_object_permission(self, request, view, obj):
+    #     # only check some model's object level permission
+    #     if view.model in []:
+    #         return super(CommonAPIPermissions, self).has_object_permission(request, view, obj)
+    #
+    #     return True
