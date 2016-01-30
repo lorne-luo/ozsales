@@ -7,6 +7,7 @@ from django.db import models
 from optparse import make_option
 from django.core import management
 from django.core.management.base import BaseCommand
+from optparse import make_option
 
 from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
 from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
@@ -29,13 +30,22 @@ class Command(BaseCommand):
         ./manage.py code apps/product/
 
     '''
+
+    option_list = BaseCommand.option_list + (
+        make_option("--overwrite", "-o", action="store_true", dest="is_overwrite", default=False,
+                    help="Overwrite all files."),
+    )
+
+    args = "app folder path or models.py path"
     module = None
     model_list = []
+    is_overwrite = False
 
     def handle(self, *args, **options):
         if len(args) < 1:
             self.stderr.write(self.help)
             return
+        self.is_overwrite = options.get("is_overwrite")
 
         self.raw_input = args[0]
         self.module_str = args[0].replace('.py', '').replace('/', '.').strip('.')
@@ -124,6 +134,8 @@ class Command(BaseCommand):
             os.makedirs(folder)
 
     def create_file(self, file_path, content):
+        if os.path.isfile(file_path) and not self.is_overwrite:
+            file_path += '.code'
         with open(file_path, 'w+') as f:
             f.write(content)
 
@@ -203,7 +215,5 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(
-            " * Add 'url(r'^%s/', include('%s.urls')),' into super urls.py" % (self.app_name, self.app_str))
-        self.stderr.write(" * Allow API permission for model [%s] in utils.api.permission" % self.all_models_str)
+        self.stderr.write(" * Add 'url(r'^', include('%s.urls')),' into super urls.py" % self.app_str)
         self.stdout.write('')
