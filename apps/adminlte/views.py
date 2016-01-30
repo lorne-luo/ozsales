@@ -43,7 +43,10 @@ class CommonContextMixin(object):
         context = super(CommonContextMixin, self).get_context_data(**kwargs)
 
         default_dashboard_title = constants.DEFAULT_DASHBOARD_TITLE
-        if getattr(self, 'model', None):
+
+        if getattr(self, 'object', None):
+            page_title = unicode(self.object)
+        elif getattr(self, 'model', None):
             page_title = self.model._meta.verbose_name
         else:
             page_title = default_dashboard_title

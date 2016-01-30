@@ -9,6 +9,28 @@
     {% endif %}{{ page_title }}
 {% endblock %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="/member/home">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% if page_app_name and page_model_name %}
+                <a href="{% url page_app_name|add:'-list' %}">
+                    {{ page_model_name }}
+                </a>
+            {% endif %}
+            </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-md-12">
