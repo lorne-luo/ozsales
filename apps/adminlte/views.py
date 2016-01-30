@@ -239,8 +239,9 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
         return queryset.filter(pk__in=pk)
 
 
-class CommonDeleteView(GenericAPIView):
+class CommonBatchDeleteView(GenericAPIView):
     permission_classes = [permissions.DjangoModelPermissions]
+
     def post(self, request):
         pk = self.request.POST.get('pk')
         pk = pk.split(',')
