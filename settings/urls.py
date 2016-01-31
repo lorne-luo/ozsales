@@ -41,13 +41,13 @@ urlpatterns = patterns('',
 
 
     # registration
-    url(r'^auth/', include("apps.registration.urls", namespace="registration")),
+    # url(r'^auth/', include("apps.registration.urls", namespace="registration")),
 
     # for common views
-    url(r'^', include('apps.adminlte.urls', namespace='adminlte')),
+    url(r'^', include('core.adminlte.urls', namespace='adminlte')),
 
     # for common api
-    url(r'^api/v1/', include('apps.api.urls', namespace='common_api')),
+    url(r'^api/v1/', include('core.api.urls', namespace='common_api')),
 
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),

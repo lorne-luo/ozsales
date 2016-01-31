@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from apps.adminlte.views import CommonContextMixin, CommonViewSet
+from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Page, Store
 import serializers
 import forms

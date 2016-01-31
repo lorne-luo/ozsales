@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from braces.views import MultiplePermissionsRequiredMixin
 
-from ..adminlte.views import CommonListPageView, CommonCreatePageView, CommonDetailPageView, CommonUpdatePageView, \
+from core.adminlte.views import CommonListPageView, CommonCreatePageView, CommonDetailPageView, CommonUpdatePageView, \
     CommonDeletePageView
 from models import Customer
 from forms import CustomerEditForm, CustomerAddForm2

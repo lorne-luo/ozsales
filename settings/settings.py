@@ -45,8 +45,10 @@ INSTALLED_APPS = (
     'djcelery',
     'kombu.transport.django',
 
+    # common app
+    'core.adminlte',
+
     'apps',
-    'apps.adminlte',
     'apps.member',
     'apps.express',
     'apps.customer',
@@ -218,7 +220,7 @@ REST_FRAMEWORK = {
     'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
     'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
     'UNICODE_JSON': True,
-    'DEFAULT_PAGINATION_CLASS': 'apps.api.pagination.CommonPageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'core.api.pagination.CommonPageNumberPagination',
 
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
     'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
@@ -234,7 +236,7 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
-        'apps.api.renders.UTF8JSONRenderer',
+        'core.api.renders.UTF8JSONRenderer',
         # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -242,7 +244,7 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.DjangoObjectPermissions',
         # 'utils.api.permission.ObjectPermissions',
-        'apps.api.permission.CommonAPIPermissions',
+        'core.api.permission.CommonAPIPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

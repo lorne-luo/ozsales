@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect
 from django.views.generic import ListView, CreateView, UpdateView
 from rest_framework.permissions import AllowAny
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from apps.adminlte.views import CommonContextMixin
-from apps.api.views import CommonListCreateAPIView
+from core.adminlte.views import CommonContextMixin
+from core.api.views import CommonListCreateAPIView
 from models import Product
 from forms import ProductForm
 
