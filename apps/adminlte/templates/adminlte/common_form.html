@@ -19,7 +19,7 @@
         {% if page_title != default_dashboard_title %}
         <li class="active">
             {% if page_app_name and page_model_name %}
-                <a href="{% url page_app_name|add:'-list' %}">
+                <a href="{% url page_model_name|add:'-list' %}">
                     {{ page_model_name }}
                 </a>
             {% endif %}
@@ -32,14 +32,15 @@
 {% endblock %}
 
 {% block content %}
-            <div class="box box-primary">
+            <div class="box box-info">
                 {% if form.is_multipart %}
                     <form enctype="multipart/form-data"
                           method="post"
                           action=""
+                          class="form-horizontal"
                           role="form" id="commonForm">
                 {% else %}
-                    <form method="post" action=""
+                    <form method="post" action="" class="form-horizontal"
                           role="form" id="commonForm">
                 {% endif %}
                 {% csrf_token %}
@@ -59,7 +60,6 @@
                                 <p class="help-block">{{ field.help_text }}</p>
                             </div>
                         </div>
-                        <br/>
                     {% endfor %}
                 </div>
                 <div class="box-footer">
@@ -70,8 +70,8 @@
 {% endblock %}
 
 {% block header_page_script %}
-    <link rel="stylesheet" type="text/css" href="{% static "assets/jquery-chosen/chosen.css" %}" />
-    <script type="text/javascript" src="{% static "assets/jquery-chosen/chosen.jquery.min.js" %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
+    <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
 
     <script type="text/javascript">
     jQuery(document).ready(function($) {
