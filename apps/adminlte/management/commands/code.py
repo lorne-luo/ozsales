@@ -7,6 +7,7 @@ from django.db import models
 from optparse import make_option
 from django.core import management
 from django.core.management.base import BaseCommand
+from django.conf import settings
 from optparse import make_option
 
 from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
@@ -184,6 +185,12 @@ class Command(BaseCommand):
         self.stdout.write(content)
         return content
 
+    def get_reverse_js(self):
+        management.call_command('collectstatic_js_reverse')
+        static_file = os.path.join(settings.BASE_DIR, 'static', 'django_js_reverse', 'js', 'reverse.js')
+        self.make_folder(static_file)
+        shutil.copyfile(os.path.join(settings.STATIC_ROOT, 'django_js_reverse', 'js', 'reverse.js'), static_file)
+
     def run(self):
         self.stdout.write('\n######### %s #########' % self.urls_file)
         self.create_file(self.urls_file, self.get_urls_content())
@@ -209,8 +216,7 @@ class Command(BaseCommand):
             self.stdout.write(content)
             self.create_file(list_template_file, content)
 
-        management.call_command('collectstatic_js_reverse')
-        shutil.copyfile('collectstatic/django_js_reverse/js/reverse.js', 'static/django_js_reverse/js/reverse.js')
+        self.get_reverse_js()
         self.stdout.write('')
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
