@@ -234,7 +234,7 @@ REST_FRAMEWORK = {
     'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
-        'utils.api.renders.CustomJSONRenderer',
+        'apps.api.renders.UTF8JSONRenderer',
         # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
@@ -242,7 +242,7 @@ REST_FRAMEWORK = {
         #'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.DjangoObjectPermissions',
         # 'utils.api.permission.ObjectPermissions',
-        'utils.api.permission.CommonAPIPermissions',
+        'apps.api.permission.CommonAPIPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
