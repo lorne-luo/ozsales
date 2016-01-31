@@ -20,7 +20,7 @@
         <li class="active">
             {% if page_app_name and page_model_name %}
                 <a href="{% url page_model_name|add:'-list' %}">
-                    {{ page_model_name }}
+                    {{ page_model_verbose_name }}
                 </a>
             {% endif %}
             </li>

@@ -60,7 +60,7 @@
                                     <li class="active">
                                         {% if page_app_name and page_model_name %}
                                             <a href="{% url 'adminlte:common_list_page' page_app_name page_model_name %}">
-                                                {{ page_title }}
+                                                {{ page_model_verbose_name }}
                                             </a>
                                         {% else %}
                                             {{ page_title }}
