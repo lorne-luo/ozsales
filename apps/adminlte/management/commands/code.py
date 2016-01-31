@@ -186,10 +186,7 @@ class Command(BaseCommand):
         return content
 
     def get_reverse_js(self):
-        management.call_command('collectstatic_js_reverse')
-        static_file = os.path.join(settings.BASE_DIR, 'static', 'django_js_reverse', 'js', 'reverse.js')
-        self.make_folder(static_file)
-        shutil.copyfile(os.path.join(settings.STATIC_ROOT, 'django_js_reverse', 'js', 'reverse.js'), static_file)
+        management.call_command('js_reverse')
 
     def run(self):
         self.stdout.write('\n######### %s #########' % self.urls_file)
