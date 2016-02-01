@@ -4,9 +4,9 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from core.adminlte.views import CommonContextMixin, CommonViewSet
-from models import Page, Store
 import serializers
 import forms
+from models import Page, Store
 
 
 # views for Page

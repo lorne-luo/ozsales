@@ -24,3 +24,27 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
     }
 );
 '''
+
+MENU_TEMPLATE='''{% load activelink %}
+<li class="treeview {% ifstartswith '/<% app_name %>/' %}active{% endifstartswith %}">
+    <a href="javascript:void(0)">
+        <i class='fa fa-cloud'></i>
+        <b><% App_name %></b>
+        <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+<% model_menu %>
+    </ul>
+</li>
+'''
+
+MENU_APP_TEMPLATE='''        {% if perms.<% app_name %>.add_<% model_name %> or perms.<% app_name %>.change_<% model_name %> %}
+        <li>
+
+        <a href="{% url '<% model_name %>-list' %}">
+                <i class="fa fa-circle-o"></i>
+                <% MODEL_NAME %>
+            </a>
+        </li>
+        {%endif%}
+'''

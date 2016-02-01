@@ -14,7 +14,7 @@ from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
 from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
 from templates.forms import FORMS_HEADER, FORMS_MODEL_TEMPLATE
 from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
-from templates.templates import LIST_JS, LIST_TEMPLATES
+from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE
 
 
 class Command(BaseCommand):
@@ -107,6 +107,7 @@ class Command(BaseCommand):
         self.forms_file = os.path.join(self.module_folder, 'forms.py')
         self.js_folder = os.path.join(self.module_folder, 'static', 'js', self.app_name, '%s_list.js')
         self.templates_folder = os.path.join(self.module_folder, 'templates', self.app_name, '%s_list.html')
+        self.menu_html_file = os.path.join(self.module_folder, 'templates', self.app_name, '_menu.html')
         self.all_models_str = ', '.join([md.__name__ for md in self.model_list])
 
     def get_fields_and_titles(self, model):
@@ -145,16 +146,19 @@ class Command(BaseCommand):
             f.write(content)
 
     # ============= generate content ==============
-    def render_content(self, content, model):
-        fields, titles = self.get_fields_and_titles(model)
-
-        return content.replace('<% module_str %>', self.module_str). \
+    def render_content(self, content, model=None):
+        content = content.replace('<% module_str %>', self.module_str). \
             replace('<% app_name %>', self.app_name). \
-            replace('<% MODEL_NAME %>', model.__name__). \
-            replace('<% model_name %>', model.__name__.lower()). \
-            replace('<% fields %>', str(fields)). \
-            replace('<% titles %>', str(titles)). \
+            replace('<% App_name %>', self.app_name.title()). \
             replace('<% ALL_MODELS %>', self.all_models_str)
+        if model:
+            fields, titles = self.get_fields_and_titles(model)
+            content = content.replace('<% MODEL_NAME %>', model.__name__). \
+                replace('<% model_name %>', model.__name__.lower()). \
+                replace('<% fields %>', str(fields)). \
+                replace('<% titles %>', str(titles))
+        return content
+
 
     def get_urls_content(self):
         content = URLS_HEADER
@@ -165,25 +169,36 @@ class Command(BaseCommand):
         return content
 
     def get_views_content(self):
-        content = VIEWS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
+        content = self.render_content(VIEWS_HEADER)
         for model in self.model_list:
             content += self.render_content(VIEWS_MODEL_TEMPLATE, model)
         self.stdout.write(content)
         return content
 
     def get_forms_content(self):
-        content = FORMS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
+        content = self.render_content(FORMS_HEADER)
         for model in self.model_list:
             content += self.render_content(FORMS_MODEL_TEMPLATE, model)
         self.stdout.write(content)
         return content
 
     def get_serializers_content(self):
-        content = SERIALIZERS_HEADER.replace('<% ALL_MODELS %>', self.all_models_str)
+        content = self.render_content(SERIALIZERS_HEADER)
         for model in self.model_list:
             content += self.render_content(SERIALIZERS_MODEL_TEMPLATE, model)
         self.stdout.write(content)
         return content
+
+    def get_menu_html(self):
+        model_menu = ''
+        content = self.render_content(MENU_TEMPLATE)
+        for model in self.model_list:
+            model_menu += self.render_content(MENU_APP_TEMPLATE, model)
+
+        content = content.replace('<% model_menu %>', model_menu)
+        self.stdout.write(content)
+        return content
+
 
     def get_reverse_js(self):
         management.call_command('js_reverse')
@@ -197,6 +212,8 @@ class Command(BaseCommand):
         self.create_file(self.views_file, self.get_views_content())
         self.stdout.write('\n######### %s #########' % self.serializers_file)
         self.create_file(self.serializers_file, self.get_serializers_content())
+        self.stdout.write('\n######### %s #########' % self.menu_html_file)
+        self.create_file(self.menu_html_file, self.get_menu_html())
 
         for model in self.model_list:
             list_js_file = self.js_folder % model.__name__.lower()
@@ -219,4 +236,7 @@ class Command(BaseCommand):
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
         self.stderr.write(" * Add 'url(r'^', include('%s.urls')),' into super urls.py" % self.app_str)
+        self.stdout.write('')
+        self.stderr.write(
+            " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")
         self.stdout.write('')

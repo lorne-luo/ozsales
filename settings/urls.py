@@ -41,7 +41,7 @@ urlpatterns = patterns('',
 
 
     # registration
-    # url(r'^auth/', include("apps.registration.urls", namespace="registration")),
+    url(r'^auth/', include("apps.registration.urls", namespace="registration")),
 
     # for common views
     url(r'^', include('core.adminlte.urls', namespace='adminlte')),
