@@ -1,10 +1,9 @@
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-import os
+from django.contrib import admin
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
-from utils.custom_admin_site import member_site
+from core.adminlte.views import  ChangePasswordView, ChangePasswordDoneView
 
 def if_installed(appname, *args, **kwargs):
     ret = url(*args, **kwargs)
@@ -42,6 +41,10 @@ urlpatterns = patterns('',
 
     # registration
     url(r'^auth/', include("apps.registration.urls", namespace="registration")),
+
+    # auth
+    url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
+    url('^auth/change-password-done/$', ChangePasswordDoneView.as_view(), name='password_change_done'),
 
     # for common views
     url(r'^', include('core.adminlte.urls', namespace='adminlte')),

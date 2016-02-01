@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.contrib.auth.views import password_change
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.core.urlresolvers import reverse
@@ -80,15 +81,13 @@ class CommonPageViewMixin(object):
     def app_name(self):
         if getattr(self, 'model', None):
             return getattr(self, 'model')._meta.app_label
-        else:
-            raise ViewDoesNotExist
+        return ''
 
     @property
     def model_name(self):
         if getattr(self, 'model', None):
             return getattr(self, 'model')._meta.model_name
-        else:
-            raise ViewDoesNotExist('No model found.')
+        return ''
 
     def get_model(self):
         if 'app_name' not in self.kwargs or 'model_name' not in self.kwargs:
@@ -106,7 +105,7 @@ class CommonPageViewMixin(object):
     def get_context_data(self, **kwargs):
         context = super(CommonPageViewMixin, self).get_context_data(**kwargs)
         default_dashboard_title = constants.DEFAULT_DASHBOARD_TITLE
-        if hasattr(self, 'model'):
+        if getattr(self, 'model', None):
             page_title = getattr(self, 'model')._meta.verbose_name
         else:
             page_title = default_dashboard_title
@@ -115,8 +114,8 @@ class CommonPageViewMixin(object):
             'default_dashboard_title': default_dashboard_title,
             'page_title': page_title,
             'page_model': getattr(self, 'model', ''),
-            'page_app_name': self.app_name,
-            'page_model_name': self.model_name,
+            'page_app_name': getattr(self, 'app_name', ''),
+            'page_model_name': getattr(self, 'model_name', ''),
             'page_system_name': get_system_config_value('system_name'),
             'page_system_subhead': get_system_config_value('system_subhead')
         }
@@ -315,3 +314,23 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
 #         for obj in objects:
 #             obj.delete()
 #         return JsonResponse({'success': True}, status=200)
+
+
+class ChangePasswordView(CommonPageViewMixin, TemplateView):
+    def post(self, request, **kwargs):
+        self.request = request
+        context = super(ChangePasswordView, self).get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+    def render_to_response(self, context, **response_kwargs):
+        context['page_title'] = u'修改密码'
+        template_response = password_change(
+            self.request,
+            template_name='adminlte/change-password.html',
+            extra_context=context
+        )
+        return template_response
+
+
+class ChangePasswordDoneView(CommonPageViewMixin, TemplateView):
+    template_name = 'adminlte/change-password-done.html'
