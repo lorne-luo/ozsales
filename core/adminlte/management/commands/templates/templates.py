@@ -10,16 +10,16 @@ LIST_TEMPLATES = '''
 LIST_JS = '''
 var <% model_name %>ListPageVue = new CommonListPageVue({
         data: {
-            add_api_tag: 'api-<% model_name %>-list',
-            list_api_tag: 'api-<% model_name %>-list',
-            delete_api_tag: 'api-<% model_name %>-delete',
-            retrieve_api_tag: 'api-<% model_name %>-detail',
-            update_api_tag: 'api-<% model_name %>-detail',
-            destroy_api_tag: 'api-<% model_name %>-detail',
+            add_api_tag: '<% app_name %>:api-<% model_name %>-list',
+            list_api_tag: '<% app_name %>:api-<% model_name %>-list',
+            delete_api_tag: '<% app_name %>:api-<% model_name %>-delete',
+            retrieve_api_tag: '<% app_name %>:api-<% model_name %>-detail',
+            update_api_tag: '<% app_name %>:api-<% model_name %>-detail',
+            destroy_api_tag: '<% app_name %>:api-<% model_name %>-detail',
 
-            create_url_tag: '<% model_name %>-add',
-            detail_url_tag: '<% model_name %>-detail',
-            update_url_tag: '<% model_name %>-update',
+            create_url_tag: '<% app_name %>:<% model_name %>-add',
+            detail_url_tag: '<% app_name %>:<% model_name %>-detail',
+            update_url_tag: '<% app_name %>:<% model_name %>-update',
         }
     }
 );
@@ -41,7 +41,7 @@ MENU_TEMPLATE='''{% load activelink %}
 MENU_APP_TEMPLATE='''        {% if perms.<% app_name %>.add_<% model_name %> or perms.<% app_name %>.change_<% model_name %> %}
         <li>
 
-        <a href="{% url '<% model_name %>-list' %}">
+        <a href="{% url '<% app_name %>:<% model_name %>-list' %}">
                 <i class="fa fa-circle-o"></i>
                 <% MODEL_NAME %>
             </a>

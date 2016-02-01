@@ -235,7 +235,7 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(" * Add 'url(r'^', include('%s.urls')),' into super urls.py" % self.app_str)
+        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (self.app_str,self.app_name))
         self.stdout.write('')
         self.stderr.write(
             " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")

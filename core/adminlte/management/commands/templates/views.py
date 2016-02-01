@@ -36,7 +36,7 @@ class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMix
     }
 
     def get_success_url(self):
-        return reverse('<% model_name %>-list')
+        return reverse('<% app_name %>:<% model_name %>-list')
 
 
 class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -48,7 +48,7 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
     }
 
     def get_success_url(self):
-        return reverse('<% model_name %>-list')
+        return reverse('<% app_name %>:<% model_name %>-list')
 
 
 class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
