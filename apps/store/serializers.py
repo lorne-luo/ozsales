@@ -18,10 +18,10 @@ class PageSerializer(serializers.ModelSerializer):
         change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         if request.user.has_perm(change_perm_str):
-            url = reverse('page-update', args=[obj.id])
+            url = reverse('store:page-update', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Update Link')
         elif request.user.has_perm(view_perm_str):
-            url = reverse('page-detail', args=[obj.id])
+            url = reverse('store:page-detail', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Detail Link')
         return None
 
@@ -41,10 +41,10 @@ class StoreSerializer(serializers.ModelSerializer):
         change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         if request.user.has_perm(change_perm_str):
-            url = reverse('store-update', args=[obj.id])
+            url = reverse('store:store-update', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Update Link')
         elif request.user.has_perm(view_perm_str):
-            url = reverse('store-detail', args=[obj.id])
+            url = reverse('store:store-detail', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Detail Link')
         return None
 

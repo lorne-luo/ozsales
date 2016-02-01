@@ -34,7 +34,7 @@ class PageAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateVi
     }
 
     def get_success_url(self):
-        return reverse('page-list')
+        return reverse('store:page-list')
 
 
 class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -46,7 +46,7 @@ class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
     }
 
     def get_success_url(self):
-        return reverse('page-list')
+        return reverse('store:page-list')
 
 
 class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -93,7 +93,7 @@ class StoreAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     }
 
     def get_success_url(self):
-        return reverse('store-list')
+        return reverse('store:store-list')
 
 
 class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -105,7 +105,7 @@ class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     }
 
     def get_success_url(self):
-        return reverse('store-list')
+        return reverse('store:store-list')
 
 
 class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

@@ -9,7 +9,7 @@
         {% if perms.store.add_page or perms.store.change_page %}
         <li>
 
-        <a href="{% url 'page-list' %}">
+        <a href="{% url 'store:page-list' %}">
                 <i class="fa fa-circle-o"></i>
                 Page
             </a>
@@ -18,7 +18,7 @@
         {% if perms.store.add_store or perms.store.change_store %}
         <li>
 
-        <a href="{% url 'store-list' %}">
+        <a href="{% url 'store:store-list' %}">
                 <i class="fa fa-circle-o"></i>
                 Store
             </a>
