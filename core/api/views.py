@@ -54,8 +54,11 @@ class ContentTypeObjectView(GenericAPIView):
         self.get_model()
 
         serialize_name = self.model.__name__ + 'Serializer'
-        serializer_module_name = 'apps.%s.serializers' % self.app_name
-        serializer_module = sys.modules[serializer_module_name]
+        module_str = 'core.%s.serializers' % self.app_name
+        if module_str not in sys.modules:
+            module_str = 'apps.%s.serializers' % self.app_name
+        serializer_module = sys.modules[module_str]
+
         self.serializer_class = getattr(serializer_module, serialize_name)
         return self.serializer_class
 

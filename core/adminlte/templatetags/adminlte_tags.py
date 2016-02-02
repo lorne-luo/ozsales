@@ -3,7 +3,6 @@
 from __future__ import absolute_import, print_function, unicode_literals
 from datetime import datetime
 import django
-# from django.db.models.fields.related import ManyRelatedManager
 import django.db.models.fields.related as related
 from django import template
 from django.db.models import ImageField
@@ -11,6 +10,21 @@ from utils.converter import format_datetime
 
 
 register = template.Library()
+
+
+def get_attr(obj, attr_name):
+    """
+    当attr_name中包含'.'时，获取属性值
+    :param obj:
+    :param attr_name:
+    :return:
+    """
+    if '.' in attr_name:
+        lst_attr = [obj]
+        lst_attr.extend(attr_name.split('.'))
+        return reduce(getattr, lst_attr)
+    else:
+        return getattr(obj, attr_name)
 
 
 @register.filter(name='render_field_label')
@@ -34,8 +48,8 @@ def render_field_label(obj, field_name):
 @register.filter(name='render_field_value')
 def render_field_value(obj, a):
     value = '-'
-    if hasattr(obj, a):
-        value = getattr(obj, a)
+    if hasattr(obj, a) or '.' in a:
+        value = get_attr(obj, a)
         if value is None:
             value = '-'
         else:
