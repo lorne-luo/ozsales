@@ -47,6 +47,7 @@ INSTALLED_APPS = (
 
     # common app
     'core.adminlte',
+    'core.messageset',
 
     'apps',
     'apps.member',
@@ -66,7 +67,6 @@ INSTALLED_APPS = (
     'rest_framework.authtoken', # must come after accounts for migrations to work
     'taggit',
     'easy_thumbnails',
-
 )
 
 

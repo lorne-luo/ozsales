@@ -57,6 +57,8 @@ urlpatterns = patterns('',
 
     # for js reverse
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
+
+    url(r'^api/v1/messageset', include('core.messageset.urls_api',namespace='messageset_api')),
 )
 
 urlpatterns += staticfiles_urlpatterns()
