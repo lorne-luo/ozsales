@@ -4,10 +4,6 @@ from django.http import Http404
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
-from apps.product.models import Product, Country, Brand, Category
-from apps.customer.models import Customer, Address
-from apps.member.models import Seller
-from apps.store.models import Store, Page
 
 log = logging.getLogger(__name__)
 
@@ -168,7 +164,7 @@ class ObjectPermissions(ModelPermissions):
         return False
 
 
-class CommonAPIPermissions(DjangoObjectPermissions):
+class CommonAPIPermissions(DjangoModelPermissions):
     perms_map = {
         'GET': ['%(app_label)s.view_%(model_name)s'],
         'OPTIONS': ['%(app_label)s.view_%(model_name)s'],
@@ -187,20 +183,7 @@ class CommonAPIPermissions(DjangoObjectPermissions):
         else:
             raise ImproperlyConfigured('API view not have model or queryset.')
 
-        if model not in [Seller, Product, Country, Brand, Category, Customer, Address, Store, Page]:
+        if model in []:
             raise Http404
 
         return super(CommonAPIPermissions, self).has_permission(request, view)
-
-    def has_object_permission(self, request, view, obj):
-        if hasattr(view, 'model'):
-            model = view.model
-        elif hasattr(view, 'queryset'):
-            model = view.queryset.model
-        else:
-            raise ImproperlyConfigured('API view not have model or queryset.')
-
-        if model in []:
-            return super(CommonAPIPermissions, self).has_object_permission(request, view, obj)
-
-        return True
