@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.views import password_change
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q, Count
 from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
@@ -8,6 +9,7 @@ from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
 from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
@@ -280,6 +282,64 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         for obj in objects:
             obj.delete()
         return JsonResponse({'success': True}, status=200)
+
+    @list_route(methods=['post', 'get'])
+    def page(self, request):
+        """ pagenation api for jquery.dataTable """
+        draw = request.GET.get('draw', 0)
+        length = int(request.GET.get('length', 5))
+        start = int(request.GET.get('start', 0))
+        order_column = int(request.GET.get('order[0][column]', 0))
+        order_direction = request.GET.get('order[0][dir]', 'asc')
+        search_keyword = request.GET.get('search[value]', '')
+        raise NotImplementedError
+        # column_field_map = {
+        #     0: 'start_time',
+        #     1: 'title',
+        #     2: 'start_time',
+        #     3: 'end_time',
+        #     4: 'version',
+        #     5: 'parental_rating',
+        # }
+        # order_string = column_field_map[order_column]
+        #
+        # if order_direction.lower() == 'desc':
+        #     order_string = '-' + order_string
+        #
+        # events = Event.objects.filter(channel_id=channel_id).order_by(order_string)
+        # records_total = events.count()
+        #
+        # if search_keyword:
+        #     events = events.filter(
+        #         Q(title__icontains=search_keyword) | Q(parental_rating__abbreviation__icontains=search_keyword))
+        # records_filtered_total = events.count()
+        #
+        # if length >= 0:
+        #     events = events[start: start + length]
+        #
+        # data = []
+        # for e in events:
+        #     parental_rating_str = e.parental_rating.abbreviation if e.parental_rating else ''
+        #     item = ['<input type="checkbox" name="selected_events" class="checkboxes" value="%s" />' % e.id,
+        #             '<a href="%s">%s</a>' % (reverse('event-edit', kwargs={'event_id': e.id, }), e.title),
+        #             formats.localize(timezone.localtime(e.start_time)),  # timezone convert and datetime string localize
+        #             formats.localize(timezone.localtime(e.end_time)),
+        #             parental_rating_str,
+        #             EventRecordStatus.get_record_button(e, e.get_record_button_code(request.user))
+        #             ]
+        #     data.append(item)
+        #
+        # result = {
+        #     "draw": draw,
+        #     "length": len(data),
+        #     "start": start,
+        #     "end": start + length,
+        #     "recordsTotal": records_total,
+        #     "recordsFiltered": records_filtered_total,
+        #     "data": data,
+        #     "error": ""
+        # }
+        # return Response(result)
 #
 # class AbstractViewSet(PaginateByMaxMixin, ModelViewSet):
 #     """ provide list/retrive/patch/delete restful api for model """
