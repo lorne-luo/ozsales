@@ -1,7 +1,3 @@
-/**
- * Created by lyhapple on 15/12/10.
- */
-
 var sitemailListPageVue = new CommonListPageVue({
     el: '#siteMailContentRow',
     data: {

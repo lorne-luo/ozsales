@@ -46,12 +46,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block base_foot_script %}
-    <script type="text/javascript">
-        $('#commonForm input:text').addClass('form-control');
-        $('#commonForm select').addClass('form-control');
-        $("#commonForm select > option[value='{{ request.user.id }}']").remove();
-        $('#commonForm textarea').addClass('form-control');
-    </script>
-{% endblock %}
