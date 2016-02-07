@@ -21,6 +21,10 @@ DICT_NULL_BLANK_TRUE = {
     'blank': True
 }
 
+DICT_NULL_BLANK_FALSE = {
+    'null': False,
+    'blank': False
+}
 
 class ReadStatus(object):
     UNREAD = 0

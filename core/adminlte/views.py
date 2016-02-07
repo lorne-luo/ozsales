@@ -183,13 +183,17 @@ class CommonFormPageMixin(CommonPageViewMixin):
         if not getattr(self, 'fields', None):
             self.fields = getattr(self, 'model').Config.list_form_fields
 
-        self.success_url = reverse(
-            'adminlte:common_list_page',
-            kwargs={
-                'app_name': self.app_name,
-                'model_name': self.model_name
-            }
-        )
+        if hasattr(self.model.Config, 'success_url'):
+            self.success_url = self.model.Config.success_url
+        else:
+            self.success_url = reverse(
+                'adminlte:common_list_page',
+                kwargs={
+                    'app_name': self.app_name,
+                    'model_name': self.model_name
+                }
+            )
+
         if hasattr(getattr(self, 'model').Config, 'form_template_name'):
             self.template_name = getattr(getattr(self, 'model').Config,
                                          'form_template_name')
