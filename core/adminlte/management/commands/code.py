@@ -16,6 +16,8 @@ from templates.forms import FORMS_HEADER, FORMS_MODEL_TEMPLATE
 from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
 from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 class Command(BaseCommand):
     help = ''' Create code
@@ -124,8 +126,22 @@ class Command(BaseCommand):
             if title and title[0].islower():
                 title = title.title()
             titles.append(title)
-
         return fields, titles
+
+    def get_chinese_titles(self, titles):
+        result = ''
+        for t in titles:
+            if u'\u4e00' <= t <= u'\u9fff':
+                item = "u'%s'" % t.encode('gb2312')
+            else:
+                item = "'%s'" % t.encode('gb2312')
+
+            if result:
+                result = ', '.join([result, item])
+            else:
+                result = item
+        result = '[%s]' % result
+        return result.decode('gbk')
 
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
@@ -159,7 +175,7 @@ class Command(BaseCommand):
             content = content.replace('<% MODEL_NAME %>', model.__name__). \
                 replace('<% model_name %>', model.__name__.lower()). \
                 replace('<% fields %>', str(fields)). \
-                replace('<% titles %>', str(titles))
+                replace('<% titles %>', self.get_chinese_titles(titles))
         return content
 
     def get_urls_content(self):
@@ -236,7 +252,7 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (self.app_str,self.app_name))
+        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (self.app_str, self.app_name))
         self.stdout.write('')
         self.stderr.write(
             " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")
