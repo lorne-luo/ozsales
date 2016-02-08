@@ -1,4 +1,5 @@
-URLS_HEADER = '''from django.conf.urls import patterns, url
+URLS_HEADER = '''# coding=utf-8
+from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 import views

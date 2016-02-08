@@ -1,4 +1,5 @@
-VIEWS_HEADER = '''from django.views.generic import ListView, CreateView, UpdateView
+VIEWS_HEADER = '''# coding=utf-8
+from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet

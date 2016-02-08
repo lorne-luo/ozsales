@@ -1,4 +1,5 @@
-FORMS_HEADER = '''from django import forms
+FORMS_HEADER = '''# coding=utf-8
+from django import forms
 from models import <% ALL_MODELS %>
 
 '''

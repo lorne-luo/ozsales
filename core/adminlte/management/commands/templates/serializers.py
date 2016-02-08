@@ -1,4 +1,5 @@
-SERIALIZERS_HEADER = '''from django.core.urlresolvers import reverse
+SERIALIZERS_HEADER = '''# coding=utf-8
+from django.core.urlresolvers import reverse
 from rest_framework import serializers
 from models import <% ALL_MODELS %>
 
