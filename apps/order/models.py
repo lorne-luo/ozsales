@@ -106,7 +106,7 @@ class Order(models.Model):
     def get_paid_button(self):
         if not self.is_paid:
             url = reverse('change-order-paid', kwargs={'order_id': self.id})
-            return '<a href="%s">UNPAID</a>' % url
+            return '<a href="%s"><b>UNPAID</b></a>' % url
         return 'PAID'
 
     get_paid_button.allow_tags = True
