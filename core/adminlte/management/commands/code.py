@@ -116,6 +116,9 @@ class Command(BaseCommand):
         for mf in model._meta.fields:
             if mf.name == 'id':
                 continue
+            elif isinstance(mf, models.fields.DateTimeField):
+                if mf.auto_now_add or mf.auto_now:
+                    continue
             fields.append(mf.name)
             title = unicode(mf.verbose_name)
             if title and title[0].islower():
