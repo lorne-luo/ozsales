@@ -127,7 +127,7 @@ class Command(BaseCommand):
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
             if obj.__module__.startswith(self.module_str):
-                if issubclass(obj, models.Model):
+                if issubclass(obj, models.Model) and not obj._meta.abstract:
                     self.model_list.append(obj)
 
     def make_folder(self, path):
@@ -158,7 +158,6 @@ class Command(BaseCommand):
                 replace('<% fields %>', str(fields)). \
                 replace('<% titles %>', str(titles))
         return content
-
 
     def get_urls_content(self):
         content = URLS_HEADER
@@ -198,7 +197,6 @@ class Command(BaseCommand):
         content = content.replace('<% model_menu %>', model_menu)
         self.stdout.write(content)
         return content
-
 
     def get_reverse_js(self):
         management.call_command('js_reverse')
