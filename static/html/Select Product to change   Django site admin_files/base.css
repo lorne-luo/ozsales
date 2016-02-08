@@ -244,7 +244,7 @@ table {
 }
 
 td, th {
-    font-size: 11px;
+    font-size: 20px;
     line-height: 13px;
     border-bottom: 1px solid #eee;
     vertical-align: top;
@@ -254,7 +254,7 @@ td, th {
 
 th {
     text-align: left;
-    font-size: 12px;
+    font-size: 20px;
     font-weight: bold;
 }
 
