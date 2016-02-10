@@ -23,7 +23,6 @@ def sitemail_markall(request):
     return JsonResponse({'message': u'ok'}, status=200)
 
 
-
 # views for Notification
 
 class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -143,25 +142,10 @@ class NotificationContentViewSet(CommonViewSet):
 
 
 # views for SiteMailContent
-
-class SiteMailContentListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    model = SiteMailContent
-    template_name_suffix = '_list'  # sitemailcontent/sitemailcontent_list.html
-    permissions = {
-        "all": ("messageset.view_sitemailcontent",)
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super(SiteMailContentListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'标题', u'内容', u'状态', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'contents', 'status', 'creator', 'deleted_at'] + ['id']
-        return context
-
-
 class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = SiteMailContent
     form_class = forms.SiteMailContentAddForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'messageset/sitemail_form.html'
     permissions = {
         "all": ("sitemailcontent.add_sitemailcontent",)
     }
@@ -215,30 +199,6 @@ class SiteMailReceiveListView(MultiplePermissionsRequiredMixin, CommonContextMix
         context['table_titles'] = [u'主题',  u'发件人', u'读取状态', u'收件时间'] + ['']
         context['table_fields'] = ['title', 'sender', 'status', 'send_time'] + ['id']
         return context
-
-
-class SiteMailReceiveAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = SiteMailReceive
-    form_class = forms.SiteMailReceiveAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("sitemailreceive.add_sitemailreceive",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailreceive-list')
-
-
-class SiteMailReceiveUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    model = SiteMailReceive
-    form_class = forms.SiteMailReceiveUpdateForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("sitemailreceive.change_sitemailreceive",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailreceive-list')
 
 
 class SiteMailReceiveDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

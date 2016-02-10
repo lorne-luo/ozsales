@@ -67,11 +67,11 @@ router.register(r'api/messageset/notificationcontent', views.NotificationContent
 
 # urls for sitemailcontent
 urlpatterns += patterns('',
-    url(r'^messageset/sitemailcontent/add/$', login_required(views.SiteMailContentAddView.as_view()), name='sitemailcontent-add'),
-    url(r'^messageset/sitemailcontent/list/$', login_required(views.SiteMailContentListView.as_view()), name='sitemailcontent-list'),
+    url(r'^messageset/sitemail/add/$', login_required(views.SiteMailContentAddView.as_view()), name='sitemail-add'),
     url(r'^messageset/sitemailcontent/(?P<pk>\d+)/$', login_required(views.SiteMailContentDetailView.as_view()), name='sitemailcontent-detail'),
     url(r'^messageset/sitemailcontent/(?P<pk>\d+)/edit/$', login_required(views.SiteMailContentUpdateView.as_view()), name='sitemailcontent-update'),
 )
+
 
 # reverse('messageset:api-sitemailcontent-list'),reverse('messageset:api-sitemailcontent-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/sitemailcontent', views.SiteMailContentViewSet, base_name='api-sitemailcontent')
@@ -79,11 +79,9 @@ router.register(r'api/messageset/sitemailcontent', views.SiteMailContentViewSet,
 
 # urls for sitemailreceive
 urlpatterns += patterns('',
-    url(r'^messageset/sitemailreceive/add/$', login_required(views.SiteMailReceiveAddView.as_view()), name='sitemailreceive-add'),
-    url(r'^messageset/sitemailreceive/list/$', login_required(views.SiteMailReceiveListView.as_view()), name='sitemailreceive-list'),
-    url(r'^messageset/sitemailreceive/(?P<pk>\d+)/$', login_required(views.SiteMailReceiveDetailView.as_view()), name='sitemailreceive-detail'),
-    url(r'^messageset/sitemailreceive/(?P<pk>\d+)/edit/$', login_required(views.SiteMailReceiveUpdateView.as_view()), name='sitemailreceive-update'),
-    url(r'api/messageset/sitemailreceive/markall', views.sitemail_markall,name='api-sitemail_markall'),
+    url(r'^messageset/sitemail/receive/list/$', login_required(views.SiteMailReceiveListView.as_view()), name='sitemailreceive-list'),
+    url(r'^messageset/sitemail/receive/(?P<pk>\d+)/$', login_required(views.SiteMailReceiveDetailView.as_view()), name='sitemailreceive-detail'),
+    url(r'api/messageset/sitemail/receive/markall', views.sitemail_markall, name='api-sitemail_markall'),
 )
 
 # reverse('messageset:api-sitemailreceive-list'),reverse('messageset:api-sitemailreceive-detail', kwargs={'pk': 1})
