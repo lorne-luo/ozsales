@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.conf.urls import patterns, include, url
 from django.conf import settings
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from core.adminlte.views import  ChangePasswordView, ChangePasswordDoneView
 
@@ -17,6 +16,7 @@ apps_urlpatterns = patterns('',
     url(r'^product/', include('apps.product.urls')),
     url(r'^customer/', include('apps.customer.urls')),
     url(r'^', include('apps.store.urls', namespace='store')),
+    url(r'^', include('core.messageset.urls', namespace='messageset')),
 )
 # Member frontend
 
@@ -58,7 +58,4 @@ urlpatterns = patterns('',
     # for js reverse
     url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 
-    url(r'^api/v1/messageset', include('core.messageset.urls_api',namespace='messageset_api')),
 )
-
-urlpatterns += staticfiles_urlpatterns()
