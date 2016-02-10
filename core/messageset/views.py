@@ -262,43 +262,6 @@ class SiteMailReceiveViewSet(CommonViewSet):
 
 # views for SiteMailSend
 
-class SiteMailSendListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    model = SiteMailSend
-    template_name_suffix = '_list'  # sitemailsend/sitemailsend_list.html
-    permissions = {
-        "all": ("messageset.view_sitemailsend",)
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super(SiteMailSendListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'主题', u'内容', u'发件人', u'读取状态', u'数据创建人', u'数据删除时间', u'收件人', u'读取时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'sender', 'status', 'creator', 'deleted_at', 'receive', 'read_time'] + ['id']
-        return context
-
-
-class SiteMailSendAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = SiteMailSend
-    form_class = forms.SiteMailSendAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("sitemailsend.add_sitemailsend",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailsend-list')
-
-
-class SiteMailSendUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    model = SiteMailSend
-    form_class = forms.SiteMailSendUpdateForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("sitemailsend.change_sitemailsend",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailsend-list')
-
 
 class SiteMailSendDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = SiteMailSend

@@ -92,10 +92,7 @@ router.register(r'api/messageset/sitemailreceive', views.SiteMailReceiveViewSet,
 
 # urls for sitemailsend
 urlpatterns += patterns('',
-    url(r'^messageset/sitemailsend/add/$', login_required(views.SiteMailSendAddView.as_view()), name='sitemailsend-add'),
-    url(r'^messageset/sitemailsend/list/$', login_required(views.SiteMailSendListView.as_view()), name='sitemailsend-list'),
     url(r'^messageset/sitemailsend/(?P<pk>\d+)/$', login_required(views.SiteMailSendDetailView.as_view()), name='sitemailsend-detail'),
-    url(r'^messageset/sitemailsend/(?P<pk>\d+)/edit/$', login_required(views.SiteMailSendUpdateView.as_view()), name='sitemailsend-update'),
 )
 
 # reverse('messageset:api-sitemailsend-list'),reverse('messageset:api-sitemailsend-detail', kwargs={'pk': 1})
