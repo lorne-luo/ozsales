@@ -16,7 +16,7 @@ VIEWS_MODEL_TEMPLATE = '''
 
 class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = <% MODEL_NAME %>
-    template_name_suffix = '_list'  # <% model_name %>/<% model_name %>_list.html
+    template_name_suffix = '_list'  # <% app_name %>/<% model_name %>_list.html
     permissions = {
         "all": ("<% app_name %>.view_<% model_name %>",)
     }
