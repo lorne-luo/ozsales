@@ -31,11 +31,11 @@ class AbstractMessageContent(models.Model, UsableStatus):
     )
     created_at = models.DateTimeField(
         verbose_name=u"数据创建时间",
-        default=timezone.now
+        auto_now_add=True
     )
     updated_at = models.DateTimeField(
         verbose_name=u"数据更新时间",
-        default=timezone.now
+        auto_now=True
     )
     deleted_at = models.DateTimeField(
         verbose_name=u"数据删除时间",
@@ -106,11 +106,11 @@ class AbstractSiteMail(models.Model, MailStatus):
     )
     created_at = models.DateTimeField(
         verbose_name=u"数据创建时间",
-        default=timezone.now
+        auto_now_add=True
     )
     updated_at = models.DateTimeField(
         verbose_name=u"数据更新时间",
-        default=timezone.now
+        auto_now=True
     )
     deleted_at = models.DateTimeField(
         verbose_name=u"数据删除时间",
@@ -151,7 +151,7 @@ class SiteMailSend(AbstractSiteMail):
 class SiteMailReceive(AbstractSiteMail):
     receive = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name='+',
+        related_name='sitemailreceive_receive',
         verbose_name=u'收件人',
         **DICT_NULL_BLANK_TRUE
     )
@@ -280,11 +280,11 @@ class Notification(models.Model, ReadStatus):
     )
     created_at = models.DateTimeField(
         verbose_name=u"数据创建时间",
-        default=timezone.now
+        auto_now_add=True
     )
     updated_at = models.DateTimeField(
         verbose_name=u"数据更新时间",
-        default=timezone.now
+        auto_now=True
     )
     deleted_at = models.DateTimeField(
         verbose_name=u"数据删除时间",
@@ -351,11 +351,11 @@ class Task(models.Model, TaskStatus):
     )
     created_at = models.DateTimeField(
         verbose_name=u"数据创建时间",
-        default=timezone.now
+        auto_now_add=True
     )
     updated_at = models.DateTimeField(
         verbose_name=u"数据更新时间",
-        default=timezone.now
+        auto_now=True
     )
     deleted_at = models.DateTimeField(
         verbose_name=u"数据删除时间",
