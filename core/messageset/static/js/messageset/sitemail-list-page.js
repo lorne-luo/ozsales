@@ -3,7 +3,17 @@ var sitemailListPageVue = new CommonListPageVue({
     data: {
         firstCount: true,
         unReadItemsCount: 0,
-        showBox: 'in'
+        showBox: 'in',
+        add_api_tag: 'messageset:api-sitemailreceive-list',
+        list_api_tag: 'messageset:api-sitemailreceive-list',
+        delete_api_tag: 'messageset:api-sitemailreceive-delete',
+        retrieve_api_tag: 'messageset:api-sitemailreceive-detail',
+        update_api_tag: 'messageset:api-sitemailreceive-detail',
+        destroy_api_tag: 'messageset:api-sitemailreceive-detail',
+
+        create_url_tag: 'messageset:sitemailreceive-add',
+        detail_url_tag: 'messageset:sitemailreceive-detail',
+        update_url_tag: 'messageset:sitemailreceive-update'
     },
     ready: function () {
         if (this.appName && this.modelName) {
@@ -12,16 +22,14 @@ var sitemailListPageVue = new CommonListPageVue({
     },
     methods: {
         newMail: function(event){
-            window.location.href = Urls['adminlte:common_create_page'](
-                this.appName,
-                'sitemailcontent'
-            );
+            window.location.href = Urls['messageset:sitemailcontent-add']();
         },
         inBox: function (event) {
             $(event.target).parent().siblings().removeClass('active');
             $(event.target).parent().addClass('active');
             this.showBox = 'in';
             this.modelName = 'sitemailreceive';
+            this.list_api_tag = 'messageset:api-sitemailreceive-list';
             this.loadData({});
         },
         sendBox: function (event) {
@@ -29,6 +37,7 @@ var sitemailListPageVue = new CommonListPageVue({
             $(event.target).parent().addClass('active');
             this.showBox = 'send';
             this.modelName = 'sitemailsend';
+            this.list_api_tag = 'messageset:api-sitemailsend-list';
             this.loadData({});
         },
         trashBox: function (event) {
@@ -67,7 +76,7 @@ var sitemailListPageVue = new CommonListPageVue({
                 showLoaderOnConfirm: true
             }, function () {
                 $.AdminLTE.apiPatch(
-                    Urls['messageset_api:sitemail_markall'](), {},
+                    Urls['messageset:api-sitemail_markall'](), {},
                     function (resp) {
                         swal({
                             title: "标识更新成功!",
@@ -82,13 +91,13 @@ var sitemailListPageVue = new CommonListPageVue({
     }
 });
 
+
 sitemailListPageVue.$watch('items', function (items) {
     if (sitemailListPageVue.firstCount) {
         var count = 0;
         if (sitemailListPageVue.unReadItemsCount === 0) {
             $.each(items, function (i, item) {
-                if (item.status_value === 0 &&
-                    item.sender != sitemailListPageVue.userName) {
+                if (item.status_value === 0 ) {
                     count++;
                 }
             });
