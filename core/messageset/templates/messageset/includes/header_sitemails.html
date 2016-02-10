@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Messages: style can be found in dropdown.less-->
 <li class="dropdown messages-menu">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -17,7 +18,7 @@
                         <a href="javascript:void(0);" data-pk="#[item.id]"
                                 v-on:click="sitemailDetail">
                             <div class="pull-left" data-pk="#[item.id]">
-                                <img src="#[item.sender_avatar]"
+                                <img src="{% static 'img/avatar-mini.png' %}"
                                      class="img-circle" alt="User Image"
                                      data-pk="#[item.id]" />
                             </div>
