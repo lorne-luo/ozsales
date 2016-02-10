@@ -24,11 +24,16 @@ class SiteMailReceiveSerializer(serializers.ModelSerializer):
 
 
 class SiteMailSendSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField()
+
+    def get_status(self, obj):
+        return obj.get_status_display()
+
     class Meta:
         model = SiteMailSend
-        fields = SiteMailSend.Config.list_display_fields
+        fields = ['title', 'sender', 'status', 'send_time', 'id']
         read_only_fields = (
-            'id', 'send_time'
+            'id', 'send_time', 'sender', 'status'
         )
 
 
@@ -74,11 +79,10 @@ class TaskSerializer(serializers.ModelSerializer):
 
 # Serializer for notificationcontent
 class NotificationContentSerializer(serializers.ModelSerializer):
-    link = serializers.SerializerMethodField()
 
     class Meta:
         model = NotificationContent
-        fields = ['link'] + ['title', 'contents', 'status', 'creator', 'created_at', 'updated_at', 'deleted_at'] + ['id']
+        fields = ['title', 'contents', 'status', 'creator', 'created_at', 'updated_at', 'deleted_at'] + ['id']
         read_only_fields = ['id']
 
     def get_link(self, obj):
@@ -98,10 +102,16 @@ class NotificationContentSerializer(serializers.ModelSerializer):
 # Serializer for sitemailcontent
 class SiteMailContentSerializer(serializers.ModelSerializer):
     link = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
+    sender = serializers.CharField(source='creator.username')
+    send_time = serializers.DateTimeField(source='created_at')
+
+    def get_status(self, obj):
+        return obj.get_status_display()
 
     class Meta:
         model = SiteMailContent
-        fields = ['link'] + ['title', 'contents', 'status', 'creator', 'created_at', 'updated_at', 'deleted_at'] + ['id']
+        fields = ['link'] + ['title', 'contents', 'status', 'sender', 'send_time', 'updated_at', 'deleted_at'] + ['id']
         read_only_fields = ['id']
 
     def get_link(self, obj):

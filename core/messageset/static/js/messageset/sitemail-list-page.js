@@ -11,8 +11,9 @@ var sitemailListPageVue = new CommonListPageVue({
         update_api_tag: 'messageset:api-sitemailreceive-detail',
         destroy_api_tag: 'messageset:api-sitemailreceive-detail',
 
-        create_url_tag: 'messageset:sitemailreceive-add',
-        detail_url_tag: 'messageset:sitemailreceive-detail',
+        create_url_tag: 'messageset:sitemail-add',
+        receive_detail_url_tag: 'messageset:sitemailreceive-detail',
+        send_detail_url_tag: 'messageset:sitemailsend-detail',
         update_url_tag: 'messageset:sitemailreceive-update'
     },
     ready: function () {
@@ -22,7 +23,7 @@ var sitemailListPageVue = new CommonListPageVue({
     },
     methods: {
         newMail: function(event){
-            window.location.href = Urls['messageset:sitemailcontent-add']();
+            window.location.href = Urls[this.create_url_tag]();
         },
         inBox: function (event) {
             $(event.target).parent().siblings().removeClass('active');
@@ -37,13 +38,30 @@ var sitemailListPageVue = new CommonListPageVue({
             $(event.target).parent().addClass('active');
             this.showBox = 'send';
             this.modelName = 'sitemailsend';
-            this.list_api_tag = 'messageset:api-sitemailsend-list';
+            this.list_api_tag = 'messageset:api-sitemailcontent-list';
             this.loadData({});
         },
         trashBox: function (event) {
             $(event.target).parent().siblings().removeClass('active');
             $(event.target).parent().addClass('active');
             this.loadData({});
+        },
+        mailDetail: function (event) {
+            var pk;
+            if ($(event.target).data('pk'))
+                pk = $(event.target).data('pk');
+            else if ($(event.target.parentNode).data('pk'))
+                pk = $(event.target.parentNode).data('pk');
+            else{
+                swal('错误', '无法获取pk', 'error');
+                return;
+            }
+            var url;
+            if (this.showBox == 'in')
+                url = Urls[this.receive_detail_url_tag](pk);
+            else
+                url = Urls[this.send_detail_url_tag](pk);
+            window.location.href = url;
         },
         filterStatus: function (status, event) {
             var self = this, data = {};
