@@ -8,7 +8,7 @@ var sitemailcontentListPageVue = new CommonListPageVue({
             update_api_tag: 'messageset:api-sitemailcontent-detail',
             destroy_api_tag: 'messageset:api-sitemailcontent-detail',
 
-            create_url_tag: 'messageset:sitemailcontent-add',
+            create_url_tag: 'messageset:sitemail-add',
             detail_url_tag: 'messageset:sitemailcontent-detail',
             update_url_tag: 'messageset:sitemailcontent-update'
         }

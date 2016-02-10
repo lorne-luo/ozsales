@@ -171,8 +171,7 @@ class SiteMailReceive(AbstractSiteMail):
         form_template_name = 'messageset/sitemail_form.html'
         detail_template_name = 'messageset/sitemail_detail.html'
         list_display_fields = (
-            'title', 'sender',
-            'status', 'send_time', 'id'
+            'title', 'sender', 'status', 'send_time', 'id'
         )
         list_form_fields = (
             'title', 'sender'
