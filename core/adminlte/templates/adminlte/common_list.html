@@ -86,52 +86,51 @@
                                     {% endif %}
                                 {% endfor %}
                             </tr>
-                            </thead>
-                            <tfoot>
-                                <tr>
-                                </tr>
-                            </tfoot>
-                            <tbody>
-                            <tbody v-for="item in items">
-                                <tr>
-                                    <td class="text-center">
-                                        <input type="checkbox" class="minimal"
-                                               name="checkboxRow"
-                                               value="#[item.id]"/>
-                                    </td>
-                                    <td class="text-center">#[$index+1]</td>
-                                    {% for field in table_fields %}
-                                        {% if field == 'id' %}
-                                            {% block item_buttons %}
-                                            <td class="text-right">
-                                                {% if page_model_perms.view %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                                   class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
-                                                   <i class="fa fa-bars fa-inverse"></i>
-                                                </a>
-                                                {% endif %}
-                                                {% if page_model_perms.change %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                                   class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
-                                                    <i class="fa fa-pencil fa-inverse"></i>
-                                                </a>
-                                                {% endif %}
-                                                {% if page_model_perms.delete %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                                   class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-                                                    <i class="fa fa-trash-o fa-inverse"></i>
-                                                </a>
-                                                {% endif %}
-                                            </td>
-                                            {% endblock %}
-                                        {% else %}
-                                            <td>
-                                                {!! item.{{ field }} !!}
-                                            </td>
-                                        {% endif %}
-                                    {% endfor %}
-                                </tr>
-                            </tbody>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                            </tr>
+                        </tfoot>
+                        <tbody v-for="item in items">
+                            <tr>
+                                <td class="text-center">
+                                    <input type="checkbox" class="minimal"
+                                           name="checkboxRow"
+                                           value="#[item.id]"/>
+                                </td>
+                                <td class="text-center">#[$index+1]</td>
+                                {% for field in table_fields %}
+                                    {% if field == 'id' %}
+                                        {% block item_buttons %}
+                                        <td class="text-right">
+                                            {% if page_model_perms.view %}
+                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
+                                               class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
+                                               <i class="fa fa-bars fa-inverse"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if page_model_perms.change %}
+                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
+                                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                                                <i class="fa fa-pencil fa-inverse"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if page_model_perms.delete %}
+                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+                                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                                                <i class="fa fa-trash-o fa-inverse"></i>
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                        {% endblock %}
+                                    {% else %}
+                                        <td>
+                                            {!! item.{{ field }} !!}
+                                        </td>
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 {% endblock %}

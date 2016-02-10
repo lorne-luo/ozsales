@@ -19,7 +19,7 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
 
             create_url_tag: '<% app_name %>:<% model_name %>-add',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
-            update_url_tag: '<% app_name %>:<% model_name %>-update',
+            update_url_tag: '<% app_name %>:<% model_name %>-update'
         }
     }
 );

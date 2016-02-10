@@ -1,6 +1,7 @@
+{% load static %}
 <li class="dropdown user user-menu">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <img src="/static/img/avatar-mini.png"
+        <img src="{% static 'img/avatar-mini.png' %}"
              class="user-image hidden-phone" alt="User Image">
         <span class="hidden-xs">
             {{ request.user.staff_of.real_name|default:request.user.username }}

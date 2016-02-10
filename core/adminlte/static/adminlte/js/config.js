@@ -1,6 +1,3 @@
-/**
- * Created by lyhapple on 15/11/6.
- */
 
 _.mixin(s.exports());
 
