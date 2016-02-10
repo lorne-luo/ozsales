@@ -63,6 +63,14 @@ class UsableStatus(object):
     )
 
 
+class DeletableStatus(object):
+    NORMAL = 1
+    DELETED = 99
+    STATUS = (
+        (NORMAL, u'启用'),
+        (DELETED, u'删除'),
+    )
+
 class TaskStatus(object):
     NORMAL = 0
     EXCEPT = 1
