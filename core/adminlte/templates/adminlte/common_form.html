@@ -18,12 +18,14 @@
         </li>
         {% if page_title != default_dashboard_title %}
         <li class="active">
+            {% block app_index %}
             {% if page_app_name and page_model_name %}
                 <a href="{% url page_app_name|add:':'|add:page_model_name|add:'-list' %}">
-                    {{ page_model_verbose_name }}
+                    {{ page_app_name }}
                 </a>
             {% endif %}
-            </li>
+            {% endblock %}
+        </li>
         {% endif %}
         {% if object != None %}
             <li class="active">{{ page_title }}</li>

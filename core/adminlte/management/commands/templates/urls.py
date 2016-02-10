@@ -19,7 +19,8 @@ urlpatterns += patterns('',
     url(r'^<% app_name %>/<% model_name %>/(?P<pk>\d+)/edit/$', login_required(views.<% MODEL_NAME %>UpdateView.as_view()), name='<% model_name %>-update'),
 )
 
-# reverse('<% app_name %>:api-<% model_name %>-list'),reverse('<% app_name %>:api-<% model_name %>-detail', kwargs={'pk': 1})
+
+# reverse('<% app_name %>:api-<% model_name %>-list'), reverse('<% app_name %>:api-<% model_name %>-detail', kwargs={'pk': 1})
 router.register(r'api/<% app_name %>/<% model_name %>', views.<% MODEL_NAME %>ViewSet, base_name='api-<% model_name %>')
 
 '''
