@@ -1,29 +1,25 @@
 # coding=utf-8
 from rest_framework import serializers
-from .models import Task, Notification, SiteMailReceive, SiteMailSend
+from django.core.urlresolvers import reverse
+from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
-__author__ = 'lyhapple'
 
 
 class SiteMailReceiveSerializer(serializers.ModelSerializer):
     sender = serializers.CharField(source='sender.username')
     status = serializers.SerializerMethodField()
     status_value = serializers.IntegerField(source='status')
-    sender_avatar = serializers.SerializerMethodField()
 
     def get_status(self, obj):
         return obj.get_status_display()
 
-    def get_sender_avatar(self, obj):
-        return obj.sender.staff_of.avatar.url
-
     class Meta:
         model = SiteMailReceive
         fields = SiteMailReceive.Config.list_display_fields + (
-            'sender_avatar', 'status_value'
+            'status_value',
         )
         read_only_fields = (
-            'id', 'send_time', 'sender_avatar', 'status_value'
+            'id', 'send_time', 'status_value'
         )
 
 
@@ -74,3 +70,50 @@ class TaskSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'id', 'created_at', 'status'
         )
+
+
+# Serializer for notificationcontent
+class NotificationContentSerializer(serializers.ModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NotificationContent
+        fields = ['link'] + ['title', 'contents', 'status', 'creator', 'created_at', 'updated_at', 'deleted_at'] + ['id']
+        read_only_fields = ['id']
+
+    def get_link(self, obj):
+        request = self.context.get('request', None)
+
+        change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
+        view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
+        if request.user.has_perm(change_perm_str):
+            url = reverse('messageset:notificationcontent-update', args=[obj.id])
+            return '<a href="%s">%s</a>' % (url, 'Update Link')
+        elif request.user.has_perm(view_perm_str):
+            url = reverse('messageset:notificationcontent-detail', args=[obj.id])
+            return '<a href="%s">%s</a>' % (url, 'Detail Link')
+        return None
+
+
+# Serializer for sitemailcontent
+class SiteMailContentSerializer(serializers.ModelSerializer):
+    link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SiteMailContent
+        fields = ['link'] + ['title', 'contents', 'status', 'creator', 'created_at', 'updated_at', 'deleted_at'] + ['id']
+        read_only_fields = ['id']
+
+    def get_link(self, obj):
+        request = self.context.get('request', None)
+
+        change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
+        view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
+        if request.user.has_perm(change_perm_str):
+            url = reverse('messageset:sitemailcontent-update', args=[obj.id])
+            return '<a href="%s">%s</a>' % (url, 'Update Link')
+        elif request.user.has_perm(view_perm_str):
+            url = reverse('messageset:sitemailcontent-detail', args=[obj.id])
+            return '<a href="%s">%s</a>' % (url, 'Detail Link')
+        return None
+
