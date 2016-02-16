@@ -27,6 +27,7 @@ class AbstractMessageContent(models.Model, UsableStatus):
     creator = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         verbose_name=u"数据创建人",
+        # editable=False,
         **DICT_NULL_BLANK_TRUE
     )
     created_at = models.DateTimeField(

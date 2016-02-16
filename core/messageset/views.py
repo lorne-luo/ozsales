@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
@@ -8,10 +8,9 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from core.adminlte.views import CommonContextMixin, CommonViewSet
+from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 import serializers
 import forms
-
-from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 
 @login_required
@@ -151,8 +150,18 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
     }
 
     def get_success_url(self):
-        return reverse('messageset:sitemailcontent-list')
+        return reverse('messageset:sitemailreceive-list')
 
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            sitemail = form.save(commit=False)
+            sitemail.creator=request.user
+            sitemail.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.form_invalid(form)
 
 class SiteMailContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = SiteMailContent

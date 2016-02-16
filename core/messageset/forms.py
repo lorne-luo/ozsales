@@ -41,7 +41,7 @@ class NotificationContentDetailForm(forms.ModelForm):
 class SiteMailContentAddForm(forms.ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents','receivers', 'status', 'creator']
+        fields = ['title', 'contents','receivers', 'status']
 
 
 class SiteMailContentUpdateForm(forms.ModelForm):
