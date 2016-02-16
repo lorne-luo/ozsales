@@ -1,3 +1,4 @@
+# coding=utf-8
 from django import forms
 from models import AbstractMessageContent, AbstractSiteMail, Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
@@ -5,19 +6,19 @@ from models import AbstractMessageContent, AbstractSiteMail, Notification, Notif
 class NotificationAddForm(forms.ModelForm):
     class Meta:
         model = Notification
-        fields = ['title', 'content', 'receive', 'status', 'read_time', 'creator']
+        fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
 class NotificationUpdateForm(forms.ModelForm):
     class Meta:
         model = Notification
-        fields = ['title', 'content', 'receive', 'status','read_time', 'creator']
+        fields = ['title', 'content', 'receiver', 'status','read_time', 'creator']
 
 
 class NotificationDetailForm(forms.ModelForm):
     class Meta:
         model = Notification
-        fields = ['title', 'content', 'receive', 'status', 'read_time', 'creator']
+        fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
 class NotificationContentAddForm(forms.ModelForm):
@@ -41,7 +42,7 @@ class NotificationContentDetailForm(forms.ModelForm):
 class SiteMailContentAddForm(forms.ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents','receivers', 'status']
+        fields = ['title', 'contents','receivers']
 
 
 class SiteMailContentUpdateForm(forms.ModelForm):
@@ -59,19 +60,19 @@ class SiteMailContentDetailForm(forms.ModelForm):
 class SiteMailReceiveAddForm(forms.ModelForm):
     class Meta:
         model = SiteMailReceive
-        fields = ['title', 'content', 'sender', 'status', 'creator', 'receive', 'read_time']
+        fields = ['title', 'content', 'sender', 'status', 'creator', 'receiver', 'read_time']
 
 
 class SiteMailReceiveUpdateForm(forms.ModelForm):
     class Meta:
         model = SiteMailReceive
-        fields = ['title', 'content', 'sender', 'status', 'creator', 'receive', 'read_time']
+        fields = ['title', 'content', 'sender', 'status', 'creator', 'receiver', 'read_time']
 
 
 class SiteMailReceiveDetailForm(forms.ModelForm):
     class Meta:
         model = SiteMailReceive
-        fields = ['title', 'content', 'sender',  'status', 'creator', 'receive', 'read_time']
+        fields = ['title', 'content', 'sender',  'status', 'creator', 'receiver', 'read_time']
 
 
 class SiteMailSendAddForm(forms.ModelForm):

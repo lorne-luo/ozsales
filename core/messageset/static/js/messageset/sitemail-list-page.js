@@ -38,7 +38,7 @@ var sitemailListPageVue = new CommonListPageVue({
             $(event.target).parent().addClass('active');
             this.showBox = 'send';
             this.modelName = 'sitemailsend';
-            this.list_api_tag = 'messageset:api-sitemailcontent-list';
+            this.list_api_tag = 'messageset:api-sitemailsend-list';
             this.loadData({});
         },
         trashBox: function (event) {

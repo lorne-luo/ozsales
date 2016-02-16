@@ -14,7 +14,7 @@
         </li>
         {% if page_title != default_dashboard_title %}
             <li class="active">
-                <a href="{% url 'messageset:sitemailreceive-list' %}">
+                <a href="{% url 'messageset:sitemail-list' %}">
                     站内信
                 </a>
             </li>
@@ -75,7 +75,7 @@
                     <div class="box-header">
                         <div class="row">
                             <div class="col-xs-12 col-sm-8">
-                                {% comment %}<button class="btn btn-primary"
+                                <button class="btn btn-primary"
                                         v-on:click="allStatus">
                                     全部
                                 </button>
@@ -90,7 +90,7 @@
                                 <button class="btn btn-link"
                                         v-on:click="markAllRead">
                                     标记为已读
-                                </button>{% endcomment %}
+                                </button>
                                 <div class="checkbox pull-left btn-link"
                                      style="margin-top: 7px; margin-right: 12px;">
                                     <label>

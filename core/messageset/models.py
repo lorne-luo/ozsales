@@ -150,7 +150,7 @@ class SiteMailSend(AbstractSiteMail):
 
 
 class SiteMailReceive(AbstractSiteMail):
-    receive = models.ForeignKey(
+    receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='sitemailreceive_receive',
         verbose_name=u'收件人',
@@ -182,7 +182,7 @@ class SiteMailReceive(AbstractSiteMail):
 
         @classmethod
         def filter_queryset(cls, request, queryset):
-            return queryset.filter(receive=request.user).exclude(
+            return queryset.filter(receiver=request.user).exclude(
                 status=SiteMailReceive.DELETED
             )
             # if 'receive' in request.query_params \
@@ -252,7 +252,7 @@ class Notification(models.Model, ReadStatus):
         verbose_name=u'内容',
         **DICT_NULL_BLANK_TRUE
     )
-    receive = models.ForeignKey(
+    receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='+',
         verbose_name=u'接收人',
@@ -311,7 +311,7 @@ class Notification(models.Model, ReadStatus):
         @classmethod
         def filter_queryset(cls, request, queryset):
             return queryset.exclude(status=Notification.DELETED).filter(
-                receive=request.user
+                receiver=request.user
             )
 
         @classmethod
@@ -420,7 +420,7 @@ def create_sitemail_datas(sender, instance, **kwargs):
     SiteMailSend(**kwargs).save()
     for user in instance.receivers.all():
         tmp_kwargs = {
-            'receive': user,
+            'receiver': user,
         }
         tmp_kwargs.update(kwargs)
         SiteMailReceive(**tmp_kwargs).save()
@@ -438,13 +438,13 @@ def create_notification_datas(sender, instance, **kwargs):
     """
     for user in instance.receivers.all():
         exists = Notification.objects.filter(
-            receive=user, content=instance
+            receiver=user, content=instance
         ).exists()
         if not exists:
             nf = Notification()
             nf.title = instance.title
             nf.content = instance
-            nf.receive = user
+            nf.receiver = user
             nf.creator = instance.creator
             nf.status = Notification.UNREAD
             nf.save()

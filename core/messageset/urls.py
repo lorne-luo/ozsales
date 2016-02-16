@@ -79,7 +79,7 @@ router.register(r'api/messageset/sitemailcontent', views.SiteMailContentViewSet,
 
 # urls for sitemailreceive
 urlpatterns += patterns('',
-    url(r'^messageset/sitemail/receive/list/$', login_required(views.SiteMailReceiveListView.as_view()), name='sitemailreceive-list'),
+    url(r'^messageset/sitemail/list/$', login_required(views.SiteMailReceiveListView.as_view()), name='sitemail-list'),
     url(r'^messageset/sitemail/receive/(?P<pk>\d+)/$', login_required(views.SiteMailReceiveDetailView.as_view()), name='sitemailreceive-detail'),
     url(r'api/messageset/sitemail/receive/markall', views.sitemail_markall, name='api-sitemail_markall'),
 )

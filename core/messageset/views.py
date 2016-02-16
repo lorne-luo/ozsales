@@ -34,7 +34,7 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
     def get_context_data(self, **kwargs):
         context = super(NotificationListView, self).get_context_data(**kwargs)
         context['table_titles'] = ['Link'] + [u'标题', u'内容', u'接收人', u'读取状态', u'读取时间', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'receive', 'status', 'read_time', 'creator', 'deleted_at'] + ['id']
+        context['table_fields'] = ['link'] + ['title', 'content', 'receiver', 'status', 'read_time', 'creator', 'deleted_at'] + ['id']
         return context
 
 
@@ -77,8 +77,8 @@ class NotificationViewSet(CommonViewSet):
     queryset = Notification.objects.all()
     serializer_class = serializers.NotificationSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content', 'receive', 'status', 'read_time', 'creator']
-    search_fields = ['title', 'content', 'receive', 'status', 'read_time', 'creator']
+    filter_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
+    search_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
 # views for NotificationContent
@@ -150,7 +150,7 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
     }
 
     def get_success_url(self):
-        return reverse('messageset:sitemailreceive-list')
+        return reverse('messageset:sitemail-list')
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -225,8 +225,8 @@ class SiteMailReceiveViewSet(CommonViewSet):
     queryset = SiteMailReceive.objects.all()
     serializer_class = serializers.SiteMailReceiveSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content', 'sender', 'status', 'creator', 'receive', 'read_time']
-    search_fields = ['title', 'content', 'sender', 'status', 'creator', 'receive', 'read_time']
+    filter_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
+    search_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
 
 
 # views for SiteMailSend

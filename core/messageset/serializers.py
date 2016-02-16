@@ -24,6 +24,7 @@ class SiteMailReceiveSerializer(serializers.ModelSerializer):
 
 
 class SiteMailSendSerializer(serializers.ModelSerializer):
+    sender = serializers.CharField(source='sender.username')
     status = serializers.SerializerMethodField()
 
     def get_status(self, obj):
