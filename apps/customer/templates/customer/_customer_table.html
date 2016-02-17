@@ -1,0 +1,44 @@
+{% load staticfiles %}
+
+<span class='hide' id='no_records'>There are currently no customers available.</span>
+<div id="server-error" class="alert alert-error hide">Server error, please try again later!</div>
+
+
+<form action="." method="POST">
+{% csrf_token %}
+<table class="table table-striped table-list">
+  <thead>
+    <tr>
+      <th><input type="checkbox" class="group-checkable" data-set=".checkboxes" /></th>
+      <th>Name</th>
+      <th>Mobile</th>
+      <th>Primary Addr</th>
+      <th class="hidden-phone">Order Count</th>
+      <th class="hidden-phone">Last Order</th>
+      <th>Tags</th>
+      <th class="hidden-phone"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for customer in customers %}
+      <tr class="odd gradeX">
+        <td><input type="checkbox" name="customer_ids" class="checkboxes" value="{{customer.id}}" /></td>
+        <td>
+            <a href="{% url 'customer-edit' pk=customer.pk%}">
+            {{customer.name}}
+            </a>
+        </td>
+        <td>{{customer.mobile}}</td>
+        <td>{{customer.primary_address}}</td>
+        <td class="hidden-phone">{{customer.order_count}}</td>
+        <td class="hidden-phone">{{customer.last_order_time}}</td>
+        <td></td>
+        <td class="hidden-phone">
+            <button type='button' data-placement="bottom" data-original-title="Delete Customer" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
+            <a data-placement="bottom" data-original-title="Edit Customer" href="{% url 'customer-edit' pk=customer.pk%}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
+        </td>
+      </tr>
+  {%endfor%}
+  </tbody>
+</table>
+</form>

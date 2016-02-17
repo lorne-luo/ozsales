@@ -1,0 +1,11 @@
+{% extends "adminlte/common_form.html" %}
+
+{% block content_title %}
+    发送{{ page_title }}
+{% endblock %}
+
+{% block app_index %}
+    <a href="{% url 'messageset:sitemail-list' %}">
+        站内邮件
+    </a>
+{% endblock %}

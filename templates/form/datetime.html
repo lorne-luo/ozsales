@@ -1,0 +1,17 @@
+<div class="control-group datetimepicker-group {% if errors %}error{% endif %}">
+    <label class="control-label">{{title}}{%if input.field.required or required %}<span>*</span>{% endif %} :</label>
+    <div class="controls">
+    	<div class="input-append {{type|default:'datetimepicker'}}_trigger">
+    		<input type="text" readonly class="{{type|default:'datetimepicker'}}" value="{{input.value|default:''}}" name='{{input.name}}' id='id_{{input.name}}'>
+            <span class="add-on trigger"><i class="fa fa-calendar"></i></span>
+		</div>
+        <a href="#" class="remove">Clear</a>
+		{% if errors %}
+			<span class="help-inline">{{errors}}</span>
+		{% elif  hint%}
+			<span class="help-inline">{{hint}}</span>
+		{% else %}
+			<span class="help-inline"></span>
+		{% endif %}
+    </div>
+</div>

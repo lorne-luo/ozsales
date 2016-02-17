@@ -1,0 +1,92 @@
+{% extends "adminlte/base.html" %}
+{% load staticfiles %}
+
+{% block content_title %}
+    {% if object %}
+        修改
+    {% else %}
+        新增
+    {% endif %}{{ page_title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="/member/home">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% block app_index %}
+            {% if page_app_name and page_model_name %}
+                <a href="{% url page_app_name|add:':'|add:page_model_name|add:'-list' %}">
+                    {{ page_app_name }}
+                </a>
+            {% endif %}
+            {% endblock %}
+        </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+{% block content %}
+            <div class="box box-info">
+                {% if form.is_multipart %}
+                    <form enctype="multipart/form-data"
+                          method="post"
+                          action=""
+                          class="form-horizontal"
+                          role="form" id="commonForm">
+                {% else %}
+                    <form method="post" action="" class="form-horizontal"
+                          role="form" id="commonForm">
+                {% endif %}
+                {% csrf_token %}
+
+                <div class="box-header with-border">
+                  <h3 class="box-title">{{ object }}</h3>
+                </div>
+
+                <div class="box-body">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
+                            <div class="col-sm-6">
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-4">
+                                <p class="help-block">{{ field.help_text }}</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="box-footer">
+                  <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+                </div>
+            </form>
+            </div>
+{% endblock %}
+
+{% block header_page_script %}
+    <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
+    <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
+{% endblock %}
+
+{% block footer_base_script %}
+    <script type="text/javascript">
+        $('#commonForm input:text').addClass('form-control');
+        $("#commonForm input[type='email']").addClass('form-control');
+        $("#commonForm input[type='url']").addClass('form-control');
+        $("#commonForm input[type='number']").addClass('form-control');
+        $('#commonForm select').addClass('form-control');
+        $('#commonForm textarea').addClass('form-control');
+
+        jQuery(document).ready(function($) {
+            $("select[class$='form-control']").chosen({search_contains: true,disable_search_threshold: 10});
+        });
+    </script>
+{% endblock %}

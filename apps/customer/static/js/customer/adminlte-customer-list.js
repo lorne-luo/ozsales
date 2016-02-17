@@ -1,0 +1,2 @@
+var customerListPageVue = new CommonListPageVue();
+

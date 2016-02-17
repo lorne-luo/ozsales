@@ -1,0 +1,110 @@
+from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404
+from django.http import Http404
+from django.http import HttpResponseRedirect
+from django.views.generic import ListView, CreateView, UpdateView
+from rest_framework.permissions import AllowAny
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from core.adminlte.views import CommonContextMixin
+from core.api.views import CommonListCreateAPIView
+from models import Product
+from forms import ProductForm
+
+
+class ProductList(MultiplePermissionsRequiredMixin, TemplateView):
+    ''' List of products. '''
+    template_name = 'product/product-list.html'
+    permissions = {
+        "any": ("product.add_product", "product.view_product")
+    }
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['products'] = Product.objects.all()
+        return self.render_to_response(context)
+
+
+class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
+    ''' Add/Edit a product. '''
+    template_name = 'product/product-edit.html'
+    permissions = {
+        "any": ("product.add_product", "product.view_product")
+    }
+
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk', '')
+        context = {'form': ProductForm(), }
+        if pk:
+            product = get_object_or_404(Product, id=pk)
+            context['product'] = product
+
+        return self.render_to_response(context)
+
+
+class ProductListView(CommonContextMixin, ListView):
+    model = Product
+    # template_name_suffix = '_list'
+    # template_name = 'product_list.html'
+    # permissions = {
+    # "all": ("product.view_product",)
+    # }
+
+    def get_template_names(self):
+        if not self.request.user.is_authenticated():
+            return ['product/allowany_product_list.html']
+        return super(ProductListView, self).get_template_names()
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        return context
+
+
+class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    model = Product
+    # template_name_suffix = '_create'
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("product.add_product",)
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductAddView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        return context
+
+
+class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Product
+    # template_name_suffix = '_form'
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("product.change_product",)
+    }
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
+              'safe_sell_price']
+
+
+class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Product
+    # template_name_suffix = '_form'
+    template_name = 'adminlte/common_detail.html'
+    permissions = {
+        "all": ("product.view_product",)
+    }
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
+              'safe_sell_price']
+
+
+class PublicListAPIView(CommonListCreateAPIView):
+    ''' Public API view for Product '''
+    model = Product
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return Http404

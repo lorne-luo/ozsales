@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+{% load in_group %}
+{% load staticfiles %}
+{% load breadcrumbs %}
+{% block page_id %}user-edit{%endblock%}
+{% block breadcrumbs %}
+   {% if perms.member.add_seller %}
+      {% breadcrumb_url 'All Users' 'seller-index' %}
+  {% endif %}
+  {% if edit_user %}
+    {% if edit_user != user %} {# Note 'user' variable is autopopulated with request.user #}
+      {% breadcrumb_last edit_user.username %}
+    {% else %}
+      {% breadcrumb_last 'Edit profile' %}
+    {% endif %}
+  {% else %}
+    {% breadcrumb_last 'Create user' %}
+  {% endif %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row-fluid">
+    <div class="span12">
+        <div class="widget">
+            <div class="widget-title">
+                <h4><i class="fa fa-user"></i> {{edit_user.username }}</h4>
+                {% if edit_user %}
+                <div class="actions">
+                    <a class="btn btn-mini" data-toggle="modal" href="#PasswordRestModel"><i class="fa fa-lock"></i> Change Password</a>
+                    {% if perms.member.delete_seller and edit_user and edit_user != user%}
+                    <a class="btn btn-danger btn-mini" data-toggle="modal" href="#UserDeleteModal"><i class="fa fa-trash"></i> Delete</a>
+                    {% endif%}
+                </div>
+                {% endif %}
+            </div>
+            <div class="widget-body">
+                <div class="tabbable tabbable-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#profile">Profile</a></li>
+                        <li><a data-toggle="tab" href="#profile2">Profile2</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="profile" class="tab-pane active">
+                            {% include "member/_member_profile.html" with form=form edit_user=edit_user %}
+                        </div>
+                        <div id="profile2" class="tab-pane">
+                            [[tab-html]]
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% if edit_user %}
+    {% include "modal/password_reset.html" with edit_user=edit_user form=resetpasswordform %}
+    {% include "modal/confirm_delete.html" with modal_name="User" modal_title="Are you sure?" modal_body="Please confirm that you want to delete this user. Once deleted the user will not be able to login, any user data will also be deleted permanently." modal_url='user-delete' modal_url_param=edit_user.pk %}
+{% endif %}
+{% endblock %}
+
+
+{% block js %}
+  <script type="text/javascript" src="{% static 'assets/jquery-chosen/chosen.jquery.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/jquery-ui/jquery-ui-1.9.2.custom.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/common.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/member/profile-save.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+  <link type="text/css" rel="stylesheet" href="{% static 'css/custom-theme/jquery-ui-1.10.0.custom.css' %}">
+  <link type="text/css" rel="stylesheet" href="{% static 'assets/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'assets/jquery-chosen/chosen.css' %}" />
+{% endblock %}

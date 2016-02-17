@@ -1,0 +1,21 @@
+{% load static %}
+<!-- Header Script -->
+<input type="hidden" name="adminlte_page_app_name" id="adminlte_page_app_name" value="{{ page_app_name }}"/>
+<input type="hidden" name="adminlte_page_model_name" id="adminlte_page_model_name" value="{{ page_model_name }}"/>
+<input type="hidden" name="adminlte_page_user_name" id="adminlte_page_user_name" value="{{ request.user.username }}"/>
+
+<script type="text/javascript" src="{% static 'plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/underscore/underscore-min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/underscore/underscore.string.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/vue/dist/vue.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'plugins/sweetalert/dist/sweetalert.min.js' %}"></script>
+<script type="text/javascript" src="{% url 'js_reverse' %}"></script>
+<script type="text/javascript" src="{% static 'django_js_reverse/js/reverse.js' %}"></script>
+
+<!-- AdminLTE App -->
+<script type="text/javascript" src="{% static 'adminlte/js/app.min.js' %}"></script>
+<!-- 全局配置 -->
+<script type="text/javascript" src="{% static 'adminlte/js/config.js' %}"></script>
+<!-- 全局ajax -->
+<script type="text/javascript" src="{% static 'adminlte/js/ajax.js' %}"></script>

@@ -1,0 +1,13 @@
+<div id="{{modal_name}}DeleteModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="{{modal_name}}DeleteModal" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel2"><i class="fa fa-exclamation-circle"></i> {{modal_title}}</h3>
+    </div>
+    <div class="modal-body">
+        <p>{{modal_body}}</p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <a class="btn btn-danger" href="{% url modal_url modal_url_param %}">Delete</a>
+    </div>
+</div>

@@ -1,0 +1,119 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta content="" name="description" />
+  <meta content="" name="author" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <title>OZ Sale - Login</title>
+  <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
+  <link href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <link href="{% static 'css/template-style.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style_responsive.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/style_default.css' %}" rel="stylesheet" id="style_color" />
+  <link rel="apple-touch-icon" href="{% static 'img/avatar-mini.png' %}" />
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body id="login-body">
+  <div class="login-header">
+      <!-- BEGIN LOGO -->
+      <div id="logo" class="center">
+          <img src="{% static 'img/logo.png' %}" alt="logo" class="center" />
+      </div>
+      <!-- END LOGO -->
+  </div>
+
+  <!-- BEGIN LOGIN -->
+  <div id="login">
+
+    {% if form.errors %}
+        <p>Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <!-- BEGIN LOGIN FORM -->
+    <form method="post" id="loginform" action=" {% url "member-login" %}" class="form-vertical no-padding no-margin">
+      {% csrf_token %}
+      <div class="lock">
+          <i class="icon-lock"></i>
+      </div>
+      <div class="control-wrap">
+          <h4>User Login</h4>
+          <div class="control-group">
+              <div class="controls">
+                  <div class="input-prepend">
+                      <span class="add-on"><i class="fa fa-user"></i></span>
+                      <input id="id_username" type="text" name="username" maxlength="30"  placeholder="Username"/>
+                  </div>
+              </div>
+          </div>
+          <div class="control-group">
+              <div class="controls">
+                  <div class="input-prepend">
+                      <span class="add-on"><i class="fa fa-key"></i></span>
+                      <input type="password" name="password" id="id_password" placeholder="Password"  />
+                  </div>
+                  <div class="mtop10">
+                      <div class="block-hint pull-left small">
+                          <input type="checkbox" id=""> Remember Me
+                      </div>
+                      <div class="block-hint pull-right">
+                          <a href="javascript:;" class="hide" id="forget-password">Forgot Password?</a>
+                      </div>
+                  </div>
+
+                  <div class="clearfix space5"></div>
+              </div>
+
+          </div>
+      </div>
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      <input type="hidden" name="next" value="{{ next }}" />
+      <input type="submit" id="login-btn" class="btn btn-block login-btn" value="Login" />
+    </form>
+    <!-- END LOGIN FORM -->
+    <!-- BEGIN FORGOT PASSWORD FORM -->
+    <form id="forgotform" method="post" class="form-vertical no-padding no-margin hide" action="{% url 'django.contrib.auth.views.password_reset' %}">
+      {% csrf_token %}
+      <p class="center">Enter your e-mail address below to reset your password.</p>
+      <div class="control-group">
+        <div class="controls">
+          <div class="input-prepend">
+            <span class="add-on"><i class="fa fa-envelope"></i></span><input name="email" id="input-email" type="email" placeholder="Email"  />
+          </div>
+        </div>
+        <div class="space20"></div>
+      </div>
+      <input type="submit" id="forget-btn" class="btn btn-block login-btn" value="Submit" />
+    </form>
+    <!-- END FORGOT PASSWORD FORM -->
+  </div>
+  <!-- END LOGIN -->
+  <!-- BEGIN COPYRIGHT -->
+  <!-- END COPYRIGHT -->
+  <!-- BEGIN JAVASCRIPTS -->
+  <script type="text/javascript" src="{% static 'assets/jquery/jquery-1.8.3.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/jquery/jquery.blockui.js' %}"></script>
+  <script type="text/javascript" src="{% static 'assets/jquery-knob/js/jquery.knob.js' %}"></script>
+ <script type="text/javascript" src="{% static 'js/scripts.js' %}"></script>
+  <script>
+    jQuery(document).ready(function() {
+      App.initLogin();
+    });
+  </script>
+  <!-- END JAVASCRIPTS -->
+</body>
+<!-- END BODY -->
+</html>

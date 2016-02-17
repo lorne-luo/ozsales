@@ -1,0 +1,10 @@
+<div class="control-group {% if errors %}error{% endif %}">
+    <label class="control-label">{{title}}{%if input.field.required%}<span>*</span>{% endif %} :</label>
+    <div class="controls">
+    	{{input}}
+		{% if errors %}
+			<span class="input-error error"><i class="fa fa-exclamation-circle"></i></span>
+			<span class="help-inline error">{{errors}}</span>
+		{% endif %}
+    </div>
+</div>

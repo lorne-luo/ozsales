@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name" style="display:inline-block">
+    <a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a>
+</h1>
+    <div style="display:inline-block">
+        <span><a href="/admin">Home</a></span> |
+        <span><a href="/admin/member/seller/">Member</a></span> |
+        <span><a href="/admin/customer/customer/">Customer</a></span> |
+        <span><a href="/admin/customer/address/">Address</a></span> |
+        <span><a href="/admin/order/order/?status__in=SHIPPING,CREATED,PAID,DELIVERED">Orders</a></span> |
+        <span><a href="/admin/express/expressorder/">Express</a></span> |
+        <span><a href="/admin/product/brand/">Brand</a></span> |
+        <span><a href="/admin/product/product/">Product</a></span> |
+        <span><a href="/admin/store/store/">Store</a></span> |
+        <span><a href="/admin/settings/">Settings</a></span>
+    </div>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

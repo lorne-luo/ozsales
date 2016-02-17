@@ -1,0 +1,19 @@
+<div class="control-group {% if errors %}error{% endif %}">
+    <label class="control-label">
+    	{% if title %} 
+    		{{title}}
+    	{% elif input.label %}
+    		{{input.label}}
+    	{% endif %}
+    	{%if input.field.required or required%}<span>*</span>{% endif %} :</label>
+    <div class="controls">
+    	{{input}}
+		{% if errors %} 
+			<span class="help-inline">{{errors}}</span>
+		{% elif  hint %}
+			<span class="help-inline">{{hint}}</span>
+		{% else %}
+			<span class="help-inline"></span>
+		{% endif %}
+    </div>
+</div>
