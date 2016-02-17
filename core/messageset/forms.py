@@ -42,8 +42,11 @@ class NotificationContentDetailForm(forms.ModelForm):
 class SiteMailContentAddForm(forms.ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents','receivers']
+        fields = ['receivers', 'title', 'contents']
 
+    def __init__(self, *args, **kwargs):
+        super(SiteMailContentAddForm, self).__init__(*args, **kwargs)
+        self.fields['receivers'].help_text='不选则发送给全体用户'
 
 class SiteMailContentUpdateForm(forms.ModelForm):
     class Meta:

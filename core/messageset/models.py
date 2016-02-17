@@ -51,7 +51,7 @@ class SiteMailContent(AbstractMessageContent):
     receivers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True,
         related_name='sitemail_receivers',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         help_text=u'不选则发送给全体用户'
     )
 
@@ -217,7 +217,7 @@ class NotificationContent(AbstractMessageContent):
     receivers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True,
         related_name='notification_receivers',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         help_text=u'不选则发送给全体用户'
     )
 
@@ -255,7 +255,7 @@ class Notification(models.Model, ReadStatus):
     receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='+',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         **DICT_NULL_BLANK_TRUE
     )
     status = models.PositiveSmallIntegerField(
