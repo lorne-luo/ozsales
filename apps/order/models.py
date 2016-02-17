@@ -188,7 +188,6 @@ class OrderProduct(models.Model):
 
 
 @receiver(post_save, sender=OrderProduct)
-@receiver(post_delete, sender=OrderProduct)
 def update_order_price(sender, instance=None, created=False, **kwargs):
     if instance.order.id:
         instance.order.update_price()
