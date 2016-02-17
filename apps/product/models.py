@@ -1,12 +1,25 @@
 import os
 
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from apps.store.models import Page
-from apps.common.models import Country
 from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
+
+
+@python_2_unicode_compatible
+class Country(models.Model):
+    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
+    short_name = models.CharField(_(u'short_name'), max_length=30, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = _('Country')
+        verbose_name = _('Country')
+
+    def __str__(self):
+        return '[%s]' % self.short_name
 
 
 @python_2_unicode_compatible
@@ -79,6 +92,21 @@ class Product(models.Model):
         verbose_name_plural = _('Product')
         verbose_name = _('Product')
 
+    class Config:
+        list_template_name = 'customer/adminlte-customer-list.html'
+
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
+        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
+        filter_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
+        search_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
+
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Product.objects.all()
+            return queryset
+
+
     def __str__(self):
         spec = ''
         if self.spec1:
@@ -92,6 +120,18 @@ class Product(models.Model):
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
+
+    def get_edit_link(self):
+        url = reverse('product-update-view', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+
+    get_edit_link.short_description = 'Name'
+
+    def get_detail_link(self):
+        url = reverse('product-detail-view', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+
+    get_detail_link.short_description = 'Name'
 
     def get_pic_link(self):
         if self.pic:

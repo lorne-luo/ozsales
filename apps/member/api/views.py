@@ -9,24 +9,27 @@ from rest_framework.response import Response
 
 import serializers
 from ..models import Seller
-from utils.api.views import PaginateMaxModelViewSet, ContentTypeObjectView
+from utils.api.views import PaginateMaxModelViewSet
 
 
 log = logging.getLogger(__name__)
 
 
-class OmniscreenUserViewSet(PaginateMaxModelViewSet):
+class SellerViewSet(PaginateMaxModelViewSet):
     """ A viewset for viewing and editing user instances. """
-    serializer_class = serializers.OmniscreenUserSerializer
+    serializer_class = serializers.SellerUserSerializer
+    permission_required = 'member.change_seller'
     # Exclude restframework's anonymous user which can cause 500s in url-versing due to its negative pk
     queryset = Seller.objects.exclude(username='AnonymousUser').exclude(pk__lt=0)
 
 class Profile(generics.GenericAPIView):
     ''' Return current users's profile '''
     model = Seller
+    queryset = Seller.objects.all()
+    permission_required = 'member.view_seller'
 
     def get(self, request):
-        return Response({'user': serializers.OmniscreenUserSerializer(request.user).data})
+        return Response(serializers.SellerUserSerializer(request.user).data)
 
 
 class GroupsAndUsersList(generics.GenericAPIView):
@@ -36,25 +39,12 @@ class GroupsAndUsersList(generics.GenericAPIView):
      Since this is not handling a single model/object, we add a custom
      has_permission method.
     '''
-
-    def has_permission(self, request, view):
-        '''
-         For non admins, limit it to users of billing account.
-         Allow access to this view if any of these permissions are set
-         Note: this is only called when our custom IsOwnerAdminOrSuperuser
-         permission class is active.
-        '''
-        allow = any((request.user.has_perm('photo.share_image'),
-                     request.user.has_perm('vod.share_vodvideo'),
-                     request.user.has_perm('vod.share_recordingvideo'),
-                     request.user.has_perm('vod.share_uservideo'),
-                     request.user.has_perm('parental_control.add_rule')))
-        return allow
+    permission_required = 'member.add_seller'
 
     def get(self, *args, **kwargs):
         users = Seller.objects.filter(is_active=True, is_superuser=False).exclude(
             username='AnonymousUser').exclude(pk__lt=0)
-        if self.request.user.is_admin():
+        if self.request.user.is_admin:
             groups = Group.objects.order_by('name')
         else:
             # f = Q(billingaccount_user__in=self.request.user.billingaccount_admin.all()) | \
@@ -70,7 +60,7 @@ class GroupsAndUsersList(generics.GenericAPIView):
             users = users.exclude(pk=self.request.user.pk)
 
         data = {
-            'users': serializers.OmniscreenUserNameSerializer(users, many=True).data,
+            'users': serializers.MemberUserSimpleSerializer(users, many=True).data,
             'groups': serializers.GroupSimpleSerializer(groups, many=True).data
         }
 

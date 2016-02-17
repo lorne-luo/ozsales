@@ -5,7 +5,7 @@ from django.core import management
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Permission, Group
 import copy
-from apps.common.models import Country
+from apps.product.models import Country
 
 
 class Command(BaseCommand):

@@ -18,20 +18,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 
 
-# def modify_fields(**kwargs):
-#     def wrap(cls):
-#         for field, prop_dict in kwargs.items():
-#             for prop, val in prop_dict.items():
-#                 setattr(cls._meta.get_field(field), prop, val)
-#         return cls
-#
-#     return wrap
-#
-#
-# @modify_fields(groups={'verbose_name': _('customer groups'),
-#                        'related_name': "customer_set",
-#                        'related_query_name': "customer"})
-
 @python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
@@ -48,22 +34,19 @@ class InterestTag(models.Model):
 
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
-    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
+    name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
+    email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
+    mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
                               validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
                                                                     'invalid')])
     order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
-    last_order_time = models.DateTimeField(_('last order time'), auto_now_add=True, null=True)
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('primary address'),
+    last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
                                         related_name=_('primary address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
-    remarks = models.CharField(_('remarks'), max_length=128, null=True, blank=True)
-    groups = models.ManyToManyField(Group, verbose_name=_('customer groups'),
-                                    blank=True, help_text=_('The groups this user belongs to. A customer will '
-                                                            'get all permissions granted to each of '
-                                                            'his/her group.'),
-                                    related_name="customer_set", related_query_name="customer")
+    remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
+    groups = models.ManyToManyField(Group, verbose_name=_('groups'),
+                                    blank=True, related_name="customer_set", related_query_name="customer")
     user_permissions = models.ManyToManyField(Permission,
                                               verbose_name=_('customer permissions'), blank=True,
                                               help_text=_('Specific permissions for this customer.'),
@@ -77,24 +60,39 @@ class Customer(AbstractBaseUser):
     class Meta:
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
-        permissions = (
 
-        )
+    class Config:
+        list_template_name = 'customer/adminlte-customer-list.html'
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
+        list_form_fields = ('name', 'email', 'mobile', 'primary_address', 'groups', 'tags')
+        filter_fields = ('name', 'email', 'mobile')
+        search_fields = ('name', 'email', 'mobile')
 
-    # def __init__(self, *args, **kwargs):
-    #     super(Customer, self).__init__(*args, **kwargs)
-    #     # snip the other fields for the sake of brevity
-    #     # Adding content to the form
-    #     self.fields['groups'].verbose_name = 'customer groups'
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Customer.objects.all()
+            return queryset
 
     def __str__(self):
         return '%s' % self.name
 
+
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
-        name = '[#%s]%s' % (self.id, self.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return u'<a href="%s">%s</a>' % (url, self.name)
 
+    def get_edit_link(self):
+        url = reverse('customer-update-view', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name)
+
+    get_edit_link.short_description = 'Name'
+
+    def get_detail_link(self):
+        url = reverse('customer-detail-view', args=[self.id])
+        return u'<a href="%s">%s</a>' % (url, self.name)
+
+    get_detail_link.short_description = 'Name'
 
     def get_full_name(self):
         return self.name.strip()
@@ -128,9 +126,6 @@ class Customer(AbstractBaseUser):
             token, _created = Token.objects.get_or_create(user=self)
 
         return token
-
-    def is_member(self, group_name):
-        return self.groups.filter(name=group_name).exists()
 
     def get_absolute_url(self):
         return "/customer/%s" % urlquote(self.email)

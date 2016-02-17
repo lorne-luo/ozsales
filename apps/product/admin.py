@@ -1,8 +1,15 @@
 from django.contrib import admin
-from models import Category, Brand, Product
+from models import Category, Brand, Product, Country
 from utils.custom_admin_site import member_site
 
 admin.site.register(Category)
+
+
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'short_name')
+
+
+admin.site.register(Country, CountryAdmin)
 
 
 class BrandAdmin(admin.ModelAdmin):

@@ -1787,7 +1787,7 @@ var App = function () {
                     "sType": 'alt-string'
                 }
             ],
-            "lengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "lengthMenu": [[8, 15, 30, -1], [8, 15, 30, "All"]],
             //"aaSorting": [
                 //[$('th.connected').index(), 'asc']
             //],

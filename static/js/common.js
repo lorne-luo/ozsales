@@ -125,9 +125,10 @@ $.subscribe('alert-user', function(_, message, level, container, data) {
     }
   };
 
-  self.show_server_error = function(){
+  self.show_server_error = function(text){
     // Unhides predefined server error message box for >=400 responses
-    $('#server-error').show();
+    text = typeof text !== 'undefined' ? text : 'Server error, please try again later!';
+    $('#server-error').text(text).show();
     $('div.progress .bar').parent().hide();
   };
 
@@ -272,7 +273,7 @@ $.subscribe('alert-user', function(_, message, level, container, data) {
     });
   };
 
-}(window.omniscreenCommon = window.omniscreenCommon || {}, jQuery));
+}(window.OZCommon = window.OZCommon || {}, jQuery));
 
 
 /*

@@ -481,7 +481,7 @@ ul.sidebar-menu span.icon-box  {
     padding: 0;
     border: 0px;
     background: url("../img/side-bar-list-bg.png");
-    line-height: 30px;
+    /*line-height: 30px;*/
 }
 
 #sidebar > ul > li > a {

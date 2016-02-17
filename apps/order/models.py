@@ -35,7 +35,7 @@ class Order(models.Model):
     product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
     shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
-    ship_time = models.DateTimeField(auto_now_add=False, editable=False, blank=True, null=True,
+    ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Shipping Time'))
     total_cost_aud = models.DecimalField(_(u'Total Cost AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'Total Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -44,7 +44,7 @@ class Order(models.Model):
     sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
-    finish_time = models.DateTimeField(_(u'Finish Time'), auto_now_add=True, editable=False)
+    finish_time = models.DateTimeField(_(u'Finish Time'), auto_now_add=False, editable=True)
 
     def __str__(self):
         return '[#%s]%s' % (self.id, self.customer.name)
@@ -188,7 +188,6 @@ class OrderProduct(models.Model):
 
 
 @receiver(post_save, sender=OrderProduct)
-@receiver(post_delete, sender=OrderProduct)
 def update_order_price(sender, instance=None, created=False, **kwargs):
     if instance.order.id:
         instance.order.update_price()

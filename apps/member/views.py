@@ -40,7 +40,7 @@ def member_login(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                next_page = reverse('profile-edit')
+                next_page = reverse('member-profile')
 
             return HttpResponseRedirect(next_page)
 
@@ -48,15 +48,28 @@ def member_login(request):
             messages.error(request, 'Login failed. Please try again.')
             return redirect('member-login')
 
+
 def member_home(request):
     return HttpResponse('123')
 
+
 def member_logout(request):
-    return HttpResponse('123')
+    logout(request)
+    return redirect('member-login')
+
+
+class CreateUser(PermissionRequiredMixin, TemplateView):
+    template_name = 'member/profile.html'
+    permission_required = 'member.add_seller'
+
+    def get(self, request, *args, **kwargs):
+        context = {'form': SellerProfileForm(username_readonly=False)}
+        return self.render_to_response(context)
+
 
 class Profile(PermissionRequiredMixin, TemplateView):
     template_name = 'member/profile.html'
-    permission_required = 'accounts.change_omniscreenuser'
+    permission_required = 'member.view_seller'
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
@@ -69,9 +82,9 @@ class Profile(PermissionRequiredMixin, TemplateView):
         else:  # Editing own profile
             user = request.user
         if request.user.has_perm('member.add_seller'):
-            form = SellerProfileForm(username_readonly=False)
+            form = SellerProfileForm(username_readonly=False, instance=user)
         else:
-            form = SellerProfileForm(username_readonly=True)
+            form = SellerProfileForm(username_readonly=True, instance=user)
 
         context = {
             'edit_user': user,
@@ -80,6 +93,20 @@ class Profile(PermissionRequiredMixin, TemplateView):
         }
 
         return self.render_to_response(context)
+
+
+@permission_required('member.add_seller', raise_exception=True)
+def seller_index(request):
+    if request.user.is_superuser:
+        users = Seller.objects.all().exclude(username=request.user.username)
+    elif request.user.is_group('Admin'):
+        users = Seller.objects.exclude(is_superuser=True).exclude(username=request.user.username)
+    else:
+        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(
+            username=request.user.username)
+
+    return render_to_response('member/user-list.html', {'users': users},
+                              RequestContext(request))
 
 
 def user_password_reset(request, pk):
@@ -105,7 +132,7 @@ def user_password_reset(request, pk):
 
             # user.renew_token()
             if request.user == user:
-                return redirect('profile-edit')
+                return redirect('member-profile')
             else:
                 return redirect('admin-user-edit', pk=user.pk)
     return render_to_response('member/user-reset-password.html', {
@@ -119,7 +146,7 @@ def _reset_password_form(user, request, POST=False):
         form = UserResetPasswordForm(user)
         if POST:
             form = UserResetPasswordForm(user, POST)
-    elif request.user.has_perm('accounts.change_omniscreenuser'):
+    elif request.user.has_perm('member.change_seller'):
         form = ResetPasswordEmailForm(user)
         if POST:
             form = ResetPasswordEmailForm(user, POST)
@@ -129,10 +156,11 @@ def _reset_password_form(user, request, POST=False):
 
     return form
 
-@permission_required('accounts.delete_omniscreenuser', raise_exception=True)
+
+@permission_required('member.delete_seller', raise_exception=True)
 def user_delete(request, pk):
     try:
         Seller.objects.get(pk=pk).delete()
     except Seller.DoesNotExist:
         pass
-    return redirect('user-index')
+    return redirect('seller-index')

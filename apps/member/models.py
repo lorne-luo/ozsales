@@ -20,10 +20,11 @@ class Seller(AbstractBaseUser, PermissionsMixin):
                                             '@/./+/-/_ characters'),
                                 validators=[
                                     validators.RegexValidator(re.compile(r'^[\w.@+-]+$'), _('Only letters, numbers and '
-                                                                                            '@/./+/-/_ characters are allowed'), 'invalid')
+                                                                                            '@/./+/-/_ characters are allowed'),
+                                                              'invalid')
                                 ])
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, unique=True, blank=True)
+    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
     mobile = models.CharField(max_length=18, null=True, blank=True)
     is_staff = models.BooleanField(_('staff status'), default=False,
                                    help_text=_('Designates whether the user can log into this admin '
@@ -41,9 +42,19 @@ class Seller(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = _('seller')
         verbose_name_plural = _('sellers')
-        permissions = (
 
-        )
+    class Config:
+        # list_template_name = 'customer/customer_list.html'
+        # form_template_name = 'customer/customer_form.html'
+        list_display_fields = ['username', 'name', 'email', 'mobile', 'is_active', 'date_joined']
+        list_form_fields = ('username', 'name', 'email', 'mobile')
+        filter_fields = ('username', 'name', 'email', 'mobile')
+        search_fields = ('username', 'name', 'email', 'mobile')
+
+        @classmethod
+        def filter_queryset(cls, request, queryset):
+            queryset = Seller.objects.all()
+            return queryset
 
     def __str__(self):
         return '[S]%s' % self.name
@@ -81,10 +92,11 @@ class Seller(AbstractBaseUser, PermissionsMixin):
 
         return token
 
+    @property
     def is_admin(self):
-        return self.is_superuser or self.is_member('Admin')
+        return self.is_superuser or self.is_group('Admin')
 
-    def is_member(self, group_name):
+    def is_group(self, group_name):
         return self.groups.filter(name=group_name).exists()
 
     def get_absolute_url(self):

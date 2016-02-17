@@ -12,7 +12,7 @@
     // For edititing existing instance, load data from the api
     var pk = $('#form').attr('data-pk');
     if (pk) {
-      $.getJSON(self.url + pk + '/', self._populate_form);
+//      $.getJSON(self.url + pk + '/', self._populate_form);
     }
 
     $('#form').submit(function (e) {
@@ -23,7 +23,7 @@
     $('button.avatar_browse').click(function(){$('#id_avatar').click();});
     $('#id_avatar').change(function(e) {
       self.avatar = e.target.files[0];
-      omniscreenCommon.show_thumbnail(this, $('#avatar_preview'));
+      OZCommon.show_thumbnail(this, $('#avatar_preview'));
     });
 
     $('button.avatar_delete').click(function(){
@@ -31,7 +31,7 @@
       $('#id_avatar').wrap('<form>').closest('form').get(0).reset();
       $('#id_avatar').unwrap();
       self.avatar = '';
-      omniscreenCommon.hide_thumbnail($('#avatar_preview'));
+      OZCommon.hide_thumbnail($('#avatar_preview'));
     });
 
     $("#id_timezone").chosen({search_contains:true});
@@ -59,6 +59,7 @@
         else if(value){
           $(this).val(value);
         }
+
       });
 
       if (data.avatar_display) {
@@ -77,11 +78,10 @@
     if($('#form').attr('data-pk')){
       data.append('pk', $('#form').attr('data-pk'));
     }
-    if (self.avatar!== undefined) {// Allow '' to reset image field
-      data.append('avatar', self.avatar);
-    }
-    data.append('full_name', $('#id_full_name').val());
-    data.append('short_name', $('#id_short_name').val());
+    data.append('name', $('#id_name').val());
+    data.append('email', $('#id_email').val());
+    data.append('mobile', $('#id_mobile').val());
+
     if($('#id_username').length){
       data.append('username', $('#id_username').val());
     }
@@ -94,10 +94,6 @@
     if($('#id_password2').length){
       data.append('password2', $('#id_password2').val());
     }
-
-    data.append('email', $('#id_email').val());
-    data.append('mobile', $('#id_mobile').val());
-    data.append('timezone', $('#id_timezone').val());
 
     if ($('#id_groups').length != 0) {
       if($('#id_groups option:selected').length === 0){
@@ -121,7 +117,7 @@
       type = 'PATCH';
     }
 
-    omniscreenCommon.remove_errors();
+    OZCommon.remove_errors();
 
     $.ajax({
       dataType: 'json',
@@ -138,20 +134,20 @@
           window.location.reload();
         }
         else if(xhr.status === 201){
-          window.location = '/admin/accounts/users/';
+          window.location = '/member/users/';
         }
         else{
-          omniscreenCommon.display_errors(data.responseText);
+          OZCommon.display_errors(data.responseText);
         }
       },
-      error: omniscreenCommon._on_form_error_api
+      error: OZCommon._on_form_error_api
     });
   };
 
-}(window.omniscreenProfileSave = window.omniscreenProfileSave || {}, jQuery));
+}(window.OZProfileSave = window.OZProfileSave || {}, jQuery));
 /**
  * On ready.
  */
 $(document).ready(function() {
-  omniscreenProfileSave.initialize();
+  OZProfileSave.initialize();
 });

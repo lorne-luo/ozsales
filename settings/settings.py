@@ -23,15 +23,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = TEMPLATE_DEBUG = True
 
-TEMPLATE_DEBUG = True
+ALLOWED_HOSTS = ['*']
 
-ALLOWED_HOSTS = []
-
+INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,9 +38,16 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    'django_webtest',
+    'django_nose',
     'dbsettings',
     'djcelery',
     'kombu.transport.django',
+
+    # common app
+    'core.adminlte',
+    'core.messageset',
+
     'apps',
     'apps.member',
     'apps.express',
@@ -50,15 +55,19 @@ INSTALLED_APPS = (
     'apps.product',
     'apps.order',
     'apps.store',
-    'apps.common',
+    'apps.registration',
     'utils',
 
+    # third_app
+    'mptt',
+    'django_js_reverse',
     'activelink',
     'rest_framework',
     'rest_framework.authtoken', # must come after accounts for migrations to work
     'taggit',
     'easy_thumbnails',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -68,6 +77,9 @@ MIDDLEWARE_CLASSES = (
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # 'core.adminlte.middleware.ApiPermissionCheck',
+    # 'core.adminlte.middleware.MenuMiddleware',
 )
 
 ROOT_URLCONF = 'settings.urls'
@@ -117,7 +129,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, 'static'),
 )
 
 STATICFILES_FINDERS = (
@@ -128,14 +140,55 @@ STATICFILES_FINDERS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
 
+# Templates
+# List of callables that know how to import templates from various sources.
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.static',
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.request',
+    'django.contrib.messages.context_processors.messages',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.tz',
+    # 'dealer.contrib.django.context_processor',
+)
+
+
+# Auth
 AUTH_USER_MODEL = 'member.Seller'
 
+LOGIN_URL = '/member/login/'
+
+LOGOUT_URL = '/member/login/'
+
+LOGIN_REDIRECT_URL = '/member/profile/'
+
+# registration
+# ACCOUNT_ACTIVATION_DAYS=7
+# REGISTRATION_OPEN=True
+# REGISTRATION_SALT='IH*&^AGBIovalaft1AXbas2213klsd73'
+
+
+# Others
 ID_PHOTO_FOLDER = 'id'
+
 PRODUCT_PHOTO_FOLDER = 'product'
+
+# for django-guardian
+ANONYMOUS_USER_ID = -1
+
+
+# Test
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+SOUTH_TESTS_MIGRATE = False
 
 # ----------------------------------------- CELERY -----------------------------------------------
 
@@ -161,22 +214,39 @@ BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
 
-# ----------------------------------------- DBSETTINGS -----------------------------------------------
+# ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGINATE_BY': 100, # Default to 100
-    'PAGINATE_BY_PARAM': 'limit', # Allow client to override, using `?limit=xxx`.
-    'MAX_PAGINATE_BY': 999, # Maximum limit allowed when using `?limit=xxx`.
+    'PAGE_SIZE': 10,
+    'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
+    'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
+    'UNICODE_JSON': True,
+    'DEFAULT_PAGINATION_CLASS': 'core.api.pagination.CommonPageNumberPagination',
+
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ('%Y-%m-%d %H:%M:%S',),
+    'DATE_FORMAT': '%Y-%m-%d',
+    'DATE_INPUT_FORMATS': ('%Y-%m-%d',),
+    'TIME_FORMAT': '%H:%M:%S',
+    'TIME_INPUT_FORMATS': ('%H:%M:%S',),
+    'LANGUAGES': (
+        ('zh-hans', 'Simplified Chinese'),
+    ),
+
+    'LANGUAGE_CODE': 'zh-hans',
+    'NON_FIELD_ERRORS_KEY': 'detail',
 
     'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
+        'core.api.renders.UTF8JSONRenderer',
+        # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         #'rest_framework.permissions.AllowAny',
         #'rest_framework.permissions.IsAuthenticated',
         #'rest_framework.permissions.DjangoObjectPermissions',
-        'utils.api.permission.IsOwnerAdminOrSuperuser',
+        # 'utils.api.permission.ObjectPermissions',
+        'core.api.permission.CommonAPIPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',

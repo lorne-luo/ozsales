@@ -19,8 +19,11 @@ class Command(BaseCommand):
         ],
         'Member': [
             # Permission codename, app name, model name
+            ('change_seller', 'member', 'seller'),
+            ('view_seller', 'member', 'seller'),
             ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address')
+            ('change_address', 'customer', 'address'),
+            ('view_address', 'customer', 'address')
         ],
         'Customer': [
             ('add_address', 'customer', 'address'),
