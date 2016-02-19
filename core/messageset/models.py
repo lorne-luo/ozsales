@@ -402,8 +402,8 @@ class Task(models.Model, TaskStatus):
             )
 
 
-@receiver(m2m_changed, sender=SiteMailContent.receivers.through)
-def create_sitemail_datas(sender, instance, **kwargs):
+@receiver(post_save, sender=SiteMailContent)
+def create_sitemail_datas(sender, instance, created, **kwargs):
     """
     发送邮件时，向收件箱和发件箱添加数据，
     这里将来可以替换为异步消息队列
@@ -411,19 +411,20 @@ def create_sitemail_datas(sender, instance, **kwargs):
     :param instance:
     :param kwargs:
     """
-    kwargs = {
-        'title': instance.title,
-        'content': instance,
-        'sender': instance.creator,
-        'creator': instance.creator
-    }
-    SiteMailSend(**kwargs).save()
-    for user in instance.receivers.all():
-        tmp_kwargs = {
-            'receiver': user,
+    if created:
+        kwargs = {
+            'title': instance.title,
+            'content': instance,
+            'sender': instance.creator,
+            'creator': instance.creator
         }
-        tmp_kwargs.update(kwargs)
-        SiteMailReceive(**tmp_kwargs).save()
+        SiteMailSend(**kwargs).save()
+        for user in instance.receivers.all():
+            tmp_kwargs = {
+                'receiver': user,
+            }
+            tmp_kwargs.update(kwargs)
+            SiteMailReceive(**tmp_kwargs).save()
 
 
 @receiver(m2m_changed, sender=NotificationContent.receivers.through)
