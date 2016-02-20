@@ -103,29 +103,7 @@
             </li>
             {%endif%}
 
-            {% if perms.product.add_product or perms.product.view_product %}
-            <li class="treeview active {% ifstartswith '/common/product/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Products</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/common/product/product/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Product
-                                </a>
-                            </li>
-                            <li>
-                            <a href="/common/product/product/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Product List
-                                </a>
-                            </li>
-                        </ul>
-            </li>
-            {%endif%}
+            {% include "product/_menu.html" %}
 
             {% if perms.express.add_expresscarrier or perms.product.view_expressorder %}
             <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">

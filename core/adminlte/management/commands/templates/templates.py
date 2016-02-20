@@ -40,7 +40,6 @@ MENU_TEMPLATE='''{% load activelink %}
 
 MENU_APP_TEMPLATE='''        {% if perms.<% app_name %>.add_<% model_name %> or perms.<% app_name %>.change_<% model_name %> %}
         <li>
-
         <a href="{% url '<% app_name %>:<% model_name %>-list' %}">
                 <i class="fa fa-circle-o"></i>
                 <% MODEL_NAME %>

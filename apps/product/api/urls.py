@@ -8,6 +8,6 @@ urlpatterns = patterns('',
                        )
 router = DefaultRouter()
 router.include_root_view = False
-router.register(r'product', views.ProductViewSet, 'product')
+router.register(r'product', views.ProductViewSet, base_name='api-product')
 
 urlpatterns += router.urls
