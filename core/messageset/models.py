@@ -2,6 +2,7 @@
 import datetime
 from django.conf import settings
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import models
 from django.db.models.signals import post_save, m2m_changed
@@ -418,6 +419,12 @@ def create_sitemail_datas(sender, instance, created, **kwargs):
             'sender': instance.creator,
             'creator': instance.creator
         }
+
+        # if no receivers filed, send to all
+        if not instance.receivers.count():
+            instance.receivers = get_user_model().objects.all()
+            instance.save()
+
         SiteMailSend(**kwargs).save()
         for user in instance.receivers.all():
             tmp_kwargs = {
