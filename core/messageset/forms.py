@@ -55,7 +55,7 @@ class SiteMailContentUpdateForm(ModelForm):
 class SiteMailContentDetailForm(ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents', 'status', 'creator']
+        fields = ['receivers', 'title', 'contents']
 
 
 class SiteMailReceiveAddForm(ModelForm):
@@ -91,7 +91,7 @@ class SiteMailSendUpdateForm(ModelForm):
 class SiteMailSendDetailForm(ModelForm):
     class Meta:
         model = SiteMailSend
-        fields = ['title', 'content', 'sender', 'status', 'creator']
+        fields = ['sender','title', 'content', 'status']
 
 
 class TaskAddForm(ModelForm):
