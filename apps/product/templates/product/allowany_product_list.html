@@ -16,39 +16,39 @@
 
             <li class="treeview active">
                 <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Products</b>
-                            <i class="fa fa-angle-left pull-right"></i>
+                    <i class='fa fa-cloud'></i>
+                    <b>Products</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                    <a href="/product/product/list">
+                            <i class="fa fa-circle-o"></i>
+                            All Products
                         </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/product/product/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    All Products
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                </ul>
             </li>
             <li class="treeview active">
                 <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Brand</b>
-                            <i class="fa fa-angle-left pull-right"></i>
+                    <i class='fa fa-cloud'></i>
+                    <b>Brand</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    {% for brand in brands %}
+                    <li>
+                    <a href="#">
+                            <i class="fa fa-circle-o"></i>
+                            {% ifnotequal brand.name_cn brand.name_en %}
+                                {{ brand.name_en }} {{ brand.name_cn }}
+                            {% else %}
+                                {{ brand.name_cn|default:brand.name_en }}
+                            {% endifnotequal %}
                         </a>
-                        <ul class="treeview-menu">
-                            {% for brand in brands %}
-                            <li>
-                            <a href="{% url 'product:brand-list' %}">
-                                    <i class="fa fa-circle-o"></i>
-                                    {% ifnotequal brand.name_cn brand.name_en %}
-                                        {{ brand.name_en }} {{ brand.name_cn }}
-                                    {% else %}
-                                        {{ brand.name_cn|default:brand.name_en }}
-                                    {% endifnotequal %}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
+                    </li>
+                    {% endfor %}
+                </ul>
             </li>
         </ul>
     </section>
