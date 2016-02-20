@@ -8,7 +8,7 @@ router = DefaultRouter()
 router.include_root_view = False
 
 urlpatterns = patterns('',
-    url(r'^product/$', views.ProductList.as_view(), name="product-list"),
+    url(r'^product/$', views.ProductListView.as_view(), name="product-list"),
     url(r'^product/add/$', views.ProductAddEdit.as_view(), name="product-add"),
     url(r'^product/edit/(?P<pk>\d+)/$', views.ProductAddEdit.as_view(), name="product-edit"),
     url(r'^product/product/list/$', views.ProductListView.as_view(), name='product-list-view'),

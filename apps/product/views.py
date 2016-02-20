@@ -47,7 +47,7 @@ class ProductListView(CommonContextMixin, ListView):
     # template_name_suffix = '_list'
     # template_name = 'product_list.html'
     # permissions = {
-    # "all": ("product.view_product",)
+    #     "all": ("product.view_product",)
     # }
 
     def get_template_names(self):
@@ -110,7 +110,6 @@ class PublicListAPIView(CommonListCreateAPIView):
 
     def post(self, request, *args, **kwargs):
         return Http404
-
 
 
 class ProductViewSet(CommonViewSet):
