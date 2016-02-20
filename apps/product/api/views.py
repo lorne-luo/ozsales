@@ -14,6 +14,4 @@ class ProductViewSet(PaginateMaxModelViewSet):
      A viewset for viewing and editing  instances.
     """
     serializer_class = serializers.ProductSerializer
-    queryset = Product.objects.filter()
-
-
+    queryset = Product.objects.all()
