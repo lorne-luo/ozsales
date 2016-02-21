@@ -4,12 +4,6 @@ from django.utils.translation import ugettext_lazy as _
 from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 
-class NotificationAddForm(ModelForm):
-    class Meta:
-        model = Notification
-        fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-
-
 class NotificationUpdateForm(ModelForm):
     class Meta:
         model = Notification
@@ -25,7 +19,7 @@ class NotificationDetailForm(ModelForm):
 class NotificationContentAddForm(ModelForm):
     class Meta:
         model = NotificationContent
-        fields = ['title', 'contents', 'status', 'creator']
+        fields = ['title', 'contents']
 
 
 class NotificationContentUpdateForm(ModelForm):

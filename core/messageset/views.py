@@ -38,18 +38,6 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
         return context
 
 
-class NotificationAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = Notification
-    form_class = forms.NotificationAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("notification.add_notification",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:notification-list')
-
-
 class NotificationUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Notification
     form_class = forms.NotificationUpdateForm
@@ -79,22 +67,6 @@ class NotificationViewSet(CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
     search_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-
-
-# views for NotificationContent
-
-class NotificationContentListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    model = NotificationContent
-    template_name_suffix = '_list'  # notificationcontent/notificationcontent_list.html
-    permissions = {
-        "all": ("messageset.view_notificationcontent",)
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super(NotificationContentListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'标题', u'内容', u'状态', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'contents', 'status', 'creator', 'deleted_at'] + ['id']
-        return context
 
 
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
