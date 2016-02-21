@@ -13,12 +13,9 @@ urlpatterns = patterns('',
     url(r'^product/edit/(?P<pk>\d+)/$', views.ProductAddEdit.as_view(), name="product-edit"),
     url(r'^product/product/list/$', views.ProductListView.as_view(), name='product-list-view'),
     url(r'^product/product/add/$', login_required(views.ProductAddView.as_view()), name="product-add-view"),
-    url(r'^product/product/(?P<pk>\d+)/$', login_required(views.ProductDetailView.as_view()), name="product-detail-view"),
-    url(r'^product/product/(?P<pk>\d+)/edit/$', login_required(views.ProductUpdateView.as_view()), name="product-update-view"),
+    url(r'^product/product/(?P<pk>\d+)/$', login_required(views.ProductDetailView.as_view()), name="product-detail"),
+    url(r'^product/product/(?P<pk>\d+)/edit/$', login_required(views.ProductUpdateView.as_view()), name="product-update"),
     # url(r'^product/delete/$', login_required(views.ProductListView.as_view()), name="product-delete-view"),
-
-    # public product api
-    url(r'api/product/list/$', views.PublicListAPIView.as_view(), name='allowany-product-list'),
 )
 
 # reverse('product:api-product-list'), reverse('product:api-product-detail', kwargs={'pk': 1})

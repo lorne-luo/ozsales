@@ -100,27 +100,15 @@ class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
               'safe_sell_price']
 
 
-class PublicListAPIView(CommonListCreateAPIView):
-    ''' Public API view for Product '''
-    model = Product
-    permission_classes = (permissions.AllowAny,)
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        return Http404
-
-
 class ProductViewSet(CommonViewSet):
     """
      A viewset for viewing and editing  instances.
     """
     queryset = Product.objects.all()
     serializer_class = serializers.ProductSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-    search_fields = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+    permission_classes = [permissions.AllowAny]
+    filter_fields = ['name_en', 'name_cn', 'brand__id', 'brand__name_cn', 'brand__name_en']
+    search_fields = ['name_en', 'name_cn', 'brand__name_cn', 'brand__name_en']
 
 
 class BrandListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
