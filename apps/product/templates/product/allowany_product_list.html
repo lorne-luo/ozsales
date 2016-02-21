@@ -22,7 +22,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                    <a href="/product/product/list">
+                        <a href="/product/product/list">
                             <i class="fa fa-circle-o"></i>
                             All Products
                         </a>
@@ -36,9 +36,14 @@
                     <i class="fa fa-angle-left pull-right"></i>
                 </a>
                 <ul class="treeview-menu">
+                    <button class="btn btn-primary" data-pk="2"
+                                        v-on:click="brand_select">
+                                    <i class="fa fa-plus"></i>
+                                    Brand
+                                </button>
                     {% for brand in brands %}
                     <li>
-                    <a href="#">
+                        <a class="brand_select" data-pk="{{ brand.pk }}" v-on:click="brand_select" href="javascript:void(0)">
                             <i class="fa fa-circle-o"></i>
                             {% ifnotequal brand.name_cn brand.name_en %}
                                 {{ brand.name_en }} {{ brand.name_cn }}
@@ -53,4 +58,18 @@
         </ul>
     </section>
 </aside>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+    <script type="text/javascript" src="{% static 'js/product/product_list.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('a.brand_select').off('click').click(function () {
+                var pk = $(this).attr('data-pk');
+                productListPageVue.loadData(
+                    $.param({'brand__id': pk})
+                );
+            });
+        });
+    </script>
 {% endblock %}
