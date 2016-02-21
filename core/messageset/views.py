@@ -33,8 +33,8 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 
     def get_context_data(self, **kwargs):
         context = super(NotificationListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'标题', u'内容', u'接收人', u'读取状态', u'读取时间', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'receiver', 'status', 'read_time', 'creator', 'deleted_at'] + ['id']
+        context['table_titles'] = [u'标题', u'内容', u'接收人', u'读取状态', u'读取时间', u'数据创建人', u'数据删除时间']
+        context['table_fields'] = ['link', 'content', 'receiver', 'status', 'read_time', 'creator', 'deleted_at']
         return context
 
 
@@ -72,19 +72,31 @@ class NotificationViewSet(CommonViewSet):
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = NotificationContent
     form_class = forms.NotificationContentAddForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'messageset/notificationcontent_form.html'
     permissions = {
         "all": ("notificationcontent.add_notificationcontent",)
     }
 
     def get_success_url(self):
-        return reverse('messageset:notificationcontent-list')
+        return reverse('messageset:notification-list')
 
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            self.object = notification_content = form.save(commit=False)
+            notification_content.creator=request.user
+            notification_content.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+
+            return self.form_invalid(form)
 
 class NotificationContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = NotificationContent
     form_class = forms.NotificationContentUpdateForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'messageset/notificationcontent_form.html'
     permissions = {
         "all": ("notificationcontent.change_notificationcontent",)
     }
