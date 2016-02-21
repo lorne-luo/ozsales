@@ -22,7 +22,7 @@
                 </a>
                 <ul class="treeview-menu">
                     <li>
-                        <a href="/product/product/list">
+                        <a href="{% url 'product:product-list' %}">
                             <i class="fa fa-circle-o"></i>
                             All Products
                         </a>
@@ -30,12 +30,12 @@
                 </ul>
             </li>
             <li class="treeview active">
+                <a href="javascript:void(0)">
+                    <i class='fa fa-cloud'></i>
+                    <b>Brand</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
                 <ul class="treeview-menu">
-                    <button class="btn btn-primary" data-pk="2"
-                                        v-on:click="brand_select">
-                                    <i class="fa fa-plus"></i>
-                                    Brand
-                                </button>
                     {% for brand in brands %}
                     <li>
                         <a class="brand_select" data-pk="{{ brand.pk }}" v-on:click="brand_select" href="javascript:void(0)">
