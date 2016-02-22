@@ -44,7 +44,7 @@ class Order(models.Model):
     sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
-    finish_time = models.DateTimeField(_(u'Finish Time'), auto_now_add=False, editable=True)
+    finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
     def __str__(self):
         return '[#%s]%s' % (self.id, self.customer.name)
