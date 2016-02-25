@@ -55,8 +55,8 @@ class Order(models.Model):
         result = unicode(self.address)
         if self.address:
             if self.address.id_number:
-                result += u' = %s <br/>' % self.address.id_number
-        result += '<br/>'
+                result += u' = %s' % self.address.id_number
+        result += '<br/><br/>'
 
         for product in self.products.all():
             result += u'%s <br/>' % product.get_summary()
