@@ -53,7 +53,9 @@ class Order(models.Model):
     def get_summary(self):
         """ plain text summary for order """
         result = unicode(self.address)
-        result += u' = %s <br/><br/>' % self.address.id_number
+        if self.address:
+            if self.address.id_number:
+                result += u' = %s <br/><br/>' % self.address.id_number
 
         for product in self.products.all():
             result += u'%s <br/>' % product.get_summary()
