@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -49,6 +50,19 @@ class Order(models.Model):
     def __str__(self):
         return '[#%s]%s' % (self.id, self.customer.name)
 
+    def get_summary(self):
+        """ plain text summary for order """
+        result = unicode(self.address)
+        result += u' = %s <br/><br/>' % self.address.id_number
+
+        for product in self.products.all():
+            result += u'%s <br/>' % product.get_summary()
+
+        result += u'总计: %d<br/>' % self.sell_price_rmb
+        result = '<br/>' + result
+        return result
+
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
             self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
@@ -70,7 +84,6 @@ class Order(models.Model):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
         name = '[#%s]%s' % (self.id, self.customer.name)
         return u'<a href="%s">%s</a>' % (url, name)
-
 
     def update_price(self):
         self.total_amount = 0
@@ -185,6 +198,13 @@ class OrderProduct(models.Model):
             self.name = self.product.get_name_cn()
 
         super(OrderProduct, self).save()
+
+    def get_summary(self):
+        if self.product:
+            product_name = '%s%s' % (self.product.brand.name_en, self.product.name_cn)
+        else:
+            product_name = self.name
+        return '%s = %d x %s' % (product_name, self.sell_price_rmb, self.amount)
 
 
 @receiver(post_save, sender=OrderProduct)
