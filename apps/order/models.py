@@ -52,7 +52,12 @@ class Order(models.Model):
 
     def get_summary(self):
         """ plain text summary for order """
-        result = unicode(self.address)
+        if self.customer:
+            url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
+            result = '<a href="%s">%s</a>'%(url,unicode(self.address))
+        else:
+            result= 'None'
+
         if self.address:
             if self.address.id_number:
                 result += u' = %s' % self.address.id_number
