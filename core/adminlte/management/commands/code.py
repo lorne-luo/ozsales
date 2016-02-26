@@ -19,6 +19,7 @@ from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+
 class Command(BaseCommand):
     help = ''' Create code
 
@@ -115,7 +116,10 @@ class Command(BaseCommand):
     def get_fields_and_titles(self, model):
         titles = []
         fields = []
-        for mf in model._meta.fields:
+
+        # normal fields + many-to-many fields
+        meta_fields = model._meta.fields + model._meta.many_to_many
+        for mf in meta_fields:
             if mf.name == 'id':
                 continue
             elif isinstance(mf, models.fields.DateTimeField):
@@ -252,7 +256,8 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (self.app_str, self.app_name))
+        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (
+        self.app_str, self.app_name))
         self.stdout.write('')
         self.stderr.write(
             " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")
