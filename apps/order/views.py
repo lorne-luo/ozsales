@@ -16,8 +16,10 @@ def change_order_status(request, order_id, status_str):
         if order.is_paid:
             order.finish_time = datetime.datetime.now()
             order.customer.last_order_time = order.create_time
-            order.customer.order_count += 1
             order.save()
+            customer = order.customer
+            customer.order_count += 1
+            customer.save()
     else:
         order.save()
     referer = request.META.get('HTTP_REFERER')
