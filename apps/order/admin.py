@@ -47,7 +47,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         self.inlines = [OrderProductChangeInline, ExpressOrderChangeInline]
-        self.exclude = []
+        self.exclude = ['ship_time', 'finish_time']
         self.form = OrderForm
         order = Order.objects.get(pk=object_id)
         extra_context = {'order_summary': order.get_summary()}
