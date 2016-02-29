@@ -33,8 +33,8 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 
     def get_context_data(self, **kwargs):
         context = super(NotificationListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'标题', u'内容', u'接收人', u'读取状态', u'读取时间', u'数据创建人', u'数据删除时间']
-        context['table_fields'] = ['link', 'content', 'receiver', 'status', 'read_time', 'creator', 'deleted_at']
+        context['table_titles'] = [u'标题', u'内容', u'状态']
+        context['table_fields'] = ['link', 'content', 'status']
         return context
 
 
@@ -86,12 +86,13 @@ class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContext
         form = self.get_form(form_class)
         if form.is_valid():
             self.object = notification_content = form.save(commit=False)
-            notification_content.creator=request.user
+            notification_content.creator = request.user
             notification_content.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
 
             return self.form_invalid(form)
+
 
 class NotificationContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = NotificationContent
@@ -142,7 +143,7 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         form = self.get_form(form_class)
         if form.is_valid():
             sitemail = form.save(commit=False)
-            sitemail.creator=request.user
+            sitemail.creator = request.user
             sitemail.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
@@ -192,7 +193,7 @@ class SiteMailReceiveListView(MultiplePermissionsRequiredMixin, CommonContextMix
 
     def get_context_data(self, **kwargs):
         context = super(SiteMailReceiveListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'主题',  u'发件人', u'读取状态', u'收件时间'] + ['']
+        context['table_titles'] = [u'主题', u'发件人', u'读取状态', u'收件时间'] + ['']
         context['table_fields'] = ['title', 'sender', 'status', 'send_time'] + ['id']
         return context
 
@@ -249,8 +250,8 @@ class TaskListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'主题', u'内容', u'发件人', u'读取状态', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'sender', 'status', 'creator', 'deleted_at'] + ['id']
+        context['table_titles'] = [u'名称', u'状态', u'进度', u'开始时间']
+        context['table_fields'] = ['link', 'status', 'percent', 'start_time']
         return context
 
 
@@ -269,6 +270,5 @@ class TaskViewSet(CommonViewSet):
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name', 'percent', 'start_app', 'status', 'start_time', 'end_time', 'creator']
-    search_fields = ['name', 'percent', 'start_app', 'status', 'start_time', 'end_time', 'creator']
-
+    filter_fields = ['name', 'start_app', 'status']
+    search_fields = ['name', 'start_app', 'status']

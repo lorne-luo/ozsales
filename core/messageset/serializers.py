@@ -62,6 +62,7 @@ class NotificationSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     percent = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    link = serializers.SerializerMethodField()
 
     def get_percent(self, obj):
         return '%s%%' % obj.percent
@@ -74,11 +75,20 @@ class TaskSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'name', 'percent', 'start_app', 'status',
             'start_time', 'end_time',
-            'creator', 'created_at'
+            'link'
         )
         read_only_fields = (
-            'id', 'created_at', 'status'
+            'id', 'start_time', 'status'
         )
+
+    def get_link(self, obj):
+        request = self.context.get('request', None)
+
+        view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
+        if request.user.has_perm(view_perm_str):
+            url = reverse('messageset:task-detail', args=[obj.id])
+            return '<a href="%s">%s</a>' % (url, obj.name)
+        return obj.name
 
 
 # Serializer for notificationcontent
