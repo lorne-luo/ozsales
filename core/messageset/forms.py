@@ -88,18 +88,6 @@ class SiteMailSendDetailForm(ModelForm):
         fields = ['sender','title', 'content', 'status']
 
 
-class TaskAddForm(ModelForm):
-    class Meta:
-        model = Task
-        fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']
-
-
-class TaskUpdateForm(ModelForm):
-    class Meta:
-        model = Task
-        fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']
-
-
 class TaskDetailForm(ModelForm):
     class Meta:
         model = Task

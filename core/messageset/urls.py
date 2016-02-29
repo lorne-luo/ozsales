@@ -97,10 +97,9 @@ router.register(r'api/messageset/sitemailsend', views.SiteMailSendViewSet, base_
 
 # urls for task
 urlpatterns += patterns('',
-    url(r'^messageset/task/add/$', login_required(views.TaskAddView.as_view()), name='task-add'),
     url(r'^messageset/task/list/$', login_required(views.TaskListView.as_view()), name='task-list'),
     url(r'^messageset/task/(?P<pk>\d+)/$', login_required(views.TaskDetailView.as_view()), name='task-detail'),
-    url(r'^messageset/task/(?P<pk>\d+)/edit/$', login_required(views.TaskUpdateView.as_view()), name='task-update'),
+    # url(r'^messageset/task/(?P<pk>\d+)/edit/$', login_required(views.TaskUpdateView.as_view()), name='task-update'),
 )
 
 # reverse('messageset:api-task-list'),reverse('messageset:api-task-detail', kwargs={'pk': 1})

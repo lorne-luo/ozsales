@@ -254,30 +254,6 @@ class TaskListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
         return context
 
 
-class TaskAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = Task
-    form_class = forms.TaskAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("task.add_task",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:task-list')
-
-
-class TaskUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    model = Task
-    form_class = forms.TaskUpdateForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("task.change_task",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:task-list')
-
-
 class TaskDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Task
     form_class = forms.TaskDetailForm
