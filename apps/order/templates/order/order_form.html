@@ -19,21 +19,23 @@
     <tr>
         <th style="width:150px;">Name</th>
         <td>
-            {% if page_model_perms.change %}
+            {% if user.is_superuser %}
                 <a href="{% url 'customer-edit' pk=object.customer.pk %}">{{ object.customer }}</a>
             {% else %}
                 {{ object.customer }}
             {% endif %}
         </td>
     </tr>
+    {% if user.is_superuser %}
     <tr>
         <th style="width:150px;">ID</th>
         <td>{{ object.address.id_number }}</td>
     </tr>
+    {% endif %}
     <tr>
         <th style="width:150px;">Address</th>
         <td>
-            {% if page_model_perms.change %}
+            {% if user.is_superuser %}
                 <a href="#">{{ object.address }}</a>
             {% else %}
                 {{ object.address }}
@@ -56,7 +58,7 @@
     <tr>
         <th style="width:150px;">Total Price</th>
         <td>
-        {% if page_model_perms.change %}
+        {% if user.is_superuser %}
             {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
             {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                 {{ object.origin_sell_rmb }}
@@ -64,12 +66,22 @@
                 {{ object.origin_sell_rmb }} => {{ object.sell_price_rmb }}
             {% endifequal %}
             - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
+            {% if object.is_paid %}
+                (已支付)
+            {% else %}
+                (<a href="{% url 'change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
+            {% endif %}
         {% else %}
             {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                 {{ object.origin_sell_rmb }}
             {% else %}
                 {{ object.sell_price_rmb }} (Original: {{ object.origin_sell_rmb }})
             {% endifequal %}
+            {% if object.is_paid %}
+                (已支付)
+            {% else %}
+                (<b>未支付</b>)
+            {% endif %}
         {% endif %}
         </td>
     </tr>
@@ -85,9 +97,17 @@
     </tr>
     <tr>
         <th style="width:150px;">Status</th>
-        <td>{{ object.status }}</td>
+        <td>
+            {{ object.status }}
+            {% if user.is_superuser %}
+                {% if object.next_status %}
+                    => <a href="{% url 'change-order-status' order_id=object.pk status_str=object.next_status %}">{{ object.next_status }}</a>
+                {% endif %}
+            {% endif %}
+        </td>
     </tr>
 {% endblock %}
+
 
 {% block menu %}
 <aside class="main-sidebar">
