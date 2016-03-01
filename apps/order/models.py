@@ -28,7 +28,6 @@ ORDER_STATUS_CHOICES = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    code = models.CharField(max_length=10, null=True, blank=True)
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
@@ -91,8 +90,6 @@ class Order(models.Model):
             self.sell_price_rmb = self.total_cost_rmb
         if self.sell_price_rmb and self.total_cost_rmb:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
-        if not self.code:
-            self.code = self._generate_hashcode()
 
         return super(Order, self).save()
 
@@ -185,10 +182,6 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
-
-    def _generate_hashcode(self):
-        # return self.pk, get_random_string(3, '0123456789')
-        return str(self.pk * 2 + 5)[-3:]
 
 
 @python_2_unicode_compatible

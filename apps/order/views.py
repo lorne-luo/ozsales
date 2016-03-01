@@ -72,8 +72,8 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
     def get_object(self, queryset=None):
         obj = super(OrderDetailView, self).get_object(queryset)
-        hash_code = self.kwargs.get('hash_code', None)
-        if not obj.code == hash_code or not hash_code:
+        customer_id = self.kwargs.get('customer_id', None)
+        if not obj.customer_id == long(customer_id):
             raise Http404(_("No order found!"))
 
         return obj

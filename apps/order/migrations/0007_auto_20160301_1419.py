@@ -11,12 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='order',
-            name='code',
-            field=models.CharField(max_length=10, null=True, blank=True),
-            preserve_default=True,
-        ),
         migrations.AlterField(
             model_name='order',
             name='is_paid',

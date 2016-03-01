@@ -11,5 +11,5 @@ urlpatterns = patterns('apps.order.views',
     url(r'^$', views.OrderIndex.as_view(), name="order-index"),
 	url(r'^add/$', views.OrderAddEdit.as_view(), name="order-add"),
 	url(r'^edit/(?P<pk>\d+)/$', views.OrderAddEdit.as_view(), name="order-edit"),
-    url(r'^(?P<pk>\d+)/(?P<hash_code>\d+)/$', views.OrderDetailView.as_view(), name='order-detail'),
+    url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', views.OrderDetailView.as_view(), name='order-detail'),
 )
