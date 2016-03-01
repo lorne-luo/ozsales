@@ -59,11 +59,11 @@
         <th style="width:150px;">Total Price</th>
         <td>
         {% if user.is_superuser %}
-            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
+            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }} ({{ object.total_cost_rmb }})<br/>
             {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                 {{ object.origin_sell_rmb }}
             {% else %}
-                {{ object.origin_sell_rmb }} => {{ object.sell_price_rmb }}
+                [{{ object.origin_sell_rmb }}] {{ object.sell_price_rmb }}
             {% endifequal %}
             - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
             {% if object.is_paid %}
