@@ -46,9 +46,6 @@ class ProductListView(CommonContextMixin, ListView):
     model = Product
     # template_name_suffix = '_list'
     # template_name = 'product_list.html'
-    # permissions = {
-    #     "all": ("product.view_product",)
-    # }
 
     def get_template_names(self):
         if not self.request.user.is_authenticated():
@@ -57,8 +54,12 @@ class ProductListView(CommonContextMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        if self.request.user.is_superuser:
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+            context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        else:
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Sell Price']
+            context['table_fields'] = ['pic', 'link', 'brand', 'safe_sell_price']
         context['brands'] = Brand.objects.all()
         return context
 

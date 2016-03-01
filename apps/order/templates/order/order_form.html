@@ -2,6 +2,19 @@
 {% extends "adminlte/common_detail_new.html" %}
 {% load static adminlte_tags %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
 {% block table_content %}
     <tr>
         <th style="width:150px;">Name</th>
