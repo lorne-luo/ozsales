@@ -1,0 +1,109 @@
+
+{% extends "adminlte/common_detail_new.html" %}
+{% load static adminlte_tags %}
+
+{% block table_content %}
+    <tr>
+        <th style="width:150px;">Name</th>
+        <td>
+            {% if page_model_perms.change %}
+                <a href="{% url 'customer-edit' pk=object.customer.pk %}">{{ object.customer }}</a>
+            {% else %}
+                {{ object.customer }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th style="width:150px;">ID</th>
+        <td>{{ object.address.id_number }}</td>
+    </tr>
+    <tr>
+        <th style="width:150px;">Address</th>
+        <td>
+            {% if page_model_perms.change %}
+                <a href="#">{{ object.address }}</a>
+            {% else %}
+                {{ object.address }}
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th style="width:150px;">Products</th>
+        <td>
+            {% for prod in object.products.all %}
+                {% if prod.get_link %}
+                    <a target="_blank" href="{{ prod.get_link }}"> {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}</a>
+                    = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% else %}
+                    {{ prod.name }} = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th style="width:150px;">Total Price</th>
+        <td>
+        {% if page_model_perms.change %}
+            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
+            {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                {{ object.origin_sell_rmb }}
+            {% else %}
+                {{ object.origin_sell_rmb }} => {{ object.sell_price_rmb }}
+            {% endifequal %}
+            - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
+        {% else %}
+            {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                {{ object.origin_sell_rmb }}
+            {% else %}
+                {{ object.sell_price_rmb }} (Original: {{ object.origin_sell_rmb }})
+            {% endifequal %}
+        {% endif %}
+        </td>
+    </tr>
+
+    <tr>
+        <th style="width:150px;">Shipping</th>
+        <td>
+            {% for ex in object.express_orders.all %}
+                [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
+                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th style="width:150px;">Status</th>
+        <td>{{ object.status }}</td>
+    </tr>
+{% endblock %}
+
+{% block menu %}
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+                <a href="#">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{ default_dashboard_title }}</span>
+                </a>
+            </li>
+
+            <li class="treeview active">
+                <a href="javascript:void(0)">
+                    <i class='fa fa-cloud'></i>
+                    <b>Products</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{% url 'product:product-list' %}">
+                            <i class="fa fa-circle-o"></i>
+                            All Products
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>
+{% endblock %}

@@ -1,12 +1,13 @@
 import datetime
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView
+from django.http import Http404, HttpResponseRedirect
+from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
-from braces.views import MultiplePermissionsRequiredMixin
-
+from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS
-from forms import OrderForm2
+import forms
 
 
 def change_order_status(request, order_id, status_str):
@@ -57,9 +58,22 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': OrderForm2(), }
+        context = {'form': forms.OrderForm2(), }
         if pk:
             order = get_object_or_404(Order, id=pk)
             context['order'] = order
 
         return self.render_to_response(context)
+
+
+class OrderDetailView(CommonContextMixin, UpdateView):
+    model = Order
+    form_class = forms.OrderDetailForm
+
+    def get_object(self, queryset=None):
+        obj = super(OrderDetailView, self).get_object(queryset)
+        hash_code = self.kwargs.get('hash_code', None)
+        if not obj.code == hash_code or not hash_code:
+            raise Http404(_("No order found!"))
+
+        return obj
