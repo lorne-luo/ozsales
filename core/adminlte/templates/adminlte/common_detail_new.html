@@ -11,14 +11,16 @@
             <div class="box">
                 <div class="box-body table-responsive no-padding">
                     <table class="table">
+                    {% block table_content %}
                     {% for field in form.fields %}
                         {% ifnotequal field 'id' %}
                             <tr>
-                                <th style="width:150px;">{{ object|render_field_label:field }}:</th>
+                                <th style="width:150px;">{{ object|render_field_label:field }}</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
                         {% endifnotequal %}
                     {% endfor %}
+                    {% endblock %}
                     </table>
                 </div>
             </div>
