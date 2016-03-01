@@ -17,4 +17,9 @@ class Migration(migrations.Migration):
             field=models.CharField(max_length=10, null=True, blank=True),
             preserve_default=True,
         ),
+        migrations.AlterField(
+            model_name='order',
+            name='is_paid',
+            field=models.BooleanField(default=False, verbose_name='paid'),
+        ),
     ]
