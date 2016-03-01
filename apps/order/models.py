@@ -140,20 +140,25 @@ class Order(models.Model):
 
     def get_status_button(self):
         current_status = self.get_shipping_orders() + self.status
-        next_status = ''
+        next_status = self.next_status
 
-        if self.status == ORDER_STATUS.CREATED:
-            next_status = ORDER_STATUS.SHIPPING
-        elif self.status == ORDER_STATUS.SHIPPING:
-            next_status = ORDER_STATUS.DELIVERED
-        elif self.status == ORDER_STATUS.DELIVERED:
-            next_status = ORDER_STATUS.FINISHED
-        else:
+        if not next_status:
             return ORDER_STATUS.FINISHED
 
         url = reverse('change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
         btn = '%s => <a href="%s">%s</a>' % (current_status, url, next_status)
         return btn
+
+    @property
+    def next_status(self):
+        if self.status == ORDER_STATUS.CREATED:
+            return ORDER_STATUS.SHIPPING
+        elif self.status == ORDER_STATUS.SHIPPING:
+            return ORDER_STATUS.DELIVERED
+        elif self.status == ORDER_STATUS.DELIVERED:
+            return ORDER_STATUS.FINISHED
+        else:
+            return None
 
     def get_shipping_orders(self):
         result = ''
