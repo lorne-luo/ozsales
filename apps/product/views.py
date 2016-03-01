@@ -89,15 +89,10 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
               'safe_sell_price']
 
 
-class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class ProductDetailView(CommonContextMixin, UpdateView):
     model = Product
     # template_name_suffix = '_form'
-    template_name = 'adminlte/common_detail.html'
-    permissions = {
-        "all": ("product.view_product",)
-    }
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
-              'safe_sell_price']
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'category', 'safe_sell_price']
 
 
 class ProductViewSet(CommonViewSet):
