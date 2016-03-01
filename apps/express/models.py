@@ -22,7 +22,7 @@ class ExpressCarrier(models.Model):
         verbose_name = _('Express Carrier')
 
     def __str__(self):
-        return '%s' % self.name_en
+        return '%s' % self.name_cn
 
 
 @python_2_unicode_compatible

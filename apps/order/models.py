@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
+from django.utils.crypto import get_random_string
 
 from utils.enum import enum
 from settings.settings import rate
@@ -27,7 +28,8 @@ ORDER_STATUS_CHOICES = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    is_paid = models.BooleanField(default=False)
+    code = models.CharField(max_length=10, null=True, blank=True)
+    is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
     total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
@@ -50,22 +52,26 @@ class Order(models.Model):
     def __str__(self):
         return '[#%s]%s' % (self.id, self.customer.name)
 
+    def get_product_summary(self):
+        result = ''
+        for product in self.products.all():
+            result += u'%s <br/>' % product.get_summary()
+        return result
+
     def get_summary(self):
         """ plain text summary for order """
         if self.customer:
             url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
-            result = '<a href="%s">%s</a>'%(url,unicode(self.address))
+            result = '<a href="%s">%s</a>' % (url, unicode(self.address))
         else:
-            result= 'None'
+            result = 'None'
 
         if self.address:
             if self.address.id_number:
                 result += u' = %s' % self.address.id_number
         result += '<br/><br/>'
 
-        for product in self.products.all():
-            result += u'%s <br/>' % product.get_summary()
-
+        result += self.get_product_summary()
         result += u'总计: %d<br/>' % self.sell_price_rmb
         result = '<br/>' + result
         return result
@@ -85,6 +91,8 @@ class Order(models.Model):
             self.sell_price_rmb = self.total_cost_rmb
         if self.sell_price_rmb and self.total_cost_rmb:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
+        if not self.code:
+            self.code = self._generate_hashcode()
 
         return super(Order, self).save()
 
@@ -134,12 +142,9 @@ class Order(models.Model):
     get_paid_button.short_description = 'Paid'
 
     def get_status_button(self):
-        current_status = self.status
+        current_status = self.get_shipping_orders() + self.status
         next_status = ''
-        express_orders = self.express_orders.all()
-        if express_orders.count():
-            for ex in express_orders:
-                current_status = ex.get_tracking_link() + '<br/>' + current_status
+
         if self.status == ORDER_STATUS.CREATED:
             next_status = ORDER_STATUS.SHIPPING
         elif self.status == ORDER_STATUS.SHIPPING:
@@ -152,6 +157,12 @@ class Order(models.Model):
         url = reverse('change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
         btn = '%s => <a href="%s">%s</a>' % (current_status, url, next_status)
         return btn
+
+    def get_shipping_orders(self):
+        result = ''
+        for ex in self.express_orders.all():
+            result += ex.get_tracking_link() + '<br/>'
+        return result
 
     get_status_button.allow_tags = True
     get_status_button.short_description = 'Status'
@@ -174,6 +185,10 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
+
+    def _generate_hashcode(self):
+        # return self.pk, get_random_string(3, '0123456789')
+        return str(self.pk * 2 + 5)[-3:]
 
 
 @python_2_unicode_compatible
@@ -213,6 +228,12 @@ class OrderProduct(models.Model):
         else:
             product_name = self.name
         return '%s = %d x %s' % (product_name, self.sell_price_rmb, self.amount)
+
+    def get_link(self):
+        if self.product:
+            return reverse('product:product-detail', args=[self.product.pk])
+        else:
+            return None
 
 
 @receiver(post_save, sender=OrderProduct)
