@@ -84,7 +84,9 @@
                 {% endblock %}
             </div>
             {% include "adminlte/includes/footer.html" %}
-            {% include "adminlte/includes/control_sidebar.html" %}
+            {% if user.is_superuser %}
+                {% include "adminlte/includes/control_sidebar.html" %}
+            {% endif %}
         </div>
     {% endblock %}
 
