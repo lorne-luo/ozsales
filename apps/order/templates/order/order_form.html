@@ -21,6 +21,9 @@
         <td>
             {% if user.is_superuser %}
                 <a href="{% url 'customer-edit' pk=object.customer.pk %}">{{ object.customer }}</a>
+                {% if object.customer.remarks %}
+                    - {{ object.customer.remarks }}
+                {% endif %}
             {% else %}
                 {{ object.customer }}
             {% endif %}
