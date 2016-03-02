@@ -282,3 +282,6 @@ class ForexRate(dbsettings.Group):
 
 
 rate = ForexRate()
+
+# ----------------------------------------- CONSTANTS -----------------------------------------------
+SITE_NAME = 'OZ SALE'
