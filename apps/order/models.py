@@ -49,7 +49,7 @@ class Order(models.Model):
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
     def __str__(self):
-        return '[#%s]%s' % (self.id, self.customer.name)
+        return '[%s]%s' % (self.id, self.customer.name)
 
     def get_product_summary(self):
         result = ''
@@ -97,6 +97,15 @@ class Order(models.Model):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
         name = '[#%s]%s' % (self.id, self.customer.name)
         return u'<a href="%s">%s</a>' % (url, name)
+
+    def get_public_link(self):
+        return reverse('order-detail', args=[self.customer.id, self.id])
+
+    def get_id_link(self):
+        return u'<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
+
+    get_id_link.allow_tags = True
+    get_id_link.short_description = 'ID'
 
     def update_price(self):
         self.total_amount = 0

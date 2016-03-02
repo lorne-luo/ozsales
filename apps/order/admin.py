@@ -24,7 +24,7 @@ class OrderProductChangeInline(admin.TabularInline):
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'create_time', 'get_customer_link', 'total_amount', 'get_status_button',
+    list_display = ('get_id_link', 'create_time', 'get_customer_link', 'total_amount', 'get_status_button',
                     'sell_price_rmb', 'get_id_upload', 'get_paid_button', 'profit_rmb', 'product_cost_aud',
                     'shipping_fee',
                     'origin_sell_rmb', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb')
@@ -34,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ['total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee',
                        'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'profit_rmb', 'create_time']
     exclude = ['ship_time', ]
-    list_display_links = ['id', 'total_amount', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb', 'total_cost_aud',
+    list_display_links = ['total_amount', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb', 'total_cost_aud',
                           'total_cost_rmb', 'sell_price_rmb', 'profit_rmb']
     search_fields = ('customer__name',)
 
