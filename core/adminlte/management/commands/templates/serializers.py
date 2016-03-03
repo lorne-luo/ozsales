@@ -22,10 +22,10 @@ class <% MODEL_NAME %>Serializer(serializers.ModelSerializer):
         view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         if request.user.has_perm(change_perm_str):
             url = reverse('<% app_name %>:<% model_name %>-update', args=[obj.id])
-            return '<a href="%s">%s</a>' % (url, 'Update Link')
+            return u'<a href="%s">%s</a>' % (url, 'Update Link')
         elif request.user.has_perm(view_perm_str):
             url = reverse('<% app_name %>:<% model_name %>-detail', args=[obj.id])
-            return '<a href="%s">%s</a>' % (url, 'Detail Link')
+            return u'<a href="%s">%s</a>' % (url, 'Detail Link')
         return None
 
 '''
