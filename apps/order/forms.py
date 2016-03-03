@@ -1,5 +1,4 @@
-__author__ = 'Lorne'
-
+# coding=utf-8
 from django import forms
 from django.contrib import admin
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
@@ -56,6 +55,18 @@ class OrderForm2(forms.ModelForm):
         model = Order
         fields = '__all__'
         # exclude = ['epg_events_updated_at']
+
+
+class OrderAddForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
+
+
+class OrderUpdateForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
 
 
 class OrderDetailForm(ModelForm):

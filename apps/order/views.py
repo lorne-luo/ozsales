@@ -1,12 +1,15 @@
+# coding=utf-8
 import datetime
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
+from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS
+import serializers
 import forms
 
 
@@ -66,6 +69,44 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
+class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    model = Order
+    template_name_suffix = '_list'  # order/order_list.html
+    permissions = {
+        "all": ("order.view_order",)
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Customer', 'Paid', 'Status', 'Amount', 'Product Cost AUD',  'Shipping Fee', 'Total Cost AUD', 'Total Cost RMB', 'Sell Price RMB', 'Profit RMB', '']
+        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
+        return context
+
+
+class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    model = Order
+    form_class = forms.OrderAddForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("order.add_order",)
+    }
+
+    def get_success_url(self):
+        return reverse('order:order-list')
+
+
+class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Order
+    form_class = forms.OrderUpdateForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("order.change_order",)
+    }
+
+    def get_success_url(self):
+        return reverse('order:order-list')
+
+
 class OrderDetailView(CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderDetailForm
@@ -77,3 +118,13 @@ class OrderDetailView(CommonContextMixin, UpdateView):
             raise Http404(_("No order found!"))
 
         return obj
+
+# api views for Order
+
+class OrderViewSet(CommonViewSet):
+    queryset = Order.objects.all()
+    serializer_class = serializers.OrderSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+    filter_fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
+    search_fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
+

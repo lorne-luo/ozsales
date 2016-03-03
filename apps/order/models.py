@@ -99,7 +99,7 @@ class Order(models.Model):
         return u'<a href="%s">%s</a>' % (url, name)
 
     def get_public_link(self):
-        return reverse('order-detail', args=[self.customer.id, self.id])
+        return reverse('order:order-detail', args=[self.customer.id, self.id])
 
     def get_id_link(self):
         return u'<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
@@ -140,7 +140,7 @@ class Order(models.Model):
 
     def get_paid_button(self):
         if not self.is_paid:
-            url = reverse('change-order-paid', kwargs={'order_id': self.id})
+            url = reverse('order:change-order-paid', kwargs={'order_id': self.id})
             return '<a href="%s"><b>UNPAID</b></a>' % url
         return 'PAID'
 
@@ -154,7 +154,7 @@ class Order(models.Model):
         if not next_status:
             return ORDER_STATUS.FINISHED
 
-        url = reverse('change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
+        url = reverse('order:change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
         btn = '%s => <a href="%s">%s</a>' % (current_status, url, next_status)
         return btn
 

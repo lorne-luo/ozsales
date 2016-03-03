@@ -72,7 +72,7 @@
             {% if object.is_paid %}
                 (已支付)
             {% else %}
-                (<a href="{% url 'change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
+                (<a href="{% url 'order:change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
             {% endif %}
         {% else %}
             {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
@@ -104,7 +104,7 @@
             {{ object.status }}
             {% if user.is_superuser %}
                 {% if object.next_status %}
-                    => <a href="{% url 'change-order-status' order_id=object.pk status_str=object.next_status %}">{{ object.next_status }}</a>
+                    => <a href="{% url 'order:change-order-status' order_id=object.pk status_str=object.next_status %}">{{ object.next_status }}</a>
                 {% endif %}
             {% endif %}
         </td>
