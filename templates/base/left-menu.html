@@ -54,8 +54,8 @@
           <span class="arrow {% ifstartswith '/order/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/order/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'order-add' %}">New Order</a></li>
-            <li><a href="{% url 'order-index' %}">Order List</a></li>
+            <li><a href="{% url 'order:order-add' %}">New Order</a></li>
+            <li><a href="{% url 'order:order-list' %}">Order List</a></li>
         </ul>
       </li>
       {%endif%}
