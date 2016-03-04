@@ -9,6 +9,17 @@
                 <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
             </a>
         </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% if user.is_superuser %}
+                <a href="{% url 'order:order-list' %}">
+                    {{ page_model_verbose_name }}
+                </a>
+            {% else %}
+                {{ page_title }}
+            {% endif %}
+            </li>
+        {% endif %}
         {% if object != None %}
             <li class="active">{{ page_title }}详情</li>
         {% endif %}
@@ -20,7 +31,7 @@
         <th style="width:150px;">Name</th>
         <td>
             {% if user.is_superuser %}
-                <a href="{% url 'customer-edit' pk=object.customer.pk %}">{{ object.customer }}</a>
+                <a href="{% url 'admin:customer_customer_change' object.customer.pk %}">{{ object.customer }}</a>
                 {% if object.customer.remarks %}
                     - {{ object.customer.remarks }}
                 {% endif %}
