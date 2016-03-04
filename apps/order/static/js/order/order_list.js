@@ -14,7 +14,7 @@ var OrderListPageVue = CommonListPageVue.extend({
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
-            var ongoing_url=url+'?status_in=CREATED,SHIPPING,DELIVERED';
+            var ongoing_url=url+'?status_in=CREATED,SHIPPING,DELIVERED&ordering=-id';
             $.AdminLTE.apiGet(
                 ongoing_url,
                 data,
