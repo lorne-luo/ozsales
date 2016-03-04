@@ -78,8 +78,10 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 
     def get_context_data(self, **kwargs):
         context = super(OrderListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Customer', 'Paid', 'Status', 'Amount', 'Product Cost AUD',  'Shipping Fee', 'Total Cost AUD', 'Total Cost RMB', 'Sell Price RMB', 'Profit RMB', '']
-        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee', 'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
+        context['table_titles'] = ['Customer', 'Paid', 'Status', 'Amount', 'Product Cost AUD', 'Shipping Fee',
+                                   'Total Cost AUD', 'Total Cost RMB', 'Sell Price RMB', 'Profit RMB', '']
+        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee',
+                                   'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
         return context
 
 
@@ -119,12 +121,31 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
         return obj
 
+
+from django_filters import Filter, FilterSet
+from rest_framework import filters
+
+
+class ListFilter(Filter):
+    def filter(self, qs, value):
+        self.lookup_type = 'in'
+        values = value.split(',')
+        return super(ListFilter, self).filter(qs, values)
+
+
+class OrderFilter(FilterSet):
+    status_in = ListFilter(name='status')
+
+    class Meta:
+        model = Order
+        fields = ['status_in', 'customer', 'is_paid', 'status', 'ship_time', 'finish_time']
+
+
 # api views for Order
 
 class OrderViewSet(CommonViewSet):
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
+    filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
-    search_fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
-
+    search_fields = ['customer', 'is_paid', 'status', 'ship_time', 'finish_time']
