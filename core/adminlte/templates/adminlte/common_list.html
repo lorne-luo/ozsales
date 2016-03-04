@@ -68,13 +68,10 @@
                     <table class="table table-hover" id="commonTable">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width:40px;">
+                                <th class="text-center" style="width:60px;">
                                     <input type="checkbox"
                                            name="checkboxAllRow"
                                            v-on:click="toggleAllBox"/>
-                                </th>
-                                <th class="text-center" style="width:40px;">
-                                    #
                                 </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
@@ -94,11 +91,11 @@
                         <tbody v-for="item in items">
                             <tr>
                                 <td class="text-center">
+                                    #[$index+1]
                                     <input type="checkbox" class="minimal"
                                            name="checkboxRow"
                                            value="#[item.id]"/>
                                 </td>
-                                <td class="text-center">#[$index+1]</td>
                                 {% for field in table_fields %}
                                     {% if field == 'id' %}
                                         {% block item_buttons %}
