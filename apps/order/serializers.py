@@ -22,10 +22,10 @@ class OrderSerializer(serializers.ModelSerializer):
         view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
         name = u'[%s]%s' % (obj.id, obj.customer)
         if request.user.has_perm(change_perm_str):
-            url = reverse('order:order-detail', args=[obj.id, obj.customer.id])
+            url = reverse('order:order-detail', args=[obj.customer.id, obj.id])
             return u'<a href="%s">%s</a>' % (url, name)
         elif request.user.has_perm(view_perm_str):
-            url = reverse('order:order-detail', args=[obj.id, obj.customer.id])
+            url = reverse('order:order-detail', args=[obj.customer.id, obj.id])
             return u'<a href="%s">%s</a>' % (url, name)
-        return None
+        return name
 

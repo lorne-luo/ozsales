@@ -213,7 +213,7 @@ class Address(models.Model):
             self.customer.save()
 
     def get_customer_link(self):
-        url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
+        url = reverse('admin:customer_customer_change', args=[self.customer.id])
         return '<a href="%s">%s</a>' % (url, self.customer)
 
     get_customer_link.allow_tags = True
