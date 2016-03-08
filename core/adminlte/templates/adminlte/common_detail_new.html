@@ -5,6 +5,20 @@
     <b>{{ object }} 详情</b>
 {% endblock %}
 
+
+{% block header_base_style %}
+    <style type="text/css">
+        .table-responsive > .table > thead > tr > th,
+        .table-responsive > .table > tbody > tr > th,
+        .table-responsive > .table > tfoot > tr > th,
+        .table-responsive > .table > thead > tr > td,
+        .table-responsive > .table > tbody > tr > td,
+        .table-responsive > .table > tfoot > tr > td {
+            white-space: normal !important;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
@@ -15,7 +29,7 @@
                     {% for field in form.fields %}
                         {% ifnotequal field 'id' %}
                             <tr>
-                                <th style="width:150px;">{{ object|render_field_label:field }}</th>
+                                <th>{{ object|render_field_label:field }}</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
                         {% endifnotequal %}

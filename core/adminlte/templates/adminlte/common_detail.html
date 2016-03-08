@@ -14,7 +14,7 @@
                     {% for field in object.Config.list_form_fields %}
                         {% ifnotequal field 'id' %}
                             <tr>
-                                <th style="width:150px;">{{ object|render_field_label:field }}:</th>
+                                <th>{{ object|render_field_label:field }}:</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
                         {% endifnotequal %}
