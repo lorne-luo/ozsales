@@ -28,7 +28,7 @@
 
 {% block table_content %}
     <tr>
-        <th>Name</th>
+        <th>姓名</th>
         <td>
             {% if user.is_superuser %}
                 <a href="{% url 'admin:customer_customer_change' object.customer.pk %}">{{ object.customer }}</a>
@@ -42,12 +42,12 @@
     </tr>
     {% if user.is_superuser %}
     <tr>
-        <th>ID</th>
+        <th>身份证号</th>
         <td>{{ object.address.id_number }}</td>
     </tr>
     {% endif %}
     <tr>
-        <th>Address</th>
+        <th>地址</th>
         <td>
             {% if user.is_superuser %}
                 <a href="#">{{ object.address }}</a>
@@ -57,7 +57,7 @@
         </td>
     </tr>
     <tr>
-        <th>Products</th>
+        <th>产品</th>
         <td>
             {% for prod in object.products.all %}
                 {% if prod.get_link %}
@@ -70,7 +70,7 @@
         </td>
     </tr>
     <tr>
-        <th>Total Price</th>
+        <th>总价</th>
         <td>
         {% if user.is_superuser %}
             {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }} ({{ object.total_cost_rmb }})<br/>
@@ -101,7 +101,7 @@
     </tr>
 
     <tr>
-        <th>Shipping</th>
+        <th>物流</th>
         <td>
             {% for ex in object.express_orders.all %}
                 [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
@@ -110,7 +110,7 @@
         </td>
     </tr>
     <tr>
-        <th>Status</th>
+        <th>状态</th>
         <td>
             {{ object.status }}
             {% if user.is_superuser %}
