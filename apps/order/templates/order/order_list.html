@@ -46,7 +46,6 @@
                 <tbody v-for="item in ongoing_items">
                     <tr v-if="item.id">
                         <td class="text-center">
-                            #[$index+1]
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>
@@ -158,7 +157,6 @@
                 <tbody v-for="item in finished_items">
                     <tr v-if="item.id">
                         <td class="text-center">
-                            #[$index+1]
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>

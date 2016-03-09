@@ -44,14 +44,15 @@ var CommonListPageVue = Vue.extend({
             }
 
             var url;
-            if (this.detail_url_tag)
+            if (this.detail_url_tag){
                 url = Urls[this.detail_url_tag](pk);
-            else
+            }else{
                 url = Urls['adminlte:common_detail_page'](
                     this.appName,
                     this.modelName,
                     pk
                 );
+            }
             window.location.href = url;
         },
         create: function () {
