@@ -11,7 +11,7 @@ urlpatterns = patterns('apps.order.views',
     url(r'^order/(?P<order_id>\d+)/status/(?P<status_str>\w+)/$', views.change_order_status, name='change-order-status'),
     url(r'^order/paid/(?P<order_id>\d+)/$', views.change_order_paid, name="change-order-paid"),
 
-    url(r'^order/$', views.OrderIndex.as_view(), name="order-index"),
+    url(r'^order/index/$', views.OrderIndex.as_view(), name="order-index"),
 	# url(r'^add/$', views.OrderAddEdit.as_view(), name="order-add"),
 	# url(r'^order/edit/(?P<pk>\d+)/$', views.OrderAddEdit.as_view(), name="order-edit"),
     url(r'^order/(?P<customer_id>\d+)/(?P<pk>\d+)/$', views.OrderDetailView.as_view(), name='order-detail'),
@@ -19,6 +19,7 @@ urlpatterns = patterns('apps.order.views',
     url(r'^order/(?P<pk>\d+)/edit/$', login_required(views.OrderUpdateView.as_view()), name='order-update'),
     url(r'^order/add/$', login_required(views.OrderAddView.as_view()), name='order-add'),
     url(r'^order/list/$', login_required(views.OrderListView.as_view()), name='order-list'),
+    url(r'^order/$', login_required(views.OrderListView.as_view()), name='order-list-short'),
 )
 
 

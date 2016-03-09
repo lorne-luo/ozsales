@@ -94,7 +94,7 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     }
 
     def get_success_url(self):
-        return reverse('order:order-list')
+        return reverse('order:order-list-short')
 
 
 class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -106,7 +106,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     }
 
     def get_success_url(self):
-        return reverse('order:order-list')
+        return reverse('order:order-list-short')
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):

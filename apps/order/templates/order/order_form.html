@@ -12,7 +12,7 @@
         {% if page_title != default_dashboard_title %}
         <li class="active">
             {% if user.is_superuser %}
-                <a href="{% url 'order:order-list' %}">
+                <a href="{% url 'order:order-list-short' %}">
                     {{ page_model_verbose_name }}
                 </a>
             {% else %}

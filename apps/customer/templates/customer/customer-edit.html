@@ -10,7 +10,7 @@
 {%endblock%}
 
 {% block breadcrumbs %}
-  {% breadcrumb_url 'Orders' 'order:order-list' %}
+  {% breadcrumb_url 'Orders' 'order:order-list-short' %}
   {%if order %}
     {% breadcrumb_last order.customer.name %}
   {%else%}
@@ -101,7 +101,7 @@
 
                         <div class="form-actions">
                           <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Save</button>
-                          <a href="{% url 'order:order-list' %}" type="button" class="btn btn-info"><i class="fa fa-times"></i> Cancel</a>
+                          <a href="{% url 'order:order-list-short' %}" type="button" class="btn btn-info"><i class="fa fa-times"></i> Cancel</a>
                         </div>
                       </div>
                     <div class="span4 ">

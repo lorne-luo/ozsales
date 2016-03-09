@@ -8,7 +8,7 @@
     <ul class="treeview-menu">
         {% if perms.order.add_order or perms.order.change_order %}
         <li>
-        <a href="{% url 'order:order-list' %}">
+        <a href="{% url 'order:order-list-short' %}">
                 <i class="fa fa-circle-o"></i>
                 Order
             </a>
