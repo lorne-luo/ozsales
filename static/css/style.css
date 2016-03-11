@@ -19,6 +19,22 @@ input[type='checkbox'] {
         padding-left: 0;
     }
 
+    #commonDataTableRow .box-header {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    #commonDataTableRow .box-header .btn {
+        padding: 5px 10px;
+        font-size: 12px;
+        line-height: 1.5;
+        border-radius: 3px;
+    }
+
+    #commonDataTableRow #tableSearch{
+        width: 100%;
+    }
+
     #commonDataTableRow .content-header {
         padding: 15px 0 0;
     }
