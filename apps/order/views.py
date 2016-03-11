@@ -148,4 +148,4 @@ class OrderViewSet(CommonViewSet):
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
-    search_fields = ['customer', 'is_paid', 'status', 'ship_time', 'finish_time']
+    search_fields = ['customer__name', 'status']
