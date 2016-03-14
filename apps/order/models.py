@@ -148,7 +148,12 @@ class Order(models.Model):
     get_paid_button.short_description = 'Paid'
 
     def get_status_button(self):
-        current_status = self.get_shipping_orders() + self.status
+        current_status = self.get_shipping_orders()
+        if self.status in [ORDER_STATUS.CREATED, ORDER_STATUS.DELIVERED]:
+            current_status += '<b>%s</b>' % self.status
+        else:
+            current_status += self.status
+
         next_status = self.next_status
 
         if not next_status:
