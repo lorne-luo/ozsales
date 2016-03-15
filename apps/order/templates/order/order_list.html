@@ -28,15 +28,24 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    {% for title in table_titles %}
-                        {% if title == 'ID' %}
-                            <th></th>
-                        {% else %}
-                            <th>
-                                {{ title }}
-                            </th>
-                        {% endif %}
-                    {% endfor %}
+                    <th class="hidden-sm-down">
+                        Create Time
+                    </th>
+                    <th>
+                        Customer
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Shipping
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th class="hidden-sm-down">
+
+                    </th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -50,34 +59,54 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        {% for field in table_fields %}
-                            {% if field == 'id' %}
-                                <td class="text-right">
-                                    {% if page_model_perms.view %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                       class="btn btn-info btn-sm"  data-pk="#[item.id]" data-customer="#[item.customer]" v-on:click="detail">
-                                       <i class="fa fa-bars fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                    {% if page_model_perms.change %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                       class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
-                                        <i class="fa fa-pencil fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                    {% if page_model_perms.delete %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                       class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-                                        <i class="fa fa-trash-o fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                </td>
+                        <td class="hidden-sm-down">
+                            {!! item.create_time !!}
+                        </td>
+                        <td>
+                            <a target="_blank" href="{!! item.customer_url !!}">#{!! item.customer !!}{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                        </td>
+                        <td>
+                            {!! item.status_button !!}
+                        </td>
+                        <td>
+                            {!! item.shipping_order !!}
+                        </td>
+                        <td>
+                            <b>AUD:</b>{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            <b>RMB:</b>{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                                {!! item.origin_sell_rmb !!}
                             {% else %}
-                                <td>
-                                    {!! item.{{ field }} !!}
-                                </td>
+                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
+                            {% endifequal %}
+                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+                            <template v-if="item.is_paid">
+                                (已支付)
+                            </template>
+                            <template v-else>
+                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
+                            </template>
+                        </td>
+
+                        <td class="text-right hidden-sm-down">
+                            {% if page_model_perms.view %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
+                               class="btn btn-info btn-sm"  data-pk="#[item.id]" data-customer="#[item.customer]" v-on:click="detail">
+                               <i class="fa fa-bars fa-inverse"></i>
+                            </a>
                             {% endif %}
-                        {% endfor %}
+                            {% if page_model_perms.change %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
+                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                                <i class="fa fa-pencil fa-inverse"></i>
+                            </a>
+                            {% endif %}
+                            {% if page_model_perms.delete %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                                <i class="fa fa-trash-o fa-inverse"></i>
+                            </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 </tbody>
         </table>
@@ -143,15 +172,24 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    {% for title in table_titles %}
-                        {% if title == 'ID' %}
-                            <th></th>
-                        {% else %}
-                            <th>
-                                {{ title }}
-                            </th>
-                        {% endif %}
-                    {% endfor %}
+                    <th class="hidden-sm-down">
+                        Create Time
+                    </th>
+                    <th>
+                        Customer
+                    </th>
+                    <th>
+                        Status
+                    </th>
+                    <th>
+                        Shipping
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th class="hidden-sm-down">
+
+                    </th>
                 </tr>
                 </thead>
                 <tbody v-for="item in finished_items">
@@ -161,34 +199,54 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        {% for field in table_fields %}
-                            {% if field == 'id' %}
-                                <td class="text-right">
-                                    {% if page_model_perms.view %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                       class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
-                                       <i class="fa fa-bars fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                    {% if page_model_perms.change %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                       class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
-                                        <i class="fa fa-pencil fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                    {% if page_model_perms.delete %}
-                                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                       class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-                                        <i class="fa fa-trash-o fa-inverse"></i>
-                                    </a>
-                                    {% endif %}
-                                </td>
+                        <td class="hidden-sm-down">
+                            {!! item.create_time !!}
+                        </td>
+                        <td>
+                            <a target="_blank" href="{!! item.customer_url !!}">#{!! item.customer !!}{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                        </td>
+                        <td>
+                            {!! item.status_button !!}
+                        </td>
+                        <td>
+                            {!! item.shipping_order !!}
+                        </td>
+                        <td>
+                            <b>AUD:</b>{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            <b>RMB:</b>{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                                {!! item.origin_sell_rmb !!}
                             {% else %}
-                                <td>
-                                    {!! item.{{ field }} !!}
-                                </td>
+                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
+                            {% endifequal %}
+                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+                            <template v-if="item.is_paid">
+                                (已支付)
+                            </template>
+                            <template v-else>
+                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
+                            </template>
+                        </td>
+
+                        <td class="text-right hidden-sm-down">
+                            {% if page_model_perms.view %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
+                               class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
+                               <i class="fa fa-bars fa-inverse"></i>
+                            </a>
                             {% endif %}
-                        {% endfor %}
+                            {% if page_model_perms.change %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
+                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                                <i class="fa fa-pencil fa-inverse"></i>
+                            </a>
+                            {% endif %}
+                            {% if page_model_perms.delete %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                                <i class="fa fa-trash-o fa-inverse"></i>
+                            </a>
+                            {% endif %}
+                        </td>
                     </tr>
                 </tbody>
                 <tfoot>
