@@ -23,7 +23,7 @@
         <table class="table table-hover" data-status="ONGOING">
             <thead>
                 <tr>
-                    <th class="text-center" style="width:60px;">
+                    <th class="text-center hidden-sm hidden-xs" style="width:60px;">
                         <input type="checkbox"
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
@@ -54,7 +54,7 @@
                 </tfoot>
                 <tbody v-for="item in ongoing_items">
                     <tr v-if="item.id">
-                        <td class="text-center">
+                        <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>
@@ -167,7 +167,7 @@
         <table class="table table-hover" data-status="FINISHED">
             <thead>
                 <tr>
-                    <th class="text-center" style="width:60px;">
+                    <th class="text-center hidden-sm hidden-xs" style="width:60px;">
                         <input type="checkbox"
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
@@ -194,7 +194,7 @@
                 </thead>
                 <tbody v-for="item in finished_items">
                     <tr v-if="item.id">
-                        <td class="text-center">
+                        <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>
