@@ -5,27 +5,6 @@
     <b>{{ object }} 详情</b>
 {% endblock %}
 
-{% block header_base_style %}
-    <style type="text/css">
-        @media (max-width: 767px) {
-            .table-responsive > .table > thead > tr > th,
-            .table-responsive > .table > tbody > tr > th,
-            .table-responsive > .table > tfoot > tr > th,
-            .table-responsive > .table > thead > tr > td,
-            .table-responsive > .table > tbody > tr > td,
-            .table-responsive > .table > tfoot > tr > td {
-                white-space: normal !important;
-            }
-            .col-xs-12, .col-sm-12{
-                padding: 0;
-            }
-            .content-header {
-                padding: 15px 0 0;
-            }
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
     <div class="row">
         <div class="col-sm-12">

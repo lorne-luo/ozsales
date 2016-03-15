@@ -1,12 +1,12 @@
 var OrderListPageVue = CommonListPageVue.extend({
     ready: function () {
-        if(this.appName && this.modelName){
-            this.loadOngoingData({});
-            this.loadFinishedData({});
+        if (this.appName && this.modelName) {
+            this.loadData({}, true);
         }
     },
     methods: {
-        loadOngoingData: function (data) {
+        loadData: function (data, init) {
+            var _init = typeof init !== 'undefined' ? init : false;
             var self = this;
             var url;
             if (self.list_api_tag)
@@ -14,55 +14,52 @@ var OrderListPageVue = CommonListPageVue.extend({
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
-            var ongoing_url=url+'?status_in=CREATED,SHIPPING,DELIVERED&ordering=-id';
-            $.AdminLTE.apiGet(
-                ongoing_url,
-                data,
-                function (resp) {
-                    self.ongoing_items = resp.results;
-                    self.ongoing_count = resp.count;
-                    self.ongoing_perPage = resp.per_page;
-                    self.ongoing_totalPage = resp.total_page;
-                    self.ongoing_currentPage = resp.current_page;
-                }
-            );
-        },
-        loadFinishedData: function (data) {
-            var self = this;
-            var url;
-            if (self.list_api_tag)
-                url = Urls[self.list_api_tag]();
-            else
-                url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
+            if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
+                url = url + '?ordering=-id&status=FINISHED';
 
-            var finished_url=url+'?ordering=-id&status=FINISHED';
-            $.AdminLTE.apiGet(
-                finished_url,
-                data,
-                function (resp) {
-                    self.finished_items = resp.results;
-                    self.finished_count = resp.count;
-                    self.finished_perPage = resp.per_page;
-                    self.finished_totalPage = resp.total_page;
-                    self.finished_currentPage = resp.current_page;
-                }
-            );
+                $.AdminLTE.apiGet(
+                    url,
+                    data,
+                    function (resp) {
+                        self.finished_items = resp.results;
+                        self.finished_count = resp.count;
+                        self.finished_perPage = resp.per_page;
+                        self.finished_totalPage = resp.total_page;
+                        self.finished_currentPage = resp.current_page;
+                    }
+                );
+            } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
+                url = url + '?status_in=CREATED,SHIPPING,DELIVERED&ordering=-id';
+
+                $.AdminLTE.apiGet(
+                    url,
+                    data,
+                    function (resp) {
+                        self.ongoing_items = resp.results;
+                        self.ongoing_count = resp.count;
+                        self.ongoing_perPage = resp.per_page;
+                        self.ongoing_totalPage = resp.total_page;
+                        self.ongoing_currentPage = resp.current_page;
+                    }
+                );
+            }
+
         },
         page_ongoing: function () {
             var num = $(event.target).attr('page');
-            this.loadOngoingData({'page': num});
+            this.loadData({'page': num});
         },
         page_finished: function () {
             var num = $(event.target).attr('page');
-            this.loadFinishedData({'page': num});
+            this.loadData({'page': num});
         },
         detail: function (event) {
-            var pk,customer;
+            var pk, customer;
             if ($(event.target).data('pk'))
                 pk = $(event.target).data('pk');
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
-            else{
+            else {
                 swal('错误', '无法获取pk', 'error');
                 return;
             }
@@ -70,15 +67,15 @@ var OrderListPageVue = CommonListPageVue.extend({
                 customer = $(event.target).data('customer');
             else if ($(event.target.parentNode).data('customer'))
                 customer = $(event.target.parentNode).data('customer');
-            else{
+            else {
                 swal('错误', '无法获取customer', 'error');
                 return;
             }
 
             var url;
-            if (this.detail_url_tag){
-                url = Urls[this.detail_url_tag](customer,pk);
-            }else{
+            if (this.detail_url_tag) {
+                url = Urls[this.detail_url_tag](customer, pk);
+            } else {
                 url = Urls['adminlte:common_detail_page'](
                     this.appName,
                     this.modelName,
@@ -86,7 +83,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                 );
             }
             window.location.href = url;
-        },
+        }
     }
 });
 

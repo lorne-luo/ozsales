@@ -28,7 +28,7 @@
 
 {% block table_content %}
     <tr>
-        <th>姓名</th>
+        <th style="min-width: 44px">姓名</th>
         <td>
             {% if user.is_superuser %}
                 <a href="{% url 'admin:customer_customer_change' object.customer.pk %}">{{ object.customer }}</a>
@@ -42,7 +42,7 @@
     </tr>
     {% if user.is_superuser %}
     <tr>
-        <th>身份证号</th>
+        <th>证件</th>
         <td>{{ object.address.id_number }}</td>
     </tr>
     {% endif %}
