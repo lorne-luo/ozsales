@@ -28,7 +28,7 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    <th class="hidden-sm-down">
+                    <th class="hidden-sm hidden-xs">
                         Create Time
                     </th>
                     <th>
@@ -43,7 +43,7 @@
                     <th>
                         Price
                     </th>
-                    <th class="hidden-sm-down">
+                    <th class="hidden-sm hidden-xs">
 
                     </th>
                 </tr>
@@ -59,7 +59,7 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="hidden-sm-down">
+                        <td class="hidden-sm hidden-xs">
                             {!! item.create_time !!}
                         </td>
                         <td>
@@ -72,8 +72,8 @@
                             {!! item.shipping_order !!}
                         </td>
                         <td>
-                            <b>AUD:</b>{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
-                            <b>RMB:</b>{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
                             {% else %}
                                 [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
@@ -87,7 +87,7 @@
                             </template>
                         </td>
 
-                        <td class="text-right hidden-sm-down">
+                        <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                class="btn btn-info btn-sm"  data-pk="#[item.id]" data-customer="#[item.customer]" v-on:click="detail">
@@ -172,7 +172,7 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    <th class="hidden-sm-down">
+                    <th class="hidden-sm hidden-xs">
                         Create Time
                     </th>
                     <th>
@@ -187,7 +187,7 @@
                     <th>
                         Price
                     </th>
-                    <th class="hidden-sm-down">
+                    <th class="hidden-sm hidden-xs">
 
                     </th>
                 </tr>
@@ -199,7 +199,7 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="hidden-sm-down">
+                        <td class="hidden-sm hidden-xs">
                             {!! item.create_time !!}
                         </td>
                         <td>
@@ -212,8 +212,8 @@
                             {!! item.shipping_order !!}
                         </td>
                         <td>
-                            <b>AUD:</b>{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
-                            <b>RMB:</b>{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
                             {% else %}
                                 [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
@@ -227,7 +227,7 @@
                             </template>
                         </td>
 
-                        <td class="text-right hidden-sm-down">
+                        <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
