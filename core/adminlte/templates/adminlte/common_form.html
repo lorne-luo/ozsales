@@ -86,6 +86,8 @@
         $('#commonForm select').addClass('form-control');
         $('#commonForm textarea').addClass('form-control');
 
+        $("select[class$='form-control'][readonly=true]").prop('disabled', true);
+
         jQuery(document).ready(function($) {
             $("select[class$='form-control']").chosen({search_contains: true,disable_search_threshold: 10});
         });
