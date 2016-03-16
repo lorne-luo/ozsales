@@ -33,6 +33,7 @@ def change_order_status(request, order_id, status_value):
 def change_order_paid(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     order.is_paid = True
+    order.paid_time = datetime.datetime.now()
     order.save()
     referer = request.META.get('HTTP_REFERER')
     return HttpResponseRedirect(referer)
@@ -78,7 +79,7 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 
     def get_context_data(self, **kwargs):
         context = super(OrderListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Create Time','Customer', 'Amount', 'Status', 'Paid', 'Price', 'Shipping','']
+        context['table_titles'] = ['Create Time', 'Customer', 'Amount', 'Status', 'Paid', 'Price', 'Shipping', '']
         context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee',
                                    'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
         return context
