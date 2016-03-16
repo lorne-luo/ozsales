@@ -13,10 +13,10 @@ import serializers
 import forms
 
 
-def change_order_status(request, order_id, status_str):
+def change_order_status(request, order_id, status_value):
     order = get_object_or_404(Order, pk=order_id)
-    order.status = status_str
-    if status_str == ORDER_STATUS.FINISHED:
+    order.status = status_value
+    if status_value == ORDER_STATUS.FINISHED:
         if order.is_paid:
             order.finish_time = datetime.datetime.now()
             order.customer.last_order_time = order.create_time

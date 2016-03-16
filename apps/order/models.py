@@ -159,7 +159,7 @@ class Order(models.Model):
         if not next_status:
             return ORDER_STATUS.FINISHED
 
-        url = reverse('order:change-order-status', kwargs={'order_id': self.id, 'status_str': next_status})
+        url = reverse('order:change-order-status', kwargs={'order_id': self.id, 'status_value': next_status})
         btn = '%s => <a href="%s">%s</a>' % (current_status, url, next_status)
         return btn
 

@@ -52,8 +52,8 @@ class OrderSerializer(serializers.ModelSerializer):
         if not next_status:
             return ORDER_STATUS.FINISHED
 
-        url = reverse('order:change-order-status', kwargs={'order_id': obj.id, 'status_str': next_status})
         btn = '%s<br/> => <a href="%s">%s</a>' % (current_status, url, next_status)
+        url = reverse('order:change-order-status', kwargs={'order_id': obj.id, 'status_value': next_status})
         return btn
 
     def get_paid_url(self, obj):

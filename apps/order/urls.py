@@ -8,7 +8,7 @@ router = DefaultRouter()
 router.include_root_view = False
 
 urlpatterns = patterns('apps.order.views',
-    url(r'^order/(?P<order_id>\d+)/status/(?P<status_str>\w+)/$', views.change_order_status, name='change-order-status'),
+    url(r'^order/(?P<order_id>\d+)/status/(?P<status_value>\w+)/$', views.change_order_status, name='change-order-status'),
     url(r'^order/paid/(?P<order_id>\d+)/$', views.change_order_paid, name="change-order-paid"),
 
     url(r'^order/index/$', views.OrderIndex.as_view(), name="order-index"),

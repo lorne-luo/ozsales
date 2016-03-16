@@ -115,7 +115,7 @@
             {{ object.status }}
             {% if user.is_superuser %}
                 {% if object.next_status %}
-                    => <a href="{% url 'order:change-order-status' order_id=object.pk status_str=object.next_status %}">{{ object.next_status }}</a>
+                    => <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">{{ object.next_status }}</a>
                 {% endif %}
             {% endif %}
         </td>
