@@ -63,7 +63,8 @@
                             {!! item.create_time !!}
                         </td>
                         <td>
-                            <a target="_blank" href="{!! item.customer_url !!}">#{!! item.customer !!}{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            {!! item.public_link !!} <br/>
+                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td>
                             {!! item.status_button !!}
@@ -72,7 +73,7 @@
                             {!! item.shipping_order !!}
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
                             RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
                             {% else %}
@@ -178,13 +179,13 @@
                     <th>
                         Customer
                     </th>
-                    <th>
+                    <th class="hidden-sm hidden-xs">
                         Status
                     </th>
-                    <th>
+                    <th class="hidden-sm hidden-xs">
                         Shipping
                     </th>
-                    <th class="hidden-sm hidden-xs">
+                    <th>
                         Price
                     </th>
                     <th class="hidden-sm hidden-xs">
@@ -203,28 +204,23 @@
                             {!! item.create_time !!}
                         </td>
                         <td>
-                            <a target="_blank" href="{!! item.customer_url !!}">#{!! item.customer !!}{!! item.customer_display !!}({!! item.total_amount !!})</a>
-                        </td>
-                        <td>
-                            {!! item.status_button !!}
-                        </td>
-                        <td>
-                            {!! item.shipping_order !!}
+                            {!! item.public_link !!} <br/>
+                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
+                            {!! item.status_button !!}
+                        </td>
+                        <td class="hidden-sm hidden-xs">
+                            {!! item.shipping_order !!}
+                        </td>
+                        <td>
+                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
                             RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
                             {% else %}
                                 [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
                             {% endifequal %}
                             - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
-                            <template v-if="item.is_paid">
-                                (已支付)
-                            </template>
-                            <template v-else>
-                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
-                            </template>
                         </td>
 
                         <td class="text-right hidden-sm hidden-xs">
