@@ -60,7 +60,7 @@ class OrderForm2(forms.ModelForm):
 class OrderAddForm(ModelForm):
     class Meta:
         model = Order
-        fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
+        fields = ['customer', 'address']
 
 
 class OrderUpdateForm(ModelForm):
@@ -68,6 +68,12 @@ class OrderUpdateForm(ModelForm):
         model = Order
         fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'finish_time']
 
+    def __init__(self, *args, **kwargs):
+        super(OrderUpdateForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['status'].widget.attrs['readonly'] = True
+            self.fields['total_amount'].widget.attrs['readonly'] = True
 
 class OrderDetailForm(ModelForm):
     class Meta:
