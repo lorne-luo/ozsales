@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'apps.product',
     'apps.order',
     'apps.store',
+    'apps.report',
     'apps.registration',
     'utils',
 
