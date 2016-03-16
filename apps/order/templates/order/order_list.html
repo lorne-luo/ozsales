@@ -40,7 +40,7 @@
                     <th>
                         Shipping
                     </th>
-                    <th>
+                    <th class="hidden-sm hidden-xs">
                         Price
                     </th>
                     <th class="hidden-sm hidden-xs">
@@ -71,7 +71,7 @@
                         <td>
                             {!! item.shipping_order !!}
                         </td>
-                        <td>
+                        <td class="hidden-sm hidden-xs">
                             AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
                             RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
@@ -184,7 +184,7 @@
                     <th>
                         Shipping
                     </th>
-                    <th>
+                    <th class="hidden-sm hidden-xs">
                         Price
                     </th>
                     <th class="hidden-sm hidden-xs">
@@ -211,7 +211,7 @@
                         <td>
                             {!! item.shipping_order !!}
                         </td>
-                        <td>
+                        <td class="hidden-sm hidden-xs">
                             AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!} ({!! item.total_cost_rmb !!})<br/>
                             RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
