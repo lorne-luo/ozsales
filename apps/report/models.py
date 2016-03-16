@@ -43,7 +43,7 @@ class MonthlyReport(models.Model):
 
         all_orders = Order.objects.all()
         for order in all_orders:
-            if order.status == ORDER_STATUS.FINISHED:
+            if order.is_paid and order.paid_time:
                 if order.paid_time.year == stat_date.year and order.paid_time.month == stat_date.month:
                     report.cost_aud += order.total_cost_aud
                     report.cost_rmb += order.total_cost_rmb
