@@ -27,11 +27,14 @@ class MonthlyReport(models.Model):
         self.profit_rmb = 0
 
     @staticmethod
-    def stat(stat_date):
-        if not isinstance(stat_date, datetime.date) and not isinstance(stat_date, datetime.datetime):
-            raise
+    def stat_current_month():
+        year = datetime.datetime.now().year
+        month = datetime.datetime.now().month
+        MonthlyReport.stat(year, month)
 
-        stat_date = stat_date.replace(day=1)
+    @staticmethod
+    def stat(year, month):
+        stat_date = datetime.date(year=year, month=month, day=1)
         report_filter = MonthlyReport.objects.filter(month=stat_date)
         if report_filter.count():
             report = report_filter[0]
