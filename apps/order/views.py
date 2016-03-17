@@ -113,6 +113,12 @@ class OrderDetailView(CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderDetailForm
 
+    def get_template_names(self):
+        if self.request.user.is_superuser:
+            return 'order/order_form_admin.html'
+        else:
+            return 'order/order_form.html'
+
     def get_object(self, queryset=None):
         obj = super(OrderDetailView, self).get_object(queryset)
         customer_id = self.kwargs.get('customer_id', None)

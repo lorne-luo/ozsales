@@ -1,5 +1,5 @@
 
-{% extends "adminlte/common_detail_new.html" %}
+{% extends "order/order_form.html" %}
 {% load static adminlte_tags %}
 
 {% block breadcrumb %}
@@ -11,7 +11,9 @@
         </li>
         {% if page_title != default_dashboard_title %}
         <li class="active">
-            {{ page_title }}
+            <a href="{% url 'order:order-list-short' %}">
+                {{ page_model_verbose_name }}
+            </a>
         </li>
         {% endif %}
         {% if object != None %}
@@ -24,13 +26,20 @@
     <tr>
         <th style="min-width: 44px">姓名</th>
         <td>
-            {{ object.customer }}
+            <a href="{% url 'admin:customer_customer_change' object.customer.pk %}">{{ object.customer }}</a>
+            {% if object.customer.remarks %}
+                - {{ object.customer.remarks }}
+            {% endif %}
         </td>
+    </tr>
+    <tr>
+        <th>证件</th>
+        <td>{{ object.address.id_number }}</td>
     </tr>
     <tr>
         <th>地址</th>
         <td>
-            {{ object.address }}
+            <a href="#">{{ object.address }}</a>
         </td>
     </tr>
     <tr>
@@ -49,22 +58,18 @@
     <tr>
         <th>总价</th>
         <td>
+            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }} ({{ object.total_cost_rmb }})<br/>
             {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
                 {{ object.origin_sell_rmb }}
-                {% if object.is_paid %}
-                    (已支付)
-                {% else %}
-                    (<b>未支付</b>)
-                {% endif %}
             {% else %}
-                {{ object.sell_price_rmb }}
-                {% if object.is_paid %}
-                    (已支付)
-                {% else %}
-                    (<b>未支付</b>)
-                {% endif %}
-                (Original: {{ object.origin_sell_rmb }})
+                [{{ object.origin_sell_rmb }}] {{ object.sell_price_rmb }}
             {% endifequal %}
+            - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
+            {% if object.is_paid %}
+                (已支付)
+            {% else %}
+                (<a href="{% url 'order:change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
+            {% endif %}
         </td>
     </tr>
 
@@ -81,6 +86,9 @@
         <th>状态</th>
         <td>
             {{ object.status }}
+            {% if object.next_status %}
+                => <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">{{ object.next_status }}</a>
+            {% endif %}
         </td>
     </tr>
 {% endblock %}
