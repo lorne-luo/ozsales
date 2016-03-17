@@ -15,26 +15,14 @@ import forms
 
 def change_order_status(request, order_id, status_value):
     order = get_object_or_404(Order, pk=order_id)
-    order.status = status_value
-    if status_value == ORDER_STATUS.FINISHED:
-        if order.is_paid:
-            order.finish_time = datetime.datetime.now()
-            order.customer.last_order_time = order.create_time
-            order.save()
-            customer = order.customer
-            customer.order_count += 1
-            customer.save()
-    else:
-        order.save()
+    order.set_status(status_value)
     referer = request.META.get('HTTP_REFERER')
     return HttpResponseRedirect(referer)
 
 
 def change_order_paid(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
-    order.is_paid = True
-    order.paid_time = datetime.datetime.now()
-    order.save()
+    order.set_paid()
     referer = request.META.get('HTTP_REFERER')
     return HttpResponseRedirect(referer)
 

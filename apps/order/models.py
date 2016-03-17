@@ -1,4 +1,5 @@
 # coding=utf-8
+import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -77,6 +78,26 @@ class Order(models.Model):
         result = '<br/>' + result
         return result
 
+    def set_paid(self):
+        self.is_paid = True
+        self.paid_time = datetime.datetime.now()
+        self.save()
+
+        from ..report.models import MonthlyReport
+        MonthlyReport.stat_current_month()
+
+    def set_status(self,status_value):
+        self.status = status_value
+        if status_value == ORDER_STATUS.FINISHED:
+            if self.is_paid:
+                self.finish_time = datetime.datetime.now()
+                self.save()
+                customer = self.customer
+                customer.last_order_time = self.create_time
+                customer.order_count += 1
+                customer.save()
+        else:
+            self.save()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
