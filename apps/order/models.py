@@ -30,7 +30,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
-    paid_time = models.DateTimeField(auto_now_add=False, editable=False, blank=True, null=True,
+    paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Paid Time'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
