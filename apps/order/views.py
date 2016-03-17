@@ -103,9 +103,9 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
     def get_template_names(self):
         if self.request.user.is_superuser:
-            return 'order/order_form_admin.html'
+            return 'order/order_detail_admin.html'
         else:
-            return 'order/order_form.html'
+            return 'order/order_detail.html'
 
     def get_object(self, queryset=None):
         obj = super(OrderDetailView, self).get_object(queryset)
