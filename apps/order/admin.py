@@ -31,7 +31,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ['status']
     ordering = ['-create_time']
     inlines = []
-    readonly_fields = ['total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee',
+    readonly_fields = ['paid_time', 'total_amount', 'product_cost_aud', 'product_cost_rmb', 'shipping_fee',
                        'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'profit_rmb', 'create_time']
     exclude = ['ship_time', ]
     list_display_links = ['total_amount', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb', 'total_cost_aud',
