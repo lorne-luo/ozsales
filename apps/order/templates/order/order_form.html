@@ -1,0 +1,231 @@
+
+{% extends "adminlte/common_form.html" %}
+{% load static adminlte_tags %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {{ page_title }}
+        </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+
+{% block content %}
+    <div class="box box-info">
+        {% if form.is_multipart %}
+            <form enctype="multipart/form-data"
+                  method="post"
+                  action=""
+                  class="form-horizontal"
+                  role="form" id="commonForm">
+        {% else %}
+            <form method="post" action="" class="form-horizontal"
+                  role="form" id="commonForm">
+        {% endif %}
+        {% csrf_token %}
+
+        <div class="box-header with-border">
+          <h3 class="box-title">{{ object }}</h3>
+        </div>
+
+        <div class="box-body">
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
+                    <div class="col-sm-6">
+                        {{ field }}
+                    </div>
+                    <div class="col-sm-4">
+                        {{ field.errors }}
+                        <p class="help-block">{{ field.help_text }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="box-footer">
+          <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+        </div>
+    </form>
+    </div>
+
+    <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">订单产品</h3>
+        </div>
+        <div class="box-body form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <b>产品</b>
+                </div>
+                <div class="col-sm-3">
+                    <b>名称</b>
+                </div>
+                <div class="col-sm-1">
+                    <b>数量</b>
+                </div>
+                <div class="col-sm-1">
+                    <b>售价</b>
+                </div>
+                <div class="col-sm-1">
+                    <b>小计</b>
+                </div>
+                <div class="col-sm-2">
+                    <b>来源</b>
+                </div>
+                <div class="col-sm-1">
+                    <b>删除</b>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-1">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-1">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-1">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-2">
+                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" class="btn btn-danger ">删除</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <button type="button" class="btn btn-success col-sm-1">增加一项</button>
+                </div>
+            </div>
+        </div>
+        <div class="box-footer form-horizontal">
+            <div class="form-group col-sm-12">
+              <b>总计:</b>
+              <span class="total_price"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <section class="col-lg-3 connectedSortable">
+        <div class="box box-info">
+            {% if form.is_multipart %}
+                <form enctype="multipart/form-data"
+                      method="post"
+                      action=""
+                      class="form-horizontal"
+                      role="form" id="commonForm">
+            {% else %}
+                <form method="post" action="" class="form-horizontal"
+                      role="form" id="commonForm">
+            {% endif %}
+            {% csrf_token %}
+
+            <div class="box-header with-border">
+              <h3 class="box-title">{{ object }}</h3>
+            </div>
+
+            <div class="box-body">
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="id_{{ field.name }}" class="col-sm-4 control-label">{{ field.label }}</label>
+                        <div class="col-sm-7">
+                            {{ field }}
+                        </div>
+                        <div class="col-sm-4">
+                            {{ field.errors }}
+                            <p class="help-block">{{ field.help_text }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="box-footer">
+              <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+            </div>
+        </form>
+        </div>
+        </section>
+
+        <section class="col-lg-9 connectedSortable">
+        <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">订单产品</h3>
+            </div>
+            <div class="box-body form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <b>产品</b>
+                    </div>
+                    <div class="col-sm-3">
+                        <b>名称</b>
+                    </div>
+                    <div class="col-sm-1">
+                        <b>数量</b>
+                    </div>
+                    <div class="col-sm-2">
+                        <b>售价</b>
+                    </div>
+                    <div class="col-sm-2">
+                        <b>小计</b>
+                    </div>
+                    <div class="col-sm-1">
+                        <b>删除</b>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    </div>
+                    <div class="col-sm-3">
+                        <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    </div>
+                    <div class="col-sm-1">
+                        <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    </div>
+                    <div class="col-sm-2">
+                        <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    </div>
+                    <div class="col-sm-1">
+                        <button type="button" class="btn btn-danger ">删除</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <button type="button" class="btn btn-success col-sm-2">增加一项</button>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer form-horizontal">
+                <div class="form-group col-sm-12">
+                  <b>总计:</b>
+                  <span class="total_price"></span>
+                </div>
+            </div>
+        </div>
+        </section>
+    </div>
+{% endblock %}

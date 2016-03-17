@@ -88,7 +88,7 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
 class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderUpdateForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'order/order_form.html'
     permissions = {
         "all": ("order.change_order",)
     }
