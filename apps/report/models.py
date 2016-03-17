@@ -28,7 +28,7 @@ class MonthlyReport(models.Model):
 
     @staticmethod
     def stat(stat_date):
-        if not isinstance(stat_date, datetime.date) or not isinstance(stat_date, datetime.datetime):
+        if not isinstance(stat_date, datetime.date) and not isinstance(stat_date, datetime.datetime):
             raise
 
         stat_date = stat_date.replace(day=1)
