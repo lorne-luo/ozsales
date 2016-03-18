@@ -82,11 +82,9 @@ class Order(models.Model):
         self.is_paid = True
         self.paid_time = datetime.datetime.now()
         self.save()
+        self.update_monthly_report()
 
-        from ..report.models import MonthlyReport
-        MonthlyReport.stat_current_month()
-
-    def set_status(self,status_value):
+    def set_status(self, status_value):
         self.status = status_value
         if status_value == ORDER_STATUS.FINISHED:
             if self.is_paid:
@@ -98,6 +96,21 @@ class Order(models.Model):
                 customer.save()
         else:
             self.save()
+
+        self.update_monthly_report()
+
+    def update_monthly_report(self):
+        if self.is_paid and self.status in [ORDER_STATUS.CREATED, ORDER_STATUS.FINISHED]:
+            from ..report.models import MonthlyReport
+
+            if self.paid_time:
+                year = self.paid_time.year
+                month = self.paid_time.month
+                MonthlyReport.stat(year, month)
+            else:
+                self.paid_time = datetime.datetime.now()
+                self.save()
+                MonthlyReport.stat_current_month()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if self.product_cost_aud:
