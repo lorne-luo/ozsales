@@ -44,13 +44,12 @@ class MonthlyReport(models.Model):
 
         report.reset()
 
-        all_orders = Order.objects.all()
+        all_orders = Order.objects.filter(paid_time__year=year, paid_time__month=month)
         for order in all_orders:
             if order.is_paid and order.paid_time:
-                if order.paid_time.year == stat_date.year and order.paid_time.month == stat_date.month:
-                    report.cost_aud += order.total_cost_aud
-                    report.cost_rmb += order.total_cost_rmb
-                    report.shipping_fee += order.shipping_fee
-                    report.sell_price_rmb += order.sell_price_rmb
-                    report.profit_rmb += order.profit_rmb
+                report.cost_aud += order.total_cost_aud
+                report.cost_rmb += order.total_cost_rmb
+                report.shipping_fee += order.shipping_fee
+                report.sell_price_rmb += order.sell_price_rmb
+                report.profit_rmb += order.profit_rmb
         report.save()
