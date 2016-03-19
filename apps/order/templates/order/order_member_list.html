@@ -4,7 +4,7 @@
 
 {% block common_list_footer_page_script %}
     <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/order/order_member_list.js' %}"></script>
 {% endblock %}
 
 {% block tab_nav %}
@@ -44,9 +44,6 @@
                     <th class="hidden-sm hidden-xs">
                         Price
                     </th>
-                    <th class="hidden-sm hidden-xs">
-
-                    </th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -61,53 +58,25 @@
                                    value="#[item.id]"/>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            {!! item.create_time !!}
+                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time !!}</a>
                         </td>
                         <td>
-                            {!! item.public_link !!} <br/>
-                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td>
-                            {!! item.status_button !!}
+                            {!! item.status !!}
                         </td>
                         <td>
                             {!! item.shipping_order !!}
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
-                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
-                                {!! item.origin_sell_rmb !!}
-                            {% else %}
-                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
-                            {% endifequal %}
-                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+                            {!! item.sell_price_rmb !!}
                             <template v-if="item.is_paid">
                                 (已支付)
                             </template>
                             <template v-else>
-                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
+                                (<b>未支付</b>)
                             </template>
-                        </td>
-
-                        <td class="text-right hidden-sm hidden-xs">
-                            {% if page_model_perms.view %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                               class="btn btn-info btn-sm"  data-pk="#[item.id]" data-customer="#[item.customer]" v-on:click="detail">
-                               <i class="fa fa-bars fa-inverse"></i>
-                            </a>
-                            {% endif %}
-                            {% if page_model_perms.change %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
-                                <i class="fa fa-pencil fa-inverse"></i>
-                            </a>
-                            {% endif %}
-                            {% if page_model_perms.delete %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-                                <i class="fa fa-trash-o fa-inverse"></i>
-                            </a>
-                            {% endif %}
                         </td>
                     </tr>
                 </tbody>
@@ -189,9 +158,6 @@
                     <th>
                         Price
                     </th>
-                    <th class="hidden-sm hidden-xs">
-
-                    </th>
                 </tr>
                 </thead>
                 <tbody v-for="item in finished_items">
@@ -202,11 +168,10 @@
                                    value="#[item.id]"/>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            {!! item.create_time !!}
+                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time !!}</a>
                         </td>
                         <td>
-                            {!! item.public_link !!} <br/>
-                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             {!! item.status_button !!}
@@ -215,34 +180,7 @@
                             {!! item.shipping_order !!}
                         </td>
                         <td>
-                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
-                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
-                                {!! item.origin_sell_rmb !!}
-                            {% else %}
-                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
-                            {% endifequal %}
-                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
-                        </td>
-
-                        <td class="text-right hidden-sm hidden-xs">
-                            {% if page_model_perms.view %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                               class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
-                               <i class="fa fa-bars fa-inverse"></i>
-                            </a>
-                            {% endif %}
-                            {% if page_model_perms.change %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
-                                <i class="fa fa-pencil fa-inverse"></i>
-                            </a>
-                            {% endif %}
-                            {% if page_model_perms.delete %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-                                <i class="fa fa-trash-o fa-inverse"></i>
-                            </a>
-                            {% endif %}
+                            {!! item.sell_price_rmb !!}
                         </td>
                     </tr>
                 </tbody>
@@ -306,4 +244,36 @@
 {% endblock %}
 
 {% block common_list_pagination %}
+{% endblock %}
+
+{% block menu %}
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+                <a href="#">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{ default_dashboard_title }}</span>
+                </a>
+            </li>
+
+            <li class="treeview active">
+                <a href="javascript:void(0)">
+                    <i class='fa fa-cloud'></i>
+                    <b>Products</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{% url 'product:product-list' %}">
+                            <i class="fa fa-circle-o"></i>
+                            All Products
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>
 {% endblock %}
