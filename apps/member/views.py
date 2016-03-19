@@ -164,3 +164,10 @@ def user_delete(request, pk):
     except Seller.DoesNotExist:
         pass
     return redirect('seller-index')
+
+class AgentView(TemplateView):
+    template_name = 'member/agent.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
