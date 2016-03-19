@@ -4,11 +4,15 @@ from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django_filters import Filter, FilterSet
+from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS
+from ..member.models import Seller
 import serializers
 import forms
 
@@ -116,10 +120,6 @@ class OrderDetailView(CommonContextMixin, UpdateView):
         return obj
 
 
-from django_filters import Filter, FilterSet
-from rest_framework import filters
-
-
 class ListFilter(Filter):
     def filter(self, qs, value):
         self.lookup_type = 'in'
@@ -138,8 +138,43 @@ class OrderFilter(FilterSet):
 # api views for Order
 
 class OrderViewSet(CommonViewSet):
-    queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
     search_fields = ['customer__name', 'status']
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return Order.objects.all()
+        elif self.request.user.is_authenticated():
+            return Order.objects.filter(customer__name=self.request.user.name)
+        else:
+            return Order.objects.none()
+
+class OrderMemberListView(CommonContextMixin, ListView):
+    model = Order
+    template_name_suffix = '_member_list'  # order/order_member_list.html
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderMemberListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Create Time', 'Customer', 'Amount', 'Status', 'Paid', 'Price', 'Shipping', '']
+        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee',
+                                   'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
+        return context
+
+    def get(self, request, *args, **kwargs):
+        username = self.kwargs.get('username', None)
+
+        try:
+            user = Seller.objects.get(username=username)
+            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+
+            if user:
+                if user.is_active:
+                    login(request, user)
+            else:
+                raise Http404
+        except Seller.DoesNotExist:
+            raise Http404
+
+        return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
