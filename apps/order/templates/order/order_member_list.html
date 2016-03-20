@@ -41,7 +41,7 @@
                     <th>
                         Shipping
                     </th>
-                    <th class="hidden-sm hidden-xs">
+                    <th>
                         Price
                     </th>
                 </tr>
@@ -69,7 +69,7 @@
                         <td>
                             {!! item.shipping_order !!}
                         </td>
-                        <td class="hidden-sm hidden-xs">
+                        <td>
                             {!! item.sell_price_rmb !!}
                             <template v-if="item.is_paid">
                                 (已支付)
@@ -152,7 +152,7 @@
                     <th class="hidden-sm hidden-xs">
                         Status
                     </th>
-                    <th class="hidden-sm hidden-xs">
+                    <th>
                         Shipping
                     </th>
                     <th>
@@ -176,7 +176,7 @@
                         <td class="hidden-sm hidden-xs">
                             {!! item.status_button !!}
                         </td>
-                        <td class="hidden-sm hidden-xs">
+                        <td>
                             {!! item.shipping_order !!}
                         </td>
                         <td>

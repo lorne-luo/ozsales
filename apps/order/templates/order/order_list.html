@@ -41,7 +41,7 @@
                     <th>
                         Shipping
                     </th>
-                    <th class="hidden-sm hidden-xs">
+                    <th>
                         Price
                     </th>
                     <th class="hidden-sm hidden-xs">
@@ -88,7 +88,15 @@
                                 (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
                             </template>
                         </td>
-
+                        <td class="visible-sm visible-xs">
+                            {!! item.sell_price_rmb !!}
+                            <template v-if="item.is_paid">
+                                (已支付)
+                            </template>
+                            <template v-else>
+                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
+                            </template>
+                        </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
