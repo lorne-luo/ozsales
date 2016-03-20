@@ -147,7 +147,7 @@ class OrderViewSet(CommonViewSet):
         if self.request.user.is_superuser:
             return Order.objects.all()
         elif self.request.user.is_authenticated():
-            return Order.objects.filter(customer__name=self.request.user.name)
+            return Order.objects.filter(customer__seller=self.request.user)
         else:
             return Order.objects.none()
 

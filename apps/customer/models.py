@@ -16,6 +16,7 @@ from django.contrib.auth.hashers import is_password_usable, make_password
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
+from apps.member.models import Seller
 
 
 @python_2_unicode_compatible
@@ -34,6 +35,7 @@ class InterestTag(models.Model):
 
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
+    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('Member'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
