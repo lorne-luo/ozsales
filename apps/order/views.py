@@ -66,7 +66,7 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
     permissions = {
-        "all": ("order.view_order",)
+        "all": ("order.is_superuser",)
     }
 
     def get_context_data(self, **kwargs):
