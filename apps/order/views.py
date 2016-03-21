@@ -169,7 +169,7 @@ class OrderMemberListView(CommonContextMixin, ListView):
             user = Seller.objects.get(username=username)
             user.backend = settings.AUTHENTICATION_BACKENDS[0]
 
-            if user:
+            if user and not user.is_superuser:
                 if user.is_active:
                     login(request, user)
             else:

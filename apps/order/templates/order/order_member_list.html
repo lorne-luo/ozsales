@@ -64,7 +64,18 @@
                             <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td>
-                            {!! item.status !!}
+                            <template v-if="item.status == 'CREATED'">
+                                <span class="label label-info">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'SHIPPING'">
+                                <span class="label label-success">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'DELIVERED'">
+                                <span class="label label-warning">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'FINISHED'">
+                                <span class="label label-danger">{!! item.status !!}</span>
+                            </template>
                         </td>
                         <td>
                             {!! item.shipping_order !!}
@@ -174,7 +185,18 @@
                             <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            {!! item.status_button !!}
+                            <template v-if="item.status == 'CREATED'">
+                                <span class="label label-info">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'SHIPPING'">
+                                <span class="label label-success">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'DELIVERED'">
+                                <span class="label label-warning">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'FINISHED'">
+                                <span class="label label-danger">{!! item.status !!}</span>
+                            </template>
                         </td>
                         <td>
                             {!! item.shipping_order !!}

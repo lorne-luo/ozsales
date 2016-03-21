@@ -85,10 +85,27 @@
     <tr>
         <th>状态</th>
         <td>
-            {{ object.status }}
-            {% if object.next_status %}
-                => <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">{{ object.next_status }}</a>
+            {% if object.status == 'CREATED'  %}
+                <span class="label label-info">{{ object.status }}</span>
+            {% elif object.status == 'SHIPPING' %}
+                <span class="label label-success">{{ object.status }}</span>
+            {% elif object.status == 'DELIVERED' %}
+                <span class="label label-warning">{{ object.status }}</span>
+            {% elif object.status == 'FINISHED' %}
+                <span class="label label-danger">{{ object.status }}</span>
             {% endif %}
+            >
+            <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">
+            {% if object.next_status == 'CREATED'  %}
+                <span class="label label-info">{{ object.next_status }}</span>
+            {% elif object.next_status == 'SHIPPING' %}
+                <span class="label label-success">{{ object.next_status }}</span>
+            {% elif object.next_status == 'DELIVERED' %}
+                <span class="label label-warning">{{ object.next_status }}</span>
+            {% elif object.next_status == 'FINISHED' %}
+                <span class="label label-danger">{{ object.next_status }}</span>
+            {% endif %}
+            </a>
         </td>
     </tr>
 {% endblock %}

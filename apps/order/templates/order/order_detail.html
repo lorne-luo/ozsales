@@ -80,7 +80,15 @@
     <tr>
         <th>状态</th>
         <td>
-            {{ object.status }}
+            {% if object.status == 'CREATED'  %}
+                <span class="label label-info">{{ object.status }}</span>
+            {% elif object.status == 'SHIPPING' %}
+                <span class="label label-success">{{ object.status }}</span>
+            {% elif object.status == 'DELIVERED' %}
+                <span class="label label-warning">{{ object.status }}</span>
+            {% elif object.status == 'FINISHED' %}
+                <span class="label label-danger">{{ object.status }}</span>
+            {% endif %}
         </td>
     </tr>
 {% endblock %}
