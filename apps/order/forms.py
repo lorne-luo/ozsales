@@ -4,7 +4,7 @@ from django.contrib import admin
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 
 from ..customer.models import Customer, Address
-from models import Order
+from models import Order, OrderProduct
 
 
 class OrderForm(forms.ModelForm):
@@ -45,8 +45,8 @@ class OrderInline(admin.TabularInline):
     def has_add_permission(self, request, obj=None):
         return False
 
-class OrderForm2(forms.ModelForm):
 
+class OrderForm2(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         # self.user = kwargs.pop('user')
         super(OrderForm2, self).__init__(*args, **kwargs)
@@ -119,4 +119,24 @@ class OrderDetailForm(ModelForm):
                   'profit_rmb', 'finish_time']
 
 
+class OrderProductInlineAddForm(ModelForm):
+    sum_price = forms.DecimalField(required=False)
+
+    class Meta:
+        model = OrderProduct
+
+    def __init__(self, *args, **kwargs):
+        super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
+        self.fields['product'].widget.attrs['class'] = 'form-control'
+        self.fields['name'].widget.attrs['class'] = 'form-control'
+        self.fields['amount'].widget.attrs['class'] = 'form-control'
+        self.fields['sell_price_rmb'].widget.attrs['class'] = 'form-control'
+        self.fields['sum_price'].widget.attrs['class'] = 'form-control'
+        self.fields['cost_price_aud'].widget.attrs['class'] = 'form-control'
+        self.fields['store'].widget.attrs['class'] = 'form-control'
+        self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
 

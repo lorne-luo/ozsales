@@ -80,34 +80,61 @@
                 <div class="col-sm-1">
                     <b>小计</b>
                 </div>
+                <div class="col-sm-1">
+                    <b>进价</b>
+                </div>
                 <div class="col-sm-2">
                     <b>来源</b>
                 </div>
-                <div class="col-sm-1">
-                    <b>删除</b>
-                </div>
             </div>
+            {% for product in product_forms %}
             <div class="form-group">
                 <div class="col-sm-3">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.product }}
                 </div>
                 <div class="col-sm-3">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.name }}
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.amount }}
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.sell_price_rmb }}
                 </div>
                 <div class="col-sm-1">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.sum_price }}
+                </div>
+                <div class="col-sm-1">
+                    {{ product.cost_price_aud }}
                 </div>
                 <div class="col-sm-2">
-                    <input id="id_product_cost_aud" name="product_cost_aud" step="0.01" type="number" value="100.00" class="form-control">
+                    {{ product.store }}
+                    <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-3">
+                    {{ new_product_form.product }}
+                </div>
+                <div class="col-sm-3">
+                    {{ new_product_form.name }}
                 </div>
                 <div class="col-sm-1">
-                    <button type="button" class="btn btn-danger ">删除</button>
+                    {{ new_product_form.amount }}
+                </div>
+                <div class="col-sm-1">
+                    {{ new_product_form.sell_price_rmb }}
+                </div>
+                <div class="col-sm-1">
+                    {{ new_product_form.sum_price }}
+                </div>
+                <div class="col-sm-1">
+                    {{ new_product_form.cost_price_aud }}
+                </div>
+                <div class="col-sm-2">
+                    {{ new_product_form.store }}
+                    <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
                 </div>
             </div>
 

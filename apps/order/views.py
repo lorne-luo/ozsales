@@ -89,6 +89,11 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     def get_success_url(self):
         return reverse('order:order-list-short')
 
+    def get_context_data(self, **kwargs):
+        context = super(OrderAddView, self).get_context_data(**kwargs)
+        context['new_product_form'] = forms.OrderProductInlineAddForm()
+        return context
+
 
 class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Order
@@ -100,6 +105,15 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
     def get_success_url(self):
         return reverse('order:order-list-short')
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderUpdateView, self).get_context_data(**kwargs)
+
+        context['product_forms'] = [forms.OrderProductInlineAddForm(instance=product)
+                                    for product in self.object.products.all()]
+
+        context['new_product_form'] = forms.OrderProductInlineAddForm()
+        return context
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):
@@ -151,6 +165,7 @@ class OrderViewSet(CommonViewSet):
             return Order.objects.filter(customer__seller=self.request.user)
         else:
             return Order.objects.none()
+
 
 class OrderMemberListView(CommonContextMixin, ListView):
     model = Order
