@@ -80,7 +80,8 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Order
     form_class = forms.OrderAddForm
-    template_name = 'adminlte/common_form.html'
+    # template_name = 'adminlte/common_form.html'
+    template_name = 'order/order_form.html'
     permissions = {
         "all": ("order.add_order",)
     }
