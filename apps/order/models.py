@@ -100,7 +100,7 @@ class Order(models.Model):
         self.update_monthly_report()
 
     def update_monthly_report(self):
-        if self.is_paid and self.status in [ORDER_STATUS.CREATED, ORDER_STATUS.FINISHED]:
+        if self.is_paid and not self.status == ORDER_STATUS.CREATED:
             from ..report.models import MonthlyReport
 
             if self.paid_time:

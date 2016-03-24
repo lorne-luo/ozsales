@@ -46,7 +46,7 @@ class MonthlyReport(models.Model):
 
         all_orders = Order.objects.filter(paid_time__year=year, paid_time__month=month)
         for order in all_orders:
-            if order.is_paid and order.paid_time:
+            if order.is_paid and order.paid_time and not order.status == ORDER_STATUS.CREATED:
                 report.cost_aud += order.total_cost_aud
                 report.cost_rmb += order.total_cost_rmb
                 report.shipping_fee += order.shipping_fee
