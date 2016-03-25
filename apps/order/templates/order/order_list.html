@@ -29,8 +29,8 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    <th class="hidden-sm hidden-xs">
-                        Create Time
+                    <th>
+                        Date
                     </th>
                     <th>
                         Customer
@@ -60,12 +60,11 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="hidden-sm hidden-xs">
-                            {!! item.create_time_display !!}
+                        <td>
+                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            {!! item.public_link !!} <br/>
-                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td>
                             {!! item.status_button !!}
@@ -181,8 +180,8 @@
                                name="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    <th class="hidden-sm hidden-xs">
-                        Create Time
+                    <th>
+                        Date
                     </th>
                     <th>
                         Customer
@@ -208,12 +207,11 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="hidden-sm hidden-xs">
-                            {!! item.create_time_display !!}
+                        <td>
+                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            {!! item.public_link !!} <br/>
-                            <a target="_blank" href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             <span class="label label-danger">{!! item.status_button !!}</span>
