@@ -67,7 +67,19 @@
                             <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td>
-                            {!! item.status_button !!}
+                            <template v-if="item.status == 'CREATED'">
+                                <span class="label label-info">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'SHIPPING'">
+                                <span class="label label-success">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'DELIVERED'">
+                                <span class="label label-warning">{!! item.status !!}</span>
+                            </template>
+                            <template v-if="item.status == 'FINISHED'">
+                                <span class="label label-danger">{!! item.status !!}</span>
+                            </template>
+                            <a href="{!! item.next_status_url !!}">>></a>
                         </td>
                         <td>
                             {!! item.shipping_order !!}
@@ -214,7 +226,7 @@
                             <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            <span class="label label-danger">{!! item.status_button !!}</span>
+                            <span class="label label-danger">{!! item.status !!}</span>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             {!! item.shipping_order !!}
