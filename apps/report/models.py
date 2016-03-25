@@ -1,3 +1,4 @@
+# coding=utf-8
 import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +11,8 @@ from apps.order.models import Order, ORDER_STATUS
 class MonthlyReport(models.Model):
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
                              verbose_name=_(u'Month'))
+    order_count=models.PositiveIntegerField(blank=True, null=True)
+    parcel_count=models.PositiveIntegerField(blank=True, null=True)
     cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, default=0)
     cost_rmb = models.DecimalField(_(u'Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -25,6 +28,8 @@ class MonthlyReport(models.Model):
         self.shipping_fee = 0
         self.sell_price_rmb = 0
         self.profit_rmb = 0
+        self.order_count = 0
+        self.parcel_count = 0
 
     @staticmethod
     def stat_current_month():
@@ -46,10 +51,14 @@ class MonthlyReport(models.Model):
 
         all_orders = Order.objects.filter(paid_time__year=year, paid_time__month=month)
         for order in all_orders:
+            if order.customer.name == u'罗韬':
+                continue
             if order.is_paid and order.paid_time and not order.status == ORDER_STATUS.CREATED:
                 report.cost_aud += order.total_cost_aud
                 report.cost_rmb += order.total_cost_rmb
                 report.shipping_fee += order.shipping_fee
                 report.sell_price_rmb += order.sell_price_rmb
                 report.profit_rmb += order.profit_rmb
+                report.order_count+=1
+                report.parcel_count+=1
         report.save()

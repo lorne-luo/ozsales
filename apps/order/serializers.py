@@ -13,13 +13,14 @@ class OrderSerializer(serializers.ModelSerializer):
     shipping_order = serializers.SerializerMethodField()
     paid_url = serializers.SerializerMethodField()
     public_link = serializers.SerializerMethodField()
+    create_time_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ['link', 'customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'status_button', 'paid_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb',
-                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'id']
+                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time_display', 'finish_time', 'id']
         read_only_fields = ['id']
 
     def get_link(self, obj):
@@ -65,3 +66,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_public_link(self, obj):
         return obj.get_id_link()
+
+    def get_create_time_display(self,obj):
+        return obj.create_time.strftime('%y-%m-%d')

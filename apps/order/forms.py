@@ -64,7 +64,6 @@ class OrderAddForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderAddForm, self).__init__(*args, **kwargs)
-        self.fields['address'].widget.attrs['readonly'] = True
 
 
 class OrderUpdateForm(ModelForm):
