@@ -11,8 +11,8 @@ from apps.order.models import Order, ORDER_STATUS
 class MonthlyReport(models.Model):
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
                              verbose_name=_(u'Month'))
-    order_count=models.PositiveIntegerField(blank=True, null=True)
-    parcel_count=models.PositiveIntegerField(blank=True, null=True)
+    order_count = models.PositiveIntegerField(blank=True, null=True)
+    parcel_count = models.PositiveIntegerField(blank=True, null=True)
     cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, default=0)
     cost_rmb = models.DecimalField(_(u'Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -59,6 +59,6 @@ class MonthlyReport(models.Model):
                 report.shipping_fee += order.shipping_fee
                 report.sell_price_rmb += order.sell_price_rmb
                 report.profit_rmb += order.profit_rmb
-                report.order_count+=1
-                report.parcel_count+=1
+                report.order_count += 1
+                report.parcel_count += order.express_orders.count()
         report.save()

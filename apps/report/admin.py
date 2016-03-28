@@ -3,7 +3,8 @@ from .models import MonthlyReport
 
 
 class MonthlyReportAdmin(admin.ModelAdmin):
-    list_display = ('month', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb', 'profit_rmb')
+    list_display = ('month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee',
+                    'sell_price_rmb', 'profit_rmb')
     list_filter = ['month']
     ordering = ['-month']
     list_display_links = list_display
