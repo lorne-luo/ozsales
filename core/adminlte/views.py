@@ -276,9 +276,7 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         """ for batch delete """
         pk = request.DATA.get('pk')
         pk = pk.split(',')
-        objects = self.queryset.filter(pk__in=pk)
-        for obj in objects:
-            obj.delete()
+        self.get_queryset().filter(pk__in=pk).delete()
         return JsonResponse({'success': True}, status=200)
 
     @list_route(methods=['post', 'get'])
