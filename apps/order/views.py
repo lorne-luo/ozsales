@@ -81,12 +81,14 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     model = Order
     form_class = forms.OrderAddForm
     # template_name = 'adminlte/common_form.html'
-    template_name = 'order/order_form.html'
+    template_name = 'order/order_add.html'
     permissions = {
         "all": ("order.add_order",)
     }
 
     def get_success_url(self):
+        if self.object:
+            return reverse('order:order-update', args=[self.object.id])
         return reverse('order:order-list-short')
 
     def get_context_data(self, **kwargs):
@@ -136,6 +138,7 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
 
 class ListFilter(Filter):
+
     def filter(self, qs, value):
         self.lookup_type = 'in'
         values = value.split(',')

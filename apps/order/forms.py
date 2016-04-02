@@ -8,6 +8,7 @@ from models import Order, OrderProduct
 
 
 class OrderForm(forms.ModelForm):
+
     class Meta:
         model = Order
         fields = '__all__'
@@ -47,6 +48,7 @@ class OrderInline(admin.TabularInline):
 
 
 class OrderForm2(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         # self.user = kwargs.pop('user')
         super(OrderForm2, self).__init__(*args, **kwargs)
@@ -58,9 +60,10 @@ class OrderForm2(forms.ModelForm):
 
 
 class OrderAddForm(ModelForm):
+
     class Meta:
         model = Order
-        fields = ['customer', 'address']
+        fields = ['customer']
 
     def __init__(self, *args, **kwargs):
         super(OrderAddForm, self).__init__(*args, **kwargs)
@@ -111,6 +114,7 @@ class OrderUpdateForm(ModelForm):
 
 
 class OrderDetailForm(ModelForm):
+
     class Meta:
         model = Order
         fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb',
@@ -138,4 +142,3 @@ class OrderProductInlineAddForm(ModelForm):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
-
