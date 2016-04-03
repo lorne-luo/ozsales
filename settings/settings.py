@@ -287,3 +287,9 @@ class ForexRate(dbsettings.Group):
 
 
 rate = ForexRate()
+
+
+# for development env!
+# rename settings_dev.py.example to settings_dev.py
+if os.path.exists(os.path.join(BASE_DIR, "settings/settings_dev.py")):
+    execfile(os.path.join(BASE_DIR, "settings/settings_dev.py"))
