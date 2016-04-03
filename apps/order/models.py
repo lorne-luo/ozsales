@@ -127,6 +127,9 @@ class Order(models.Model):
         if self.sell_price_rmb and self.total_cost_rmb:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
+        if not self.address and self.customer.primary_address:
+            self.address = self.customer.primary_address
+
         return super(Order, self).save()
 
     def get_link(self):
