@@ -22,19 +22,19 @@
 
 
 {% block content %}
-    <div class="box box-info">
-        {% if form.is_multipart %}
-            <form enctype="multipart/form-data"
-                  method="post"
-                  action=""
-                  class="form-horizontal"
-                  role="form" id="commonForm">
-        {% else %}
-            <form method="post" action="" class="form-horizontal"
-                  role="form" id="commonForm">
-        {% endif %}
-        {% csrf_token %}
+    {% if form.is_multipart %}
+        <form enctype="multipart/form-data"
+              method="post"
+              action=""
+              class="form-horizontal"
+              role="form" id="commonForm">
+    {% else %}
+        <form method="post" action="" class="form-horizontal"
+              role="form" id="commonForm">
+    {% endif %}
+    {% csrf_token %}
 
+    <div class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">{{ object }}</h3>
         </div>
@@ -54,15 +54,18 @@
             {% endfor %}
         </div>
         <div class="box-footer">
-          <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+          <button type="submit" style="width:96px" class="btn btn-primary col-sm-offset-2">保 存</button>
+          <button type="submit" style="width:96px" class="btn btn-primary">保存并返回</button>
         </div>
-    </form>
     </div>
+
+{#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
 
     <div id="orderproduct" class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">订单产品</h3>
         </div>
+
         <div id="product_table" class="box-body form-horizontal">
             <div class="form-group">
                 <div class="col-sm-3">
@@ -87,90 +90,100 @@
                     <b>来源</b>
                 </div>
             </div>
+
             {% for product in product_forms %}
-            <div class="form-group">
-                <div class="col-sm-3">
+            <div class="form-group" data-pk="{{ product.instance.pk }}">
+                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">
+                <div class="col-sm-3" id="{{ product.product.id_for_label }}">
                     {{ product.product }}
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-3" id="{{ product.name.id_for_label }}">
                     {{ product.name }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ product.amount.id_for_label }}">
                     {{ product.amount }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ product.sell_price_rmb.id_for_label }}">
                     {{ product.sell_price_rmb }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ product.sum_price.id_for_label }}">
                     {{ product.sum_price }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ product.cost_price_aud.id_for_label }}">
                     {{ product.cost_price_aud }}
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2" id="{{ product.store.id_for_label }}">
                     {{ product.store }}
                     <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
                 </div>
             </div>
             {% endfor %}
+            <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
+
+
             <div class="form-group">
-                <div class="col-sm-3">
+                <input id="id_products-{{ product_forms|length }}-id" name="products-{{ product_forms|length }}-id" type="hidden" value="">
+                <div class="col-sm-3" id="{{ new_product_form.product.id_for_label }}">
                     {{ new_product_form.product }}
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-3" id="{{ new_product_form.name.id_for_label }}">
                     {{ new_product_form.name }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ new_product_form.amount.id_for_label }}">
                     {{ new_product_form.amount }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ new_product_form.sell_price_rmb.id_for_label }}">
                     {{ new_product_form.sell_price_rmb }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ new_product_form.sum_price.id_for_label }}">
                     {{ new_product_form.sum_price }}
                 </div>
-                <div class="col-sm-1">
+                <div class="col-sm-1" id="{{ new_product_form.cost_price_aud.id_for_label }}">
                     {{ new_product_form.cost_price_aud }}
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-2" id="{{ new_product_form.store.id_for_label }}">
                     {{ new_product_form.store }}
                     <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
                 </div>
             </div>
         </div>
 
-        <div class="box-footer form-horizontal">
-            <div class="form-group col-sm-12">
-                <button type="button" class="btn btn-success col-sm-1" v-on:click="addone">增加一项</button>
-                <div class=" col-sm-11">
-                  <b>总计:</b>
-                  <span class="total_price"></span>
-                </div>
+        <div class="box-body">
+            <button type="button" class="btn btn-success col-sm-1" v-on:click="addone">增加一项</button>
+            <div class=" col-sm-9">
+              <b>总计:</b>
+              <span class="total_price"></span>
             </div>
         </div>
+        <div class="box-footer">
+          <button type="submit" style="width:96px" class="btn btn-primary">保 存</button>
+          <button type="submit" style="width:96px" class="btn btn-primary">保存并返回</button>
+        </div>
     </div>
+    </form>
 
     <div class="hide" id="product_template">
         <div class="form-group">
-            <div class="col-sm-3">
+            <input id="id_products-{{ product_forms|length }}-id" name="products-{{ product_forms|length }}-id" type="hidden" value="">
+            <div class="col-sm-3" id="{{ new_product_form.product.id_for_label }}">
                 {{ new_product_form.product }}
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-3" id="{{ new_product_form.name.id_for_label }}">
                 {{ new_product_form.name }}
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1" id="{{ new_product_form.amount.id_for_label }}">
                 {{ new_product_form.amount }}
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1" id="{{ new_product_form.sell_price_rmb.id_for_label }}">
                 {{ new_product_form.sell_price_rmb }}
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1" id="{{ new_product_form.sum_price.id_for_label }}">
                 {{ new_product_form.sum_price }}
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1" id="{{ new_product_form.cost_price_aud.id_for_label }}">
                 {{ new_product_form.cost_price_aud }}
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2" id="{{ new_product_form.store.id_for_label }}">
                 {{ new_product_form.store }}
                 <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
             </div>
