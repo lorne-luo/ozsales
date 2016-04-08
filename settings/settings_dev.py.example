@@ -1,3 +1,4 @@
+# Copy this into settings_dev.py
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = TEMPLATE_DEBUG = True
