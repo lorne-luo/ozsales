@@ -117,6 +117,10 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         context['new_product_form'] = forms.OrderProductInlineAddForm()
         return context
 
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(OrderUpdateView, self).post(request, *args, **kwargs)
+
 
 class OrderDetailView(CommonContextMixin, UpdateView):
     model = Order
