@@ -1,8 +1,8 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
+from django.forms.models import inlineformset_factory, BaseInlineFormSet, modelformset_factory
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
-
 from ..customer.models import Customer, Address
 from models import Order, OrderProduct, ORDER_STATUS
 
@@ -73,7 +73,7 @@ class OrderUpdateForm(ModelForm):
     class Meta:
         model = Order
         fields = ['customer', 'address', 'total_amount', 'status', 'paid_time', 'ship_time',
-                  'cost_aud', 'sell_rmb','sell_price_rmb',  'finish_time']
+                  'cost_aud', 'sell_rmb', 'sell_price_rmb', 'finish_time']
 
     def __init__(self, *args, **kwargs):
         super(OrderUpdateForm, self).__init__(*args, **kwargs)
@@ -154,3 +154,23 @@ class OrderProductInlineAddForm(ModelForm):
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:
             self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
+
+
+class OrderProductInlineForm(ModelForm):
+    sum_price = forms.DecimalField(required=False)
+
+    class Meta:
+        model = OrderProduct
+        fields = ['product', 'order', 'name', 'amount', 'sell_price_rmb', 'sum_price', 'cost_price_aud', 'store']
+
+    def __init__(self, *args, **kwargs):
+        super(OrderProductInlineForm, self).__init__(*args, **kwargs)
+        self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['order'].widget = forms.HiddenInput()
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
+
+
+OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm,
+                                           can_order=False, can_delete=False, extra=1)

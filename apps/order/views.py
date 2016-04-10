@@ -5,14 +5,16 @@ from django.http import Http404, HttpResponseRedirect
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.forms.models import inlineformset_factory, modelformset_factory
 from django_filters import Filter, FilterSet
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from core.adminlte.views import CommonContextMixin, CommonViewSet
-from models import Order, ORDER_STATUS
+from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
+from ..express.models import ExpressOrder
 import serializers
 import forms
 
@@ -54,7 +56,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.OrderForm2(), }
+        context = {'form': forms.OrderForm2(),}
         if pk:
             order = get_object_or_404(Order, id=pk)
             context['order'] = order
@@ -111,14 +113,24 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
 
-        context['product_forms'] = [forms.OrderProductInlineAddForm(instance=product)
-                                    for product in self.object.products.all()]
-
         context['new_product_form'] = forms.OrderProductInlineAddForm()
+
+        context['product_forms'] = forms.OrderProductFormSet(queryset=self.object.products.all())
         return context
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+
+        formset = forms.OrderProductFormSet(request.POST)
+        for form in formset:
+            if form.instance.product or form.instance.name:
+                form.fields['order'].initial = self.object.id
+                form.base_fields['order'].initial = self.object.id
+                form.changed_data.append('order')
+                # form.cleaned_data['order'] = self.object
+                form.instance.order_id = self.object.id
+        instances = formset.save()
+
         return super(OrderUpdateView, self).post(request, *args, **kwargs)
 
 
@@ -142,7 +154,6 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
 
 class ListFilter(Filter):
-
     def filter(self, qs, value):
         self.lookup_type = 'in'
         values = value.split(',')

@@ -130,6 +130,7 @@ class Order(models.Model):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
 
+        self.update_price()
         return super(Order, self).save()
 
     def get_link(self):
@@ -174,8 +175,6 @@ class Order(models.Model):
         if self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.total_cost_rmb
         self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
-
-        self.save()
 
     def get_paid_button(self):
         if not self.is_paid:
