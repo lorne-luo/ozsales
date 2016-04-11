@@ -95,7 +95,7 @@
             {{ product_forms.management_form }}
 
             {% for product in product_forms %}
-            <div class="form-group" id="form-{{ forloop.counter0 }}" data-pk="{{ product.instance.pk }}">
+            <div class="form-group" id="form-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
 {#                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">#}
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
@@ -126,6 +126,7 @@
             {% endfor %}
 
             <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
+            <input id="order_pk" type="hidden" value="{{ object.pk }}">
 
 {#            <div class="form-group">#}
 {#                {{ product.id }}#}
@@ -201,26 +202,26 @@
 
     <div class="hide" id="product_template">
         <div class="form-group">
-            <input id="id_products-{{ product_forms|length }}-id" name="products-{{ product_forms|length }}-id" type="hidden" value="">
-            <div class="col-sm-3" id="{{ new_product_form.product.id_for_label }}">
+            <input id="id_order" type="hidden" value="">
+            <div class="col-sm-3">
                 {{ new_product_form.product }}
             </div>
-            <div class="col-sm-3" id="{{ new_product_form.name.id_for_label }}">
+            <div class="col-sm-3">
                 {{ new_product_form.name }}
             </div>
-            <div class="col-sm-1" id="{{ new_product_form.amount.id_for_label }}">
+            <div class="col-sm-1">
                 {{ new_product_form.amount }}
             </div>
-            <div class="col-sm-1" id="{{ new_product_form.sell_price_rmb.id_for_label }}">
+            <div class="col-sm-1">
                 {{ new_product_form.sell_price_rmb }}
             </div>
-            <div class="col-sm-1" id="{{ new_product_form.sum_price.id_for_label }}">
+            <div class="col-sm-1">
                 {{ new_product_form.sum_price }}
             </div>
-            <div class="col-sm-1" id="{{ new_product_form.cost_price_aud.id_for_label }}">
+            <div class="col-sm-1">
                 {{ new_product_form.cost_price_aud }}
             </div>
-            <div class="col-sm-2" id="{{ new_product_form.store.id_for_label }}">
+            <div class="col-sm-2">
                 {{ new_product_form.store }}
                 <button style="float:right" type="button" class="btn-sm btn-danger ">删除</button>
             </div>
