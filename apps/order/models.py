@@ -276,6 +276,8 @@ class OrderProduct(models.Model):
             self.name = self.product.get_name_cn()
 
         super(OrderProduct, self).save()
+        self.order.update_price()
+        self.order.save()
 
     def get_summary(self):
         if self.product:
