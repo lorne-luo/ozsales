@@ -25,3 +25,4 @@ django-webtest==1.7.8
 django-nose==1.4.2
 django-js-reverse==0.6.1
 django-mptt==0.7.4
+uwsgi==2.0.12
