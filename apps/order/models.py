@@ -64,18 +64,19 @@ class Order(models.Model):
         """ plain text summary for order """
         if self.customer:
             url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
-            result = '<a href="%s">%s</a>' % (url, unicode(self.address))
+            result = '<br/><a href="%s">%s</a>' % (url, unicode(self.address))
         else:
             result = 'None'
 
         if self.address:
             if self.address.id_number:
-                result += u' = %s' % self.address.id_number
+                result += u'<br/><br/>  <span>%s %s</span>' % (self.address.name, self.address.id_number)
         result += '<br/><br/>'
 
-        result += self.get_product_summary()
-        result += u'总计: %d<br/>' % self.sell_price_rmb
-        result = '<br/>' + result
+        if self.products.count():
+            result += self.get_product_summary()
+            result += u'总计: %d<br/>' % self.sell_price_rmb
+            result = '%s<br/><br/><br/>' % result
         return result
 
     def set_paid(self):
