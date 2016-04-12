@@ -66,7 +66,27 @@ var OrderEditPageVue = Vue.extend({
 
             $("select[class$='form-control']").not(".hide select[class$='form-control']")
                 .chosen({search_contains: true, disable_search_threshold: 10});
+        },
+        submit: function (event) {
+            var total_forms = parseInt($("input#id_form-TOTAL_FORMS").val());
+            var order_pk = $("input#order_pk").val();
+            // set order id for each form
+            for (var i = 0; i < total_forms; i++) {
+                if ($("input#id_form-" + i + "-product").val() || $("input#id_form-" + i + "-name").val())
+                    $("input#id_form-" + i + "-order").val(order_pk);
+            }
+            // add next url into form if click save & continue
+            if ($(event.target).attr('name') == '_continue'){
+                $('<input>').attr({
+                    type: 'hidden',
+                    id: 'next',
+                    name: 'next',
+                    value: window.location
+                }).appendTo('#commonForm');
+            }
+            document.getElementById("commonForm").submit();
         }
+
     }
 });
 

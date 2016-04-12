@@ -56,7 +56,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.OrderForm2(),}
+        context = {'form': forms.OrderForm2(), }
         if pk:
             order = get_object_or_404(Order, id=pk)
             context['order'] = order
@@ -131,7 +131,11 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
                 form.instance.order_id = self.object.id
         instances = formset.save()
 
-        return super(OrderUpdateView, self).post(request, *args, **kwargs)
+        result = super(OrderUpdateView, self).post(request, *args, **kwargs)
+        next = request.POST.get('next')
+        if next:
+            return HttpResponseRedirect(next)
+        return result
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):
