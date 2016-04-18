@@ -39,8 +39,8 @@
             {% for prod in object.products.all %}
                 {% if prod.get_link %}
                     <a target="_blank" href="{{ prod.get_link }}">
-                        {% if prod.product.name %}
-                            {{ prod.product.name }}
+                        {% if prod.name %}
+                            {{ prod.name }}
                         {% else %}
                             {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}
                         {% endif %}
