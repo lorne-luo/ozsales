@@ -38,7 +38,13 @@
         <td>
             {% for prod in object.products.all %}
                 {% if prod.get_link %}
-                    <a target="_blank" href="{{ prod.get_link }}"> {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}</a>
+                    <a target="_blank" href="{{ prod.get_link }}">
+                        {% if prod.product.name %}
+                            {{ prod.product.name }}
+                        {% else %}
+                            {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}
+                        {% endif %}
+                    </a>
                     = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
                 {% else %}
                     {{ prod.name }} = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
