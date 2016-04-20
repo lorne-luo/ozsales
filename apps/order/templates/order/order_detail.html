@@ -55,22 +55,15 @@
     <tr>
         <th>总价</th>
         <td>
-            {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
-                {{ object.origin_sell_rmb }}
-                {% if object.is_paid %}
-                    (已支付)
-                {% else %}
-                    (<b>未支付</b>)
-                {% endif %}
+            {{ object.sell_price_rmb }}
+            {% if object.is_paid %}
+                (已支付)
             {% else %}
-                {{ object.sell_price_rmb }}
-                {% if object.is_paid %}
-                    (已支付)
-                {% else %}
-                    (<b>未支付</b>)
-                {% endif %}
-                (Original: {{ object.origin_sell_rmb }})
-            {% endifequal %}
+                (<b>未支付</b>)
+            {% endif %}
+            {% ifnotequal object.origin_sell_rmb object.sell_price_rmb %}
+                (原价: {{ object.origin_sell_rmb }})
+            {% endifnotequal %}
         </td>
     </tr>
 

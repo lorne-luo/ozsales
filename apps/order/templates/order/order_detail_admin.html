@@ -64,18 +64,18 @@
     <tr>
         <th>总价</th>
         <td>
-            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }} ({{ object.total_cost_rmb }})<br/>
-            {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
-                {{ object.origin_sell_rmb }}
-            {% else %}
-                [{{ object.origin_sell_rmb }}] {{ object.sell_price_rmb }}
-            {% endifequal %}
-            - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
+            {{ object.sell_price_rmb }}
             {% if object.is_paid %}
                 (已支付)
             {% else %}
                 (<a href="{% url 'order:change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
             {% endif %}
+            {% ifnotequal object.origin_sell_rmb object.sell_price_rmb %}
+                (原价: {{ object.origin_sell_rmb }})
+            {% endifnotequal %}
+            <br/>
+            {{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
+            {{ object.sell_price_rmb }} - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
         </td>
     </tr>
 
