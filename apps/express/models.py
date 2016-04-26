@@ -82,4 +82,3 @@ class ExpressOrder(models.Model):
 def update_order_price(sender, instance=None, created=False, **kwargs):
     if instance.order and instance.order.id:
         instance.order.update_price()
-

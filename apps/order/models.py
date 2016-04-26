@@ -82,7 +82,7 @@ class Order(models.Model):
     def set_paid(self):
         self.is_paid = True
         self.paid_time = datetime.datetime.now()
-        self.save()
+        self.save(update_fields=['is_paid', 'paid_time'])
         self.update_monthly_report()
 
     def set_status(self, status_value):
@@ -90,13 +90,13 @@ class Order(models.Model):
         if status_value == ORDER_STATUS.FINISHED:
             if self.is_paid:
                 self.finish_time = datetime.datetime.now()
-                self.save()
+                self.save(update_fields=['status', 'finish_time'])
                 customer = self.customer
                 customer.last_order_time = self.create_time
-                customer.order_count += 1
+                customer.order_count = customer.order_set.count()
                 customer.save()
         else:
-            self.save()
+            self.save(update_fields=['status'])
 
         self.update_monthly_report()
 
@@ -110,28 +110,13 @@ class Order(models.Model):
                 MonthlyReport.stat(year, month)
             else:
                 self.paid_time = datetime.datetime.now()
-                self.save()
+                self.save(update_fields=['paid_time'])
                 MonthlyReport.stat_current_month()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if self.product_cost_aud:
-            self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
-
-        if self.shipping_fee:
-            self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-            self.cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
-
-        if not self.sell_price_rmb:
-            self.sell_price_rmb = self.origin_sell_rmb
-        if self.sell_price_rmb < self.total_cost_rmb:
-            self.sell_price_rmb = self.total_cost_rmb
-        if self.sell_price_rmb and self.total_cost_rmb:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
-
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
 
-        self.update_price()
         return super(Order, self).save()
 
     def get_link(self):
@@ -154,13 +139,14 @@ class Order(models.Model):
         self.product_cost_rmb = 0
         self.origin_sell_rmb = 0
         self.shipping_fee = 0
+        self.profit_rmb = 0
 
         products = self.products.all()
         for p in products:
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
-            self.product_cost_rmb += self.product_cost_aud * rate.aud_rmb_rate
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
+        self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -171,11 +157,13 @@ class Order(models.Model):
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
 
-        if not self.sell_price_rmb:
+        if not self.sell_price_rmb or self.sell_price_rmb < self.total_cost_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
-        if self.sell_price_rmb < self.total_cost_rmb:
-            self.sell_price_rmb = self.total_cost_rmb
-        self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
+        if self.sell_price_rmb and self.total_cost_rmb:
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
+
+        self.save()
+        self.update_monthly_report()
 
     def get_paid_button(self):
         if not self.is_paid:
@@ -275,9 +263,7 @@ class OrderProduct(models.Model):
         if self.product and not self.name:
             self.name = self.product.get_name_cn()
 
-        super(OrderProduct, self).save()
-        self.order.update_price()
-        self.order.save()
+        return super(OrderProduct, self).save()
 
     def get_summary(self):
         if self.product:
@@ -293,7 +279,18 @@ class OrderProduct(models.Model):
             return None
 
 
+@receiver(post_save, sender=Order)
+def update_price_from_order(sender, instance=None, created=False, update_fields=None, **kwargs):
+    if update_fields:
+        if 'status' in update_fields or 'is_paid' in update_fields or 'paid_time' in update_fields:
+            instance.update_monthly_report()
+    elif instance.id:
+        post_save.disconnect(update_price_from_order, sender=Order)
+        instance.update_price()
+        post_save.connect(update_price_from_order, sender=Order)
+
+
 @receiver(post_save, sender=OrderProduct)
-def update_order_price(sender, instance=None, created=False, **kwargs):
-    if instance.order.id:
+def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
+    if instance.order and instance.order.id:
         instance.order.update_price()

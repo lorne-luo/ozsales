@@ -6,6 +6,7 @@ from django.utils.encoding import python_2_unicode_compatible
 
 from apps.order.models import Order, ORDER_STATUS
 
+
 # Create your models here.
 @python_2_unicode_compatible
 class MonthlyReport(models.Model):
@@ -49,16 +50,16 @@ class MonthlyReport(models.Model):
 
         report.reset()
 
-        all_orders = Order.objects.filter(paid_time__year=year, paid_time__month=month)
+        all_orders = Order.objects.filter(is_paid=True, paid_time__year=year, paid_time__month=month). \
+            exclude(status=ORDER_STATUS.CREATED)
         for order in all_orders:
             if order.customer.name == u'罗韬':
                 continue
-            if order.is_paid and order.paid_time and not order.status == ORDER_STATUS.CREATED:
-                report.cost_aud += order.total_cost_aud
-                report.cost_rmb += order.total_cost_rmb
-                report.shipping_fee += order.shipping_fee
-                report.sell_price_rmb += order.sell_price_rmb
-                report.profit_rmb += order.profit_rmb
-                report.order_count += 1
-                report.parcel_count += order.express_orders.count()
+            report.cost_aud += order.total_cost_aud
+            report.cost_rmb += order.total_cost_rmb
+            report.shipping_fee += order.shipping_fee
+            report.sell_price_rmb += order.sell_price_rmb
+            report.profit_rmb += order.profit_rmb
+            report.order_count += 1
+            report.parcel_count += order.express_orders.count()
         report.save()
