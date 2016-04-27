@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import urllib2
 import redis
+import pytz
 import logging
 import datetime
 from dateutil import parser
 from bs4 import BeautifulSoup
-from celery import Celery
-from django.conf import settings
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from utils.telstra_api import MessageSender
@@ -52,6 +51,11 @@ def ozbargin():
             log.info('[Item Parsing] date parsing failed: %s' % pub_date)
             continue
         # print comment_count, title, item_date
+
+        # convert to aware time if necessary
+        if item_date.tzinfo and not last_date.tzinfo:
+            last_date = last_date.replace(tzinfo=pytz.UTC)
+
         if item_date < last_date:
             continue
         else:
@@ -106,6 +110,11 @@ def smzdm():
             continue
         # print title, item_date
         # print link
+
+        # convert to aware time if necessary
+        if item_date.tzinfo and not last_date.tzinfo:
+            last_date = last_date.replace(tzinfo=pytz.UTC)
+
         if item_date < last_date:
             continue
         else:
