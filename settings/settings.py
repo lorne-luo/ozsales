@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'apps.order',
     'apps.store',
     'apps.report',
+    'apps.schedule',
     'apps.registration',
     'utils',
 
