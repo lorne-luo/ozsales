@@ -8,6 +8,7 @@ from celery.task import periodic_task
 from celery.task.schedules import crontab
 from decimal import Decimal
 from settings.settings import rate
+from utils.telstra_api import MessageSender
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')
@@ -19,7 +20,7 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-@periodic_task(run_every=crontab(minute=0, hour='0,3,6,9,12,15,18,21'))
+@periodic_task(run_every=crontab(minute=0, hour='*/3'))
 def get_aud_rmb():
     url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
     content = urllib.urlopen(url).read()
@@ -28,8 +29,10 @@ def get_aud_rmb():
             infos = content.split(',')
             r = Decimal(infos[1])
             rate.aud_rmb_rate = r
-            return r
-            #rate.save()
+            sender = MessageSender()
+            sender.send_to_self(r)
+            # rate.save()
     except:
-        #print(0)
-        return 0
+        rate.aud_rmb_rate = 5
+
+    return rate.aud_rmb_rate

@@ -65,11 +65,11 @@ class MessageSender(object):
         # msg_id = data['messageId']
         # print msg_id
 
-    def send_to_me(self, content):
+    def send_to_self(self, content):
         my_number = '0413725868'
-        self.send_sms(my_number, content)
+        self.send_sms(my_number, str(content))
 
 
 if __name__ == '__main__':
     m = MessageSender()
-    m.send_to_me('hello boy')
+    m.send_to_self('hello boy')
