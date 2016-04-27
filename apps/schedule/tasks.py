@@ -52,13 +52,15 @@ def ozbargin():
             continue
         # print comment_count, title, item_date
 
-        # convert to aware time if necessary
+        # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+        elif not item_date.tzinfo and last_date.tzinfo:
+            last_date = last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
-        else:
+        elif item_date > new_last_date:
             new_last_date = item_date
 
         # check keywords
@@ -111,13 +113,15 @@ def smzdm():
         # print title, item_date
         # print link
 
-        # convert to aware time if necessary
+        # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+        elif not item_date.tzinfo and last_date.tzinfo:
+            last_date = last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
-        else:
+        elif item_date > new_last_date:
             new_last_date = item_date
 
         # check keywords
