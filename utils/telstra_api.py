@@ -60,7 +60,7 @@ class MessageSender(object):
         c.perform()
 
         response = buffer.getvalue().decode('utf-8')
-        log.info('Response = ' % response)
+        #log.info('Response = ' % response)
         # data = json.loads(response)
         # msg_id = data['messageId']
         # print msg_id
