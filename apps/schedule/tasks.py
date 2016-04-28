@@ -71,7 +71,7 @@ def ozbargin():
                 break
 
         if flag:
-            content = '%s\n%s' % (title, link)
+            content = '%s\n%s\n%s' % (pub_date, title, link)
             sender = MessageSender()
             sender.send_to_self(content)
             # print 'sending', content
@@ -132,7 +132,7 @@ def smzdm():
                 break
 
         if flag:
-            content = '%s\n%s' % (title, link)
+            content = '%s\n%s\n%s' % (pub_date, title, link)
             sender = MessageSender()
             sender.send_to_self(content)
             # print 'sending', content
