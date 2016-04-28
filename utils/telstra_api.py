@@ -41,7 +41,7 @@ class MessageSender(object):
         MessageSender.TOKEN = str(data['access_token'])
         sec = int(data['expires_in'])
         MessageSender.TOKEN_EXPIRY = datetime.datetime.now() + datetime.timedelta(seconds=sec)
-        log.info(MessageSender.TOKEN, MessageSender.TOKEN_EXPIRY)
+        # log.info(MessageSender.TOKEN, MessageSender.TOKEN_EXPIRY)
 
     def send_sms(self, to, content):
         if MessageSender.TOKEN_EXPIRY <= datetime.datetime.now() or not MessageSender.TOKEN:
