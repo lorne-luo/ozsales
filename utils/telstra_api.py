@@ -67,7 +67,7 @@ class MessageSender(object):
 
     def send_to_self(self, content):
         my_number = '0413725868'
-        self.send_sms(my_number, str(content))
+        self.send_sms(my_number, unicode(content))
 
 
 if __name__ == '__main__':
