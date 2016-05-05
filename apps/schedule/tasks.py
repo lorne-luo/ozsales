@@ -66,7 +66,7 @@ def ozbargin():
         # check keywords
         flag = False
         for key in ozbargin_keywords:
-            if key.lower() in title.lower() or comment_count > 80:
+            if key.lower() in title.lower() or comment_count > 30:
                 flag = True
                 break
 

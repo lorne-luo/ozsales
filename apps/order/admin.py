@@ -36,7 +36,7 @@ class OrderAdmin(admin.ModelAdmin):
     exclude = ['ship_time', ]
     list_display_links = ['total_amount', 'product_cost_aud', 'shipping_fee', 'origin_sell_rmb', 'total_cost_aud',
                           'total_cost_rmb', 'sell_price_rmb', 'profit_rmb']
-    search_fields = ('customer__name',)
+    search_fields = ('customer__name', 'address__name')
 
     def add_view(self, request, form_url='', extra_context=None):
         self.inlines = [OrderProductAddInline, ExpressOrderAddInline]
@@ -63,5 +63,3 @@ class OrderProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(OrderProduct, OrderProductAdmin)
-
-
