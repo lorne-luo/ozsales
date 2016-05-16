@@ -54,6 +54,9 @@ urlpatterns = patterns('',
     # for common api
     url(r'^api/v1/', include('core.api.urls', namespace='common_api')),
 
+    # for sms api
+    url(r'^api/', include('core.sms.urls')),
+
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),
 
