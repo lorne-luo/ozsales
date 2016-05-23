@@ -15,7 +15,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
-                     'Trifecta', 'filco', 'dyson']
+                     'Trifecta', 'filco']
 
 
 @periodic_task(run_every=crontab(minute='*/30', hour='7-22'))
@@ -81,7 +81,7 @@ def ozbargin():
 
 
 smzdm_last_date = 'schedule.smzdm.last_date'
-smzdm_keywords = [u'羽绒服']
+smzdm_keywords = []
 
 
 @periodic_task(run_every=crontab(minute='*/30', hour='8-23'))
