@@ -55,19 +55,21 @@ class MessageSender(object):
         post_dict = {'to': unicode(to), 'body': unicode(content)}
         post_data = json.dumps(post_dict)
         c.setopt(pycurl.POST, 1)
-        c.setopt(c.POSTFIELDS, urlencode(post_data))
+        c.setopt(c.POSTFIELDS, post_data)
         c.setopt(c.WRITEFUNCTION, buffer.write)
         c.perform()
 
         response = buffer.getvalue().decode('utf-8')
         # log.info('Response = ' % response)
         data = json.loads(response)
-        msg_id = data['messageId']
-        return msg_id
+        if 'messageId' in data:
+            return True, data['messageId']
+        elif 'status' in data:
+            return False, data['status']
 
     def send_to_self(self, content):
         my_number = '0413725868'
-        self.send_sms(my_number, content)
+        return self.send_sms(my_number, content)
 
 
 if __name__ == '__main__':
