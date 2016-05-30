@@ -212,7 +212,7 @@ class Order(models.Model):
         return result
 
     get_status_button.allow_tags = True
-    get_status_button.short_description = 'Status'
+    get_status_button.short_description = 'Shipping Status'
 
     def get_id_upload(self):
         express_orders = self.express_orders.all()
@@ -294,3 +294,8 @@ def update_price_from_order(sender, instance=None, created=False, update_fields=
 def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
     if instance.order and instance.order.id:
         instance.order.update_price()
+
+@receiver(post_delete, sender=OrderProduct)
+def order_product_deleted(sender, **kwargs):
+    order_product = kwargs['instance']
+    order_product.order.update_price()
