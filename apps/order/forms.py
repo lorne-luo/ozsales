@@ -139,6 +139,7 @@ class OrderProductInlineAddForm(ModelForm):
 
     class Meta:
         model = OrderProduct
+        fields = '__all__'
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
