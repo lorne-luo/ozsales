@@ -53,6 +53,15 @@ var OrderListPageVue = CommonListPageVue.extend({
             var num = $(event.target).attr('page');
             this.loadData({'page': num});
         },
+        showShipping: function (pk, event) {
+            if (event.target.tagName.toUpperCase() == 'TD') {
+                if ($('#shipping_' + pk).hasClass('hide')) {
+                    $('#shipping_' + pk).removeClass('hide');
+                } else {
+                    $('#shipping_' + pk).addClass('hide');
+                }
+            }
+        },
         detail: function (event) {
             var pk, customer;
             if ($(event.target).data('pk'))

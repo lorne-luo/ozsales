@@ -33,16 +33,16 @@
                         Date
                     </th>
                     <th>
-                        Customer
+                        Name
                     </th>
                     <th>
                         Status
                     </th>
                     <th>
-                        Shipping
-                    </th>
-                    <th>
                         Price
+                    </th>
+                    <th class="hidden-sm hidden-xs">
+                        Ship
                     </th>
                     <th class="hidden-sm hidden-xs">
 
@@ -54,7 +54,7 @@
                     </tr>
                 </tfoot>
                 <tbody v-for="item in ongoing_items">
-                    <tr v-if="item.id">
+                    <tr v-if="item.id" v-on:click="showShipping(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
@@ -64,29 +64,26 @@
                             <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td>
                             <template v-if="item.status == 'CREATED'">
-                                <span class="label label-info">{!! item.status !!}</span>
+                                <span class="label label-info">C</span>
                             </template>
                             <template v-if="item.status == 'SHIPPING'">
-                                <span class="label label-success">{!! item.status !!}</span>
+                                <span class="label label-success">S</span>
                             </template>
                             <template v-if="item.status == 'DELIVERED'">
-                                <span class="label label-warning">{!! item.status !!}</span>
+                                <span class="label label-warning">D</span>
                             </template>
                             <template v-if="item.status == 'FINISHED'">
-                                <span class="label label-danger">{!! item.status !!}</span>
+                                <span class="label label-danger">F</span>
                             </template>
-                            <a href="{!! item.next_status_url !!}">>></a>
-                        </td>
-                        <td>
-                            {!! item.shipping_order !!}
+                            <a href="{!! item.next_status_url !!}">></a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
-                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                            RMB:{% ifequal item.origin_sell_rmb item.sell_price_rmb %}
                                 {!! item.origin_sell_rmb !!}
                             {% else %}
                                 [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
@@ -100,12 +97,17 @@
                             </template>
                         </td>
                         <td class="visible-sm visible-xs">
-                            {!! item.sell_price_rmb !!}
+                            <a href="{!! item.edit_url !!}">{!! item.sell_price_rmb !!}</a>
                             <template v-if="item.is_paid">
                             </template>
                             <template v-else>
-                                (<a href="{!! item.paid_url !!}"><b>未支付</b></a>)
+                                (<a href="{!! item.paid_url !!}"><b>未</b></a>)
                             </template>
+                        </td>
+                        <td>
+                            <div class="hidden-sm hidden-xs">
+                                {!! item.shipping_order !!}
+                            </div>
                         </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
@@ -126,6 +128,16 @@
                                 <i class="fa fa-trash-o fa-inverse"></i>
                             </a>
                             {% endif %}
+                        </td>
+                    </tr>
+                    <tr v-if="item.shipping_order" class="hide hidden-md hidden-lg" id="shipping_{!! item.id !!}">
+                        <td colspan="22">
+                            <div style="float:left">
+                                {!! item.product_summary !!}
+                            </div>
+                            <div style="float:left">
+                                {!! item.shipping_order !!}
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -196,16 +208,22 @@
                         Date
                     </th>
                     <th>
-                        Customer
+                        Name
                     </th>
                     <th class="hidden-sm hidden-xs">
                         Status
                     </th>
                     <th class="hidden-sm hidden-xs">
-                        Shipping
+                        Ship
                     </th>
                     <th>
-                        Price
+                        Sell
+                    </th>
+                    <th>
+                        Cost
+                    </th>
+                    <th>
+                        Profit
                     </th>
                     <th class="hidden-sm hidden-xs">
 
@@ -213,7 +231,7 @@
                 </tr>
                 </thead>
                 <tbody v-for="item in finished_items">
-                    <tr v-if="item.id">
+                    <tr v-if="item.id" v-on:click="showShipping(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
@@ -223,7 +241,7 @@
                             <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}({!! item.total_amount !!})</a>
+                            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             <span class="label label-danger">{!! item.status !!}</span>
@@ -231,14 +249,23 @@
                         <td class="hidden-sm hidden-xs">
                             {!! item.shipping_order !!}
                         </td>
+{#                        <td>#}
+{#                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>#}
+{#                            RMB:{% ifequal item.origin_sell_rmb item.sell_price_rmb %}#}
+{#                                {!! item.origin_sell_rmb !!}#}
+{#                            {% else %}#}
+{#                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}#}
+{#                            {% endifequal %}#}
+{#                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}#}
+{#                        </td>#}
                         <td>
-                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
-                            RMB:{% ifequal object.origin_sell_rmb object.sell_price_rmb %}
-                                {!! item.origin_sell_rmb !!}
-                            {% else %}
-                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
-                            {% endifequal %}
-                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+                            <a href="{!! item.edit_url !!}">{!! item.sell_price_rmb !!}</a>
+                        </td>
+                        <td>
+                            {!! item.total_cost_rmb !!}
+                        </td>
+                        <td>
+                            {!! item.profit_rmb !!}
                         </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
@@ -259,6 +286,16 @@
                                 <i class="fa fa-trash-o fa-inverse"></i>
                             </a>
                             {% endif %}
+                        </td>
+                    </tr>
+                    <tr v-if="item.shipping_order" class="hide" id="shipping_{!! item.id !!}">
+                        <td colspan="22">
+                            <div style="float:left">
+                                {!! item.product_summary !!}
+                            </div>
+                            <div style="float:left">
+                                {!! item.shipping_order !!}
+                            </div>
                         </td>
                     </tr>
                 </tbody>
