@@ -39,9 +39,9 @@ def ozbargin():
         meta = item.find('ozb:meta')
         click_count = meta['click-count']
         try:
-            comment_count = int(meta['comment-count'])
+            votes_pos = int(meta['votes-pos'])
         except:
-            comment_count = 0
+            votes_pos = 0
         org_url = meta['url']
         pub_date = item.pubdate.text
 
@@ -66,7 +66,7 @@ def ozbargin():
         # check keywords
         flag = False
         for key in ozbargin_keywords:
-            if key.lower() in title.lower() or comment_count > 30:
+            if key.lower() in title.lower() or votes_pos > 30:
                 flag = True
                 break
 
