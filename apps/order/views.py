@@ -1,7 +1,7 @@
 # coding=utf-8
 import datetime
 from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
@@ -14,6 +14,7 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
+from ..customer.models import Customer
 from ..express.models import ExpressOrder
 import serializers
 import forms
@@ -56,7 +57,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.OrderForm2(), }
+        context = {'form': forms.OrderForm2(),}
         if pk:
             order = get_object_or_404(Order, id=pk)
             context['order'] = order
@@ -98,6 +99,14 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
         context['new_product_form'] = forms.OrderProductInlineAddForm()
         return context
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            url = reverse('order:order-add-detail', args=[form.instance.customer_id])
+            return HttpResponseRedirect(url)
+        else:
+            return self.form_invalid(form)
+
 
 class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Order
@@ -112,9 +121,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
-
         context['new_product_form'] = forms.OrderProductInlineAddForm()
-
         context['product_forms'] = forms.OrderProductFormSet(queryset=self.object.products.all())
         return context
 
@@ -136,6 +143,60 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         if next:
             return HttpResponseRedirect(next)
         return result
+
+
+class OrderAddDetailView(OrderUpdateView):
+    permissions = {
+        "all": ("order.add_order",)
+    }
+
+    def get_object(self, queryset=None):
+        try:
+            object = super(OrderAddDetailView, self).get_object()
+        except:
+
+            object = Order(customer_id=self.kwargs['customer_id'])
+            object.address_id = self.request.POST['address']
+            object.save()
+        return object
+
+    def get(self, request, *args, **kwargs):
+        customer_id = kwargs['customer_id']
+        if not Customer.objects.filter(id=customer_id).exists():
+            return HttpResponseRedirect(reverse('order:order-add'))
+
+        self.object = Order(customer_id=customer_id)
+        form = self.get_form()
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        inlineform_count = int(request.POST['form-TOTAL_FORMS'])
+        request.POST._mutable = True
+        request.POST['some_data'] = 'test data'
+        for i in range(inlineform_count):
+            key = 'form-%s-order' % i
+            if key in request.POST:
+                request.POST[key] = self.object.id
+        request.POST._mutable = False
+
+        formset = forms.OrderProductFormSet(request.POST)
+        for form in formset:
+            if form.instance.product or form.instance.name:
+                if 'order' in form._errors:
+                    del form._errors['order']
+                form.fields['order'].initial = self.object.id
+                form.base_fields['order'].initial = self.object.id
+                form._changed_data.append('order')
+                form.instance.order_id = self.object.id
+        instances = formset.save()
+
+        next = request.POST.get('next')
+        if next:
+            url = reverse('order:order-update', args=[self.object.id])
+            return HttpResponseRedirect(url)
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):
