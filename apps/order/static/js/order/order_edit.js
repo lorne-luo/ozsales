@@ -61,7 +61,8 @@ var OrderEditPageVue = Vue.extend({
             $("select#id_store", $product_template_copy).attr("id", base_id + "-store");
 
             $product_template_copy.attr('id', 'form-' + $TOTAL_FORMS.val());
-            $("#product_table").append($product_template_copy);
+            var $element = $("#product_table").append($product_template_copy);
+            this.$compile($element.get(0)); // link event for delete button
             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
             $("select[class$='form-control']").not(".hide select[class$='form-control']")
@@ -76,7 +77,7 @@ var OrderEditPageVue = Vue.extend({
                     $("input#id_form-" + i + "-order").val(order_pk);
             }
             // add next url into form if click save & continue
-            if ($(event.target).attr('name') == '_continue'){
+            if ($(event.target).attr('name') == '_continue') {
                 $('<input>').attr({
                     type: 'hidden',
                     id: 'next',
@@ -85,6 +86,37 @@ var OrderEditPageVue = Vue.extend({
                 }).appendTo('#commonForm');
             }
             document.getElementById("commonForm").submit();
+        },
+        delete_product: function (event) {
+            var $TOTAL_FORMS = $("input#id_form-TOTAL_FORMS");
+            var product = $(event.target).closest('div.form-group');
+            var orderProductID = $("input:hidden[id$='-id']", product).val();
+            if (orderProductID) {
+                swal({
+                    title: "确定删除",
+                    text: "确定删除所选产品?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定",
+                    cancelButtonText: "取消",
+                    closeOnConfirm: true,
+                    showLoaderOnConfirm: false
+                }, function () {
+                    var deleteUrl = Urls['order:api-orderproduct-delete']();
+                    $.AdminLTE.apiDelete(
+                        deleteUrl,
+                        $.param({'pk': orderProductID}),
+                        function (resp) {
+                            product.remove();
+                            $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+                        }
+                    );
+                });
+            } else {
+                product.remove();
+                $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+            }
         }
 
     }

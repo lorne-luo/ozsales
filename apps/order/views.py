@@ -141,7 +141,8 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         result = super(OrderUpdateView, self).post(request, *args, **kwargs)
         next = request.POST.get('next')
         if next:
-            return HttpResponseRedirect(next)
+            url = reverse('order:order-update', args=[self.object.id])
+            return HttpResponseRedirect(url)
         return result
 
 
