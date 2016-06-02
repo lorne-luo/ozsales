@@ -27,6 +27,7 @@ urlpatterns = patterns('apps.order.views',
 
 # reverse('order:api-order-list'), reverse('order:api-order-detail', kwargs={'pk': 1})
 router.register(r'api/order/order', views.OrderViewSet, base_name='api-order')
+router.register(r'api/order/orderproduct', views.OrderProductViewSet, base_name='api-orderproduct')
 
 
 urlpatterns += router.urls

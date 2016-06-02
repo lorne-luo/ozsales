@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
 from rest_framework import serializers
-from models import Order, ORDER_STATUS, ORDER_STATUS_CHOICES
+from models import OrderProduct, Order, ORDER_STATUS, ORDER_STATUS_CHOICES
 
 
 # Serializer for order
@@ -65,3 +65,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_product_summary(self, obj):
         return obj.get_product_summary()
+
+
+class OrderProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderProduct

@@ -233,9 +233,8 @@ class OrderFilter(FilterSet):
         fields = ['status_in', 'customer', 'is_paid', 'status', 'ship_time', 'finish_time']
 
 
-# api views for Order
-
 class OrderViewSet(CommonViewSet):
+    """ api views for Order """
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
@@ -248,6 +247,22 @@ class OrderViewSet(CommonViewSet):
             return Order.objects.filter(customer__seller=self.request.user)
         else:
             return Order.objects.none()
+
+
+class OrderProductViewSet(CommonViewSet):
+    """ api views for OrderProduct """
+    serializer_class = serializers.OrderProductSerializer
+    filter_class = OrderFilter
+    permission_classes = [permissions.DjangoModelPermissions]
+    search_fields = ['order__customer__name', 'status']
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return OrderProduct.objects.all()
+        elif self.request.user.is_authenticated():
+            return OrderProduct.objects.filter(order__customer__seller=self.request.user)
+        else:
+            return OrderProduct.objects.none()
 
 
 class OrderMemberListView(CommonContextMixin, ListView):
