@@ -27,7 +27,8 @@ var CommonListPageVue = Vue.extend({
     },
     methods: {
         toggleAllBox: function (event) {
-            $("input[name='checkboxRow']").prop(
+            var table=$(event.target).closest('table');
+            $("input[name='checkboxRow']", table).prop(
                 'checked',
                 $(event.target).prop('checked')
             );
