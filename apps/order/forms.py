@@ -78,7 +78,8 @@ class OrderUpdateForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderUpdateForm, self).__init__(*args, **kwargs)
         instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
+
+        if instance and instance.customer:
             self.fields['address'].queryset = Address.objects.filter(customer_id=instance.customer)
             self.fields['total_amount'].widget.attrs['readonly'] = True
             self.fields['customer'].queryset = Customer.objects.filter(pk=instance.customer_id)

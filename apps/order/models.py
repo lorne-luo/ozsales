@@ -52,7 +52,8 @@ class Order(models.Model):
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
     def __str__(self):
-        return '[%s]%s' % (self.id, self.customer.name)
+
+        return '[%s]%s' % (self.id or 'New', self.customer.name)
 
     def get_product_summary(self):
         result = ''
@@ -294,6 +295,7 @@ def update_price_from_order(sender, instance=None, created=False, update_fields=
 def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
     if instance.order and instance.order.id:
         instance.order.update_price()
+
 
 @receiver(post_delete, sender=OrderProduct)
 def order_product_deleted(sender, **kwargs):
