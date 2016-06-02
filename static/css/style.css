@@ -40,8 +40,28 @@ input[type='checkbox'] {
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 992px) {
     #commonDataTableRow #tableSearch{
         width: 150px;
     }
+}
+
+.ln34 {
+     line-height: 34px;
+}
+
+/* Chosen */
+.chosen-container .chosen-results {
+    max-height:250px;
+}
+.chosen-container {
+    font-size:14px !important;
+}
+.chosen-container-single .chosen-single{
+    line-height: 32px !important;
+    height: 32px !important;
+    margin-top:1px !important;
+}
+.chosen-container-single .chosen-single div b {
+    margin-top: 4px;
 }
