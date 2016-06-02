@@ -94,7 +94,7 @@
 {#                                <div class="checkbox pull-left btn-link"#}
 {#                                     style="margin-top: 7px; margin-right: 12px;">#}
 {#                                    <label>#}
-{#                                        <input type="checkbox"#}
+{#                                        <input type="checkbox" class="checkboxAllRow"#}
 {#                                               name="checkboxAllRow"#}
 {#                                               v-on:click="toggleAllBox"/> 全选#}
 {#                                    </label>#}
@@ -136,7 +136,7 @@
                                 <tr>
                                     <th class="text-center" style="width:40px;">
                                         <input type="checkbox"
-                                               name="checkboxAllRow"
+                                               name="checkboxAllRow" class="checkboxAllRow"
                                                v-on:click="toggleAllBox"/>
                                     </th>
                                     {% for title in table_titles %}
