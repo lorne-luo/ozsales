@@ -68,26 +68,31 @@
                         </td>
                         <td>
                             <template v-if="item.status == 'CREATED'">
-                                <span class="label label-info">C</span>
+                                <span class="hidden-xs label label-info">{!! item.status !!}</span>
+                                <span class="hidden-sm hidden-md hidden-lg label label-info">C</span>
                             </template>
                             <template v-if="item.status == 'SHIPPING'">
-                                <span class="label label-success">S</span>
+                                <span class="hidden-xs label label-success">{!! item.status !!}</span>
+                                <span class="hidden-sm hidden-md hidden-lg label label-success">S</span>
                             </template>
                             <template v-if="item.status == 'DELIVERED'">
-                                <span class="label label-warning">D</span>
+                                <span class="hidden-xs label label-warning">{!! item.status !!}</span>
+                                <span class="hidden-sm hidden-md hidden-lg label label-warning">D</span>
                             </template>
                             <template v-if="item.status == 'FINISHED'">
-                                <span class="label label-danger">F</span>
+                                <span class="hidden-xs label label-danger">{!! item.status !!}</span>
+                                <span class="hidden-sm hidden-md hidden-lg label label-danger">F</span>
                             </template>
                             <a href="{!! item.next_status_url !!}">></a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
-                            RMB:{% ifequal item.origin_sell_rmb item.sell_price_rmb %}
-                                {!! item.origin_sell_rmb !!}
-                            {% else %}
+                            RMB:<template v-if="item.origin_sell_rmb == item.sell_price_rmb">
+                                {!! item.sell_price_rmb !!}
+                            </template>
+                            <template v-else>
                                 [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
-                            {% endifequal %}
+                            </template>
                             - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
                             <template v-if="item.is_paid">
                                 (已支付)
@@ -97,7 +102,7 @@
                             </template>
                         </td>
                         <td class="visible-sm visible-xs">
-                            <a href="{!! item.edit_url !!}">{!! item.sell_price_rmb !!}</a>
+                            <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
                             <template v-if="item.is_paid">
                             </template>
                             <template v-else>

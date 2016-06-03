@@ -12,7 +12,11 @@
         </li>
         {% if page_title != default_dashboard_title %}
         <li class="active">
-            {{ page_title }}
+            {% if user.is_superuser %}
+                <a href="{% url 'order:order-list' %}">Order</a>
+            {% else %}
+                {{ page_title }}
+            {% endif %}
         </li>
         {% endif %}
         {% if object != None %}
@@ -23,6 +27,7 @@
 
 
 {% block content %}
+<div class="row">
     {% if form.is_multipart %}
         <form enctype="multipart/form-data"
               method="post"
@@ -43,11 +48,11 @@
         <div class="box-body">
             {% for field in form %}
                 <div class="form-group">
-                    <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
-                    <div class="col-sm-6">
+                    <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
+                    <div class="col-sm-6 col-xs-9">
                         {{ field }}
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-4 hidden-xs">
                         {{ field.errors }}
                         <p class="help-block">{{ field.help_text }}</p>
                     </div>
@@ -77,19 +82,19 @@
                 <div class="col-xs-3">
                     <b>名称</b>
                 </div>
-                <div class="col-xs-1">
+                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
                     <b>数量</b>
                 </div>
-                <div class="col-xs-1">
+                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
                     <b>售价</b>
                 </div>
-                <div class="col-xs-1">
+                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2  hidden-sm hidden-xs">
                     <b>小计</b>
                 </div>
-                <div class="col-xs-1">
-                    <b>进价</b>
+                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+                    <b>成本</b>
                 </div>
-                <div class="col-xs-2">
+                <div class="col-xs-2 hidden-sm hidden-xs">
                     <b>来源</b>
                 </div>
             </div>
@@ -102,28 +107,29 @@
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
                 {{ product.order }}
-                <div class="col-lg-3 col-md-6 col-xs-6">
+                <div class="col-lg-3 col-md-6 col-xs-12">
                     {{ product.product }}
                 </div>
-                <div class="col-lg-3 col-md-6 col-xs-6">
+                <div class="col-lg-3 col-md-6 col-xs-12">
                     {{ product.name }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-2">
+                <div class="col-lg-1 col-md-2 col-xs-3">
                     {{ product.amount }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-2">
+                <div class="col-lg-1 col-md-2 col-xs-4">
                     {{ product.sell_price_rmb }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-2">
+                <div class="col-lg-1 col-md-2 hidden-xs">
                     {{ product.sum_price }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-2">
+                <div class="col-lg-1 col-md-2 col-xs-4">
                     {{ product.cost_price_aud }}
                 </div>
-                <div class="col-lg-2 col-md-4 col-xs-4">
-                    {{ product.store }}
-                    <input class="hide" id="id_products-0-DELETE" name="products-0-DELETE" type="checkbox">
-                    <a href="javascript:void(0)" class="delete_product" v-on:click="delete_product">
+                <div class="col-lg-2 col-md-4 col-xs-1">
+                    <div class="inline hidden-xs hidden-sm">
+                        {{ product.store }}
+                    </div>
+                    <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
                         <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i></a>
                 </div>
             </div>
@@ -135,11 +141,11 @@
         </div>
 
         <div class="box-body ln34">
-            <button type="button" class="btn btn-success col-sm-1" v-on:click="addone">增加一项</button>
-            <div class="col-sm-9">
-              <b>总计:</b>
-              <span id="total_price"></span>
-            </div>
+            <button type="button" class="btn btn-success col-md-1 col-xs-3" v-on:click="addone">增加一项</button>
+{#            <div class="col-xs-8">#}
+{#              <b>总计:</b>#}
+{#              <span id="total_price"></span>#}
+{#            </div>#}
         </div>
         <div class="box-footer">
           <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
@@ -151,32 +157,34 @@
     <div class="hide" id="product_template">
         <div class="form-group">
             <input id="id_order" type="hidden" value="">
-            <div class="col-lg-3 col-md-6 col-xs-6">
+            <div class="col-lg-3 col-md-6 col-xs-12">
                 {{ new_product_form.product }}
             </div>
-            <div class="col-lg-3 col-md-6 col-xs-6">
+            <div class="col-lg-3 col-md-6 col-xs-12">
                 {{ new_product_form.name }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-2">
+            <div class="col-lg-1 col-md-2 col-xs-3">
                 {{ new_product_form.amount }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-2">
+            <div class="col-lg-1 col-md-2 col-xs-4">
                 {{ new_product_form.sell_price_rmb }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-2">
+            <div class="col-lg-1 col-md-2 hidden-xs">
                 {{ new_product_form.sum_price }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-2">
+            <div class="col-lg-1 col-md-2 col-xs-4">
                 {{ new_product_form.cost_price_aud }}
             </div>
-            <div class="col-lg-2 col-md-4 col-xs-4">
-                {{ new_product_form.store }}
+            <div class="col-lg-2 col-md-4 col-xs-1">
+                <div class="inline hidden-xs hidden-sm">
+                    {{ new_product_form.store }}
+                </div>
                 <a href="javascript:void(0)" class="delete_product" v-on:click="delete_product">
                     <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i></a>
             </div>
         </div>
     </div>
-
+</div>
 {% endblock %}
 
 {% block header_page_script %}
