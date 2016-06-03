@@ -20,7 +20,7 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-@periodic_task(run_every=crontab(minute=0, hour='11,20'))
+@periodic_task(run_every=crontab(minute=0, hour='12,20'))
 def get_aud_rmb():
     url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
     content = urllib.urlopen(url).read()

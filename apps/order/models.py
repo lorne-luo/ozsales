@@ -41,12 +41,12 @@ class Order(models.Model):
                                            decimal_places=2, blank=True, null=True)
     shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'Shipping Time'))
+                                     verbose_name=_(u'Ship Time'))
     total_cost_aud = models.DecimalField(_(u'Total Cost AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'Total Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     origin_sell_rmb = models.DecimalField(_(u'Origin Sell RMB'), max_digits=8, decimal_places=2, blank=True,
                                           null=True)
-    sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
