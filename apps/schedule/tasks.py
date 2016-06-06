@@ -67,11 +67,13 @@ def ozbargin():
         flag = False
         for key in ozbargin_keywords:
             if key.lower() in title.lower() or votes_pos > 30:
+                if votes_pos > 30:
+                    title = '* %s' % title
                 flag = True
                 break
 
         if flag:
-            content = '%s\n%s\n%s' % (pub_date, title, link)
+            content = '%s\n%s\n%s' % (item_date.strftime('%Y/%m/%d %a %H:%M'), title, link)
             sender = MessageSender()
             sender.send_to_self(content)
             # print 'sending', content
