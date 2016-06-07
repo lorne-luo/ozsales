@@ -18,8 +18,21 @@ ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
                      'Trifecta', 'filco', 'bose', 'headphone']
 
 
+def get_rss(url):
+    return urllib2.urlopen(urllib2.Request(url))
+
+
+def utf8len(s):
+    return len(s.encode('utf-8')) if isinstance(s, unicode) else len(s)
+
+
+def utf8sub(s, length):
+    length = int(length / 3) if isinstance(s, unicode) else length
+    return s[:length]
+
+
 @periodic_task(run_every=crontab(minute='*/30', hour='7-22'))
-def ozbargin():
+def ozbargin_task():
     url = 'https://www.ozbargain.com.au/feed'
     all_deals_url = 'https://www.ozbargain.com.au/deals/feed'
 
@@ -35,6 +48,7 @@ def ozbargin():
 
     for item in reversed(items):
         title = item.title.text
+        description = item.description.text
         link = item.link.text
         meta = item.find('ozb:meta')
         click_count = meta['click-count']
@@ -73,7 +87,10 @@ def ozbargin():
                 break
 
         if flag:
-            content = '%s\n%s\n%s' % (item_date.strftime('%Y/%m/%d %a %H:%M'), title, link)
+            text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
+            description = ' '.join(x.strip() for x in text_list)
+            content = '%s>%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
+            content += description
             sender = MessageSender()
             sender.send_to_self(content)
             # print 'sending', content
@@ -83,11 +100,11 @@ def ozbargin():
 
 
 smzdm_last_date = 'schedule.smzdm.last_date'
-smzdm_keywords = []
+smzdm_keywords = [u'蓝牙耳机', u'无线耳机']
 
 
 @periodic_task(run_every=crontab(minute='*/30', hour='8-23'))
-def smzdm():
+def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
 
@@ -105,6 +122,7 @@ def smzdm():
     for item in reversed(items):
         title = item.title.text
         link = item.link.text
+        description = item.description.text
         pub_date = item.pubdate.text
 
         try:
@@ -134,7 +152,10 @@ def smzdm():
                 break
 
         if flag:
-            content = '%s\n%s\n%s' % (pub_date, title, link)
+            text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
+            description = ' '.join(x.strip() for x in text_list)
+            content = '%s\n%s\n%s' % (item_date.strftime('%H:%M'), title, link)
+            content += description
             sender = MessageSender()
             sender.send_to_self(content)
             # print 'sending', content
