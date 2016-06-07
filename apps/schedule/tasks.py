@@ -89,12 +89,12 @@ def ozbargin_task():
         if flag:
             text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
             description = ' '.join(x.strip() for x in text_list)
-            content = '%s>%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
-            content += description
+            summary = '%s>%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
+            content = summary + description
             sender = MessageSender()
-            sender.send_to_self(content)
+            result, detail = sender.send_to_self(content)
             # print 'sending', content
-            log.info('[SMS] %s' % content)
+            log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(ozbargin_last_date, new_last_date)
 
@@ -154,11 +154,11 @@ def smzdm_task():
         if flag:
             text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
             description = ' '.join(x.strip() for x in text_list)
-            content = '%s\n%s\n%s' % (item_date.strftime('%H:%M'), title, link)
-            content += description
+            summary = '%s\n%s\n%s' % (item_date.strftime('%H:%M'), title, link)
+            content = summary + description
             sender = MessageSender()
-            sender.send_to_self(content)
+            result, detail = sender.send_to_self(content)
             # print 'sending', content
-            log.info('[SMS] %s' % content)
+            log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(smzdm_last_date, new_last_date)
