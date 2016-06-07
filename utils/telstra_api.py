@@ -16,6 +16,7 @@ class MessageSender(object):
     TOKEN = None
     TOKEN_EXPIRY = datetime.datetime.now()
     _instance = None
+    LENGTH_PER_SMS = 160
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -50,6 +51,10 @@ class MessageSender(object):
         buffer = StringIO()
         c = pycurl.Curl()
         c.setopt(c.URL, MessageSender.SEND_URL)
+
+        content = unicode(content)
+        if len(content) > MessageSender.LENGTH_PER_SMS:
+            content = content[:MessageSender.LENGTH_PER_SMS]
 
         c.setopt(pycurl.HTTPHEADER, ['Authorization: Bearer %s' % MessageSender.TOKEN])
         post_dict = {'to': unicode(to), 'body': unicode(content)}
