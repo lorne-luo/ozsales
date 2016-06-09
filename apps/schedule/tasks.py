@@ -31,7 +31,7 @@ def utf8sub(s, length):
     return s[:length]
 
 
-@periodic_task(run_every=crontab(minute='*/30', hour='7-22'))
+@periodic_task(run_every=crontab(minute='*/15', hour='8-23'))
 def ozbargin_task():
     url = 'https://www.ozbargain.com.au/feed'
     all_deals_url = 'https://www.ozbargain.com.au/deals/feed'
@@ -103,7 +103,7 @@ smzdm_last_date = 'schedule.smzdm.last_date'
 smzdm_keywords = [u'蓝牙耳机', u'无线耳机']
 
 
-@periodic_task(run_every=crontab(minute='*/30', hour='8-23'))
+@periodic_task(run_every=crontab(minute='*/15', hour='8-23'))
 def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
