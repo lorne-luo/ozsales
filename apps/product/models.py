@@ -106,7 +106,6 @@ class Product(models.Model):
             queryset = Product.objects.all()
             return queryset
 
-
     def __str__(self):
         spec = ''
         if self.spec1:
@@ -116,7 +115,7 @@ class Product(models.Model):
         if self.spec3:
             spec += ' ' + self.spec3
 
-        if self.brand:
+        if self.brand and self.brand.name_en.lower() != 'none':
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
@@ -161,4 +160,3 @@ class Product(models.Model):
 
     def sell_price_text(self):
         return '%srmb' % self.safe_sell_price
-
