@@ -89,7 +89,7 @@ def ozbargin_task():
         if flag:
             text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
             description = ' '.join(x.strip() for x in text_list)
-            summary = '%s>%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
+            summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
             sender = MessageSender()
             result, detail = sender.send_to_self(content)
@@ -154,7 +154,7 @@ def smzdm_task():
         if flag:
             text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
             description = ' '.join(x.strip() for x in text_list)
-            summary = '%s\n%s\n%s' % (item_date.strftime('%H:%M'), title, link)
+            summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
             sender = MessageSender()
             result, detail = sender.send_to_self(content)

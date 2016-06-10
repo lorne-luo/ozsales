@@ -81,7 +81,7 @@ class MessageSender(object):
             with open(sms_txt_path, 'r+') as f:
                 all_content = f.read()
                 f.seek(0, 0)
-                f.write(content + '\n' + all_content[:2100])
+                f.write('%s\n\n%s' % (content[:500], all_content[:6000]))
         except Exception as e:
             log.info('[SMS] sms.txt error %s' % e.message)
 
