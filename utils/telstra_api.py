@@ -76,11 +76,15 @@ class MessageSender(object):
 
     def send_to_self(self, content):
         my_number = '0413725868'
-        sms_txt_path = os.path.join(settings.MEDIA_ROOT, 'sms.txt')
-        with open(sms_txt_path, 'r+') as f:
-            all_content = f.read()
-            f.seek(0, 0)
-            f.write(content + '\n' + all_content[:2100])
+        try:
+            sms_txt_path = os.path.join(settings.MEDIA_ROOT, 'sms.txt')
+            with open(sms_txt_path, 'r+') as f:
+                all_content = f.read()
+                f.seek(0, 0)
+                f.write(content + '\n' + all_content[:2100])
+        except Exception as e:
+            log.info('[SMS] sms.txt error %s' % e.message)
+
         return self.send_sms(my_number, content)
 
 
