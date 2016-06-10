@@ -77,7 +77,7 @@ class MessageSender(object):
     def send_to_self(self, content):
         my_number = '0413725868'
         try:
-            sms_txt_path = os.path.join(settings.MEDIA_ROOT, 'sms.txt')
+            sms_txt_path = os.path.join(settings.MEDIA_ROOT, 'sms.htm')
             with open(sms_txt_path, 'r+') as f:
                 all_content = f.read()
                 f.seek(0, 0)
