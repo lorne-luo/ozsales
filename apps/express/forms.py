@@ -37,7 +37,6 @@ class ExpressOrderInlineAddForm(ModelForm):
         self.fields['address'].widget.attrs['class'] = 'form-control'
         self.fields['fee'].widget.attrs['class'] = 'form-control'
         self.fields['weight'].widget.attrs['class'] = 'form-control'
-        self.fields['id_upload'].widget.attrs['class'] = 'form-control'
         self.fields['remarks'].widget = forms.HiddenInput()
         self.fields['remarks'].widget.attrs['class'] = 'form-control'
 

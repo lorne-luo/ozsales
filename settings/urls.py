@@ -18,6 +18,7 @@ apps_urlpatterns = patterns('',
     url(r'^', include('apps.store.urls', namespace='store')),
     url(r'^', include('apps.product.urls', namespace='product')),
     url(r'^', include('apps.order.urls', namespace='order')),
+    url(r'^', include('apps.express.urls', namespace='express')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
 )
 # Member frontend
