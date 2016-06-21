@@ -239,14 +239,14 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
-    name = models.CharField(_(u'Name'), max_length=128, null=True, blank=True)
-    amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False, )
-    sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_price_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    cost_price_aud = models.DecimalField(_(u'Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_price_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    name = models.CharField(_('Name'), max_length=128, null=True, blank=True)
+    amount = models.IntegerField(_('Amount'), default=0, blank=False, null=False, )
+    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_price_rmb = models.DecimalField(_('Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
-    create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=True)
+    create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
         return '%s X %s' % (self.name, self.amount)

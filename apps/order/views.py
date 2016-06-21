@@ -15,7 +15,7 @@ from core.adminlte.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
 from ..customer.models import Customer
-from ..express.models import ExpressOrder
+from ..express.forms import ExpressOrderInlineAddForm, ExpressOrderFormSet
 import serializers
 import forms
 
@@ -123,6 +123,9 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
         context['new_product_form'] = forms.OrderProductInlineAddForm()
         context['product_forms'] = forms.OrderProductFormSet(queryset=self.object.products.all())
+        context['new_express_form'] = ExpressOrderInlineAddForm()
+        context['express_forms'] = ExpressOrderFormSet(queryset=self.object.express_orders.all())
+
         return context
 
     def post(self, request, *args, **kwargs):
