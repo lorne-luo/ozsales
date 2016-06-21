@@ -1,10 +1,11 @@
 # coding=utf-8
 
 import urllib
-from utils.telstra_api import MessageSender
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
+from django.http import HttpResponse
+from utils.telstra_api import MessageSender
 
 
 def sms_send(request):
@@ -38,3 +39,10 @@ class SMSSelfSender(SMSSender):
             result, detail = m.send_to_self(body)
             return Response({'success': result, 'detail': detail})
         return Response({'success': False, 'detail': 'body is null'})
+
+
+def sms_record(request):
+    handle=open(MessageSender.SMS_TXT_PATH, 'r')
+    sms_records = handle.read()
+    handle.close()
+    return HttpResponse(sms_records, content_type="text/plain")
