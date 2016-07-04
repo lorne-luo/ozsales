@@ -45,7 +45,7 @@ class Customer(AbstractBaseUser):
     last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
                                         related_name=_('primary_address'))
-    tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
+    tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('groups'),
                                     blank=True, related_name="customer_set", related_query_name="customer")

@@ -41,10 +41,10 @@ class Category(models.Model):
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
-    name_cn = models.CharField(_(u'name_cn'), max_length=128, null=True, blank=True)
+    name_en = models.CharField(_('name_en'), max_length=128, null=False, blank=False)
+    name_cn = models.CharField(_('name_cn'), max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
-    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, null=True, blank=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
 
     class Meta:
@@ -79,14 +79,14 @@ class Product(models.Model):
     spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
-    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, null=True, blank=True, verbose_name=_('category'))
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
     tb_url = models.URLField(_(u'TB URL'), null=True, blank=True)
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
-    page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
+    page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
 
     class Meta:
         verbose_name_plural = _('Product')
