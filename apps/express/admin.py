@@ -9,7 +9,7 @@ class ExpressOrderAdmin(admin.ModelAdmin):
     ordering = ['-create_time']
     list_display_links = ['address', 'carrier']
     search_fields = ('order__customer__name', 'address__name', 'address__address', 'track_id')
-    filter_fields = ('carrier__name_cn')
+    list_filter = ['carrier__name_cn']
 
 
 admin.site.register(ExpressOrder, ExpressOrderAdmin)
