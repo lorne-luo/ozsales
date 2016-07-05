@@ -43,6 +43,7 @@ class ExpressOrder(models.Model):
     class Meta:
         verbose_name_plural = _('Express Order')
         verbose_name = _('Express Order')
+        unique_together = ('carrier', 'track_id')
 
     def __str__(self):
         return '[%s]%s' % (self.carrier.name_cn, self.track_id)
