@@ -173,15 +173,17 @@ def create_password(sender, instance=None, created=False, **kwargs):
 
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s%s%s_%s_front.%s' % (ID_PHOTO_FOLDER, os.sep, instance.customer.id, count, ext)
+    count = instance.customer.address_set.count()
+    filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
+    filename = os.path.join(ID_PHOTO_FOLDER, filename)
     return filename
 
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s%s%s_%s_back.%s' % (ID_PHOTO_FOLDER, os.sep, instance.customer.id, count, ext)
+    count = instance.customer.address_set.count()
+    filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
+    filename = os.path.join(ID_PHOTO_FOLDER, filename)
     return filename
 
 
