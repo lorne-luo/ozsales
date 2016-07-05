@@ -1,5 +1,5 @@
 {% extends "adminlte/base.html" %}
-{% load static %}
+{% load static adminlte_tags %}
 {% block content_title %}
     {{ page_title }}
 {% endblock %}
@@ -55,6 +55,7 @@
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover" id="commonTable">
+                        {% block table_head %}
                         <thead>
                             <tr>
                                 <th class="text-center" style="width:60px;">
@@ -63,22 +64,20 @@
                                            v-on:click="toggleAllBox"/>
                                 </th>
                                 {% for title in table_titles %}
-                                    {% if title == 'ID' %}
-                                        <th></th>
-                                    {% else %}
-                                        <th>
-                                            {{ title }}
-                                        </th>
-                                    {% endif %}
+                                    {% with 'ID,id,'|split:',' as tlist %}
+                                        {% if title in tlist %}
+                                            <th class="hidden-sm hidden-xs">{{ title }}</th>
+                                        {% else %}
+                                            <th>{{ title }}</th>
+                                        {% endif %}
+                                    {% endwith %}
                                 {% endfor %}
                             </tr>
                         </thead>
-                        <tfoot>
-                            <tr>
-                            </tr>
-                        </tfoot>
+                        {% endblock %}
                         <tbody v-for="item in items">
                             <tr>
+                                {% block table_row %}
                                 <td class="text-center">
                                     ##[$index+1]
                                     <input type="checkbox" class="minimal"
@@ -88,7 +87,7 @@
                                 {% for field in table_fields %}
                                     {% if field == 'id' %}
                                         {% block item_buttons %}
-                                        <td class="text-right">
+                                        <td class="text-right hidden-sm hidden-xs">
                                             {% if page_model_perms.view %}
                                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
                                                class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
@@ -115,6 +114,7 @@
                                         </td>
                                     {% endif %}
                                 {% endfor %}
+                                {% endblock %}
                             </tr>
                         </tbody>
                     </table>

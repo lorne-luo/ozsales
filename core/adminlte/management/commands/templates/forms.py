@@ -10,15 +10,16 @@ class <% MODEL_NAME %>AddForm(ModelForm):
         fields = <% fields %>
 
 
+class <% MODEL_NAME %>DetailForm(ModelForm):
+    class Meta:
+        model = <% MODEL_NAME %>
+        fields = <% fields %>
+
+
 class <% MODEL_NAME %>UpdateForm(ModelForm):
     class Meta:
         model = <% MODEL_NAME %>
         fields = <% fields %>
 
-
-class <% MODEL_NAME %>DetailForm(ModelForm):
-    class Meta:
-        model = <% MODEL_NAME %>
-        fields = <% fields %>
 
 '''
