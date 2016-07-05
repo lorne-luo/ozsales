@@ -84,7 +84,11 @@
         <td>
             {% for ex in object.express_orders.all %}
                 [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
-                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
+                {% if ex.get_track_url %}
+                    <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
+                {% else %}
+                    {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
+                {% endif %}
             {% endfor %}
         </td>
     </tr>

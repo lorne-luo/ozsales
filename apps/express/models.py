@@ -62,7 +62,7 @@ class ExpressOrder(models.Model):
         elif '%s' in self.carrier.search_url:
             return self.carrier.search_url % self.track_id
         else:
-            return '%s?id=%s' % (self.carrier.search_url, self.track_id)
+            return None
 
     def get_tracking_link(self):
         if self.track_id:
