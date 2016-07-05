@@ -16,6 +16,7 @@ from django.contrib.auth.hashers import is_password_usable, make_password
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
+from apps.member.models import Seller
 
 
 @python_2_unicode_compatible
@@ -34,6 +35,7 @@ class InterestTag(models.Model):
 
 @python_2_unicode_compatible
 class Customer(AbstractBaseUser):
+    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('Member'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
@@ -42,7 +44,7 @@ class Customer(AbstractBaseUser):
     order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
     last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
-                                        related_name=_('primary address'))
+                                        related_name=_('primary_address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), null=True, blank=True)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     groups = models.ManyToManyField(Group, verbose_name=_('groups'),
@@ -171,15 +173,17 @@ def create_password(sender, instance=None, created=False, **kwargs):
 
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s%s%s_%s_front.%s' % (ID_PHOTO_FOLDER, os.sep, instance.customer.id, count, ext)
+    count = instance.customer.address_set.count()
+    filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
+    filename = os.path.join(ID_PHOTO_FOLDER, filename)
     return filename
 
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = Address.objects.filter(customer=instance.customer).count()
-    filename = '%s%s%s_%s_back.%s' % (ID_PHOTO_FOLDER, os.sep, instance.customer.id, count, ext)
+    count = instance.customer.address_set.count()
+    filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
+    filename = os.path.join(ID_PHOTO_FOLDER, filename)
     return filename
 
 
@@ -213,7 +217,7 @@ class Address(models.Model):
             self.customer.save()
 
     def get_customer_link(self):
-        url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
+        url = reverse('admin:customer_customer_change', args=[self.customer.id])
         return '<a href="%s">%s</a>' % (url, self.customer)
 
     get_customer_link.allow_tags = True

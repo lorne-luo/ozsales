@@ -59,6 +59,7 @@
                                 {{ field }}
                             </div>
                             <div class="col-sm-4">
+                                {{ field.errors }}
                                 <p class="help-block">{{ field.help_text }}</p>
                             </div>
                         </div>
@@ -85,8 +86,11 @@
         $('#commonForm select').addClass('form-control');
         $('#commonForm textarea').addClass('form-control');
 
+        $("select[class$='form-control'][readonly=true]").prop('disabled', true);
+
         jQuery(document).ready(function($) {
-            $("select[class$='form-control']").chosen({search_contains: true,disable_search_threshold: 10});
+            $("select[class$='form-control']").not(".hide select[class$='form-control']")
+                    .chosen({search_contains: true,disable_search_threshold: 10});
         });
     </script>
 {% endblock %}

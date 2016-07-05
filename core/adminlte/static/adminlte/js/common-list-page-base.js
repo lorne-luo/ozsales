@@ -27,7 +27,8 @@ var CommonListPageVue = Vue.extend({
     },
     methods: {
         toggleAllBox: function (event) {
-            $("input[name='checkboxRow']").prop(
+            var table=$(event.target).closest('table');
+            $("input[name='checkboxRow']", table).prop(
                 'checked',
                 $(event.target).prop('checked')
             );
@@ -44,14 +45,15 @@ var CommonListPageVue = Vue.extend({
             }
 
             var url;
-            if (this.detail_url_tag)
+            if (this.detail_url_tag){
                 url = Urls[this.detail_url_tag](pk);
-            else
+            }else{
                 url = Urls['adminlte:common_detail_page'](
                     this.appName,
                     this.modelName,
                     pk
                 );
+            }
             window.location.href = url;
         },
         create: function () {
@@ -114,16 +116,22 @@ var CommonListPageVue = Vue.extend({
                                 title: "删除成功!",
                                 type: "success"
                             });
+                            $('input.checkboxAllRow').prop( "checked", false);
                         }
                     );
                 });
         },
         removeSelected: function () {
-            var ids = [],
-                box = $("input[name='checkboxRow']:checked");
+            var ids = [], box = null;
+            if($(".content .tab-pane.active").size()>0)
+                box = $(".content .tab-pane.active input[name='checkboxRow']:checked");
+            else
+                box = $(".content input[name='checkboxRow']:checked");
+
             $.each(box, function (i, b) {
                 ids.push($(b).val());
             });
+            
             if (ids.length === 0) {
                 swal({
                     title: "请选择数据!",

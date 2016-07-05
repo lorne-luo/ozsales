@@ -12,10 +12,13 @@ def if_installed(appname, *args, **kwargs):
 
 apps_urlpatterns = patterns('',
     url(r'^member/', include('apps.member.urls')),
-    url(r'^order/', include('apps.order.urls')),
-    url(r'^product/', include('apps.product.urls')),
+    # url(r'^order/', include('apps.order.urls')),
+    # url(r'^product/', include('apps.product.urls')),
     url(r'^customer/', include('apps.customer.urls')),
     url(r'^', include('apps.store.urls', namespace='store')),
+    url(r'^', include('apps.product.urls', namespace='product')),
+    url(r'^', include('apps.order.urls', namespace='order')),
+    url(r'^', include('apps.express.urls', namespace='express')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
 )
 # Member frontend
@@ -51,6 +54,9 @@ urlpatterns = patterns('',
 
     # for common api
     url(r'^api/v1/', include('core.api.urls', namespace='common_api')),
+
+    # for sms api
+    url(r'^', include('core.sms.urls')),
 
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),

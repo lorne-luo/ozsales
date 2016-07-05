@@ -1,111 +1,94 @@
 # coding=utf-8
-from django import forms
-from models import AbstractMessageContent, AbstractSiteMail, Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
+from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from django.utils.translation import ugettext_lazy as _
+from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 
-class NotificationAddForm(forms.ModelForm):
-    class Meta:
-        model = Notification
-        fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-
-
-class NotificationUpdateForm(forms.ModelForm):
+class NotificationUpdateForm(ModelForm):
     class Meta:
         model = Notification
         fields = ['title', 'content', 'receiver', 'status','read_time', 'creator']
 
 
-class NotificationDetailForm(forms.ModelForm):
+class NotificationDetailForm(ModelForm):
     class Meta:
         model = Notification
         fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
-class NotificationContentAddForm(forms.ModelForm):
+class NotificationContentAddForm(ModelForm):
+    class Meta:
+        model = NotificationContent
+        fields = ['title', 'contents']
+
+
+class NotificationContentUpdateForm(ModelForm):
     class Meta:
         model = NotificationContent
         fields = ['title', 'contents', 'status', 'creator']
 
 
-class NotificationContentUpdateForm(forms.ModelForm):
+class NotificationContentDetailForm(ModelForm):
     class Meta:
         model = NotificationContent
         fields = ['title', 'contents', 'status', 'creator']
 
 
-class NotificationContentDetailForm(forms.ModelForm):
-    class Meta:
-        model = NotificationContent
-        fields = ['title', 'contents', 'status', 'creator']
-
-
-class SiteMailContentAddForm(forms.ModelForm):
+class SiteMailContentAddForm(ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents','receivers']
+        fields = ['receivers', 'title', 'contents']
 
 
-class SiteMailContentUpdateForm(forms.ModelForm):
+class SiteMailContentUpdateForm(ModelForm):
     class Meta:
         model = SiteMailContent
         fields = ['title', 'contents', 'status', 'creator']
 
 
-class SiteMailContentDetailForm(forms.ModelForm):
+class SiteMailContentDetailForm(ModelForm):
     class Meta:
         model = SiteMailContent
-        fields = ['title', 'contents', 'status', 'creator']
+        fields = ['receivers', 'title', 'contents']
 
 
-class SiteMailReceiveAddForm(forms.ModelForm):
+class SiteMailReceiveAddForm(ModelForm):
     class Meta:
         model = SiteMailReceive
         fields = ['title', 'content', 'sender', 'status', 'creator', 'receiver', 'read_time']
 
 
-class SiteMailReceiveUpdateForm(forms.ModelForm):
+class SiteMailReceiveUpdateForm(ModelForm):
     class Meta:
         model = SiteMailReceive
         fields = ['title', 'content', 'sender', 'status', 'creator', 'receiver', 'read_time']
 
 
-class SiteMailReceiveDetailForm(forms.ModelForm):
+class SiteMailReceiveDetailForm(ModelForm):
     class Meta:
         model = SiteMailReceive
         fields = ['title', 'content', 'sender',  'status', 'creator', 'receiver', 'read_time']
 
 
-class SiteMailSendAddForm(forms.ModelForm):
+class SiteMailSendAddForm(ModelForm):
     class Meta:
         model = SiteMailSend
         fields = ['title', 'content', 'sender', 'status', 'creator']
 
 
-class SiteMailSendUpdateForm(forms.ModelForm):
+class SiteMailSendUpdateForm(ModelForm):
     class Meta:
         model = SiteMailSend
         fields = ['title', 'content', 'sender', 'status', 'creator']
 
 
-class SiteMailSendDetailForm(forms.ModelForm):
+class SiteMailSendDetailForm(ModelForm):
     class Meta:
         model = SiteMailSend
-        fields = ['title', 'content', 'sender', 'status', 'creator']
+        fields = ['sender','title', 'content', 'status']
 
 
-class TaskAddForm(forms.ModelForm):
-    class Meta:
-        model = Task
-        fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']
-
-
-class TaskUpdateForm(forms.ModelForm):
-    class Meta:
-        model = Task
-        fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']
-
-
-class TaskDetailForm(forms.ModelForm):
+class TaskDetailForm(ModelForm):
     class Meta:
         model = Task
         fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']

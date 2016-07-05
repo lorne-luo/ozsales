@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView
 from django.views.generic.base import View
 from django.views.generic.edit import FormView
-from core.adminlte.views import get_system_config_value
 from forms import RegistrationForm, LoginForm
 
 
@@ -38,7 +37,7 @@ class LoginView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(LoginView, self).get_context_data(**kwargs)
-        context['page_system_name'] = get_system_config_value('system_name')
+        context['page_system_name'] = settings.SITE_NAME
         return context
 
 

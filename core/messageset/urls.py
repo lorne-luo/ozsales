@@ -43,7 +43,6 @@ router.include_root_view = False
 
 # urls for notification
 urlpatterns += patterns('',
-    url(r'^messageset/notification/add/$', login_required(views.NotificationAddView.as_view()), name='notification-add'),
     url(r'^messageset/notification/list/$', login_required(views.NotificationListView.as_view()), name='notification-list'),
     url(r'^messageset/notification/(?P<pk>\d+)/$', login_required(views.NotificationDetailView.as_view()), name='notification-detail'),
     url(r'^messageset/notification/(?P<pk>\d+)/edit/$', login_required(views.NotificationUpdateView.as_view()), name='notification-update'),
@@ -56,7 +55,6 @@ router.register(r'api/messageset/notification', views.NotificationViewSet, base_
 # urls for notificationcontent
 urlpatterns += patterns('',
     url(r'^messageset/notificationcontent/add/$', login_required(views.NotificationContentAddView.as_view()), name='notificationcontent-add'),
-    url(r'^messageset/notificationcontent/list/$', login_required(views.NotificationContentListView.as_view()), name='notificationcontent-list'),
     url(r'^messageset/notificationcontent/(?P<pk>\d+)/$', login_required(views.NotificationContentDetailView.as_view()), name='notificationcontent-detail'),
     url(r'^messageset/notificationcontent/(?P<pk>\d+)/edit/$', login_required(views.NotificationContentUpdateView.as_view()), name='notificationcontent-update'),
 )
@@ -99,10 +97,9 @@ router.register(r'api/messageset/sitemailsend', views.SiteMailSendViewSet, base_
 
 # urls for task
 urlpatterns += patterns('',
-    url(r'^messageset/task/add/$', login_required(views.TaskAddView.as_view()), name='task-add'),
     url(r'^messageset/task/list/$', login_required(views.TaskListView.as_view()), name='task-list'),
     url(r'^messageset/task/(?P<pk>\d+)/$', login_required(views.TaskDetailView.as_view()), name='task-detail'),
-    url(r'^messageset/task/(?P<pk>\d+)/edit/$', login_required(views.TaskUpdateView.as_view()), name='task-update'),
+    # url(r'^messageset/task/(?P<pk>\d+)/edit/$', login_required(views.TaskUpdateView.as_view()), name='task-update'),
 )
 
 # reverse('messageset:api-task-list'),reverse('messageset:api-task-detail', kwargs={'pk': 1})

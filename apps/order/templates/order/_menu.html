@@ -1,0 +1,19 @@
+{% load activelink %}
+<li class="treeview {% ifstartswith '/order/' %}active{% endifstartswith %}">
+    <a href="javascript:void(0)">
+        <i class='fa fa-cloud'></i>
+        <b>Order</b>
+        <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+        {% if perms.order.add_order or perms.order.change_order %}
+        <li>
+        <a href="{% url 'order:order-list-short' %}">
+                <i class="fa fa-circle-o"></i>
+                Order
+            </a>
+        </li>
+        {%endif%}
+
+    </ul>
+</li>

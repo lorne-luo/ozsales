@@ -1,0 +1,33 @@
+{% load activelink %}
+{% if perms.product.add_product or perms.product.view_product %}
+<li class="treeview active {% ifstartswith '/common/product/' %}active{% endifstartswith %}">
+    <a href="javascript:void(0)">
+                <i class='fa fa-cloud'></i>
+                <b>Products</b>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+            <ul class="treeview-menu">
+                <li>
+                <a href="{% url 'product:product-add' %}">
+                        <i class="fa fa-circle-o"></i>
+                        New Product
+                    </a>
+                </li>
+                <li>
+                <a href="{% url 'product:product-list' %}">
+                        <i class="fa fa-circle-o"></i>
+                        Product List
+                    </a>
+                </li>
+
+                {% if perms.product.add_brand or perms.product.change_brand %}
+                <li>
+                <a href="{% url 'product:brand-list' %}">
+                        <i class="fa fa-circle-o"></i>
+                        Brand
+                    </a>
+                </li>
+                {%endif%}
+            </ul>
+</li>
+{%endif%}

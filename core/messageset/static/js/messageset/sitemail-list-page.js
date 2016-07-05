@@ -69,7 +69,7 @@ var sitemailListPageVue = new CommonListPageVue({
                 data = {'status': status};
             }
             self.loadData(data);
-            $(event.target).siblings().removeClass('btn-primary').addClass('btn-link');
+            $(event.target).siblings('.btn-primary').removeClass('btn-primary').addClass('btn-link');
             $(event.target).addClass('btn-primary').removeClass('btn-link');
         },
         allStatus: function (event) {

@@ -1,6 +1,11 @@
+settings/settings_dev.py
+.idea/
+.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.code
 
 # C extensions
 *.so
@@ -18,6 +23,7 @@ lib64/
 parts/
 sdist/
 var/
+collectstatic/
 *.egg-info/
 .installed.cfg
 *.egg

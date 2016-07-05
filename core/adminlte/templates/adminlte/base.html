@@ -26,6 +26,10 @@
 </head>
 {% block base_body %}
     <body class="{% block base_body_class %}skin-blue sidebar-mini{% endblock %}">
+    <input type="hidden" name="adminlte_page_app_name" id="adminlte_page_app_name" value="{{ page_app_name }}"/>
+    <input type="hidden" name="adminlte_page_model_name" id="adminlte_page_model_name" value="{{ page_model_name }}"/>
+    <input type="hidden" name="adminlte_page_user_name" id="adminlte_page_user_name" value="{{ request.user.username }}"/>
+
     {% block base_body_inner %}
         <div class="wrapper">
 
@@ -84,7 +88,9 @@
                 {% endblock %}
             </div>
             {% include "adminlte/includes/footer.html" %}
-            {% include "adminlte/includes/control_sidebar.html" %}
+            {% if user.is_superuser %}
+                {% include "adminlte/includes/control_sidebar.html" %}
+            {% endif %}
         </div>
     {% endblock %}
 

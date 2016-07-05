@@ -8,23 +8,13 @@
     {{ page_title }}
 {% endblock %}
 
-{% block header_base_style %}
-    <style type="text/css">
-        input[type='checkbox'] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
-    </style>
-{% endblock %}
-
 {% block content %}
     <div class="row" id="commonDataTableRow">
         <div class="col-xs-12">
-            <div class="box">
+            <div class="box box-info">
                 <div class="box-header">
                     <div class="row">
-                        <div class="col-xs-12 col-sm-6">
+                        <div class="col-xs-5 col-sm-6">
                             {% block common_list_buttons %}
                                 {% if page_model_perms.add %}
                                 <button class="btn btn-primary"
@@ -42,12 +32,11 @@
                                 {% endif %}
                             {% endblock %}
                         </div>
-                        <div class="col-xs-12 col-sm-6">
+                        <div class="col-xs-7 col-sm-6">
                             <div class="input-group">
                                 <input type="text" name="search"
                                        id="tableSearch"
                                        class="form-control input-sm pull-right"
-                                       style="width: 150px;"
                                        placeholder="关键字"
                                        v-on:keypress.13="search">
 
@@ -83,13 +72,10 @@
                     <table class="table table-hover" data-status="ALL">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width:40px;">
+                                <th class="text-center" style="width:60px;">
                                     <input type="checkbox"
-                                           name="checkboxAllRow"
+                                           name="checkboxAllRow" class="checkboxAllRow"
                                            v-on:click="toggleAllBox"/>
-                                </th>
-                                <th class="text-center" style="width:40px;">
-                                    #
                                 </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
@@ -113,7 +99,6 @@
                                                name="checkboxRow"
                                                value="#[item.id]"/>
                                     </td>
-                                    <td class="text-center">#[$index+1]</td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
@@ -151,13 +136,10 @@
                     <table class="table table-hover" data-status="RADIO">
                         <thead>
                             <tr>
-                                <th class="text-center" style="width:40px;">
+                                <th class="text-center" style="width:60px;">
                                     <input type="checkbox"
-                                           name="checkboxAllRow"
+                                           name="checkboxAllRow" class="checkboxAllRow"
                                            v-on:click="toggleAllBox"/>
-                                </th>
-                                <th class="text-center" style="width:40px;">
-                                    #
                                 </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
@@ -181,7 +163,6 @@
                                                name="checkboxRow"
                                                value="#[item.id]"/>
                                     </td>
-                                    <td class="text-center">#[$index+1]</td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
@@ -215,7 +196,7 @@
                     </table>
                 </div>
             </div>
-                {% endblock %}
+            {% endblock %}
 
                 {% block common_list_pagination %}
                     <div class="box-footer clearfix">
