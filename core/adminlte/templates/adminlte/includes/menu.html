@@ -13,7 +13,7 @@
             </li>
 
             {% if perms.member.change_seller or perms.member.view_seller %}
-            <li class="treeview active {% ifstartswith '/common/member/' %}active{% endifstartswith %}">
+            <li class="treeview {% ifstartswith '/common/member/' %}active{% endifstartswith %}">
                 <a href="javascript:void(0)">
                             <i class='fa fa-cloud'></i>
                             <b>Members</b>
@@ -46,67 +46,14 @@
             </li>
             {%endif%}
 
-            {% if perms.customer.add_customer or perms.customer.view_customer %}
-            <li class="treeview active {% ifstartswith '/common/customer/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Customers</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            {% if perms.customer.change_customer %}
-                            <li>
-                            <a href="/common/customer/customer/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Customer
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.customer.change_customer %}
-                            <li>
-                            <a href="/common/customer/customer/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Customer List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+            {% include "customer/_menu.html" %}
 
-            {% if perms.order.add_order or perms.order.view_order %}
-            <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Orders</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            {% if perms.order.change_order %}
-
-                            <li>
-                            <a href="/common/order/order/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Order
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.order.change_order %}
-                            <li>
-                            <a href="/common/order/order/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Order List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+            {% include "order/_menu.html" %}
 
             {% include "product/_menu.html" %}
 
             {% if perms.express.add_expresscarrier or perms.product.view_expressorder %}
-            <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
+            <li class="treeview {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
                 <a href="javascript:void(0)">
                             <i class='fa fa-cloud'></i>
                             <b>Express</b>

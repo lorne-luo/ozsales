@@ -23,6 +23,7 @@ from apps.member.models import Seller
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
     remarks = models.CharField(_('remarks'), max_length=254, null=True, blank=True)
+
     # tags = models.ManyToManyField(Customer, verbose_name=_('mobile number'), null=True, blank=True)
 
     class Meta:
@@ -79,19 +80,18 @@ class Customer(AbstractBaseUser):
     def __str__(self):
         return '%s' % self.name
 
-
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name)
 
     def get_edit_link(self):
-        url = reverse('customer-update-view', args=[self.id])
+        url = reverse('customer:customer-update', args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
-        url = reverse('customer-detail-view', args=[self.id])
+        url = reverse('customer:customer-detail', args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name)
 
     get_detail_link.short_description = 'Name'
@@ -257,4 +257,3 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
-

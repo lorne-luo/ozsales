@@ -44,8 +44,11 @@ class OrderSerializer(serializers.ModelSerializer):
         return url
 
     def get_customer_url(self, obj):
-        url = reverse('admin:customer_customer_change', args=[obj.customer.id])
-        return url
+        request = self.context.get('request', None)
+        if request.user.has_perm('customer.change_customer'):
+            return reverse('customer:customer-update', args=[obj.customer.id])
+        elif request.user.has_perm('customer.view_customer'):
+            return reverse('customer:customer-detail', args=[obj.customer.id])
 
     def get_shipping_order(self, obj):
         return obj.get_shipping_orders()

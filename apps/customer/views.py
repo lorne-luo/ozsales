@@ -1,73 +1,132 @@
-from django.shortcuts import render
-from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect
-from braces.views import MultiplePermissionsRequiredMixin
+# coding=utf-8
+from django.views.generic import ListView, CreateView, UpdateView
+from django.core.urlresolvers import reverse
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from rest_framework.viewsets import ModelViewSet
+from rest_framework import permissions
+from core.adminlte.views import CommonContextMixin, CommonViewSet
+from models import Address, Customer, InterestTag
+import serializers
+import forms
 
-from core.adminlte.views import CommonListPageView, CommonCreatePageView, CommonDetailPageView, CommonUpdatePageView, \
-    CommonDeletePageView
-from models import Customer
-from forms import CustomerEditForm, CustomerAddForm2
 
+# views for Address
 
-class CustomerList(MultiplePermissionsRequiredMixin, TemplateView):
-    ''' List of objects. '''
-    template_name = 'customer/customer-list.html'
+class AddressListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    model = Address
+    template_name_suffix = '_list'  # customer/address_list.html
     permissions = {
-        "any": ("customer.add_customer", "customer.view_customer")
+        "all": ("customer.view_address",)
     }
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        context['customers'] = Customer.objects.all().order_by('-last_order_time')
-        return self.render_to_response(context)
+    def get_context_data(self, **kwargs):
+        context = super(AddressListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Name', 'Mobile', 'Address', 'Customer', 'ID number', 'ID Front',
+                                   'ID Back'] + ['']
+        context['table_fields'] = ['link', 'mobile', 'address', 'customer_link', 'id_number', 'id_photo_front',
+                                   'id_photo_back'] + ['id']
+        return context
 
 
-class CustomerAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
-    ''' Add/Edit a object. '''
-    template_name = 'customer/customer-edit.html'
+class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    model = Address
+    form_class = forms.AddressAddForm
+    template_name = 'adminlte/common_form.html'
     permissions = {
-        "any": ("customer.add_customer", "customer.view_customer")
+        "all": ("address.add_address",)
     }
 
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', '')
-        context = {'form': CustomerAddForm2(), }
-        if pk:
-            customer = get_object_or_404(Customer, id=pk)
-            context['customer'] = customer
-
-        return self.render_to_response(context)
+    def get_success_url(self):
+        return reverse('customer:address-list')
 
 
-class CustomerListView(CommonListPageView):
+class AddressUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Address
+    form_class = forms.AddressUpdateForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("address.change_address",)
+    }
+
+    def get_success_url(self):
+        return reverse('customer:address-list')
+
+
+class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    model = Address
+    form_class = forms.AddressDetailForm
+    template_name = 'adminlte/common_detail_new.html'
+    permissions = {
+        "all": ("address.view_address",)
+    }
+
+
+# api views for Address
+
+class AddressViewSet(CommonViewSet):
+    queryset = Address.objects.all()
+    serializer_class = serializers.AddressSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+    filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
+    search_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
+
+
+# views for Customer
+
+class CustomerListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = Customer
+    template_name_suffix = '_list'  # customer/customer_list.html
+    permissions = {
+        "all": ("customer.view_customer",)
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerListView, self).get_context_data(**kwargs)
+        context['table_titles'] = ['Name', 'Mobile', 'Primary Address', 'Order Count', '']
+        context['table_fields'] = ['link', 'mobile', 'primary_address_display', 'order_count', 'id']
+        return context
 
 
-class CustomerCreateView(CommonCreatePageView):
+class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Customer
+    form_class = forms.CustomerAddForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("customer.add_customer",)
+    }
 
-    def get(self, request, *args, **kwargs):
-        self.object = None
-        self.set_form_page_attributes(*args, **kwargs)
-        form = CustomerAddForm2()
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
+    def get_success_url(self):
+        return reverse('customer:customer-list')
 
 
-class CustomerDetailView(CommonDetailPageView):
+class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
+    form_class = forms.CustomerUpdateForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("customer.change_customer",)
+    }
+
+    def get_success_url(self):
+        return reverse('customer:customer-list')
 
 
-class CustomerUpdateView(CommonUpdatePageView):
+class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
+    form_class = forms.CustomerDetailForm
+    template_name = 'adminlte/common_detail_new.html'
+    permissions = {
+        "all": ("customer.view_customer",)
+    }
 
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = CustomerEditForm(instance=self.object)
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
 
+# api views for Customer
 
-class CustomerDeleteView(CommonDeletePageView):
-    model = Customer
+class CustomerViewSet(CommonViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = serializers.CustomerSerializer
+    permission_classes = [permissions.DjangoModelPermissions]
+    filter_fields = ['last_login', 'seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
+                     'remarks', 'tags']
+    search_fields = ['last_login', 'seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
+                     'remarks', 'tags']

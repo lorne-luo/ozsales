@@ -1,0 +1,29 @@
+{% load activelink %}
+<li class="treeview active">
+    <a href="javascript:void(0)">
+        <i class='fa fa-cloud'></i>
+        <b>Customer</b>
+        <i class="fa fa-angle-left pull-right"></i>
+    </a>
+    <ul class="treeview-menu">
+
+        {% if perms.customer.add_customer or perms.customer.change_customer %}
+        <li>
+        <a href="{% url 'customer:customer-list' %}">
+                <i class="fa fa-circle-o"></i>
+                Customer
+            </a>
+        </li>
+        {%endif%}
+
+        {% if perms.customer.add_address or perms.customer.change_address %}
+        <li>
+        <a href="{% url 'customer:address-list' %}">
+                <i class="fa fa-circle-o"></i>
+                Address
+            </a>
+        </li>
+        {%endif%}
+
+    </ul>
+</li>

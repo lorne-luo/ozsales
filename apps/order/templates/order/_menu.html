@@ -1,5 +1,5 @@
 {% load activelink %}
-<li class="treeview {% ifstartswith '/order/' %}active{% endifstartswith %}">
+<li class="treeview active">
     <a href="javascript:void(0)">
         <i class='fa fa-cloud'></i>
         <b>Order</b>
@@ -10,7 +10,7 @@
         <li>
         <a href="{% url 'order:order-list-short' %}">
                 <i class="fa fa-circle-o"></i>
-                Order
+                Orders
             </a>
         </li>
         {%endif%}
