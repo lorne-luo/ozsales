@@ -104,7 +104,7 @@
             {% for product in product_forms %}
 
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}odd{% else %}even{% endif %}"
-                 id="form-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
+                 id="products-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
 {#                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">#}
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
@@ -132,7 +132,9 @@
                         {{ product.store }}
                     </div>
                     <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
-                        <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i></a>
+                        <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
+                    </a>
+                    <input style="visibility: hidden" id="id_products-{{ forloop.counter0 }}-DELETE" name="products-{{ forloop.counter0 }}-DELETE" type="checkbox">
                 </div>
             </div>
             {% endfor %}
@@ -140,10 +142,10 @@
             <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
             <input id="order_pk" type="hidden" value="{{ object.pk }}">
 
-        </div>
+        </div><!-- //express_table -->
 
         <div class="box-body ln34">
-            <button type="button" class="btn btn-success col-md-1 col-xs-3" v-on:click="add_product">增加一项</button>
+            <button type="button" class="btn btn-success col-xs-1" v-on:click="add_product">增加一项</button>
 {#            <div class="col-xs-8">#}
 {#              <b>总计:</b>#}
 {#              <span id="total_price"></span>#}
@@ -161,6 +163,7 @@
 
         <div id="express_table" class="box-body form-horizontal">
             <div class="form-group">
+                <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 <div class="col-xs-2">
                     <b>物流</b>
                 </div>
@@ -182,7 +185,8 @@
 
             {% for express in express_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}odd{% else %}even{% endif %}"
-                 id="form-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
+                 id="express_orders-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
+                <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 {{ express.id }}
                 {{ express.order }}
                 <div class="col-lg-2 col-md-2 col-xs-6">
@@ -211,18 +215,19 @@
             <input id="express_forms_length" name="express_forms_length" type="hidden" value="{{ express_forms|length }}">
         </div>
         <div class="box-body ln34">
-                <button type="button" class="btn btn-success col-md-1 col-xs-3" v-on:click="add_express">增加一项</button>
+                <button type="button" class="btn btn-success col-sm-offset-1 col-xs-1" v-on:click="add_express">增加一项</button>
             </div>
         <div class="box-footer">
-          <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+          <button style="width:108px" class="btn btn-primary col-sm-offset-1" v-on:click="submit">保 存</button>
           <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
 
+        </div><!-- //expressorders -->
     </div>
-    </form>
 
     <div class="hide" id="express_template">
         <div class="form-group">
+            <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
             <input id="id_order" type="hidden" value="">
             <div class="col-lg-2 col-md-2 col-xs-6">
                 {{ new_express_form.carrier }}
@@ -246,7 +251,6 @@
             </div>
         </div>
     </div>
-
     <div class="hide" id="product_template">
         <div class="form-group">
             <input id="id_order" type="hidden" value="">
@@ -272,11 +276,14 @@
                 <div class="inline hidden-xs hidden-sm">
                     {{ new_product_form.store }}
                 </div>
-                <a href="javascript:void(0)" class="delete_product" v-on:click="delete_product">
-                    <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i></a>
+                <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
+                    <i style="color:#dd4b39;" class="fa fa-lg fa-times-circle"></i>
+                </a>
             </div>
         </div>
     </div>
+
+    </form>
 </div>
 {% endblock %}
 

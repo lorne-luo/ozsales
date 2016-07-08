@@ -27,13 +27,14 @@ var OrderEditPageVue = Vue.extend({
         add_product: function (event) {
             var order_pk = $("input#order_pk").val();
 
-            var $TOTAL_FORMS = $("#product_table input#id_form-TOTAL_FORMS");
-            $("#product_table input#id_form-" + ($TOTAL_FORMS.val() - 1) + "-order").val(order_pk);
-
+            var $TOTAL_FORMS = $("#product_table input#id_products-TOTAL_FORMS");
+            // $("#product_table input#id_products-" + ($TOTAL_FORMS.val() - 1) + "-order").val(order_pk);
+            // console.log($("#product_table input#id_products-" + ($TOTAL_FORMS.val() - 1) + "-order")[0]);
+            // console.log(order_pk);
             var $product_template = $("#product_template");
             var $product_template_copy = $product_template.children().clone(false);
-            var base_id = "id_form-" + $TOTAL_FORMS.val();
-            var base_name = "form-" + $TOTAL_FORMS.val();
+            var base_id = "id_products-" + $TOTAL_FORMS.val();
+            var base_name = "products-" + $TOTAL_FORMS.val();
 
             $("input#id_order", $product_template_copy).val(order_pk);
             $("input#id_order", $product_template_copy).attr("name", base_name + "-order");
@@ -60,7 +61,7 @@ var OrderEditPageVue = Vue.extend({
             $("select#id_store", $product_template_copy).attr("name", base_name + "-store");
             $("select#id_store", $product_template_copy).attr("id", base_id + "-store");
 
-            $product_template_copy.attr('id', 'form-' + $TOTAL_FORMS.val());
+            $product_template_copy.attr('id', 'products-' + $TOTAL_FORMS.val());
             var $element = $("#product_table").append($product_template_copy);
             this.$compile($element.get(0)); // link event for delete button
             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
@@ -71,13 +72,14 @@ var OrderEditPageVue = Vue.extend({
         add_express: function (event) {
             var order_pk = $("input#order_pk").val();
 
-            var $TOTAL_FORMS = $("#express_table input#id_form-TOTAL_FORMS");
-            $("#express_table input#id_form-" + ($TOTAL_FORMS.val() - 1) + "-order").val(order_pk);
+            var $TOTAL_FORMS = $("#express_table input#id_express_orders-TOTAL_FORMS");
+            $("#express_table input#id_express_orders-" + ($TOTAL_FORMS.val() - 1) + "-order").val(order_pk);
 
             var $express_template = $("#express_template");
             var $express_template_copy = $express_template.children().clone(false);
-            var base_id = "id_form-" + $TOTAL_FORMS.val();
-            var base_name = "form-" + $TOTAL_FORMS.val();
+            console.log($express_template_copy[0]);
+            var base_id = "id_express_orders-" + $TOTAL_FORMS.val();
+            var base_name = "express_orders-" + $TOTAL_FORMS.val();
 
             $("input#id_order", $express_template_copy).val(order_pk);
             $("input#id_order", $express_template_copy).attr("name", base_name + "-order");
@@ -98,8 +100,9 @@ var OrderEditPageVue = Vue.extend({
             $("input#id_id_upload", $express_template_copy).attr("name", base_name + "-id_upload");
             $("input#id_id_upload", $express_template_copy).attr("id", base_id + "-id_upload");
 
-            $express_template_copy.attr('id', 'form-' + $TOTAL_FORMS.val());
+            $express_template_copy.attr('id', 'express_orders-' + $TOTAL_FORMS.val());
             var $element = $("#express_table").append($express_template_copy);
+            console.log($element.get(0));
             this.$compile($element.get(0)); // link event for delete button
             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
@@ -107,13 +110,14 @@ var OrderEditPageVue = Vue.extend({
                 .chosen({search_contains: true, disable_search_threshold: 10});
         },
         submit: function (event) {
-            var total_forms = parseInt($("input#id_form-TOTAL_FORMS").val());
-            var order_pk = $("input#order_pk").val();
-            // set order id for each form
-            for (var i = 0; i < total_forms; i++) {
-                if ($("input#id_form-" + i + "-product").val() || $("input#id_form-" + i + "-name").val())
-                    $("input#id_form-" + i + "-order").val(order_pk);
-            }
+            // var total_forms = parseInt($("input#id_form-TOTAL_FORMS").val());
+            // var order_pk = $("input#order_pk").val();
+            // // set order id for each form
+            // for (var i = 0; i < total_forms; i++) {
+            //     if ($("input#id_form-" + i + "-product").val() || $("input#id_form-" + i + "-name").val())
+            //         $("input#id_form-" + i + "-order").val(order_pk);
+            // }
+
             // add next url into form if click save & continue
             if ($(event.target).attr('name') == '_continue') {
                 $('<input>').attr({
@@ -126,7 +130,7 @@ var OrderEditPageVue = Vue.extend({
             document.getElementById("commonForm").submit();
         },
         delete_product: function (event) {
-            var $TOTAL_FORMS = $("#product_table input#id_form-TOTAL_FORMS");
+            var $TOTAL_FORMS = $("#product_table input#id_products-TOTAL_FORMS");
             var product = $(event.target).closest('div.form-group');
             console.log(product[0]);
             var orderProductID = $("input:hidden[id$='-id']", product).val();
@@ -149,6 +153,7 @@ var OrderEditPageVue = Vue.extend({
                         function (resp) {
                             product.remove();
                             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+                            location.reload();
                         }
                     );
                 });
@@ -158,9 +163,11 @@ var OrderEditPageVue = Vue.extend({
             }
         },
         delete_express: function (event) {
-            var $TOTAL_FORMS = $("#express_table input#id_form-TOTAL_FORMS");
+            var $TOTAL_FORMS = $("#express_table input#id_express_orders-TOTAL_FORMS");
             var express = $(event.target).closest('div.form-group');
+            console.log($TOTAL_FORMS[0]);
             console.log(express[0]);
+            console.log(express[0].id);
             var orderExpressID = $("input:hidden[id$='-id']", express).val();
             console.log(orderExpressID);
             if (orderExpressID) {
@@ -182,6 +189,7 @@ var OrderEditPageVue = Vue.extend({
                         function (resp) {
                             express.remove();
                             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+                            location.reload();
                         }
                     );
                 });

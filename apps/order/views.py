@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.utils.translation import ugettext as _
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.db import transaction
 from django.forms.models import inlineformset_factory, modelformset_factory
 from django_filters import Filter, FilterSet
 from django.contrib.auth import authenticate, login
@@ -121,17 +122,23 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
-        context['new_product_form'] = forms.OrderProductInlineAddForm()
-        context['product_forms'] = forms.OrderProductFormSet(queryset=self.object.products.all())
-        context['new_express_form'] = ExpressOrderInlineAddForm()
-        context['express_forms'] = ExpressOrderFormSet(queryset=self.object.express_orders.all())
+
+        context['new_product_form'] = forms.OrderProductInlineAddForm(prefix='products')
+        product_forms = forms.OrderProductFormSet(queryset=self.object.products.all(), prefix='products')
+        context['product_forms'] = product_forms
+
+        context['new_express_form'] = ExpressOrderInlineAddForm(prefix='express_orders')
+        express_forms = ExpressOrderFormSet(queryset=self.object.express_orders.all(), prefix='express_orders')
+        context['express_forms'] = express_forms
 
         return context
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        formset = forms.OrderProductFormSet(request.POST)
+        # order products
+        formset = forms.OrderProductFormSet(request.POST, prefix='products')
         for form in formset:
             if form.instance.product or form.instance.name:
                 form.fields['order'].initial = self.object.id
@@ -140,6 +147,18 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
                 # form.cleaned_data['order'] = self.object
                 form.instance.order_id = self.object.id
         instances = formset.save()
+
+        # express orders
+        express_formset = ExpressOrderFormSet(request.POST, prefix='express_orders')
+        for form in express_formset:
+            instance = form.instance
+            if form.instance.track_id:
+                form.fields['order'].initial = self.object.id
+                form.base_fields['order'].initial = self.object.id
+                form.changed_data.append('order')
+                form.instance.order_id = self.object.id
+
+        express_formset.save()
 
         result = super(OrderUpdateView, self).post(request, *args, **kwargs)
         next = request.POST.get('next')

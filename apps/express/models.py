@@ -57,7 +57,7 @@ class ExpressOrder(models.Model):
         return super(ExpressOrder, self).save()
 
     def get_track_url(self):
-        if self.remarks.startswith('http'):
+        if self.remarks and self.remarks.startswith('http'):
             return self.remarks
         elif '%s' in self.carrier.search_url:
             return self.carrier.search_url % self.track_id
