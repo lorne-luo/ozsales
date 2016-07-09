@@ -153,7 +153,10 @@ class Product(models.Model):
             spec += ' ' + self.spec2
         if self.spec3:
             spec += ' ' + self.spec3
-        return '%s %s %s' % (self.brand.name_en, self.name_cn, spec)
+        if self.brand and self.brand.name_en.lower() != 'none':
+            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+        else:
+            return '%s%s' % (self.name_cn, spec)
 
     get_name_cn.allow_tags = True
     get_name_cn.short_description = 'CN Name'
