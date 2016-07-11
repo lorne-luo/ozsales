@@ -158,9 +158,9 @@ class Order(models.Model):
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
 
-        if not self.sell_price_rmb or self.sell_price_rmb < self.total_cost_rmb:
+        if self.sell_price_rmb is None:
             self.sell_price_rmb = self.origin_sell_rmb
-        if self.sell_price_rmb and self.total_cost_rmb:
+        if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
         self.save()
@@ -240,7 +240,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     name = models.CharField(_('Name'), max_length=128, null=True, blank=True)
-    amount = models.IntegerField(_('Amount'), default=0, blank=False, null=False, )
+    amount = models.IntegerField(_('Amount'), blank=True, null=True, )
     sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_rmb = models.DecimalField(_('Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -253,12 +253,21 @@ class OrderProduct(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
+        if not self.amount:
+            self.amount = 1
+
         if not self.cost_price_aud:
-            self.cost_price_aud = self.product.normal_price
+            if self.product and self.product.normal_price:
+                self.cost_price_aud = self.product.normal_price
+            else:
+                self.cost_price_aud = 0
         self.total_price_aud = self.cost_price_aud * self.amount
 
         if not self.sell_price_rmb:
-            self.sell_price_rmb = self.product.safe_sell_price
+            if self.product and self.product.safe_sell_price:
+                self.sell_price_rmb = self.product.safe_sell_price
+            else:
+                self.sell_price_rmb = 0
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product and not self.name:
