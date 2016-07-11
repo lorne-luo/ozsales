@@ -152,6 +152,7 @@ class OrderProductInlineAddForm(ModelForm):
         self.fields['cost_price_aud'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['order'].widget = forms.HiddenInput()
 
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:

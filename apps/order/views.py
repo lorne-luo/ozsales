@@ -95,11 +95,6 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
             return reverse('order:order-update', args=[self.object.id])
         return reverse('order:order-list-short')
 
-    def get_context_data(self, **kwargs):
-        context = super(OrderAddView, self).get_context_data(**kwargs)
-        context['new_product_form'] = forms.OrderProductInlineAddForm()
-        return context
-
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid():
