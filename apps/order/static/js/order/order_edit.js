@@ -1,6 +1,6 @@
 var OrderEditPageVue = Vue.extend({
   el: function () {
-    return '#orderproduct';
+    return 'form#commonForm';
   },
   data: function () {
     return {
@@ -35,7 +35,7 @@ var OrderEditPageVue = Vue.extend({
       var base_id = base + "-" + $TOTAL_FORMS.val();
       var base_name = form_name + "-" + $TOTAL_FORMS.val();
 
-      var fields = ["order", "product", "name", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
+      var fields = ["order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
       for (var i in fields) {
         var field = fields[i];
         var input = $("#" + base + "-" + field, $product_template_copy);

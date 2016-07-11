@@ -158,8 +158,9 @@ class Order(models.Model):
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
 
-        if self.sell_price_rmb is None:
+        if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
+
         if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
