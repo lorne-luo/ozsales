@@ -57,7 +57,6 @@ var OrderListPageVue = CommonListPageVue.extend({
             if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_shipping')) {
                 var tr=$(event.target).closest('tr');
                 var td =$('td.show_shipping',tr);
-
                 if ($('#shipping_' + pk).hasClass('hide')) {
                     $('#shipping_' + pk).removeClass('hide');
                     td.html('<i class="fa fa-minus-square text-info" aria-hidden="true"></i>');

@@ -221,7 +221,7 @@ CELERYD_TASK_TIME_LIMIT = 600
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 15,
     'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
     'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
     'UNICODE_JSON': True,
