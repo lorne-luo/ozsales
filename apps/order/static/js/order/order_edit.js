@@ -49,6 +49,7 @@ var OrderEditPageVue = Vue.extend({
       this.$compile($element.get(0)); // link event for delete button
       $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
+      this.reset_row_color(form_name);
       $("select[class$='form-control']").not(".hide select[class$='form-control']")
         .chosen({search_contains: true, disable_search_threshold: 10});
     },
@@ -58,8 +59,6 @@ var OrderEditPageVue = Vue.extend({
       var base = "id_" + form_name;
 
       var $TOTAL_FORMS = $("#express_table input#" + base + "-TOTAL_FORMS");
-      // $("#express_table input#id_express_orders-" + ($TOTAL_FORMS.val() - 1) + "-order").val(order_pk);
-
       var $express_template = $("#express_template");
       var $express_template_copy = $express_template.children().clone(false);
       var base_id = base + "-" + $TOTAL_FORMS.val();
@@ -79,6 +78,7 @@ var OrderEditPageVue = Vue.extend({
       this.$compile($element.get(0)); // link event for delete button
       $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
+      this.reset_row_color(form_name);
       $("select[class$='form-control']").not(".hide select[class$='form-control']")
         .chosen({search_contains: true, disable_search_threshold: 10});
     },
@@ -95,6 +95,7 @@ var OrderEditPageVue = Vue.extend({
       document.getElementById("commonForm").submit();
     },
     delete_product: function (event) {
+      var self = this;
       var form_name = "products";
       var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
       var total = parseInt($TOTAL_FORMS.val());
@@ -142,15 +143,18 @@ var OrderEditPageVue = Vue.extend({
                 item.attr("id", new_base_name);
               }
               $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+              self.reset_row_color(form_name);
             }
           );
         });
       } else {
         product.remove();
         $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+        self.reset_row_color(form_name);
       }
     },
     delete_express: function (event) {
+      var self = this;
       var form_name = "express_orders";
       var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
       var total = parseInt($TOTAL_FORMS.val());
@@ -199,12 +203,25 @@ var OrderEditPageVue = Vue.extend({
                 item.attr("id", new_base_name);
               }
               $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+              self.reset_row_color(form_name);
             }
           );
         });
       } else {
         express.remove();
         $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+        self.reset_row_color(form_name);
+      }
+    },
+    reset_row_color: function (form_name) {
+      console.log('reset_row_color');
+      var count = parseInt($("input#id_" + form_name + "-TOTAL_FORMS").val());
+      for (var i = 0; i < count; i++) {
+        var item = $("div.form-group#" + form_name + "-" + i);
+        if (i % 2)
+          item.removeClass('even').addClass('odd');
+        else
+          item.removeClass('odd').addClass('even');
       }
     }
 

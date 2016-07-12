@@ -103,7 +103,7 @@
             <input id="order_pk" type="hidden" value="{{ object.pk }}">
             {{ product_forms.management_form }}
             {% for product in product_forms %}
-            <div class="form-group {% if forloop.counter0|divisibleby:2 %}odd{% else %}even{% endif %}"
+            <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
                  id="products-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
 {#                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">#}
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
@@ -181,7 +181,7 @@
             <input id="express_forms_length" name="express_forms_length" type="hidden" value="{{ express_forms|length }}">
 
             {% for express in express_forms %}
-            <div class="form-group {% if forloop.counter0|divisibleby:2 %}odd{% else %}even{% endif %}"
+            <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
                  id="express_orders-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
                 <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 {{ express.id }}
