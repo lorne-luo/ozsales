@@ -39,7 +39,7 @@ class Order(models.Model):
                                            null=True)
     product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'Shipping'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_(u'Ship Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Ship Time'))
     total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)

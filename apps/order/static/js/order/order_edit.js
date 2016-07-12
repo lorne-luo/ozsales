@@ -82,18 +82,6 @@ var OrderEditPageVue = Vue.extend({
       $("select[class$='form-control']").not(".hide select[class$='form-control']")
         .chosen({search_contains: true, disable_search_threshold: 10});
     },
-    submit: function (event) {
-      // add next url into form if click save & continue
-      if ($(event.target).attr('name') == '_continue') {
-        $('<input>').attr({
-          type: 'hidden',
-          id: 'next',
-          name: 'next',
-          value: window.location
-        }).appendTo('#commonForm');
-      }
-      document.getElementById("commonForm").submit();
-    },
     delete_product: function (event) {
       var self = this;
       var form_name = "products";
@@ -214,7 +202,6 @@ var OrderEditPageVue = Vue.extend({
       }
     },
     reset_row_color: function (form_name) {
-      console.log('reset_row_color');
       var count = parseInt($("input#id_" + form_name + "-TOTAL_FORMS").val());
       for (var i = 0; i < count; i++) {
         var item = $("div.form-group#" + form_name + "-" + i);
@@ -223,8 +210,46 @@ var OrderEditPageVue = Vue.extend({
         else
           item.removeClass('odd').addClass('even');
       }
-    }
+    },
+    submit: function (event) {
+      var order_pk = $("input#order_pk").val();
+      var product_count = parseInt($("input#id_products-TOTAL_FORMS").val());
+      var express_count = parseInt($("input#id_express_orders-TOTAL_FORMS").val());
 
+      // add order id for products
+      for (var i = 0; i < product_count; i++) {
+        var item = $("div.form-group#products-" + i);
+        var product = $("#id_products-" + i + "-product", item);
+        var product_name = $("#id_products-" + i + "-name", item);
+
+        if (product.val() || product_name.val()) {
+          var order = $("#id_products-" + i + "-order", item);
+          order.val(order_pk);
+        }
+      }
+
+      // add order id for express
+      for (var i = 0; i < express_count; i++) {
+        var item = $("div.form-group#express_orders-" + i);
+        var track_id = $("#id_express_orders-" + i + "-track_id", item);
+
+        if (track_id.val()) {
+          var order = $("#id_express_orders-" + i + "-order", item);
+          order.val(order_pk);
+        }
+      }
+
+      // add next url into form if click save & continue
+      if ($(event.target).attr('name') == '_continue') {
+        $('<input>').attr({
+          type: 'hidden',
+          id: 'next',
+          name: 'next',
+          value: window.location
+        }).appendTo('#commonForm');
+      }
+      document.getElementById("commonForm").submit();
+    }
   }
 });
 

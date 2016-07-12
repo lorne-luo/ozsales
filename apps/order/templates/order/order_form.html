@@ -61,8 +61,8 @@
         </div>
         {% if object.id %}
         <div class="box-footer">
-          <button style="width:108px" class="btn btn-primary col-sm-offset-2" v-on:click="submit">保 存</button>
-          <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+          <button type="button" style="width:108px" class="btn btn-primary col-sm-offset-2" v-on:click="submit">保 存</button>
+          <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
         {% endif %}
     </div>
@@ -144,9 +144,9 @@
         </div><!-- //express_table -->
 
         <div class="box-footer">
-        <button style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
-          <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-          <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+            <button type="button" style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
+            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
 
         <div id="expressorders" class="box box-info">
@@ -210,9 +210,9 @@
             {% endfor %}
         </div>
         <div class="box-footer">
-            <button style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
-            <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-            <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+            <button type="button" style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
+            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
 
         </div><!-- //expressorders -->
