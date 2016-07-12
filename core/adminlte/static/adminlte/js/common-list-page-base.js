@@ -105,7 +105,8 @@ var CommonListPageVue = Vue.extend({
                     confirmButtonText: "确定",
                     cancelButtonText: "取消",
                     closeOnConfirm: false,
-                    showLoaderOnConfirm: true
+                    showLoaderOnConfirm: true,
+                    animation: false
                 }, function () {
                     $.AdminLTE.apiDelete(
                         delUrl,
@@ -114,7 +115,8 @@ var CommonListPageVue = Vue.extend({
                             self.loadData({});
                             swal({
                                 title: "删除成功!",
-                                type: "success"
+                                type: "success",
+                                animation: false
                             });
                             $('input.checkboxAllRow').prop( "checked", false);
                         }
@@ -135,7 +137,8 @@ var CommonListPageVue = Vue.extend({
             if (ids.length === 0) {
                 swal({
                     title: "请选择数据!",
-                    type: "warning"
+                    type: "warning",
+                    animation: false
                 });
                 return;
             }

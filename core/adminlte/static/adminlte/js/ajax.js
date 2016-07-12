@@ -1,8 +1,3 @@
-/**
- * Created by lyhapple on 15/11/6.
- */
-
-// todo: ajax部分方法待优化
 
 (function ($) {
     var getCookie = function (name) {
@@ -63,7 +58,8 @@
                 }
                 swal({
                     title: text,
-                    type: "error"
+                    type: "error",
+                    animation: false
                 });
             },
             success: callback

@@ -87,7 +87,8 @@ var OrderEditPageVue = Vue.extend({
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           closeOnConfirm: true,
-          showLoaderOnConfirm: false
+          showLoaderOnConfirm: false,
+          animation: false
         }, function () {
           var deleteUrl = Urls[delete_url_tag]();
           $.AdminLTE.apiDelete(

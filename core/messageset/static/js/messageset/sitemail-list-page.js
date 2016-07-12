@@ -91,14 +91,16 @@ var sitemailListPageVue = new CommonListPageVue({
                 confirmButtonText: "确定!",
                 cancelButtonText: "取消",
                 closeOnConfirm: false,
-                showLoaderOnConfirm: true
+                showLoaderOnConfirm: true,
+                animation: false
             }, function () {
                 $.AdminLTE.apiPatch(
                     Urls['messageset:api-sitemail_markall'](), {},
                     function (resp) {
                         swal({
                             title: "标识更新成功!",
-                            type: "success"
+                            type: "success",
+                            animation: false
                         }, function () {
                             self.loadData({});
                         });
