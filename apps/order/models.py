@@ -35,16 +35,16 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('status'))
     total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
-    product_cost_aud = models.DecimalField(_(u'Product Cost AUD'), max_digits=8, decimal_places=2, blank=True,
+    product_cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, blank=True,
                                            null=True)
     product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_(u'Shipping'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Ship Time'))
-    total_cost_aud = models.DecimalField(_(u'Total Cost AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_cost_rmb = models.DecimalField(_(u'Total Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin Sell RMB'), max_digits=8, decimal_places=2, blank=True,
+    total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True,
                                           null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
