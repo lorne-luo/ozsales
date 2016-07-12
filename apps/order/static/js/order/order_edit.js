@@ -95,10 +95,13 @@ var OrderEditPageVue = Vue.extend({
       document.getElementById("commonForm").submit();
     },
     delete_product: function (event) {
-      var $TOTAL_FORMS = $("#product_table input#id_products-TOTAL_FORMS");
+      var form_name = "products";
+      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
+      var total = parseInt($TOTAL_FORMS.val());
       var product = $(event.target).closest('div.form-group');
+      var id_input = $("input:hidden[id$='-id']", product);
 
-      var orderProductID = $("input:hidden[id$='-id']", product).val();
+      var orderProductID = id_input.val();
       if (orderProductID) {
         swal({
           title: "确定删除",
@@ -116,9 +119,29 @@ var OrderEditPageVue = Vue.extend({
             deleteUrl,
             $.param({'pk': orderProductID}),
             function (resp) {
-              // product.remove();
-              // $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
-              location.reload();
+              var arr = id_input.get(0).id.split('-');
+              var number = parseInt(arr[arr.length - 2]);
+              var fields = ["id", "order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
+
+              product.remove();
+              var $INITIAL_FORMS = $("input#id_" + form_name + "-INITIAL_FORMS");
+              $INITIAL_FORMS.val(parseInt($INITIAL_FORMS.val()) - 1);
+
+              for (var i = number + 1; i < total; i++) {
+                var item = $("div#" + form_name + "-" + i);
+                var base_id = "id_" + form_name + "-" + i;
+                var new_base_name = form_name + "-" + (i - 1);
+                var new_base_id = "id_" + form_name + "-" + (i - 1);
+
+                for (var j in fields) {
+                  var field = fields[j];
+                  var input = $("#" + base_id + "-" + field, item);
+                  input.attr("name", new_base_name + "-" + field);
+                  input.attr("id", new_base_id + "-" + field);
+                }
+                item.attr("id", new_base_name);
+              }
+              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
             }
           );
         });
@@ -128,10 +151,13 @@ var OrderEditPageVue = Vue.extend({
       }
     },
     delete_express: function (event) {
-      var $TOTAL_FORMS = $("#express_table input#id_express_orders-TOTAL_FORMS");
+      var form_name = "express_orders";
+      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
+      var total = parseInt($TOTAL_FORMS.val());
       var express = $(event.target).closest('div.form-group');
+      var id_input = $("input:hidden[id$='-id']", express);
+      var orderExpressID = id_input.val();
 
-      var orderExpressID = $("input:hidden[id$='-id']", express).val();
       if (orderExpressID) {
         swal({
           title: "确定删除",
@@ -149,9 +175,30 @@ var OrderEditPageVue = Vue.extend({
             deleteUrl,
             $.param({'pk': orderExpressID}),
             function (resp) {
-              // express.remove();
-              // $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
-              location.reload();
+              var arr = id_input.get(0).id.split('-');
+              var number = parseInt(arr[arr.length - 2]);
+              var fields = ["id", "order", "carrier", "track_id", "fee", "weight", "id_upload"];
+
+              express.remove();
+              // var $INITIAL_FORMS = $("#express_table input#id_express_orders-INITIAL_FORMS");
+              var $INITIAL_FORMS = $("input#id_" + form_name + "-INITIAL_FORMS");
+              $INITIAL_FORMS.val(parseInt($INITIAL_FORMS.val()) - 1);
+
+              for (var i = number + 1; i < total; i++) {
+                var item = $("div#" + form_name + "-" + i);
+                var base_id = "id_" + form_name + "-" + i;
+                var new_base_name = form_name + "-" + (i - 1);
+                var new_base_id = "id_" + form_name + "-" + (i - 1);
+
+                for (var j in fields) {
+                  var field = fields[j];
+                  var input = $("#" + base_id + "-" + field, item);
+                  input.attr("name", new_base_name + "-" + field);
+                  input.attr("id", new_base_id + "-" + field);
+                }
+                item.attr("id", new_base_name);
+              }
+              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
             }
           );
         });
