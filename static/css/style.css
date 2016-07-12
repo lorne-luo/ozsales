@@ -92,4 +92,9 @@ input[type='checkbox'] {
     margin-top: 4px;
 }
 
-
+.label-as-badge {
+    border-radius: 0.8em;
+}
+.label {
+    padding: .2em .6em .2em;
+}

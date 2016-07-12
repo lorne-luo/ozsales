@@ -54,13 +54,50 @@ var OrderListPageVue = CommonListPageVue.extend({
             this.loadData({'page': num});
         },
         showShipping: function (pk, event) {
-            if (event.target.tagName.toUpperCase() == 'TD') {
+            if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_shipping')) {
+                var tr=$(event.target).closest('tr');
+                var td =$('td.show_shipping',tr);
+
                 if ($('#shipping_' + pk).hasClass('hide')) {
                     $('#shipping_' + pk).removeClass('hide');
+                    td.html('<i class="fa fa-minus-square text-info" aria-hidden="true"></i>');
                 } else {
                     $('#shipping_' + pk).addClass('hide');
+                    td.html('<i class="fa fa-plus-square text-info" aria-hidden="true"></i>');
                 }
             }
+        },
+        next_ship_status: function (url, next, event) {
+            swal({
+              title: "确认物流变更",
+              text: "确认将物流状态变更为\""+next+"\"?",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              closeOnConfirm: true,
+              showLoaderOnConfirm: false,
+              animation: false
+            }, function () {
+              window.location.href = url;
+            });
+        },
+        pay: function (url, event) {
+            swal({
+              title: "确认支付",
+              text: "确认变更为\"已支付\"?",
+              type: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "确定",
+              cancelButtonText: "取消",
+              closeOnConfirm: true,
+              showLoaderOnConfirm: false,
+              animation: false
+            }, function () {
+              window.location.href = url;
+            });
         },
         detail: function (event) {
             var pk, customer;

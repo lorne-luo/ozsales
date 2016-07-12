@@ -72,7 +72,7 @@ class OrderUpdateForm(ModelForm):
 
     class Meta:
         model = Order
-        fields = ['customer', 'address', 'total_amount', 'status', 'paid_time', 'ship_time',
+        fields = ['customer', 'address', 'total_amount', 'status','is_paid', 'paid_time', 'ship_time',
                   'cost_aud', 'sell_rmb', 'sell_price_rmb', 'finish_time']
 
     def __init__(self, *args, **kwargs):
