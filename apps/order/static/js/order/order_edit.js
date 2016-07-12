@@ -142,15 +142,15 @@ var OrderEditPageVue = Vue.extend({
                 }
                 item.attr("id", new_base_name);
               }
-              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
               self.reset_row_color(form_name);
+              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
             }
           );
         });
       } else {
         product.remove();
-        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
         self.reset_row_color(form_name);
+        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
       }
     },
     delete_express: function (event) {
@@ -202,15 +202,15 @@ var OrderEditPageVue = Vue.extend({
                 }
                 item.attr("id", new_base_name);
               }
-              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
               self.reset_row_color(form_name);
+              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
             }
           );
         });
       } else {
         express.remove();
-        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
         self.reset_row_color(form_name);
+        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
       }
     },
     reset_row_color: function (form_name) {

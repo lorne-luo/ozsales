@@ -75,7 +75,7 @@
         </div>
 
         <div id="product_table" class="box-body form-horizontal">
-            <div class="form-group">
+            <div class="form-group hidden-xs hidden-sm">
                 <div class="col-xs-3">
                     <b>产品</b>
                 </div>
@@ -109,22 +109,25 @@
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
                 {{ product.order }}
-                <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
+                <div class="col-lg-3 col-md-6 col-xs-10">
                     {{ product.product }}
                 </div>
-                <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="visible-xs visible-sm ln34 col-xs-2">名  称</div>
+                <div class="col-lg-3 col-md-6 col-xs-10">
                     {{ product.name }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-3">
+                <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
+                <div class="col-lg-1 col-md-2 col-xs-2">
                     {{ product.amount }}
                 </div>
                 <div class="col-lg-1 col-md-2 col-xs-4">
                     {{ product.sell_price_rmb }}
                 </div>
-                <div class="col-lg-1 col-md-2 hidden-xs">
+                <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
                     {{ product.sum_price }}
                 </div>
-                <div class="col-lg-1 col-md-2 col-xs-4">
+                <div class="col-lg-1 col-md-2 col-xs-3">
                     {{ product.cost_price_aud }}
                 </div>
                 <div class="col-lg-2 col-md-4 col-xs-1">
@@ -134,20 +137,14 @@
                     <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
                         <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
                     </a>
-                    <input style="visibility: hidden" id="id_products-{{ forloop.counter0 }}-DELETE" name="products-{{ forloop.counter0 }}-DELETE" type="checkbox">
+                    <input class="hide" style="visibility: hidden" id="id_products-{{ forloop.counter0 }}-DELETE" name="products-{{ forloop.counter0 }}-DELETE" type="checkbox">
                 </div>
             </div>
             {% endfor %}
         </div><!-- //express_table -->
 
-        <div class="box-body ln34">
-            <button type="button" style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
-{#            <div class="col-xs-8">#}
-{#              <b>总计:</b>#}
-{#              <span id="total_price"></span>#}
-{#            </div>#}
-        </div>
         <div class="box-footer">
+        <button style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
           <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
           <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
@@ -158,7 +155,7 @@
         </div>
 
         <div id="express_table" class="box-body form-horizontal">
-            <div class="form-group">
+            <div class="form-group hidden-xs hidden-sm">
                 <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 <div class="col-xs-2">
                     <b>物流</b>
@@ -186,19 +183,22 @@
                 <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 {{ express.id }}
                 {{ express.order }}
-                <div class="col-lg-2 col-md-2 col-xs-6">
+                <div class="visible-xs visible-sm col-xs-3 ln34">物  流</div>
+                <div class="col-lg-2 col-md-2 col-xs-9">
                     {{ express.carrier }}
                 </div>
-                <div class="col-lg-2 col-md-2 col-xs-6">
+                <div class="visible-xs visible-sm col-xs-3 ln34">单  号</div>
+                <div class="col-lg-2 col-md-2 col-xs-9">
                     {{ express.track_id }}
                 </div>
-                <div class="col-lg-1 col-md-1 col-xs-4">
+                <div class="visible-xs visible-sm col-xs-3 ln34">价/重</div>
+                <div class="col-lg-1 col-md-1 col-xs-3">
                     {{ express.fee }}
                 </div>
-                <div class="col-lg-1 col-md-1 col-xs-4">
+                <div class="col-lg-1 col-md-1 col-xs-3">
                     {{ express.weight }}
                 </div>
-                <div class="col-lg-1 col-md-1 col-xs-4">
+                <div class="col-lg-1 col-md-1 col-xs-3">
                     <div class="inline ln34">
                         {{ express.id_upload }}
                     </div>
@@ -209,12 +209,10 @@
             </div>
             {% endfor %}
         </div>
-        <div class="box-body ln34">
-                <button type="button" style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
-            </div>
         <div class="box-footer">
-          <button style="width:108px" class="btn btn-primary col-sm-offset-1" v-on:click="submit">保 存</button>
-          <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+            <button style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
+            <button style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+            <button style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
 
         </div><!-- //expressorders -->
@@ -226,19 +224,22 @@
         <div class="form-group">
             <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
             {{ new_express_form.order }}
-            <div class="col-lg-2 col-md-2 col-xs-6">
+            <div class="visible-xs visible-sm col-xs-3 ln34">物  流</div>
+            <div class="col-lg-2 col-md-2 col-xs-9">
                 {{ new_express_form.carrier }}
             </div>
-            <div class="col-lg-2 col-md-2 col-xs-6">
+            <div class="visible-xs visible-sm col-xs-3 ln34">单  号</div>
+            <div class="col-lg-2 col-md-2 col-xs-9">
                 {{ new_express_form.track_id }}
             </div>
-            <div class="col-lg-1 col-md-1 col-xs-4">
+            <div class="visible-xs visible-sm col-xs-3 ln34">价/量</div>
+            <div class="col-lg-1 col-md-1 col-xs-3">
                 {{ new_express_form.fee }}
             </div>
-            <div class="col-lg-1 col-md-1 col-xs-4">
+            <div class="col-lg-1 col-md-1 col-xs-3">
                 {{ new_express_form.weight }}
             </div>
-            <div class="col-lg-1 col-md-1 col-xs-4">
+            <div class="col-lg-1 col-md-1 col-xs-3">
                 <div class="inline ln34">
                     {{ new_express_form.id_upload }}
                 </div>
@@ -252,22 +253,25 @@
     <div class="hide" id="product_template">
         <div class="form-group">
             {{ new_product_form.order }}
-            <div class="col-lg-3 col-md-6 col-xs-12">
+            <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
+            <div class="col-lg-3 col-md-6 col-xs-10">
                 {{ new_product_form.product }}
             </div>
-            <div class="col-lg-3 col-md-6 col-xs-12">
+                <div class="visible-xs visible-sm ln34 col-xs-2">名  称</div>
+            <div class="col-lg-3 col-md-6 col-xs-10">
                 {{ new_product_form.name }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-3">
+            <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
+            <div class="col-lg-1 col-md-2 col-xs-2">
                 {{ new_product_form.amount }}
             </div>
             <div class="col-lg-1 col-md-2 col-xs-4">
                 {{ new_product_form.sell_price_rmb }}
             </div>
-            <div class="col-lg-1 col-md-2 hidden-xs">
+            <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
                 {{ new_product_form.sum_price }}
             </div>
-            <div class="col-lg-1 col-md-2 col-xs-4">
+            <div class="col-lg-1 col-md-2 col-xs-3">
                 {{ new_product_form.cost_price_aud }}
             </div>
             <div class="col-lg-2 col-md-4 col-xs-1">

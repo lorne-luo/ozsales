@@ -56,6 +56,7 @@ input[type='checkbox'] {
     #product_table .form-group, #express_table .form-group {
         padding-bottom: 10px;
         padding-top: 5px;
+        margin-bottom: 0;
     }
 
     .form-group {
@@ -64,7 +65,7 @@ input[type='checkbox'] {
     }
 
     div.form-group.odd {
-        background: #f6f6ff;
+        background: #f0f0ff;
     }
 }
 
