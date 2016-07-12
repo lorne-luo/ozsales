@@ -20,9 +20,6 @@ var OrderEditPageVue = Vue.extend({
       count: 0
     }
   },
-  ready: function () {
-
-  },
   methods: {
     add_product: function (event) {
       var order_pk = $("input#order_pk").val();
@@ -83,77 +80,25 @@ var OrderEditPageVue = Vue.extend({
         .chosen({search_contains: true, disable_search_threshold: 10});
     },
     delete_product: function (event) {
-      var self = this;
-      var form_name = "products";
-      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
-      var total = parseInt($TOTAL_FORMS.val());
-      var product = $(event.target).closest('div.form-group');
-      var id_input = $("input:hidden[id$='-id']", product);
-
-      var orderProductID = id_input.val();
-      if (orderProductID) {
-        swal({
-          title: "确定删除",
-          text: "确定删除所选产品?",
-          type: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#DD6B55",
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          closeOnConfirm: true,
-          showLoaderOnConfirm: false
-        }, function () {
-          var deleteUrl = Urls['order:api-orderproduct-delete']();
-          $.AdminLTE.apiDelete(
-            deleteUrl,
-            $.param({'pk': orderProductID}),
-            function (resp) {
-              var arr = id_input.get(0).id.split('-');
-              var number = parseInt(arr[arr.length - 2]);
-              var fields = ["id", "order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
-
-              product.remove();
-              var $INITIAL_FORMS = $("input#id_" + form_name + "-INITIAL_FORMS");
-              $INITIAL_FORMS.val(parseInt($INITIAL_FORMS.val()) - 1);
-
-              for (var i = number + 1; i < total; i++) {
-                var item = $("div#" + form_name + "-" + i);
-                var base_id = "id_" + form_name + "-" + i;
-                var new_base_name = form_name + "-" + (i - 1);
-                var new_base_id = "id_" + form_name + "-" + (i - 1);
-
-                for (var j in fields) {
-                  var field = fields[j];
-                  var input = $("#" + base_id + "-" + field, item);
-                  input.attr("name", new_base_name + "-" + field);
-                  input.attr("id", new_base_id + "-" + field);
-                }
-                item.attr("id", new_base_name);
-              }
-              self.reset_row_color(form_name);
-              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
-            }
-          );
-        });
-      } else {
-        product.remove();
-        self.reset_row_color(form_name);
-        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
-      }
+      var url_tag = 'order:api-orderproduct-delete';
+      var fields = ["id", "order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
+      this.delete_item(event, url_tag, fields);
     },
     delete_express: function (event) {
+      var url_tag = 'express:api-expressorder-delete';
+      var fields = ["id", "order", "carrier", "track_id", "fee", "weight", "id_upload"];
+      this.delete_item(event, url_tag, fields);
+    },
+    delete_item: function (event, delete_url_tag, fields) {
       var self = this;
-      var form_name = "express_orders";
-      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
-      var total = parseInt($TOTAL_FORMS.val());
-      var express = $(event.target).closest('div.form-group');
-      var id_input = $("input:hidden[id$='-id']", express);
-      var orderExpressID = id_input.val();
+      var item = $(event.target).closest('div.form-group');
+      var id_input = $("input:hidden[id$='-id']", item);
+      var pk = id_input.val();
 
-      if (orderExpressID) {
+      if (pk) {
         swal({
           title: "确定删除",
-          text: "确定删除所选快递信息?",
+          text: "确定删除所选信息?",
           type: "warning",
           showCancelButton: true,
           confirmButtonColor: "#DD6B55",
@@ -162,44 +107,48 @@ var OrderEditPageVue = Vue.extend({
           closeOnConfirm: true,
           showLoaderOnConfirm: false
         }, function () {
-          var deleteUrl = Urls['express:api-expressorder-delete']();
+          var deleteUrl = Urls[delete_url_tag]();
           $.AdminLTE.apiDelete(
             deleteUrl,
-            $.param({'pk': orderExpressID}),
+            $.param({'pk': pk}),
             function (resp) {
-              var arr = id_input.get(0).id.split('-');
-              var number = parseInt(arr[arr.length - 2]);
-              var fields = ["id", "order", "carrier", "track_id", "fee", "weight", "id_upload"];
-
-              express.remove();
-              // var $INITIAL_FORMS = $("#express_table input#id_express_orders-INITIAL_FORMS");
-              var $INITIAL_FORMS = $("input#id_" + form_name + "-INITIAL_FORMS");
-              $INITIAL_FORMS.val(parseInt($INITIAL_FORMS.val()) - 1);
-
-              for (var i = number + 1; i < total; i++) {
-                var item = $("div#" + form_name + "-" + i);
-                var base_id = "id_" + form_name + "-" + i;
-                var new_base_name = form_name + "-" + (i - 1);
-                var new_base_id = "id_" + form_name + "-" + (i - 1);
-
-                for (var j in fields) {
-                  var field = fields[j];
-                  var input = $("#" + base_id + "-" + field, item);
-                  input.attr("name", new_base_name + "-" + field);
-                  input.attr("id", new_base_id + "-" + field);
-                }
-                item.attr("id", new_base_name);
-              }
-              self.reset_row_color(form_name);
-              $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+              self.remove_item(item, fields);
             }
           );
         });
       } else {
-        express.remove();
-        self.reset_row_color(form_name);
-        $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
+        self.remove_item(item, fields);
       }
+    },
+    remove_item: function (item, fields) {
+      var arr = item.get(0).id.split('-');
+      var number = parseInt(arr[arr.length - 1]);
+      var form_name = arr[0];
+
+      if (item.attr('data-pk')) {
+        var $INITIAL_FORMS = $("input#id_" + form_name + "-INITIAL_FORMS");
+        $INITIAL_FORMS.val(parseInt($INITIAL_FORMS.val()) - 1);
+      }
+      item.remove();
+
+      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
+      var total = parseInt($TOTAL_FORMS.val());
+      for (var i = number + 1; i < total; i++) {
+        var item = $("div#" + form_name + "-" + i);
+        var base_id = "id_" + form_name + "-" + i;
+        var new_base_name = form_name + "-" + (i - 1);
+        var new_base_id = "id_" + form_name + "-" + (i - 1);
+
+        for (var j in fields) {
+          var field = fields[j];
+          var input = $("#" + base_id + "-" + field, item);
+          input.attr("name", new_base_name + "-" + field);
+          input.attr("id", new_base_id + "-" + field);
+        }
+        item.attr("id", new_base_name);
+      }
+      this.reset_row_color(form_name);
+      $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) - 1);
     },
     reset_row_color: function (form_name) {
       var count = parseInt($("input#id_" + form_name + "-TOTAL_FORMS").val());
