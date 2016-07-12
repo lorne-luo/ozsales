@@ -74,7 +74,7 @@
           <h3 class="box-title">订单产品</h3>
         </div>
 
-        <div id="product_table" class="box-body form-horizontal">
+        <div id="{{ product_forms.prefix }}_table" class="box-body form-horizontal">
             <div class="form-group hidden-xs hidden-sm">
                 <div class="col-xs-3">
                     <b>产品</b>
@@ -104,7 +104,7 @@
             {{ product_forms.management_form }}
             {% for product in product_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
-                 id="products-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
+                 id="{{ product_forms.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
 {#                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">#}
 {#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
@@ -137,7 +137,7 @@
                     <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
                         <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
                     </a>
-                    <input class="hide" style="visibility: hidden" id="id_products-{{ forloop.counter0 }}-DELETE" name="products-{{ forloop.counter0 }}-DELETE" type="checkbox">
+                    <input class="hide" style="visibility: hidden" id="id_{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" name="{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">
                 </div>
             </div>
             {% endfor %}
@@ -154,7 +154,7 @@
           <h3 class="box-title">物流信息</h3>
         </div>
 
-        <div id="express_table" class="box-body form-horizontal">
+        <div id="{{ express_forms.prefix }}_table" class="box-body form-horizontal">
             <div class="form-group hidden-xs hidden-sm">
                 <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 <div class="col-xs-2">
@@ -179,7 +179,7 @@
 
             {% for express in express_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
-                 id="express_orders-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
+                 id="{{ express_forms.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
                 <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
                 {{ express.id }}
                 {{ express.order }}
@@ -220,7 +220,7 @@
 
     </form>
 
-    <div class="hide" id="express_template">
+    <div class="hide" id="{{ express_forms.prefix }}_template">
         <div class="form-group">
             <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
             {{ new_express_form.order }}
@@ -250,7 +250,7 @@
         </div><!-- //express_template -->
     </div>
 
-    <div class="hide" id="product_template">
+    <div class="hide" id="{{ product_forms.prefix }}_template">
         <div class="form-group">
             {{ new_product_form.order }}
             <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>

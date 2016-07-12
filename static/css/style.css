@@ -53,7 +53,7 @@ input[type='checkbox'] {
         margin-top: 3px;
     }
 
-    #product_table .form-group, #express_table .form-group {
+    #products_table .form-group, #express_orders_table .form-group {
         padding-bottom: 10px;
         padding-top: 5px;
         margin-bottom: 0;

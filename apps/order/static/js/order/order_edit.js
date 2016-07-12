@@ -22,56 +22,38 @@ var OrderEditPageVue = Vue.extend({
   },
   methods: {
     add_product: function (event) {
-      var order_pk = $("input#order_pk").val();
       var form_name = "products";
-      var base = "id_" + form_name;
-
-      var $TOTAL_FORMS = $("#product_table input#" + base + "-TOTAL_FORMS");
-      var $product_template = $("#product_template");
-      var $product_template_copy = $product_template.children().clone(false);
-      var base_id = base + "-" + $TOTAL_FORMS.val();
-      var base_name = form_name + "-" + $TOTAL_FORMS.val();
-
       var fields = ["order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
-      for (var i in fields) {
-        var field = fields[i];
-        var input = $("#" + base + "-" + field, $product_template_copy);
-        input.attr("name", base_name + "-" + field);
-        input.attr("id", base_id + "-" + field);
-      }
-      $("#" + base_id + "-order", $product_template_copy).val(order_pk); //set up order_id
-
-      $product_template_copy.attr('id', base_name);
-      var $element = $("#product_table").append($product_template_copy);
-      this.$compile($element.get(0)); // link event for delete button
-      $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
-
-      this.reset_row_color(form_name);
-      $("select[class$='form-control']").not(".hide select[class$='form-control']")
-        .chosen({search_contains: true, disable_search_threshold: 10});
+      this.add_item(form_name, fields);
     },
     add_express: function (event) {
-      var order_pk = $("input#order_pk").val();
       var form_name = "express_orders";
-      var base = "id_" + form_name;
-
-      var $TOTAL_FORMS = $("#express_table input#" + base + "-TOTAL_FORMS");
-      var $express_template = $("#express_template");
-      var $express_template_copy = $express_template.children().clone(false);
-      var base_id = base + "-" + $TOTAL_FORMS.val();
-      var base_name = form_name + "-" + $TOTAL_FORMS.val();
-
       var fields = ["order", "carrier", "track_id", "fee", "weight", "id_upload"];
+      this.add_item(form_name, fields);
+    },
+    add_item: function (form_name, fields) {
+      var order_pk = $("input#order_pk").val();
+
+      var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
+      var template_id = form_name + "_template";
+      var $template = $("#" + template_id);
+      var $template_copy = $template.children().clone(false);
+      var base_id = "id_" + form_name + "-" + $TOTAL_FORMS.val();
+      var base_name = form_name + "-" + $TOTAL_FORMS.val();
+      console.log($template.get(0));
+
       for (var i in fields) {
         var field = fields[i];
-        var input = $("#" + base + "-" + field, $express_template_copy);
+        var input = $("#id_" + form_name + "-" + field, $template_copy);
+        console.log(input.get(0));
         input.attr("name", base_name + "-" + field);
         input.attr("id", base_id + "-" + field);
       }
-      $("#" + base_id + "-order", $express_template_copy).val(order_pk); //set up order_id
+      $("#" + base_id + "-order", $template_copy).val(order_pk); //set up order_id
 
-      $express_template_copy.attr('id', base_name);
-      var $element = $("#express_table").append($express_template_copy);
+      $template_copy.attr('id', base_name);
+      var table_id = form_name + "_table";
+      var $element = $("#" + table_id).append($template_copy);
       this.$compile($element.get(0)); // link event for delete button
       $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
@@ -201,5 +183,3 @@ var OrderEditPageVue = Vue.extend({
     }
   }
 });
-
-
