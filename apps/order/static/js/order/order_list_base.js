@@ -66,7 +66,9 @@ var OrderListPageVue = CommonListPageVue.extend({
                 }
             }
         },
-        next_ship_status: function (url, next, event) {
+        next_ship_status: function (pk, next_status, next, event) {
+            var self = this;
+            var url = Urls[self.update_api_tag](pk);
             swal({
               title: "确认物流变更",
               text: "确认将物流状态变更为\""+next+"\"?",
@@ -79,10 +81,18 @@ var OrderListPageVue = CommonListPageVue.extend({
               showLoaderOnConfirm: false,
               animation: false
             }, function () {
-              window.location.href = url;
+                $.AdminLTE.apiPatch(
+                    url,
+                    $.param({'status': next_status}),
+                    function (resp) {
+                        self.loadData({}, false);
+                    }
+                );
             });
         },
-        pay: function (url, event) {
+        pay: function (pk, event) {
+            var self = this;
+            var url = Urls[self.update_api_tag](pk);
             swal({
               title: "确认支付",
               text: "确认变更为\"已支付\"?",
@@ -95,7 +105,13 @@ var OrderListPageVue = CommonListPageVue.extend({
               showLoaderOnConfirm: false,
               animation: false
             }, function () {
-              window.location.href = url;
+                $.AdminLTE.apiPatch(
+                    url,
+                    $.param({'is_paid': true}),
+                    function (resp) {
+                        self.loadData({}, false);
+                    }
+                );
             });
         },
         detail: function (event) {

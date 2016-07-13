@@ -14,13 +14,14 @@ class OrderSerializer(serializers.ModelSerializer):
     public_link = serializers.SerializerMethodField()
     create_time_display = serializers.SerializerMethodField()
     next_status_url = serializers.SerializerMethodField()
+    next_status = serializers.SerializerMethodField()
     product_summary = serializers.SerializerMethodField()
     edit_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ['link', 'customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
-                  'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url',
+                  'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
                   'product_summary',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time_display', 'finish_time', 'id']
@@ -55,6 +56,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def get_next_status_url(self, obj):
         return obj.get_next_status_url()
+
+    def get_next_status(self, obj):
+        return obj.next_status
 
     def get_paid_url(self, obj):
         url = reverse('order:change-order-paid', args=[obj.id])
