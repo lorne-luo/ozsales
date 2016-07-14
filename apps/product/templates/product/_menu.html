@@ -6,28 +6,30 @@
                 <b>Products</b>
                 <i class="fa fa-angle-left pull-right"></i>
             </a>
-            <ul class="treeview-menu">
+            <ul class="treeview-menu menu-open" style="display: block;">
                 <li>
-                <a href="{% url 'product:product-add' %}">
+                    <a href="{% url 'product:product-list' %}">
                         <i class="fa fa-circle-o"></i>
-                        New Product
+                        Product
                     </a>
-                </li>
-                <li>
-                <a href="{% url 'product:product-list' %}">
-                        <i class="fa fa-circle-o"></i>
-                        Product List
+                    {% if perms.product.add_product %}
+                    <a href="{% url 'product:product-add' %}" style="float:right;margin-right: 1px">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
                     </a>
+                    {%endif%}
                 </li>
 
-                {% if perms.product.add_brand or perms.product.change_brand %}
                 <li>
-                <a href="{% url 'product:brand-list' %}">
+                    <a href="{% url 'product:brand-list' %}">
                         <i class="fa fa-circle-o"></i>
                         Brand
                     </a>
+                    {% if perms.product.add_brand %}
+                    <a href="{% url 'product:brand-add' %}" style="float:right;margin-right: 1px">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
+                    {%endif%}
                 </li>
-                {%endif%}
             </ul>
 </li>
 {%endif%}

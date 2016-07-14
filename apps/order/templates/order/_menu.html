@@ -5,24 +5,30 @@
         <b>Order</b>
         <i class="fa fa-angle-left pull-right"></i>
     </a>
-    <ul class="treeview-menu">
-        {% if perms.order.add_order %}
-        <li>
-        <a href="{% url 'order:order-add' %}">
-                <i class="fa fa-circle-o"></i>
-                New Order
-            </a>
-        </li>
-        {%endif%}
+    <ul class="treeview-menu menu-open" style="display: block;">
 
         {% if perms.order.view_order %}
         <li>
-        <a href="{% url 'order:order-list-short' %}">
+            <a href="{% url 'order:order-list-short' %}">
                 <i class="fa fa-circle-o"></i>
-                Orders
+                Order
             </a>
+            {% if perms.order.add_order %}
+            <a href="{% url 'order:order-add' %}" style="float:right;margin-right: 1px">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+            {%endif%}
         </li>
         {%endif%}
+
+{#        {% if perms.order.view_orderproduct %}#}
+{#        <li>#}
+{#            <a href="{% url 'order:orderproduct-list' %}">#}
+{#                <i class="fa fa-circle-o"></i>#}
+{#                OrderProduct#}
+{#            </a>#}
+{#        </li>#}
+{#        {%endif%}#}
 
     </ul>
 </li>

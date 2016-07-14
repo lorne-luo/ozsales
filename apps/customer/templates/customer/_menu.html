@@ -5,14 +5,19 @@
         <b>Customer</b>
         <i class="fa fa-angle-left pull-right"></i>
     </a>
-    <ul class="treeview-menu">
+    <ul class="treeview-menu menu-open" style="display: block;">
 
-        {% if perms.customer.add_customer or perms.customer.change_customer %}
+        {% if perms.customer.view_customer %}
         <li>
-        <a href="{% url 'customer:customer-list' %}">
+            <a href="{% url 'customer:customer-list' %}">
                 <i class="fa fa-circle-o"></i>
                 Customer
             </a>
+            {% if perms.customer.add_customer %}
+            <a href="{% url 'customer:customer-add' %}" style="float:right;margin-right: 1px">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </a>
+            {%endif%}
         </li>
         {%endif%}
 
