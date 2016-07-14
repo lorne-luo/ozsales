@@ -7,6 +7,7 @@ from models import OrderProduct, Order, ORDER_STATUS, ORDER_STATUS_CHOICES
 # Serializer for order
 class OrderSerializer(serializers.ModelSerializer):
     link = serializers.SerializerMethodField()
+    address_display = serializers.CharField(source='address')
     customer_display = serializers.CharField(source='customer')
     customer_url = serializers.SerializerMethodField()
     shipping_order = serializers.SerializerMethodField()
@@ -27,7 +28,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['link', 'customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
-                  'product_summary',
+                  'product_summary', 'address_display',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time_display', 'finish_time', 'id']
         read_only_fields = ['id']
