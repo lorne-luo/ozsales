@@ -73,19 +73,15 @@
                         <td>
                             <template v-if="item.status == 'CREATED'">
                                 <a class="label label-info" v-on:click="next_ship_status(item.id,item.next_status,'在途', $event)">新建</a>
-{#                                <a class="hidden-sm hidden-md hidden-lg label label-info">C</a>#}
                             </template>
                             <template v-if="item.status == 'SHIPPING'">
                                 <a class="label label-success" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">在途</a>
-{#                                <a class="hidden-sm hidden-md hidden-lg label label-success">S</a>#}
                             </template>
                             <template v-if="item.status == 'DELIVERED'">
                                 <a class="label label-warning" v-on:click="next_ship_status(item.id,item.next_status,'完成', $event)">寄达</a>
-{#                                <a class="hidden-sm hidden-md hidden-lg label label-warning">D</a>#}
                             </template>
                             <template v-if="item.status == 'FINISHED'">
                                 <a class="label label-danger" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">完成</a>
-{#                                <a class="hidden-sm hidden-md hidden-lg label label-danger" >F</a>#}
                             </template>
                         </td>
                         <td class="hidden-sm hidden-xs">
@@ -98,7 +94,6 @@
                             </template>
                             - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
                             <template v-if="item.is_paid">
-                                (已支付)
                             </template>
                             <template v-else>
                                 <a class="label-as-badge label label-danger" v-on:click="pay(item.id, $event)">
@@ -111,7 +106,6 @@
                             <template v-if="item.is_paid">
                             </template>
                             <template v-else>
-{#                              class="label label-primary"  (<a href="{!! item.paid_url !!}"><b>未</b></a>)#}
                                 <a style="float:right" class="label-as-badge label label-danger" v-on:click="pay(item.paid_url, $event)">
                                     <i class="fa fa-jpy" aria-hidden="true"></i>
                                 </a>

@@ -78,6 +78,9 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
 
+    def get_success_url(self):
+        return reverse('product:product-list-view')
+
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
@@ -88,6 +91,9 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     }
     fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
               'safe_sell_price']
+
+    def get_success_url(self):
+        return reverse('product:product-list-view')
 
 
 class ProductDetailView(CommonContextMixin, UpdateView):
