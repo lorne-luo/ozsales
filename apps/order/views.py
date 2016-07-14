@@ -1,5 +1,4 @@
 # coding=utf-8
-import datetime
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.utils.translation import ugettext as _
@@ -8,7 +7,7 @@ from django.conf import settings
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from django.forms.models import inlineformset_factory, modelformset_factory
-from django_filters import Filter, FilterSet
+from django_filters import FilterSet
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from rest_framework import permissions
@@ -240,20 +239,14 @@ class OrderDetailView(CommonContextMixin, UpdateView):
         return obj
 
 
-class ListFilter(Filter):
-    def filter(self, qs, value):
-        self.lookup_type = 'in'
-        values = value.split(',')
-        return super(ListFilter, self).filter(qs, values)
-
-
 class OrderFilter(FilterSet):
-    status_in = ListFilter(name='status')
 
     class Meta:
         model = Order
-        fields = ['status_in', 'customer', 'is_paid', 'status', 'ship_time', 'finish_time']
-
+        fields = {
+            'status': ['in','exact'],
+            'customer__name': ['exact','contains']
+        }
 
 class OrderViewSet(CommonViewSet):
     """ api views for Order """

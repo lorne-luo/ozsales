@@ -29,7 +29,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                url = url + '?status_in=CREATED,SHIPPING,DELIVERED&ordering=-id';
+                url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-id';
 
                 $.AdminLTE.apiGet(
                     url,
