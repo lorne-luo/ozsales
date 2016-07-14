@@ -53,13 +53,13 @@
                     </tr>
                 </tfoot>
                 <tbody v-for="item in ongoing_items">
-                    <tr v-on:click="showShipping(item.id, $event)" data-pk="{!! item.id !!}">
+                    <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="visible-sm visible-xs show_shipping" style="width:50px">
+                        <td class="visible-sm visible-xs show_detail" style="width:50px">
                             <i class="fa fa-plus-square text-info" aria-hidden="true"></i>
                         </td>
                         <td>
@@ -135,7 +135,7 @@
                             {% endif %}
                         </td>
                     </tr>
-                    <tr class="hide hidden-md hidden-lg" id="shipping_{!! item.id !!}">
+                    <tr class="hide hidden-md hidden-lg" id="detail_{!! item.id !!}">
                         <td colspan="8">
                             <div>{!! item.address_display !!}</div>
                             <div style="float:left">
@@ -237,7 +237,7 @@
                 </tr>
                 </thead>
                 <tbody v-for="item in finished_items">
-                    <tr v-if="item.id" v-on:click="showShipping(item.id, $event)" data-pk="{!! item.id !!}">
+                    <tr v-if="item.id" v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
@@ -294,8 +294,9 @@
                             {% endif %}
                         </td>
                     </tr>
-                    <tr v-if="item.shipping_order" class="hide" id="shipping_{!! item.id !!}">
-                        <td colspan="22">
+                    <tr class="hide hidden-md hidden-lg" id="detail_{!! item.id !!}">
+                        <td colspan="8">
+                            <div>{!! item.address_display !!}</div>
                             <div style="float:left">
                                 {!! item.product_summary !!}
                             </div>

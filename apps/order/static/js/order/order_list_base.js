@@ -53,15 +53,15 @@ var OrderListPageVue = CommonListPageVue.extend({
             var num = $(event.target).attr('page');
             this.loadData({'page': num});
         },
-        showShipping: function (pk, event) {
-            if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_shipping')) {
+        show_detail: function (pk, event) {
+            if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {
                 var tr=$(event.target).closest('tr');
-                var td =$('td.show_shipping',tr);
-                if ($('#shipping_' + pk).hasClass('hide')) {
-                    $('#shipping_' + pk).removeClass('hide');
+                var td =$('td.show_detail',tr);
+                if ($('#detail_' + pk).hasClass('hide')) {
+                    $('#detail_' + pk).removeClass('hide');
                     td.html('<i class="fa fa-minus-square text-info" aria-hidden="true"></i>');
                 } else {
-                    $('#shipping_' + pk).addClass('hide');
+                    $('#detail_' + pk).addClass('hide');
                     td.html('<i class="fa fa-plus-square text-info" aria-hidden="true"></i>');
                 }
             }
