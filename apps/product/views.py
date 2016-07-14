@@ -66,6 +66,7 @@ class ProductListView(CommonContextMixin, ListView):
 
 class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Product
+    form_class = forms.ProductAddForm
     # template_name_suffix = '_create'
     template_name = 'adminlte/common_form.html'
     permissions = {
@@ -84,6 +85,7 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
+    form_class = forms.ProductAddForm
     # template_name_suffix = '_form'
     template_name = 'adminlte/common_form.html'
     permissions = {
