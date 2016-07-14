@@ -547,10 +547,11 @@ a:focus {
 }
 .sidebar-menu .treeview-menu > li {
   margin: 0;
-}
-.sidebar-menu .treeview-menu > li > a {
   padding: 5px 5px 5px 35px;
   display: block;
+}
+.sidebar-menu .treeview-menu > li > a {
+
   font-size: 14px;
 }
 .sidebar-menu .treeview-menu > li > a > .fa,
