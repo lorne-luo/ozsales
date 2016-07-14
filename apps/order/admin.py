@@ -1,10 +1,7 @@
 from django.contrib import admin
-from django.forms import ModelForm
-
 from models import Order, OrderProduct
 from forms import OrderForm
 from ..express.forms import ExpressOrderAddInline, ExpressOrderChangeInline
-
 
 class OrderProductAddInline(admin.TabularInline):
     exclude = ['total_price_aud', 'total_price_rmb']
@@ -13,7 +10,6 @@ class OrderProductAddInline(admin.TabularInline):
     # max_num = 1
     can_delete = True
     verbose_name_plural = 'Order Products'
-
 
 class OrderProductChangeInline(admin.TabularInline):
     model = OrderProduct

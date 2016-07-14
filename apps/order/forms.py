@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.forms.models import inlineformset_factory, BaseInlineFormSet, modelformset_factory
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from ..customer.models import Customer, Address
+from ..product.models import Product
 from models import Order, OrderProduct, ORDER_STATUS
 
 
@@ -80,7 +81,6 @@ class OrderUpdateForm(ModelForm):
         instance = getattr(self, 'instance', None)
 
         if instance and instance.customer:
-            self.fields['address'].queryset = Address.objects.filter(customer_id=instance.customer)
             self.fields['total_amount'].widget.attrs['readonly'] = True
             self.fields['customer'].queryset = Customer.objects.filter(pk=instance.customer_id)
             self.fields['customer'].empty_value = []
@@ -144,6 +144,7 @@ class OrderProductInlineAddForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en')
         self.fields['product'].widget.attrs['class'] = 'form-control'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['amount'].widget.attrs['class'] = 'form-control'
@@ -168,6 +169,7 @@ class OrderProductInlineForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
+        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en')
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)

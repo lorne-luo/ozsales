@@ -6,7 +6,16 @@
         <i class="fa fa-angle-left pull-right"></i>
     </a>
     <ul class="treeview-menu">
-        {% if perms.order.add_order or perms.order.change_order %}
+        {% if perms.order.add_order %}
+        <li>
+        <a href="{% url 'order:order-add' %}">
+                <i class="fa fa-circle-o"></i>
+                New Order
+            </a>
+        </li>
+        {%endif%}
+
+        {% if perms.order.view_order %}
         <li>
         <a href="{% url 'order:order-list-short' %}">
                 <i class="fa fa-circle-o"></i>
