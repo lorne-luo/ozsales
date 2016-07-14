@@ -17,6 +17,11 @@ class OrderSerializer(serializers.ModelSerializer):
     next_status = serializers.SerializerMethodField()
     product_summary = serializers.SerializerMethodField()
     edit_url = serializers.SerializerMethodField()
+    sell_price_rmb = serializers.IntegerField()
+    shipping_fee = serializers.IntegerField()
+    total_cost_aud = serializers.IntegerField()
+    total_cost_rmb = serializers.IntegerField()
+    profit_rmb = serializers.IntegerField()
 
     class Meta:
         model = Order
