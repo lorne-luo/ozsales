@@ -61,10 +61,12 @@
             {% endfor %}
         </div>
         <div class="box-footer">
-            <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存&编辑</button>
+            <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
+            <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary" name="_continue">保存&编辑</button>
         </div>
     </div>
+
+    <input id="object_id" type="hidden" value="{{ object.id }}">
 
     {% block inline_formset %}{% endblock %}
 
