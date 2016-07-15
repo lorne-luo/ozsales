@@ -7,6 +7,16 @@
     <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
 {% endblock %}
 
+{% block common_list_buttons %}
+    {% if page_model_perms.add %}
+    <button class="btn btn-primary"
+            v-on:click="create">
+        <i class="fa fa-plus"></i>
+        新增
+    </button>
+    {% endif %}
+{% endblock %}
+
 {% block tab_nav %}
     <ul class="nav nav-tabs">
       <li data-status="ONGOING" class="active">
@@ -29,7 +39,9 @@
                                name="checkboxAllRow" class="checkboxAllRow"
                                v-on:click="toggleAllBox"/>
                     </th>
-                    <th class="visible-sm visible-xs"></th>
+                    <th class="visible-sm visible-xs" id="show_all_detail" v-on:click="show_all_detail">
+                        <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
+                    </th>
                     <th>
                         Date
                     </th>
@@ -59,8 +71,8 @@
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="visible-sm visible-xs show_detail" style="width:50px">
-                            <i class="fa fa-plus-square text-info" aria-hidden="true"></i>
+                        <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}" style="width:50px">
+                            <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
                         </td>
                         <td>
                             <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
