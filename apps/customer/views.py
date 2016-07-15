@@ -1,6 +1,8 @@
 # coding=utf-8
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
+from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.db import transaction
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
@@ -105,16 +107,44 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
 class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
     form_class = forms.CustomerUpdateForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'customer/customer_edit.html'
     permissions = {
         "all": ("customer.change_customer",)
     }
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerUpdateView, self).get_context_data(**kwargs)
+
+        context['new_address_forms'] = forms.AddressInlineForm(prefix='address_set')
+        address_forms = forms.AddressFormSet(queryset=self.object.address_set.all(), prefix='address_set')
+        context['address_forms'] = address_forms
+
+        return context
 
     def get_success_url(self):
         if '_continue' in self.request.POST and self.object:
             return reverse('customer:customer-update', args=[self.object.id])
         else:
             return reverse('customer:customer-list')
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # customer address
+        address_formset = forms.AddressFormSet(request.POST, prefix='address_set')
+        for form in address_formset:
+            if form.instance.address or form.instance.name:
+                form.fields['customer'].initial = self.object.id
+                form.base_fields['customer'].initial = self.object.id
+                form.changed_data.append('customer')
+                form.instance.order_id = self.object.id
+            if not form.is_valid():
+                return HttpResponse(str(form.errors))
+
+        address_formset.save()
+
+        return super(CustomerUpdateView, self).post(request, *args, **kwargs)
 
 
 class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

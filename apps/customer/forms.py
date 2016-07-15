@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from django.forms.models import modelformset_factory
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from models import Address, Customer, InterestTag
 
@@ -126,3 +127,22 @@ class CustomerUpdateForm(ModelForm):
             instance = kwargs['instance']
             self.fields['primary_address'].queryset = Address.objects.filter(customer=instance)
             self.fields['order_count'].widget.attrs['readonly'] = True
+
+
+class AddressInlineForm(ModelForm):
+
+    class Meta:
+        model = Address
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super(AddressInlineForm, self).__init__(*args, **kwargs)
+        for field_name in self.fields:
+            field = self.fields.get(field_name)
+            field.widget.attrs['class'] = 'form-control'
+
+        self.fields['customer'].widget = forms.HiddenInput()
+
+
+AddressFormSet = modelformset_factory(Address, form=AddressInlineForm,
+                                           can_order=False, can_delete=False, extra=1)

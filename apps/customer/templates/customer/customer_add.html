@@ -27,7 +27,8 @@
 
 
 {% block content %}
-<div>
+<div class="row">
+<div class="col-xs-12">
     {% if form.is_multipart %}
         <form enctype="multipart/form-data"
               method="post"
@@ -69,6 +70,8 @@
 
     </form>
 
+    {% block inline_formset_template %}{% endblock %}
+
+</div>
 </div>
 {% endblock %}
-

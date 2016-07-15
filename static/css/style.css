@@ -14,10 +14,6 @@ input[type='checkbox'] {
         white-space: normal !important;
     }
 
-    .content {
-        padding: 10px 5px 10px 5px;
-    }
-
     #commonDataTableRow .box-header {
         margin-right: 0;
         margin-left: 0;
@@ -52,10 +48,15 @@ input[type='checkbox'] {
         margin-top: 3px;
     }
 
-    #products_table .form-group, #express_orders_table .form-group {
+    .col-xs-12, .col-sm-12 {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    #products_table .form-group, #express_orders_table .form-group, #inline_formset .form-group {
         padding-bottom: 10px;
         padding-top: 5px;
-        margin-bottom: 0;
+        margin-bottom: 5px;
     }
 
     .form-group {
