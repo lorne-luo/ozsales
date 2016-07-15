@@ -55,31 +55,48 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         show_detail: function (pk, event) {
             if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {
-                var tr=$(event.target).closest('tr');
-                var td =$('td.show_detail',tr);
-                if ($('#detail_' + pk).hasClass('hide')) {
-                    $('#detail_' + pk).removeClass('hide');
-                    td.html('<i class="fa fa-minus-square text-info" aria-hidden="true"></i>');
+                var tr = $(event.target).closest('tr');
+                var td = $('td.show_detail', tr);
+                if ($('#detail_' + pk).toggleClass('hide').hasClass('hide')) {
+                    td.html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
                 } else {
-                    $('#detail_' + pk).addClass('hide');
-                    td.html('<i class="fa fa-plus-square text-info" aria-hidden="true"></i>');
+                    td.html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');
                 }
             }
+        },
+        show_all_detail: function (event) {
+            var th = $('th#show_all_detail');
+            if (th.toggleClass('extend').hasClass('extend'))
+                th.html('<i class="fa fa-minus-square text-muted" aria-hidden="true"></i>');
+            else
+                th.html('<i class="fa fa-plus-square text-muted" aria-hidden="true"></i>');
+
+            var tds = $('td.show_detail');
+            tds.each(function (index) {
+                var pk = $(this).attr('data-pk');
+                if (th.hasClass('extend')) {
+                    $('#detail_' + pk).removeClass('hide');
+                    $(this).html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');
+                } else {
+                    $('#detail_' + pk).addClass('hide');
+                    $(this).html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
+                }
+            });
         },
         next_ship_status: function (pk, next_status, next, event) {
             var self = this;
             var url = Urls[self.update_api_tag](pk);
             swal({
-              title: "确认物流变更",
-              text: "确认将物流状态变更为\""+next+"\"?",
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#DD6B55",
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              closeOnConfirm: true,
-              showLoaderOnConfirm: false,
-              animation: false
+                title: "确认物流变更",
+                text: "确认将物流状态变更为\"" + next + "\"?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: true,
+                showLoaderOnConfirm: false,
+                animation: false
             }, function () {
                 $.AdminLTE.apiPatch(
                     url,
@@ -94,22 +111,22 @@ var OrderListPageVue = CommonListPageVue.extend({
             var self = this;
             var url = Urls[self.update_api_tag](pk);
             swal({
-              title: "确认支付",
-              text: "确认变更为\"已支付\"?",
-              type: "warning",
-              showCancelButton: true,
-              confirmButtonColor: "#DD6B55",
-              confirmButtonText: "确定",
-              cancelButtonText: "取消",
-              closeOnConfirm: true,
-              showLoaderOnConfirm: false,
-              animation: false
+                title: "确认支付",
+                text: "确认变更为\"已支付\"?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: true,
+                showLoaderOnConfirm: false,
+                animation: false
             }, function () {
                 $.AdminLTE.apiPatch(
                     url,
                     $.param({'is_paid': true}),
                     function (resp) {
-                        self.loadData({}, false);
+                        $(event.target).closest('a.label-danger').remove();
                     }
                 );
             });
