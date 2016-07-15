@@ -1,0 +1,74 @@
+
+{% extends "adminlte/common_form.html" %}
+{% load i18n admin_static admin_modify static adminlte_tags %}
+{% load cycle from future %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% if user.is_superuser %}
+                <a href="{% url 'customer:customer-list' %}">Customer</a>
+            {% else %}
+                {{ page_title }}
+            {% endif %}
+        </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+
+{% block content %}
+<div>
+    {% if form.is_multipart %}
+        <form enctype="multipart/form-data"
+              method="post"
+              action=""
+              class="form-horizontal"
+              role="form" id="commonForm">
+    {% else %}
+        <form method="post" action="" class="form-horizontal"
+              role="form" id="commonForm">
+    {% endif %}
+    {% csrf_token %}
+
+    <div class="box box-info">
+        <div class="box-header with-border">
+          <h3 class="box-title">{{ object }}</h3>
+        </div>
+
+        <div class="box-body">
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label ln34">{{ field.label }}</label>
+                    <div class="col-sm-6 col-xs-9">
+                        {{ field }}
+                    </div>
+                    <div class="col-sm-4 hidden-xs">
+                        {{ field.errors }}
+                        <p class="help-block">{{ field.help_text }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="box-footer">
+            <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
+            <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存&编辑</button>
+        </div>
+    </div>
+
+    {% block inline_formset %}{% endblock %}
+
+    </form>
+
+</div>
+{% endblock %}
+

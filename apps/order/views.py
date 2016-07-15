@@ -91,9 +91,10 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     }
 
     def get_success_url(self):
-        if self.object:
+        if '_continue' in self.request.POST and self.object:
             return reverse('order:order-update', args=[self.object.id])
-        return reverse('order:order-list-short')
+        else:
+            return reverse('order:order-list-short')
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -113,7 +114,10 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     }
 
     def get_success_url(self):
-        return reverse('order:order-list-short')
+        if '_continue' in self.request.POST and self.object:
+            return reverse('order:order-update', args=[self.object.id])
+        else:
+            return reverse('order:order-list-short')
 
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)

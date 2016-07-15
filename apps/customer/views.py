@@ -90,13 +90,16 @@ class CustomerListView(MultiplePermissionsRequiredMixin, CommonContextMixin, Lis
 class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Customer
     form_class = forms.CustomerAddForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'customer/customer_add.html'
     permissions = {
         "all": ("customer.add_customer",)
     }
 
     def get_success_url(self):
-        return reverse('customer:customer-list')
+        if '_continue' in self.request.POST and self.object:
+            return reverse('customer:customer-update', args=[self.object.id])
+        else:
+            return reverse('customer:customer-list')
 
 
 class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -108,7 +111,10 @@ class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
     }
 
     def get_success_url(self):
-        return reverse('customer:customer-list')
+        if '_continue' in self.request.POST and self.object:
+            return reverse('customer:customer-update', args=[self.object.id])
+        else:
+            return reverse('customer:customer-list')
 
 
 class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

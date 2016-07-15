@@ -52,8 +52,10 @@ class Order(models.Model):
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
     def __str__(self):
-
-        return '[%s]%s' % (self.id or 'New', self.customer.name)
+        if self.id:
+            return '[%s]%s' % (self.id, self.customer.name)
+        else:
+            return '%s' % (self.customer.name)
 
     def get_product_summary(self):
         result = ''
