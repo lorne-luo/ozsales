@@ -14,9 +14,8 @@ input[type='checkbox'] {
         white-space: normal !important;
     }
 
-    #commonDataTableRow .col-xs-12, .col-sm-12 {
-        padding-right: 0;
-        padding-left: 0;
+    .content {
+        padding: 10px 5px 10px 5px;
     }
 
     #commonDataTableRow .box-header {
