@@ -139,11 +139,11 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         # order products
         products_formset = forms.OrderProductFormSet(request.POST, prefix='products')
         for form in products_formset:
-        #     if form.instance.product or form.instance.name:
-        #         form.fields['order'].initial = self.object.id
-        #         form.base_fields['order'].initial = self.object.id
-        #         form.changed_data.append('order')
-        #         form.instance.order_id = self.object.id
+            # if form.instance.product or form.instance.name:
+            #     form.fields['order'].initial = self.object.id
+            #     form.base_fields['order'].initial = self.object.id
+            #     form.changed_data.append('order')
+            #     form.instance.order_id = self.object.id
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
@@ -174,7 +174,6 @@ class OrderAddDetailView(OrderUpdateView):
         try:
             object = super(OrderAddDetailView, self).get_object()
         except:
-
             object = Order(customer_id=self.kwargs['customer_id'])
             object.address_id = self.request.POST['address']
             object.save()
@@ -189,28 +188,51 @@ class OrderAddDetailView(OrderUpdateView):
         form = self.get_form()
         return self.render_to_response(self.get_context_data(form=form))
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
-        inlineform_count = int(request.POST['form-TOTAL_FORMS'])
+        products_formset_count = int(request.POST['products-TOTAL_FORMS'])
+        express_formset_count = int(request.POST['express_orders-TOTAL_FORMS'])
         request.POST._mutable = True
-        request.POST['some_data'] = 'test data'
-        for i in range(inlineform_count):
-            key = 'form-%s-order' % i
-            if key in request.POST:
+        for i in range(products_formset_count):
+            key = 'products-%s-order' % i
+            product_key = 'products-%s-product' % i
+            name_key = 'products-%s-name' % i
+            if request.POST[product_key] or request.POST[name_key]:
+                request.POST[key] = self.object.id
+
+        for i in range(express_formset_count):
+            key = 'express_orders-%s-order' % i
+            track_key = 'express_orders-%s-track_id' % i
+            if request.POST[track_key]:
                 request.POST[key] = self.object.id
         request.POST._mutable = False
 
-        formset = forms.OrderProductFormSet(request.POST)
-        for form in formset:
-            if form.instance.product or form.instance.name:
-                if 'order' in form._errors:
-                    del form._errors['order']
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form._changed_data.append('order')
-                form.instance.order_id = self.object.id
-        instances = formset.save()
+        products_formset = forms.OrderProductFormSet(request.POST, prefix='products')
+        for form in products_formset:
+            # if form.instance.product or form.instance.name:
+            #     if 'order' in form._errors:
+            #         del form._errors['order']
+            #     form.fields['order'].initial = self.object.id
+            #     form.base_fields['order'].initial = self.object.id
+            #     form._changed_data.append('order')
+            #     form.instance.order_id = self.object.id
+            if not form.is_valid():
+                return HttpResponse(str(form.errors))
+        products_formset.save()
+
+        express_formset = ExpressOrderFormSet(request.POST, prefix='express_orders')
+        for form in express_formset:
+            # if form.instance.track_id:
+            #     form.fields['order'].initial = self.object.id
+            #     form.base_fields['order'].initial = self.object.id
+            #     form.changed_data.append('order')
+            #     form.instance.order_id = self.object.id
+            if not form.is_valid():
+                return HttpResponse(str(form.errors))
+
+        express_formset.save()
 
         next = request.POST.get('next')
         if next:
@@ -239,13 +261,13 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
 
 class OrderFilter(FilterSet):
-
     class Meta:
         model = Order
         fields = {
-            'status': ['in','exact'],
-            'customer__name': ['exact','contains']
+            'status': ['in', 'exact'],
+            'customer__name': ['exact', 'contains']
         }
+
 
 class OrderViewSet(CommonViewSet):
     """ api views for Order """
