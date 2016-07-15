@@ -9,10 +9,13 @@
 
 {% block common_list_buttons %}
     {% if page_model_perms.add %}
-    <button class="btn btn-primary"
-            v-on:click="create">
-        <i class="fa fa-plus"></i>
-        新订单
+    <button class="btn btn-primary" v-on:click="create">
+        <i class="fa fa-plus"></i> 新订单
+    </button>
+    {% endif %}
+    {% if page_model_perms.delete %}
+    <button class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
+        <i class="fa fa-trash-o"></i> 删除
     </button>
     {% endif %}
 {% endblock %}
