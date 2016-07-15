@@ -28,6 +28,7 @@
 
 {% block content %}
 <div class="row">
+<div class="col-xs-12">
     {% if form.is_multipart %}
         <form enctype="multipart/form-data"
               method="post"
@@ -61,11 +62,13 @@
         </div>
         {% if object.id %}
         <div class="box-footer">
-          <button type="button" style="width:108px" class="btn btn-primary col-sm-offset-2" v-on:click="submit">保 存</button>
-          <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+          <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-3" v-on:click="submit">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
         {% endif %}
     </div>
+
+    <input id="object_id" type="hidden" value="{{ object.id }}">
 
 {#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
 
@@ -100,13 +103,10 @@
             </div>
 
             <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
-            <input id="order_pk" type="hidden" value="{{ object.pk }}">
             {{ product_forms.management_form }}
             {% for product in product_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
                  id="{{ product_forms.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
-{#                <input id="id_products-{{ forloop.counter0 }}-id" name="products-{{ forloop.counter0 }}-id" type="hidden" value="{{ product.instance.pk }}">#}
-{#                <input id="id_form-0-id" name="form-0-id" type="hidden" value="{{ product.instance.pk }}">#}
                 {{ product.id }}
                 {{ product.order }}
                 <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
@@ -145,11 +145,12 @@
 
         <div class="box-footer">
             <button type="button" style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
-            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
+    </div>
 
-        <div id="expressorders" class="box box-info">
+    <div id="expressorders" class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">物流信息</h3>
         </div>
@@ -211,19 +212,18 @@
         </div>
         <div class="box-footer">
             <button type="button" style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
-            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-            <button type="button" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
         </div>
 
-        </div><!-- //expressorders -->
-    </div>
+    </div><!-- //expressorders -->
 
     </form>
 
     <div class="hide" id="{{ express_forms.prefix }}_template">
         <div class="form-group">
             <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
-            {{ new_express_form.order }}
+            <input id="id_{{ express_forms.prefix }}-order" name="{{ express_forms.prefix }}-order" type="hidden" value="{{ object.id }}">
             <div class="visible-xs visible-sm col-xs-2 ln34">物  流</div>
             <div class="col-lg-2 col-md-2 col-xs-10">
                 {{ new_express_form.carrier }}
@@ -252,7 +252,7 @@
 
     <div class="hide" id="{{ product_forms.prefix }}_template">
         <div class="form-group">
-            {{ new_product_form.order }}
+            <input id="id_{{ product_forms.prefix }}-order" name="{{ product_forms.prefix }}-order" type="hidden" value="{{ object.id }}">
             <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
             <div class="col-lg-3 col-md-6 col-xs-10">
                 {{ new_product_form.product }}
@@ -285,11 +285,13 @@
         </div>
     </div><!-- //product_template -->
 </div>
+</div>
 {% endblock %}
 
 {% block header_page_script %}
     <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
     <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
     <script type="text/javascript" src="{% static "js/order/order_edit.js" %}"></script>
 {% endblock %}
 

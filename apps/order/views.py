@@ -139,11 +139,11 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         # order products
         products_formset = forms.OrderProductFormSet(request.POST, prefix='products')
         for form in products_formset:
-            if form.instance.product or form.instance.name:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
+        #     if form.instance.product or form.instance.name:
+        #         form.fields['order'].initial = self.object.id
+        #         form.base_fields['order'].initial = self.object.id
+        #         form.changed_data.append('order')
+        #         form.instance.order_id = self.object.id
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
@@ -152,11 +152,11 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         # express orders
         express_formset = ExpressOrderFormSet(request.POST, prefix='express_orders')
         for form in express_formset:
-            if form.instance.track_id:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
+            # if form.instance.track_id:
+            #     form.fields['order'].initial = self.object.id
+            #     form.base_fields['order'].initial = self.object.id
+            #     form.changed_data.append('order')
+            #     form.instance.order_id = self.object.id
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 

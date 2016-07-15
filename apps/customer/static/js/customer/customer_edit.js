@@ -1,10 +1,4 @@
 var CustomerEditPageVue = CommonFormPageVue.extend({
-    el: function () {
-        return 'form#commonForm';
-    },
-    data: function () {
-        return {}
-    },
     methods: {
         add_address: function (event) {
             console.log('123');
