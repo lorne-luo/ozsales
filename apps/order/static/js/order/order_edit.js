@@ -4,20 +4,7 @@ var OrderEditPageVue = Vue.extend({
   },
   data: function () {
     return {
-      list_api_tag: undefined,
-      create_url_tag: undefined,
-      detail_url_tag: undefined,
-      update_url_tag: undefined,
-      delete_api_tag: undefined,
-      list_url_tag: undefined,
-      items: [],
-      userName: $("#adminlte_page_user_name").val(),
-      appName: $("#adminlte_page_app_name").val(),
-      modelName: $("#adminlte_page_model_name").val(),
-      currentPage: 1,
-      totalPage: 1,
-      perPage: 10,
-      count: 0
+      
     }
   },
   methods: {
@@ -175,8 +162,8 @@ var OrderEditPageVue = Vue.extend({
       if ($(event.target).attr('name') == '_continue') {
         $('<input>').attr({
           type: 'hidden',
-          id: 'next',
-          name: 'next',
+          id: '_continue',
+          name: '_continue',
           value: window.location
         }).appendTo('#commonForm');
       }

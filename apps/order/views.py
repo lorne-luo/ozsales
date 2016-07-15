@@ -162,12 +162,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
         express_formset.save()
 
-        result = super(OrderUpdateView, self).post(request, *args, **kwargs)
-        next = request.POST.get('next')
-        if next:
-            url = reverse('order:order-update', args=[self.object.id])
-            return HttpResponseRedirect(url)
-        return result
+        return super(OrderUpdateView, self).post(request, *args, **kwargs)
 
 
 class OrderAddDetailView(OrderUpdateView):
