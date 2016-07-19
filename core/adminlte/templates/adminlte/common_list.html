@@ -55,13 +55,11 @@
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover" id="commonTable">
-                        {% block table_head %}
                         <thead>
                             <tr>
-                                <th class="text-center" style="width:60px;">
-                                    <input type="checkbox"
-                                           name="checkboxAllRow" class="checkboxAllRow"
-                                           v-on:click="toggleAllBox"/>
+                                {% block table_head %}
+                                <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+                                    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
                                 </th>
                                 {% for title in table_titles %}
                                     {% with 'ID,id,'|split:',' as tlist %}
@@ -72,17 +70,15 @@
                                         {% endif %}
                                     {% endwith %}
                                 {% endfor %}
+                                {% endblock %}
                             </tr>
                         </thead>
-                        {% endblock %}
                         <tbody v-for="item in items">
                             <tr>
                                 {% block table_row %}
-                                <td class="text-center">
+                                <td class="text-center hidden-sm hidden-x">
                                     ##[$index+1]
-                                    <input type="checkbox" class="minimal"
-                                           name="checkboxRow"
-                                           value="#[item.id]"/>
+                                    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
                                 </td>
                                 {% for field in table_fields %}
                                     {% if field == 'id' %}

@@ -23,8 +23,6 @@ class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMi
 
     def get_context_data(self, **kwargs):
         context = super(<% MODEL_NAME %>ListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + <% titles %> + ['']
-        context['table_fields'] = ['link'] + <% fields %> + ['id']
         return context
 
 
