@@ -9,9 +9,10 @@
 
 {% block common_list_buttons %}
     {% if page_model_perms.add %}
-    <button class="btn btn-primary" v-on:click="create">
-        <i class="fa fa-plus"></i> 新订单
-    </button>
+    <a class="btn btn-primary" id="create">
+        <i class="fa fa-plus"></i>
+        <b>新订单</b>
+    </a>
     {% endif %}
     {% if page_model_perms.delete %}
     <button class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">

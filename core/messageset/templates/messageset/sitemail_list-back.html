@@ -1,11 +1,10 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 {% block common_list_buttons %}
-    <button class="btn btn-primary"
-            v-on:click="create">
-        <i class="fa fa-pencil"></i>
-        写信
-    </button>
+    <a class="btn btn-primary" id="create">
+        <i class="fa fa-plus"></i>
+        <b>写信</b>
+    </a>
     <button class="btn btn-link"
             v-on:click="allStatus">
         全部

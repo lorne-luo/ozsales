@@ -24,6 +24,9 @@ var CommonListPageVue = Vue.extend({
         if(this.appName && this.modelName){
             this.loadData({});
         }
+
+        var create_btn=$('a#create');
+        create_btn.prop('href',Urls[this.create_url_tag]());
     },
     methods: {
         toggleAllBox: function (event) {
@@ -33,7 +36,7 @@ var CommonListPageVue = Vue.extend({
                 $(event.target).prop('checked')
             );
         },
-        detail: function (event) {
+        detail: function (event) { // to be removed
             var pk;
             if ($(event.target).data('pk'))
                 pk = $(event.target).data('pk');
@@ -56,18 +59,7 @@ var CommonListPageVue = Vue.extend({
             }
             window.location.href = url;
         },
-        create: function () {
-            var url;
-            if (this.create_url_tag)
-                url = Urls[this.create_url_tag]();
-            else
-                url = Urls['adminlte:common_create_page'](
-                    this.appName,
-                    this.modelName
-                );
-            window.location.href = url;
-        },
-        update: function (event) {
+        update: function (event) { // to be removed
             var pk;
             if ($(event.target).data('pk'))
                 pk = $(event.target).data('pk');

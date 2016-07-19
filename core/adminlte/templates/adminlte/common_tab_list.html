@@ -17,11 +17,10 @@
                         <div class="col-xs-5">
                             {% block common_list_buttons %}
                                 {% if page_model_perms.add %}
-                                <button class="btn btn-primary"
-                                        v-on:click="create">
+                                <a class="btn btn-primary" id="create">
                                     <i class="fa fa-plus"></i>
-                                    新建
-                                </button>
+                                    <b>新建</b>
+                                </a>
                                 {% endif %}
                                 {% if page_model_perms.delete %}
                                 <button class="btn btn-danger"
