@@ -2,9 +2,6 @@ var CommonFormPageVue = Vue.extend({
     el: function () {
         return 'form#commonForm';
     },
-    data: function () {
-        return {}
-    },
     methods: {
         add_item: function (form_name, fields) {
             var $TOTAL_FORMS = $("input#id_" + form_name + "-TOTAL_FORMS");
@@ -13,12 +10,10 @@ var CommonFormPageVue = Vue.extend({
             var $template_copy = $template.children().clone(false);
             var base_id = "id_" + form_name + "-" + $TOTAL_FORMS.val();
             var base_name = form_name + "-" + $TOTAL_FORMS.val();
-            console.log($template.get(0));
 
             for (var i in fields) {
                 var field = fields[i];
                 var input = $("#id_" + form_name + "-" + field, $template_copy);
-                console.log(input.get(0));
                 input.attr("name", base_name + "-" + field);
                 input.attr("id", base_id + "-" + field);
             }
@@ -118,6 +113,31 @@ var CommonFormPageVue = Vue.extend({
                     related.val(object_id);
                 }
             }
+        },
+        delete: function (pk, event) {
+            var self = this;
+            swal({
+                title: "确定删除",
+                text: "确定删除本条记录?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: true,
+                showLoaderOnConfirm: false,
+                animation: false
+            }, function () {
+                var deleteUrl = Urls[self.delete_api_tag]();
+                $.AdminLTE.apiDelete(
+                    deleteUrl,
+                    $.param({'pk': pk}),
+                    function (resp) {
+                        var list_url = Urls[self.list_url_tag]();
+                        window.location.replace(list_url);
+                    }
+                );
+            });
         }
     }
 });
