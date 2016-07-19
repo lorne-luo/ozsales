@@ -1,10 +1,23 @@
 # coding=utf-8
-from django.core.urlresolvers import reverse
 from rest_framework import serializers
-from .models import ExpressOrder
+from core.api.serializers import BaseSerializer
+from models import ExpressCarrier, ExpressOrder
 
 
-# Serializer for ExpressOrder
-class ExpressOrderSerializer(serializers.ModelSerializer):
+# Serializer for expresscarrier
+class ExpressCarrierSerializer(BaseSerializer):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['id', 'edit_url', 'detail_url'] + \
+                 ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+        read_only_fields = ['id']
+
+
+# Serializer for expressorder
+class ExpressOrderSerializer(BaseSerializer):
     class Meta:
         model = ExpressOrder
+        fields = ['id', 'edit_url', 'detail_url'] + \
+                 ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+        read_only_fields = ['id']
+

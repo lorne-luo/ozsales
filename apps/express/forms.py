@@ -1,9 +1,45 @@
-__author__ = 'Lorne'
+# coding=utf-8
 from django.contrib import admin
-from django.forms import ModelForm
+from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
 from django.forms.models import modelformset_factory
-from models import ExpressOrder
+from models import ExpressCarrier, ExpressOrder
+
+
+class ExpressCarrierAddForm(ModelForm):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+
+
+class ExpressCarrierDetailForm(ModelForm):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+
+
+class ExpressCarrierUpdateForm(ModelForm):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+
+
+# class ExpressOrderAddForm(ModelForm):
+#     class Meta:
+#         model = ExpressOrder
+#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+#
+#
+# class ExpressOrderDetailForm(ModelForm):
+#     class Meta:
+#         model = ExpressOrder
+#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+#
+#
+# class ExpressOrderUpdateForm(ModelForm):
+#     class Meta:
+#         model = ExpressOrder
+#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
 
 
 class ExpressOrderAddInline(admin.TabularInline):
