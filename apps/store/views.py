@@ -19,10 +19,6 @@ class PageListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
         "all": ("store.view_page",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(PageListView, self).get_context_data(**kwargs)
-        return context
-
 
 class PageAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Page
@@ -75,10 +71,6 @@ class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
     permissions = {
         "all": ("store.view_store",)
     }
-
-    def get_context_data(self, **kwargs):
-        context = super(StoreListView, self).get_context_data(**kwargs)
-        return context
 
 
 class StoreAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):

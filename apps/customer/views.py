@@ -21,14 +21,6 @@ class AddressListView(MultiplePermissionsRequiredMixin, CommonContextMixin, List
         "all": ("customer.view_address",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(AddressListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Name', 'Mobile', 'Address', 'Customer', 'ID number', 'ID Front',
-                                   'ID Back'] + ['']
-        context['table_fields'] = ['link', 'mobile', 'address', 'customer_link', 'id_number', 'id_photo_front',
-                                   'id_photo_back'] + ['id']
-        return context
-
 
 class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Address
@@ -81,12 +73,6 @@ class CustomerListView(MultiplePermissionsRequiredMixin, CommonContextMixin, Lis
     permissions = {
         "all": ("customer.view_customer",)
     }
-
-    def get_context_data(self, **kwargs):
-        context = super(CustomerListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Name', 'Mobile', 'Primary Address', 'Order Count', '']
-        context['table_fields'] = ['link', 'mobile', 'primary_address_display', 'order_count', 'id']
-        return context
 
 
 class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
