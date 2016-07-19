@@ -8,6 +8,7 @@ var notificationListPageVue = new CommonListPageVue({
             update_api_tag: 'messageset:api-notification-detail',
 
             create_url_tag: 'messageset:notification-add',
+            list_url_tag:   'messageset:notification-list',
             detail_url_tag: 'messageset:notification-detail',
             update_url_tag: 'messageset:notification-update'
         }

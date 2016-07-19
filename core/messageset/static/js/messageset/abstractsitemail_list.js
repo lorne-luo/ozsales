@@ -8,6 +8,7 @@ var abstractsitemailListPageVue = new CommonListPageVue({
             update_api_tag: 'messageset:api-abstractsitemail-detail',
 
             create_url_tag: 'messageset:abstractsitemail-add',
+            list_url_tag:   'messageset:abstractsitemail-list',
             detail_url_tag: 'messageset:abstractsitemail-detail',
             update_url_tag: 'messageset:abstractsitemail-update'
         }

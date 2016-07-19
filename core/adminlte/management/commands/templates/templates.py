@@ -17,6 +17,7 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
             update_api_tag: '<% app_name %>:api-<% model_name %>-detail',
 
             create_url_tag: '<% app_name %>:<% model_name %>-add',
+            list_url_tag:   '<% app_name %>:<% model_name %>-list',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
             update_url_tag: '<% app_name %>:<% model_name %>-update'
         }

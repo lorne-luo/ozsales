@@ -8,8 +8,9 @@ var pageListPageVue = new CommonListPageVue({
             update_api_tag: 'store:api-page-detail',
 
             create_url_tag: 'store:page-add',
+            list_url_tag:   'store:page-list',
             detail_url_tag: 'store:page-detail',
-            update_url_tag: 'store:page-update',
+            update_url_tag: 'store:page-update'
         }
     }
 );

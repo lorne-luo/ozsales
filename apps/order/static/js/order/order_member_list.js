@@ -48,6 +48,7 @@ var orderListPageVue = new OrderMemberListPageVue({
             retrieve_api_tag: 'order:api-order-detail',
             update_api_tag: 'order:api-order-detail',
             create_url_tag: 'order:order-add',
+            list_url_tag:   'order:order-list-short',
             detail_url_tag: 'order:order-detail-short',
             update_url_tag: 'order:order-update',
             finished_items: [],

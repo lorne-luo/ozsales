@@ -8,6 +8,7 @@ var sitemailreceiveListPageVue = new CommonListPageVue({
             update_api_tag: 'messageset:api-sitemailreceive-detail',
 
             create_url_tag: 'messageset:sitemailreceive-add',
+            list_url_tag:   'messageset:sitemailreceive-list',
             detail_url_tag: 'messageset:sitemailreceive-detail',
             update_url_tag: 'messageset:sitemailreceive-update'
         }
