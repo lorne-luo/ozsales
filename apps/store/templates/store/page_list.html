@@ -2,6 +2,53 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 
+{% block table_head %}
+    <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+        <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+    </th>
+    <th>Name</th>
+    <th>Url</th>
+    <th>Store</th>
+    <th>Price</th>
+    <th>Original Price</th>
+
+    <th class="hidden-sm hidden-xs">{{ title }}</th>
+{% endblock %}
+
+{% block table_row %}
+    <td class="text-center">
+        ##[$index+1]
+        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td><a href="{!! item.edit_url !!}">{!! item.title !!}</a></td>
+    <td>{!! item.url !!}</td>
+    <td>{!! item.store !!}</td>
+    <td>{!! item.price !!}</td>
+    <td>{!! item.original_price !!}</td>
+
+
+    {% block item_buttons %}
+    <td class="text-right hidden-sm hidden-xs">
+        {% if page_model_perms.view %}
+        <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
+           <i class="fa fa-bars fa-inverse"></i>
+        </a>
+        {% endif %}
+        {% if page_model_perms.change %}
+        <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil fa-inverse"></i>
+        </a>
+        {% endif %}
+        {% if page_model_perms.delete %}
+        <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+           class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+            <i class="fa fa-trash-o fa-inverse"></i>
+        </a>
+        {% endif %}
+    </td>
+    {% endblock %}
+{% endblock %}
+
 {% block common_list_footer_page_script %}
     <script type="text/javascript" src="{% static 'js/store/page_list.js' %}"></script>
 {% endblock %}

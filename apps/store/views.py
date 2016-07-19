@@ -1,27 +1,26 @@
+# coding=utf-8
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from core.adminlte.views import CommonContextMixin, CommonViewSet
+from models import Page, Store
 import serializers
 import forms
-from models import Page, Store
 
 
 # views for Page
 
 class PageListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = Page
-    template_name_suffix = '_list'  # page/page_list.html
+    template_name_suffix = '_list'  # store/page_list.html
     permissions = {
         "all": ("store.view_page",)
     }
 
     def get_context_data(self, **kwargs):
         context = super(PageListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'Name', u'Url', u'Store', u'Price', u'Original Price'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'url', 'store', 'price', 'original_price'] + ['id']
         return context
 
 
@@ -79,8 +78,6 @@ class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
 
     def get_context_data(self, **kwargs):
         context = super(StoreListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'Name', u'Short Name', u'Address', u'Domain', u'Search URL', u'Shipping Rate'] + ['']
-        context['table_fields'] = ['link'] + ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate'] + ['id']
         return context
 
 

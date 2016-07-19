@@ -8,7 +8,6 @@
     <ul class="treeview-menu">
         {% if perms.store.add_page or perms.store.change_page %}
         <li>
-
         <a href="{% url 'store:page-list' %}">
                 <i class="fa fa-circle-o"></i>
                 Page
@@ -17,7 +16,6 @@
         {%endif%}
         {% if perms.store.add_store or perms.store.change_store %}
         <li>
-
         <a href="{% url 'store:store-list' %}">
                 <i class="fa fa-circle-o"></i>
                 Store
