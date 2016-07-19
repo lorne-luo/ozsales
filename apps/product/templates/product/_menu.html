@@ -13,7 +13,7 @@
                         Product
                     </a>
                     {% if perms.product.add_product %}
-                    <a href="{% url 'product:product-add' %}" style="float:right;margin-right: 1px">
+                    <a href="{% url 'product:product-add' %}" class="pull-right">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </a>
                     {%endif%}
@@ -25,7 +25,7 @@
                         Brand
                     </a>
                     {% if perms.product.add_brand %}
-                    <a href="{% url 'product:brand-add' %}" style="float:right;margin-right: 1px">
+                    <a href="{% url 'product:brand-add' %}" class="pull-right">
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </a>
                     {%endif%}
