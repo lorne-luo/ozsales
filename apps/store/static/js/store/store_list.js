@@ -6,7 +6,6 @@ var storeListPageVue = new CommonListPageVue({
             delete_api_tag: 'store:api-store-delete',
             retrieve_api_tag: 'store:api-store-detail',
             update_api_tag: 'store:api-store-detail',
-            destroy_api_tag: 'store:api-store-detail',
 
             create_url_tag: 'store:store-add',
             detail_url_tag: 'store:store-detail',

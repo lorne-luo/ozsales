@@ -6,7 +6,6 @@ var orderListPageVue = new OrderListPageVue({
             delete_api_tag: 'order:api-order-delete',
             retrieve_api_tag: 'order:api-order-detail',
             update_api_tag: 'order:api-order-detail',
-            destroy_api_tag: 'order:api-order-detail',
             create_url_tag: 'order:order-add',
             detail_url_tag: 'order:order-detail-short',
             update_url_tag: 'order:order-update',

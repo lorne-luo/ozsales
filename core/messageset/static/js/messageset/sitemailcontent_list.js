@@ -6,7 +6,6 @@ var sitemailcontentListPageVue = new CommonListPageVue({
             delete_api_tag: 'messageset:api-sitemailcontent-delete',
             retrieve_api_tag: 'messageset:api-sitemailcontent-detail',
             update_api_tag: 'messageset:api-sitemailcontent-detail',
-            destroy_api_tag: 'messageset:api-sitemailcontent-detail',
 
             create_url_tag: 'messageset:sitemail-add',
             detail_url_tag: 'messageset:sitemailcontent-detail',

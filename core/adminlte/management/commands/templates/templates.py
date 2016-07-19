@@ -15,7 +15,6 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
             delete_api_tag: '<% app_name %>:api-<% model_name %>-delete',
             retrieve_api_tag: '<% app_name %>:api-<% model_name %>-detail',
             update_api_tag: '<% app_name %>:api-<% model_name %>-detail',
-            destroy_api_tag: '<% app_name %>:api-<% model_name %>-detail',
 
             create_url_tag: '<% app_name %>:<% model_name %>-add',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
