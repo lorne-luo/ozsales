@@ -91,8 +91,6 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     permissions = {
         "all": ("product.change_product",)
     }
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
-              'safe_sell_price']
 
     def get_success_url(self):
         return reverse('product:product-list-view')
