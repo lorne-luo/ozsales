@@ -58,10 +58,10 @@
                                    value="#[item.id]"/>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
+                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
+                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td>
                             <template v-if="item.status == 'CREATED'">
@@ -179,10 +179,10 @@
                                    value="#[item.id]"/>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            <a target="_blank" href="{!! item.link !!}">{!! item.create_time_display !!}</a>
+                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
                         </td>
                         <td>
-                            <a target="_blank" href="{!! item.link !!}">{!! item.customer_display !!}</a>
+                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
                         </td>
                         <td class="hidden-sm hidden-xs">
                             <template v-if="item.status == 'CREATED'">

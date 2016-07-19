@@ -73,13 +73,6 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
         "all": ("order.is_superuser",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(OrderListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Create Time', 'Customer', 'Amount', 'Status', 'Paid', 'Price', 'Shipping', '']
-        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee',
-                                   'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
-        return context
-
 
 class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Order
@@ -304,13 +297,6 @@ class OrderProductViewSet(CommonViewSet):
 class OrderMemberListView(CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_member_list'  # order/order_member_list.html
-
-    def get_context_data(self, **kwargs):
-        context = super(OrderMemberListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Create Time', 'Customer', 'Amount', 'Status', 'Paid', 'Price', 'Shipping', '']
-        context['table_fields'] = ['link', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'shipping_fee',
-                                   'total_cost_aud', 'total_cost_rmb', 'sell_price_rmb', 'profit_rmb', 'id']
-        return context
 
     def get(self, request, *args, **kwargs):
         username = self.kwargs.get('username', None)

@@ -1,12 +1,12 @@
 # coding=utf-8
 from django.core.urlresolvers import reverse
 from rest_framework import serializers
+from core.api.serializers import BaseSerializer
 from models import OrderProduct, Order, ORDER_STATUS, ORDER_STATUS_CHOICES
 
 
-# Serializer for order
-class OrderSerializer(serializers.ModelSerializer):
-    link = serializers.SerializerMethodField()
+class OrderSerializer(BaseSerializer):
+    """ Serializer for Order """
     address_display = serializers.CharField(source='address')
     customer_display = serializers.CharField(source='customer')
     customer_url = serializers.SerializerMethodField()
@@ -17,7 +17,6 @@ class OrderSerializer(serializers.ModelSerializer):
     next_status_url = serializers.SerializerMethodField()
     next_status = serializers.SerializerMethodField()
     product_summary = serializers.SerializerMethodField()
-    edit_url = serializers.SerializerMethodField()
     sell_price_rmb = serializers.IntegerField()
     shipping_fee = serializers.IntegerField()
     total_cost_aud = serializers.IntegerField()
@@ -26,29 +25,26 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['link', 'customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
+        fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
-                  'product_summary', 'address_display',
+                  'product_summary', 'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time_display', 'finish_time', 'id']
         read_only_fields = ['id']
 
-    def get_link(self, obj):
-        request = self.context.get('request', None)
+    def get_detail_url(self, obj):
+        user = self.context['request'].user
+        app_label = self.Meta.model._meta.app_label
+        model_name = self.Meta.model._meta.model_name
 
-        change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
-        view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
-        if request.user.has_perm(change_perm_str):
-            url = reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
-        elif request.user.has_perm(view_perm_str):
-            url = reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
+        change_perm_str = '%s.change_%s' % (app_label, model_name)
+        view_perm_str = '%s.view_%s' % (app_label, model_name)
+        if user.has_perm(change_perm_str):
+            return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
+        elif user.has_perm(view_perm_str):
+            return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
         else:
-            url = '#'
-        return url
-
-    def get_edit_url(self, obj):
-        url = reverse('order:order-update', args=[obj.id])
-        return url
+            return '#'
 
     def get_customer_url(self, obj):
         request = self.context.get('request', None)
