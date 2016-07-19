@@ -69,13 +69,13 @@
                     </tr>
                 </tfoot>
                 <tbody v-for="item in ongoing_items">
-                    <tr data-pk="{!! item.id !!}">
+                    <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
                             <input type="checkbox" class="minimal"
                                    name="checkboxRow"
                                    value="#[item.id]"/>
                         </td>
-                        <td class="visible-sm visible-xs show_detail" v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}" style="width:50px">
+                        <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}" style="width:50px">
                             <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
                         </td>
                         <td>
@@ -126,9 +126,7 @@
                             </template>
                         </td>
                         <td class="hidden-sm hidden-xs">
-                            <div>
-                                {!! item.shipping_order !!}
-                            </div>
+                            {!! item.shipping_order !!}
                         </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
@@ -152,12 +150,12 @@
                         </td>
                     </tr>
                     <tr class="hide" id="detail_{!! item.id !!}">
-                        <td colspan="8">
+                        <td colspan="100%">
                             <div>{!! item.address_display !!}</div>
                             <div style="float:left">
                                 {!! item.product_summary !!}
                             </div>
-                            <div style="float:left">
+                            <div style="float:left" class="visible-sm visible-xs">
                                 {!! item.shipping_order !!}
                             </div>
                         </td>
