@@ -14,7 +14,7 @@
     <th>ID Front</th>
     <th>ID Back</th>
 
-    <th class="hidden-sm hidden-xs">{{ title }}</th>
+    <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
 {% block table_row %}
@@ -29,7 +29,6 @@
     <td>{!! item.id_number !!}</td>
     <td><img height="60px" src="{!! item.id_photo_front !!}" /></td>
     <td><img height="60px" src="{!! item.id_photo_back !!}" /></td>
-
 
     {% block item_buttons %}
     <td class="text-right hidden-sm hidden-xs">

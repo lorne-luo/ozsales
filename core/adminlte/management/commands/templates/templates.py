@@ -7,7 +7,7 @@ LIST_TEMPLATES = '''
         <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
     </th>
 <% table_head %>
-    <th class="hidden-sm hidden-xs">{{ title }}</th>
+    <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
 {% block table_row %}
@@ -16,7 +16,6 @@ LIST_TEMPLATES = '''
         <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
     </td>
 <% table_row %>
-
     {% block item_buttons %}
     <td class="text-right hidden-sm hidden-xs">
         {% if page_model_perms.view %}

@@ -13,7 +13,7 @@
     <th>Search URL</th>
     <th>Shipping Rate</th>
 
-    <th class="hidden-sm hidden-xs">{{ title }}</th>
+    <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
 {% block table_row %}
@@ -27,7 +27,6 @@
     <td>{!! item.domain !!}</td>
     <td>{!! item.search_url !!}</td>
     <td>{!! item.shipping_rate !!}</td>
-
 
     {% block item_buttons %}
     <td class="text-right hidden-sm hidden-xs">

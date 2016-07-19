@@ -21,10 +21,6 @@ class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMi
         "all": ("<% app_name %>.view_<% model_name %>",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>ListView, self).get_context_data(**kwargs)
-        return context
-
 
 class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = <% MODEL_NAME %>

@@ -12,7 +12,7 @@
     <th>Price</th>
     <th>Original Price</th>
 
-    <th class="hidden-sm hidden-xs">{{ title }}</th>
+    <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
 {% block table_row %}
@@ -25,7 +25,6 @@
     <td>{!! item.store !!}</td>
     <td>{!! item.price !!}</td>
     <td>{!! item.original_price !!}</td>
-
 
     {% block item_buttons %}
     <td class="text-right hidden-sm hidden-xs">
