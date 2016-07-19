@@ -102,10 +102,31 @@ var OrderListPageVue = CommonListPageVue.extend({
                     url,
                     $.param({'status': next_status}),
                     function (resp) {
-                        self.loadData({}, false);
+                        var td = $(event.target).closest('td');
+                        self.update_status_button(td, resp);
                     }
                 );
             });
+        },
+        update_status_button: function (td, resp) {
+            var self = this;
+            var current_status_name = self.get_status_name(resp['status']);
+            var next_status_name = self.get_status_name(resp['next_status']);
+            var label_class = '';
+            if (resp['status'] == 'SHIPPING')
+                label_class = 'success';
+            else if (resp['status'] == 'DELIVERED')
+                label_class = 'warning';
+            else if (resp['status'] == 'FINISHED')
+                label_class = 'danger';
+
+            if (resp['status'] == 'FINISHED') {
+                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['id'] + ',\'DELIVERED\',\'寄达\', $event)">完成</a>';
+            } else {
+                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['id'] + ',\'' + resp['next_status'] + '\',\'' + next_status_name + '\', $event)">' + current_status_name + '</a>';
+            }
+            td.html(html);
+            self.$compile(td.get(0));
         },
         pay: function (pk, event) {
             var self = this;
@@ -126,7 +147,9 @@ var OrderListPageVue = CommonListPageVue.extend({
                     url,
                     $.param({'is_paid': true}),
                     function (resp) {
-                        $(event.target).closest('a.label-danger').remove();
+                        if (resp['is_paid']) {
+                            $(event.target).closest('a.pay').remove();
+                        }
                     }
                 );
             });
@@ -161,6 +184,18 @@ var OrderListPageVue = CommonListPageVue.extend({
                 );
             }
             window.location.href = url;
+        },
+        get_status_name: function (status) {
+            if (status == 'CREATED')
+                return '新建';
+            else if (status == 'SHIPPING')
+                return '在途';
+            else if (status == 'DELIVERED')
+                return '寄达';
+            else if (status == 'FINISHED')
+                return '完成';
+            else
+                return '';
         }
     }
 });

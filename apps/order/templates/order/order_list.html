@@ -119,7 +119,7 @@
                             <template v-if="item.is_paid">
                             </template>
                             <template v-else>
-                                <a style="float:right" class="label-as-badge label label-danger" v-on:click="pay(item.id, $event)">
+                                <a style="float:right" class="label-as-badge label label-danger pay" v-on:click="pay(item.id, $event)">
                                     <i class="fa fa-jpy" aria-hidden="true"></i>
                                 </a>
                             </template>
@@ -150,7 +150,7 @@
                             {% endif %}
                         </td>
                     </tr>
-                    <tr class="hide hidden-md hidden-lg" id="detail_{!! item.id !!}">
+                    <tr class="hide" id="detail_{!! item.id !!}">
                         <td colspan="8">
                             <div>{!! item.address_display !!}</div>
                             <div style="float:left">
