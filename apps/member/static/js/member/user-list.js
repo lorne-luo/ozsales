@@ -83,7 +83,6 @@
     };
 
     self.delete_selected = function() {
-        //console.log(self.urls_to_delete);
         if(self.urls_to_delete.length==0) {
             $('#DeleteModal').modal('hide');
         }

@@ -1,7 +1,6 @@
 var CustomerEditPageVue = CommonFormPageVue.extend({
     methods: {
         add_address: function (event) {
-            console.log('123');
             var form_name = "address_set";
             var fields = ["customer", "name", "mobile", "address", "id_number", "id_photo_front", "id_photo_back"];
             this.add_item(form_name, fields);
