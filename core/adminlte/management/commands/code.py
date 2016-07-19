@@ -162,6 +162,11 @@ class Command(BaseCommand):
     def create_file(self, file_path, content):
         if os.path.isfile(file_path) and not self.is_overwrite:
             file_path += '.code'
+
+        base_dir = os.path.dirname(file_path)
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+
         with open(file_path, 'w+') as f:
             f.write(content)
 
