@@ -21,5 +21,4 @@ class <% MODEL_NAME %>UpdateForm(ModelForm):
         model = <% MODEL_NAME %>
         fields = <% fields %>
 
-
 '''
