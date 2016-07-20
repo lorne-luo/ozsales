@@ -204,7 +204,7 @@ class Address(models.Model):
         verbose_name = _('Address')
 
     def __str__(self):
-        return '%s,%s,%s' % (self.mobile, self.name, self.address)
+        return '%s,%s,%s' % (self.name, self.mobile, self.address)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         addr_set = Address.objects.filter(customer=self.customer)
