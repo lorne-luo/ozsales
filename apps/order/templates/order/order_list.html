@@ -58,7 +58,7 @@
         <tbody v-for="item in ongoing_items">
         <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
           <td class="text-center hidden-sm hidden-xs">
-            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]" />
           </td>
           <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}" style="width:50px">
             <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
