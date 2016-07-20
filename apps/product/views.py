@@ -34,7 +34,7 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.ProductForm(), }
+        context = {'form': forms.ProductForm(),}
         if pk:
             product = get_object_or_404(Product, id=pk)
             context['product'] = product
@@ -44,6 +44,7 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
 class ProductListView(CommonContextMixin, ListView):
     model = Product
+
     # template_name_suffix = '_list'
     # template_name = 'product_list.html'
 
@@ -80,7 +81,7 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         return context
 
     def get_success_url(self):
-        return reverse('product:product-list-view')
+        return reverse('product:product-list')
 
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -93,7 +94,7 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     }
 
     def get_success_url(self):
-        return reverse('product:product-list-view')
+        return reverse('product:product-list')
 
 
 class ProductDetailView(CommonContextMixin, UpdateView):
@@ -114,20 +115,16 @@ class ProductViewSet(CommonViewSet):
 
 
 class BrandListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    """ List views for Brand """
     model = Brand
     template_name_suffix = '_list'  # product/brand_list.html
     permissions = {
         "all": ("product.view_brand",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(BrandListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + ['Name_En', 'Name_Cn', 'Country', 'Remarks'] + ['']
-        context['table_fields'] = ['link'] + ['name_en', 'name_cn', 'country', 'remarks'] + ['id']
-        return context
-
 
 class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    """ Add views for Brand """
     model = Brand
     form_class = forms.BrandAddForm
     template_name = 'adminlte/common_form.html'
@@ -140,6 +137,7 @@ class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
 
 
 class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Update views for Brand """
     model = Brand
     form_class = forms.BrandUpdateForm
     template_name = 'adminlte/common_form.html'
@@ -152,6 +150,7 @@ class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
 
 class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Detail views for Brand """
     model = Brand
     form_class = forms.BrandDetailForm
     template_name = 'adminlte/common_detail_new.html'
@@ -160,12 +159,10 @@ class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     }
 
 
-# api views for Brand
-
 class BrandViewSet(CommonViewSet):
+    """ API views for Brand """
     queryset = Brand.objects.all()
     serializer_class = serializers.BrandSerializer
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['name_en', 'name_cn', 'country', 'remarks']
     search_fields = ['name_en', 'name_cn', 'country', 'remarks']
-

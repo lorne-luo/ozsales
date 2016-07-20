@@ -1,35 +1,39 @@
 {% load activelink %}
-{% if perms.product.add_product or perms.product.view_product %}
-<li class="treeview active {% ifstartswith '/common/product/' %}active{% endifstartswith %}">
-    <a href="javascript:void(0)">
-                <i class='fa fa-cloud'></i>
-                <b>Products</b>
-                <i class="fa fa-angle-left pull-right"></i>
-            </a>
-            <ul class="treeview-menu menu-open" style="display: block;">
-                <li>
-                    <a href="{% url 'product:product-list' %}">
-                        <i class="fa fa-circle-o"></i>
-                        Product
-                    </a>
-                    {% if perms.product.add_product %}
-                    <a href="{% url 'product:product-add' %}" class="pull-right">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                    </a>
-                    {%endif%}
-                </li>
+<li class="treeview active {% ifstartswith '/product/' %}active{% endifstartswith %}">
+  <a href="javascript:void(0)">
+    <i class='fa fa-cloud'></i>
+    <b>Product</b>
+    <i class="fa fa-angle-left pull-right"></i>
+  </a>
+  <ul class="treeview-menu menu-open" style="display: block;">
 
-                <li>
-                    <a href="{% url 'product:brand-list' %}">
-                        <i class="fa fa-circle-o"></i>
-                        Brand
-                    </a>
-                    {% if perms.product.add_brand %}
-                    <a href="{% url 'product:brand-add' %}" class="pull-right">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                    </a>
-                    {%endif%}
-                </li>
-            </ul>
+    {% if perms.product.view_product %}
+      <li>
+        <a href="{% url 'product:product-list' %}">
+          <i class="fa fa-circle-o"></i>
+          Product
+        </a>
+        {% if perms.product.add_product %}
+          <a href="{% url 'product:product-add' %}" class="pull-right">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          </a>
+        {% endif %}
+      </li>
+    {% endif %}
+
+    {% if perms.product.view_brand %}
+      <li>
+        <a href="{% url 'product:brand-list' %}">
+          <i class="fa fa-circle-o"></i>
+          Brand
+        </a>
+        {% if perms.product.add_brand %}
+          <a href="{% url 'product:brand-add' %}" class="pull-right">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+          </a>
+        {% endif %}
+      </li>
+    {% endif %}
+
+  </ul>
 </li>
-{%endif%}

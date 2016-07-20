@@ -42,3 +42,4 @@ class BrandDetailForm(ModelForm):
     class Meta:
         model = Brand
         fields = ['name_en', 'name_cn', 'country', 'remarks']
+
