@@ -1,303 +1,322 @@
-
 {% extends "adminlte/common_form.html" %}
 {% load i18n admin_static admin_modify static adminlte_tags %}
 {% load cycle from future %}
 
 {% block breadcrumb %}
-    <ol class="breadcrumb">
-        <li>
-            <a href="#">
-                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
-            </a>
-        </li>
-        {% if page_title != default_dashboard_title %}
-        <li class="active">
-            {% if user.is_superuser %}
-                <a href="{% url 'order:order-list' %}">Order</a>
-            {% else %}
-                {{ page_title }}
-            {% endif %}
-        </li>
+  <ol class="breadcrumb">
+    <li>
+      <a href="#">
+        <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+      </a>
+    </li>
+    {% if page_title != default_dashboard_title %}
+      <li class="active">
+        {% if user.is_superuser %}
+          <a href="{% url 'order:order-list' %}">Order</a>
+        {% else %}
+          {{ page_title }}
         {% endif %}
-        {% if object != None %}
-            <li class="active">{{ page_title }}详情</li>
-        {% endif %}
-    </ol>
+      </li>
+    {% endif %}
+    {% if object != None %}
+      <li class="active">{{ page_title }}详情</li>
+    {% endif %}
+  </ol>
 {% endblock %}
 
 
 {% block content %}
-<div class="row">
-<div class="col-xs-12">
-    {% if form.is_multipart %}
+  <div class="row">
+    <div class="col-xs-12">
+      {% if form.is_multipart %}
         <form enctype="multipart/form-data"
               method="post"
               action=""
               class="form-horizontal"
               role="form" id="commonForm">
-    {% else %}
+      {% else %}
         <form method="post" action="" class="form-horizontal"
               role="form" id="commonForm">
-    {% endif %}
-    {% csrf_token %}
+      {% endif %}
+      {% csrf_token %}
 
-    <div class="box box-info">
+      <div class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">{{ object }}</h3>
         </div>
 
         <div class="box-body">
-            {% for field in form %}
-                <div class="form-group">
-                    <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label ln34">{{ field.label }}</label>
-                    <div class="col-sm-6 col-xs-9">
-                        {{ field }}
-                    </div>
-                    <div class="col-sm-4 hidden-xs">
-                        {{ field.errors }}
-                        <p class="help-block">{{ field.help_text }}</p>
-                    </div>
-                </div>
-            {% endfor %}
+          {% for field in form %}
+            <div class="form-group">
+              <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label ln34">{{ field.label }}</label>
+              <div class="col-sm-6 col-xs-9">
+                {{ field }}
+              </div>
+              <div class="col-sm-4 hidden-xs">
+                {{ field.errors }}
+                <p class="help-block">{{ field.help_text }}</p>
+              </div>
+            </div>
+          {% endfor %}
         </div>
         {% if object.id %}
-        <div class="box-footer">
-          <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-0" v-on:click="submit">保 存</button>
-          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
-          <button type="button" style="width:108px" class="btn btn-danger" v-on:click="delete({{ object.id }}, $event)">删 除</button>
-        </div>
+          <div class="box-footer">
+            <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-0"
+                    v-on:click="submit">保 存
+            </button>
+            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 &
+              编辑
+            </button>
+            <button type="button" style="width:108px" class="btn btn-danger"
+                    v-on:click="delete({{ object.id }}, $event)">删 除
+            </button>
+          </div>
         {% endif %}
-    </div>
+      </div>
 
-    <input id="object_id" type="hidden" value="{{ object.id }}">
+      <input id="object_id" type="hidden" value="{{ object.id }}">
 
-{#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
+      {#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
 
-    <div id="orderproduct" class="box box-info">
+      <div id="orderproduct" class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">订单产品</h3>
         </div>
 
         <div id="{{ product_forms.prefix }}_table" class="box-body form-horizontal">
-            <div class="form-group hidden-xs hidden-sm">
-                <div class="col-xs-3">
-                    <b>产品</b>
-                </div>
-                <div class="col-xs-3">
-                    <b>名称</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>数量</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>售价</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2  hidden-sm hidden-xs">
-                    <b>小计</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>成本</b>
-                </div>
-                <div class="col-xs-2 hidden-sm hidden-xs">
-                    <b>来源</b>
-                </div>
+          <div class="form-group hidden-xs hidden-sm">
+            <div class="col-xs-3">
+              <b>产品</b>
             </div>
+            <div class="col-xs-3">
+              <b>名称</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>数量</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>售价</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2  hidden-sm hidden-xs">
+              <b>小计</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>成本</b>
+            </div>
+            <div class="col-xs-2 hidden-sm hidden-xs">
+              <b>来源</b>
+            </div>
+          </div>
 
-            <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
-            {{ product_forms.management_form }}
-            {% for product in product_forms %}
+          <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
+          {{ product_forms.management_form }}
+          {% for product in product_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
-                 id="{{ product_forms.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %} data-pk="{{ product.instance.pk }}"{% endif %}>
-                {{ product.id }}
-                {{ product.order }}
-                <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
-                <div class="col-lg-3 col-md-6 col-xs-10">
-                    {{ product.product }}
+                 id="{{ product_forms.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %}
+                 data-pk="{{ product.instance.pk }}"{% endif %}>
+              {{ product.id }}
+              {{ product.order }}
+              <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
+              <div class="col-lg-3 col-md-6 col-xs-10">
+                {{ product.product }}
+              </div>
+              <div class="visible-xs visible-sm ln34 col-xs-2">名 称</div>
+              <div class="col-lg-3 col-md-6 col-xs-10">
+                {{ product.name }}
+              </div>
+              <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
+              <div class="col-lg-1 col-md-2 col-xs-2">
+                {{ product.amount }}
+              </div>
+              <div class="col-lg-1 col-md-2 col-xs-4">
+                {{ product.sell_price_rmb }}
+              </div>
+              <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
+                {{ product.sum_price }}
+              </div>
+              <div class="col-lg-1 col-md-2 col-xs-3">
+                {{ product.cost_price_aud }}
+              </div>
+              <div class="col-lg-2 col-md-4 col-xs-1">
+                <div class="inline hidden-xs hidden-sm">
+                  {{ product.store }}
                 </div>
-                <div class="visible-xs visible-sm ln34 col-xs-2">名  称</div>
-                <div class="col-lg-3 col-md-6 col-xs-10">
-                    {{ product.name }}
-                </div>
-                <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
-                <div class="col-lg-1 col-md-2 col-xs-2">
-                    {{ product.amount }}
-                </div>
-                <div class="col-lg-1 col-md-2 col-xs-4">
-                    {{ product.sell_price_rmb }}
-                </div>
-                <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
-                    {{ product.sum_price }}
-                </div>
-                <div class="col-lg-1 col-md-2 col-xs-3">
-                    {{ product.cost_price_aud }}
-                </div>
-                <div class="col-lg-2 col-md-4 col-xs-1">
-                    <div class="inline hidden-xs hidden-sm">
-                        {{ product.store }}
-                    </div>
-                    <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
-                        <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
-                    </a>
-                    <input class="hide" style="visibility: hidden" id="id_{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" name="{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">
-                </div>
+                <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
+                  <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
+                </a>
+                <input class="hide" style="visibility: hidden"
+                       id="id_{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE"
+                       name="{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">
+              </div>
             </div>
-            {% endfor %}
+          {% endfor %}
         </div><!-- //express_table -->
 
         <div class="box-footer">
-            <button type="button" style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+          <button type="button" style="width:108px" class="btn btn-success" v-on:click="add_product">增加一项</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 &
+            编辑
+          </button>
         </div>
-    </div>
+      </div>
 
-    <div id="expressorders" class="box box-info">
+      <div id="expressorders" class="box box-info">
         <div class="box-header with-border">
           <h3 class="box-title">物流信息</h3>
         </div>
 
         <div id="{{ express_forms.prefix }}_table" class="box-body form-horizontal">
-            <div class="form-group hidden-xs hidden-sm">
-                <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
-                <div class="col-xs-2">
-                    <b>物流</b>
-                </div>
-                <div class="col-xs-2">
-                    <b>单号</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>费用</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>重量</b>
-                </div>
-                <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-                    <b>证件</b>
-                </div>
+          <div class="form-group hidden-xs hidden-sm">
+            <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
+            <div class="col-xs-2">
+              <b>物流</b>
             </div>
+            <div class="col-xs-2">
+              <b>单号</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>费用</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>重量</b>
+            </div>
+            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
+              <b>证件</b>
+            </div>
+          </div>
 
-            {{ express_forms.management_form }}
-            <input id="express_forms_length" name="express_forms_length" type="hidden" value="{{ express_forms|length }}">
+          {{ express_forms.management_form }}
+          <input id="express_forms_length" name="express_forms_length" type="hidden" value="{{ express_forms|length }}">
 
-            {% for express in express_forms %}
+          {% for express in express_forms %}
             <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
-                 id="{{ express_forms.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %} data-pk="{{ express.instance.pk }}"{% endif %}>
-                <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
-                {{ express.id }}
-                {{ express.order }}
-                <div class="visible-xs visible-sm col-xs-2 ln34">物  流</div>
-                <div class="col-lg-2 col-md-2 col-xs-10">
-                    {{ express.carrier }}
+                 id="{{ express_forms.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %}
+                 data-pk="{{ express.instance.pk }}"{% endif %}>
+              <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
+              {{ express.id }}
+              {{ express.order }}
+              <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
+              <div class="col-lg-2 col-md-2 col-xs-10">
+                {{ express.carrier }}
+              </div>
+              <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
+              <div class="col-lg-2 col-md-2 col-xs-10">
+                {{ express.track_id }}
+              </div>
+              <div class="visible-xs visible-sm col-xs-2 ln34">价/重</div>
+              <div class="col-lg-1 col-md-1 col-xs-3">
+                {{ express.fee }}
+              </div>
+              <div class="col-lg-1 col-md-1 col-xs-3">
+                {{ express.weight }}
+              </div>
+              <div class="col-lg-1 col-md-1 col-xs-3">
+                <div class="inline ln34">
+                  {{ express.id_upload }}
                 </div>
-                <div class="visible-xs visible-sm col-xs-2 ln34">单  号</div>
-                <div class="col-lg-2 col-md-2 col-xs-10">
-                    {{ express.track_id }}
-                </div>
-                <div class="visible-xs visible-sm col-xs-2 ln34">价/重</div>
-                <div class="col-lg-1 col-md-1 col-xs-3">
-                    {{ express.fee }}
-                </div>
-                <div class="col-lg-1 col-md-1 col-xs-3">
-                    {{ express.weight }}
-                </div>
-                <div class="col-lg-1 col-md-1 col-xs-3">
-                    <div class="inline ln34">
-                        {{ express.id_upload }}
-                    </div>
-                    <a style="margin-left:35px"  href="javascript:void(0)" class="ln34 delete_express" v-on:click="delete_express">
-                        <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
-                    </a>
-                </div>
+                <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"
+                   v-on:click="delete_express">
+                  <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
+                </a>
+              </div>
             </div>
-            {% endfor %}
+          {% endfor %}
         </div>
         <div class="box-footer">
-            <button type="button" style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">增加一项</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 & 编辑</button>
+          <button type="button" style="width:108px" class="btn btn-success col-sm-offset-1" v-on:click="add_express">
+            增加一项
+          </button>
+          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" v-on:click="submit" name="_continue">保存 &
+            编辑
+          </button>
         </div>
 
-    </div><!-- //expressorders -->
+      </div><!-- //expressorders -->
 
-    </form>
+      </form>
 
-    <div class="hide" id="{{ express_forms.prefix }}_template">
+      <div class="hide" id="{{ express_forms.prefix }}_template">
         <div class="form-group">
-            <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
-            <input id="id_{{ express_forms.prefix }}-order" name="{{ express_forms.prefix }}-order" type="hidden" value="{{ object.id }}">
-            <div class="visible-xs visible-sm col-xs-2 ln34">物  流</div>
-            <div class="col-lg-2 col-md-2 col-xs-10">
-                {{ new_express_form.carrier }}
+          <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
+          <input id="id_{{ express_forms.prefix }}-order" name="{{ express_forms.prefix }}-order" type="hidden"
+                 value="{{ object.id }}">
+          <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
+          <div class="col-lg-2 col-md-2 col-xs-10">
+            {{ new_express_form.carrier }}
+          </div>
+          <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
+          <div class="col-lg-2 col-md-2 col-xs-10">
+            {{ new_express_form.track_id }}
+          </div>
+          <div class="visible-xs visible-sm col-xs-2 ln34">价/量</div>
+          <div class="col-lg-1 col-md-1 col-xs-3">
+            {{ new_express_form.fee }}
+          </div>
+          <div class="col-lg-1 col-md-1 col-xs-3">
+            {{ new_express_form.weight }}
+          </div>
+          <div class="col-lg-1 col-md-1 col-xs-3">
+            <div class="inline ln34">
+              {{ new_express_form.id_upload }}
             </div>
-            <div class="visible-xs visible-sm col-xs-2 ln34">单  号</div>
-            <div class="col-lg-2 col-md-2 col-xs-10">
-                {{ new_express_form.track_id }}
-            </div>
-            <div class="visible-xs visible-sm col-xs-2 ln34">价/量</div>
-            <div class="col-lg-1 col-md-1 col-xs-3">
-                {{ new_express_form.fee }}
-            </div>
-            <div class="col-lg-1 col-md-1 col-xs-3">
-                {{ new_express_form.weight }}
-            </div>
-            <div class="col-lg-1 col-md-1 col-xs-3">
-                <div class="inline ln34">
-                    {{ new_express_form.id_upload }}
-                </div>
-                <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express" v-on:click="delete_express">
-                    <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
-                </a>
-            </div>
+            <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"
+               v-on:click="delete_express">
+              <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
+            </a>
+          </div>
         </div><!-- //express_template -->
-    </div>
+      </div>
 
-    <div class="hide" id="{{ product_forms.prefix }}_template">
+      <div class="hide" id="{{ product_forms.prefix }}_template">
         <div class="form-group">
-            <input id="id_{{ product_forms.prefix }}-order" name="{{ product_forms.prefix }}-order" type="hidden" value="{{ object.id }}">
-            <div class="visible-xs visible-sm ln34 col-xs-2">产  品</div>
-            <div class="col-lg-3 col-md-6 col-xs-10">
-                {{ new_product_form.product }}
+          <input id="id_{{ product_forms.prefix }}-order" name="{{ product_forms.prefix }}-order" type="hidden"
+                 value="{{ object.id }}">
+          <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
+          <div class="col-lg-3 col-md-6 col-xs-10">
+            {{ new_product_form.product }}
+          </div>
+          <div class="visible-xs visible-sm ln34 col-xs-2">名 称</div>
+          <div class="col-lg-3 col-md-6 col-xs-10">
+            {{ new_product_form.name }}
+          </div>
+          <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
+          <div class="col-lg-1 col-md-2 col-xs-2">
+            {{ new_product_form.amount }}
+          </div>
+          <div class="col-lg-1 col-md-2 col-xs-4">
+            {{ new_product_form.sell_price_rmb }}
+          </div>
+          <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
+            {{ new_product_form.sum_price }}
+          </div>
+          <div class="col-lg-1 col-md-2 col-xs-3">
+            {{ new_product_form.cost_price_aud }}
+          </div>
+          <div class="col-lg-2 col-md-4 col-xs-1">
+            <div class="inline hidden-xs hidden-sm">
+              {{ new_product_form.store }}
             </div>
-                <div class="visible-xs visible-sm ln34 col-xs-2">名  称</div>
-            <div class="col-lg-3 col-md-6 col-xs-10">
-                {{ new_product_form.name }}
-            </div>
-            <div class="visible-xs visible-sm ln34 col-xs-2">量价本</div>
-            <div class="col-lg-1 col-md-2 col-xs-2">
-                {{ new_product_form.amount }}
-            </div>
-            <div class="col-lg-1 col-md-2 col-xs-4">
-                {{ new_product_form.sell_price_rmb }}
-            </div>
-            <div class="col-lg-1 col-md-2 hidden-sm hidden-xs">
-                {{ new_product_form.sum_price }}
-            </div>
-            <div class="col-lg-1 col-md-2 col-xs-3">
-                {{ new_product_form.cost_price_aud }}
-            </div>
-            <div class="col-lg-2 col-md-4 col-xs-1">
-                <div class="inline hidden-xs hidden-sm">
-                    {{ new_product_form.store }}
-                </div>
-                <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
-                    <i style="color:#dd4b39;" class="fa fa-lg fa-times-circle"></i>
-                </a>
-            </div>
+            <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
+              <i style="color:#dd4b39;" class="fa fa-lg fa-times-circle"></i>
+            </a>
+          </div>
         </div>
-    </div><!-- //product_template -->
-</div>
-</div>
+      </div><!-- //product_template -->
+    </div>
+  </div>
 {% endblock %}
 
 {% block header_page_script %}
-    <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
-    <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
-    <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
-    <script type="text/javascript" src="{% static "js/order/order_edit.js" %}"></script>
+  <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}"/>
+  <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
+  <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
+  <script type="text/javascript" src="{% static "js/order/order_edit.js" %}"></script>
 {% endblock %}
 
 {% block footer_page_script %}
-    <script type="text/javascript">
+  <script type="text/javascript">
     var orderEditPageVue = new OrderEditPageVue();
-    </script>
+  </script>
 {% endblock %}

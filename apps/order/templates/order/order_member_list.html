@@ -1,239 +1,241 @@
-
 {% extends "adminlte/common_tab_list.html" %}
 {% load static %}
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/order/order_member_list.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_member_list.js' %}"></script>
 {% endblock %}
 
 {% block tab_nav %}
-    <ul class="nav nav-tabs">
-      <li data-status="ONGOING" class="active">
-        <a data-toggle="tab" href="#pane-ONGOING"> 进行中</a>
-      </li>
-      <li data-status="FINISHED">
-        <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
-      </li>
-    </ul>
+  <ul class="nav nav-tabs">
+    <li data-status="ONGOING" class="active">
+      <a data-toggle="tab" href="#pane-ONGOING"> 进行中</a>
+    </li>
+    <li data-status="FINISHED">
+      <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
+    </li>
+  </ul>
 {% endblock %}
 
 {% block tab_content %}
-<div class="tab-content">
+  <div class="tab-content">
     <div class="tab-pane active" id="pane-ONGOING">
-        <table class="table table-hover" data-status="ONGOING">
-            <thead>
-                <tr>
-                    <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-                        <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
-                    </th>
-                    <th class="hidden-sm hidden-xs">Create Time</th>
-                    <th>Customer</th>
-                    <th>Status</th>
-                    <th>Shipping</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                    </tr>
-                </tfoot>
-                <tbody v-for="item in ongoing_items">
-                    <tr v-if="item.id">
-                        <td class="text-center hidden-sm hidden-xs">
-                            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-                        </td>
-                        <td class="hidden-sm hidden-xs">
-                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
-                        </td>
-                        <td>
-                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
-                        </td>
-                        <td>
-                            <template v-if="item.status == 'CREATED'">
-                                <span class="label label-info">新建</span>
-                            </template>
-                            <template v-if="item.status == 'SHIPPING'">
-                                <span class="label label-success">在途</span>
-                            </template>
-                            <template v-if="item.status == 'DELIVERED'">
-                                <span class="label label-warning">寄达</span>
-                            </template>
-                            <template v-if="item.status == 'FINISHED'">
-                                <span class="label label-danger">完成</span>
-                            </template>
-                        </td>
-                        <td>
-                            {!! item.shipping_order !!}
-                        </td>
-                        <td>
-                            {!! item.sell_price_rmb !!}
-                            <template v-if="item.is_paid">
-                                (已支付)
-                            </template>
-                            <template v-else>
-                                (<b>未支付</b>)
-                            </template>
-                        </td>
-                    </tr>
-                </tbody>
-        </table>
+      <table class="table table-hover" data-status="ONGOING">
+        <thead>
+        <tr>
+          <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+            <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+          </th>
+          <th class="hidden-sm hidden-xs">Create Time</th>
+          <th>Customer</th>
+          <th>Status</th>
+          <th>Shipping</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+        <tbody v-for="item in ongoing_items">
+        <tr v-if="item.id">
+          <td class="text-center hidden-sm hidden-xs">
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
+          </td>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
+          </td>
+          <td>
+            <template v-if="item.status == 'CREATED'">
+              <span class="label label-info">新建</span>
+            </template>
+            <template v-if="item.status == 'SHIPPING'">
+              <span class="label label-success">在途</span>
+            </template>
+            <template v-if="item.status == 'DELIVERED'">
+              <span class="label label-warning">寄达</span>
+            </template>
+            <template v-if="item.status == 'FINISHED'">
+              <span class="label label-danger">完成</span>
+            </template>
+          </td>
+          <td>
+            {!! item.shipping_order !!}
+          </td>
+          <td>
+            {!! item.sell_price_rmb !!}
+            <template v-if="item.is_paid">
+              (已支付)
+            </template>
+            <template v-else>
+              (<b>未支付</b>)
+            </template>
+          </td>
+        </tr>
+        </tbody>
+      </table>
 
-        <div class="form-inline" align="center">
+      <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
-            <li v-if="ongoing_currentPage > 1">
-                <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold">首页</a>
-            </li>
-            <li v-if="ongoing_currentPage == 1" class="disabled">
-                <a href="javascript:void(0);">首页</a>
-            </li>
-            <li v-if="ongoing_currentPage > 1">
-                <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing" class="text-bold">上页</a>
-            </li>
-            <li v-if="ongoing_currentPage == 1" class="disabled">
-                <a href="javascript:void(0);">上页</a>
-            </li>
-            <li v-if="ongoing_currentPage < ongoing_totalPage">
-                <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing" class="text-bold">下页</a>
-            </li>
-            <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
-                <a href="javascript:void(0);">下页</a>
-            </li>
-            <li v-if="ongoing_currentPage < ongoing_totalPage">
-                <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" class="text-bold">末页</a>
-            </li>
-            <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
-                <a href="javascript:void(0);">末页</a>
-            </li>
+          <li v-if="ongoing_currentPage > 1">
+            <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold">首页</a>
+          </li>
+          <li v-if="ongoing_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">首页</a>
+          </li>
+          <li v-if="ongoing_currentPage > 1">
+            <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing"
+               class="text-bold">上页</a>
+          </li>
+          <li v-if="ongoing_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">上页</a>
+          </li>
+          <li v-if="ongoing_currentPage < ongoing_totalPage">
+            <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing"
+               class="text-bold">下页</a>
+          </li>
+          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+            <a href="javascript:void(0);">下页</a>
+          </li>
+          <li v-if="ongoing_currentPage < ongoing_totalPage">
+            <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" class="text-bold">末页</a>
+          </li>
+          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+            <a href="javascript:void(0);">末页</a>
+          </li>
         </ul>
         <span>
             &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
         </span>
-        </div>
-        <br/>
+      </div>
+      <br/>
 
     </div>
 
     <div class="tab-pane" id="pane-FINISHED">
-        <table class="table table-hover" data-status="FINISHED">
-            <thead>
-                <tr>
-                    <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-                        <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
-                    </th>
-                    <th class="hidden-sm hidden-xs">Create Time</th>
-                    <th>Customer</th>
-                    <th class="hidden-sm hidden-xs">Status</th>
-                    <th>Shipping</th>
-                    <th>Price</th>
-                </tr>
-                </thead>
-                <tbody v-for="item in finished_items">
-                    <tr v-if="item.id">
-                        <td class="text-center hidden-sm hidden-xs">
-                            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-                        </td>
-                        <td class="hidden-sm hidden-xs">
-                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
-                        </td>
-                        <td>
-                            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
-                        </td>
-                        <td class="hidden-sm hidden-xs">
-                            <template v-if="item.status == 'CREATED'">
-                                <span class="label label-info">新建</span>
-                            </template>
-                            <template v-if="item.status == 'SHIPPING'">
-                                <span class="label label-success">在途</span>
-                            </template>
-                            <template v-if="item.status == 'DELIVERED'">
-                                <span class="label label-warning">寄达</span>
-                            </template>
-                            <template v-if="item.status == 'FINISHED'">
-                                <span class="label label-danger">完成</span>
-                            </template>
-                        </td>
-                        <td>
-                            {!! item.shipping_order !!}
-                        </td>
-                        <td>
-                            {!! item.sell_price_rmb !!}
-                        </td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                    </tr>
-                </tfoot>
-        </table>
+      <table class="table table-hover" data-status="FINISHED">
+        <thead>
+        <tr>
+          <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+            <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+          </th>
+          <th class="hidden-sm hidden-xs">Create Time</th>
+          <th>Customer</th>
+          <th class="hidden-sm hidden-xs">Status</th>
+          <th>Shipping</th>
+          <th>Price</th>
+        </tr>
+        </thead>
+        <tbody v-for="item in finished_items">
+        <tr v-if="item.id">
+          <td class="text-center hidden-sm hidden-xs">
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
+          </td>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            <template v-if="item.status == 'CREATED'">
+              <span class="label label-info">新建</span>
+            </template>
+            <template v-if="item.status == 'SHIPPING'">
+              <span class="label label-success">在途</span>
+            </template>
+            <template v-if="item.status == 'DELIVERED'">
+              <span class="label label-warning">寄达</span>
+            </template>
+            <template v-if="item.status == 'FINISHED'">
+              <span class="label label-danger">完成</span>
+            </template>
+          </td>
+          <td>
+            {!! item.shipping_order !!}
+          </td>
+          <td>
+            {!! item.sell_price_rmb !!}
+          </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+      </table>
 
-        <div class="form-inline" align="center">
+      <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
-            <li v-if="finished_currentPage > 1">
-                <a href="javascript:void(0);" page="1" v-on:click="page_finished" class="text-bold">首页</a>
-            </li>
-            <li v-if="finished_currentPage == 1" class="disabled">
-                <a href="javascript:void(0);">首页</a>
-            </li>
-            <li v-if="finished_currentPage > 1">
-                <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" class="text-bold">上页</a>
-            </li>
-            <li v-if="finished_currentPage == 1" class="disabled">
-                <a href="javascript:void(0);">上页</a>
-            </li>
-            <li v-if="finished_currentPage < finished_totalPage">
-                <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" class="text-bold">下页</a>
-            </li>
-            <li v-if="finished_currentPage == finished_totalPage" class="disabled">
-                <a href="javascript:void(0);">下页</a>
-            </li>
-            <li v-if="finished_currentPage < finished_totalPage">
-                <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished" class="text-bold">末页</a>
-            </li>
-            <li v-if="finished_currentPage == finished_totalPage" class="disabled">
-                <a href="javascript:void(0);">末页</a>
-            </li>
+          <li v-if="finished_currentPage > 1">
+            <a href="javascript:void(0);" page="1" v-on:click="page_finished" class="text-bold">首页</a>
+          </li>
+          <li v-if="finished_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">首页</a>
+          </li>
+          <li v-if="finished_currentPage > 1">
+            <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" class="text-bold">上页</a>
+          </li>
+          <li v-if="finished_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">上页</a>
+          </li>
+          <li v-if="finished_currentPage < finished_totalPage">
+            <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" class="text-bold">下页</a>
+          </li>
+          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+            <a href="javascript:void(0);">下页</a>
+          </li>
+          <li v-if="finished_currentPage < finished_totalPage">
+            <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished"
+               class="text-bold">末页</a>
+          </li>
+          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+            <a href="javascript:void(0);">末页</a>
+          </li>
         </ul>
         <span>
             &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第 #[finished_currentPage]/#[finished_totalPage] 页
         </span>
-        </div>
-        <br/>
+      </div>
+      <br/>
     </div>
-</div>
+  </div>
 {% endblock %}
 
 {% block common_list_pagination %}
 {% endblock %}
 
 {% block menu %}
-<aside class="main-sidebar">
+  <aside class="main-sidebar">
     <section class="sidebar">
-        <ul class="sidebar-menu">
-            <li class="header">HEADER</li>
-            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
-                <a href="#">
-                    <i class="fa fa-dashboard"></i>
-                    <span>{{ default_dashboard_title }}</span>
-                </a>
-            </li>
+      <ul class="sidebar-menu">
+        <li class="header">HEADER</li>
+        <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+          <a href="#">
+            <i class="fa fa-dashboard"></i>
+            <span>{{ default_dashboard_title }}</span>
+          </a>
+        </li>
 
-            <li class="treeview active">
-                <a href="javascript:void(0)">
-                    <i class='fa fa-cloud'></i>
-                    <b>Products</b>
-                    <i class="fa fa-angle-left pull-right"></i>
-                </a>
-                <ul class="treeview-menu">
-                    <li>
-                        <a href="{% url 'product:product-list' %}">
-                            <i class="fa fa-circle-o"></i>
-                            All Products
-                        </a>
-                    </li>
-                </ul>
+        <li class="treeview active">
+          <a href="javascript:void(0)">
+            <i class='fa fa-cloud'></i>
+            <b>Products</b>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
+          <ul class="treeview-menu">
+            <li>
+              <a href="{% url 'product:product-list' %}">
+                <i class="fa fa-circle-o"></i>
+                All Products
+              </a>
             </li>
-        </ul>
+          </ul>
+        </li>
+      </ul>
     </section>
-</aside>
+  </aside>
 {% endblock %}

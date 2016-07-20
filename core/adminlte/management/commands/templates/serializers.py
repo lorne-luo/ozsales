@@ -7,7 +7,7 @@ from models import <% ALL_MODELS %>
 
 SERIALIZERS_MODEL_TEMPLATE = '''
 class <% MODEL_NAME %>Serializer(BaseSerializer):
-    """ Serializer for <% model_name %> """
+    """ Serializer for <% MODEL_NAME %> """
     class Meta:
         model = <% MODEL_NAME %>
         fields = ['id', 'edit_url', 'detail_url'] + \\

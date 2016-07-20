@@ -1,25 +1,25 @@
 {% load activelink %}
 <li class="treeview active">
-    <a href="javascript:void(0)">
-        <i class='fa fa-cloud'></i>
-        <b>Order</b>
-        <i class="fa fa-angle-left pull-right"></i>
-    </a>
-    <ul class="treeview-menu menu-open" style="display: block;">
+  <a href="javascript:void(0)">
+    <i class='fa fa-cloud'></i>
+    <b>Order</b>
+    <i class="fa fa-angle-left pull-right"></i>
+  </a>
+  <ul class="treeview-menu menu-open" style="display: block;">
 
-        {% if perms.order.view_order %}
-        <li>
-            <a href="{% url 'order:order-list-short' %}">
-                <i class="fa fa-circle-o"></i>
-                Order
-            </a>
-            {% if perms.order.add_order %}
-            <a href="{% url 'order:order-add' %}" class="pull-right">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </a>
-            {%endif%}
-        </li>
-        {%endif%}
+    {% if perms.order.view_order %}
+    <li>
+      <a href="{% url 'order:order-list-short' %}">
+        <i class="fa fa-circle-o"></i>
+        Order
+      </a>
+      {% if perms.order.add_order %}
+      <a href="{% url 'order:order-add' %}" class="pull-right">
+        <i class="fa fa-plus" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+    </li>
+    {% endif %}
 
 {#        {% if perms.order.view_orderproduct %}#}
 {#        <li>#}
@@ -30,5 +30,5 @@
 {#        </li>#}
 {#        {%endif%}#}
 
-    </ul>
+  </ul>
 </li>
