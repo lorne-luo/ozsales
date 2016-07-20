@@ -12,39 +12,39 @@
                 </a>
             </li>
 
-            {% if perms.member.change_seller or perms.member.view_seller %}
-            <li class="treeview {% ifstartswith '/common/member/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Members</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/common/member/seller/profile/">
-                                    <i class="fa fa-circle-o"></i>
-                                    My Profile
-                                </a>
-                            </li>
-                            {% if perms.member.add_seller %}
-                            <li>
-                            <a href="/common/member/seller/create/">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Member
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.member.change_seller %}
-                            <li>
-                            <a href="/common/member/seller/list/">
-                                    <i class="fa fa-circle-o"></i>
-                                    Member List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+{#            {% if perms.member.change_seller or perms.member.view_seller %}#}
+{#            <li class="treeview {% ifstartswith '/common/member/' %}active{% endifstartswith %}">#}
+{#                <a href="javascript:void(0)">#}
+{#                            <i class='fa fa-cloud'></i>#}
+{#                            <b>Members</b>#}
+{#                            <i class="fa fa-angle-left pull-right"></i>#}
+{#                        </a>#}
+{#                        <ul class="treeview-menu">#}
+{#                            <li>#}
+{#                            <a href="/common/member/seller/profile/">#}
+{#                                    <i class="fa fa-circle-o"></i>#}
+{#                                    My Profile#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {% if perms.member.add_seller %}#}
+{#                            <li>#}
+{#                            <a href="/common/member/seller/create/">#}
+{#                                    <i class="fa fa-circle-o"></i>#}
+{#                                    New Member#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {%endif%}#}
+{#                            {% if perms.member.change_seller %}#}
+{#                            <li>#}
+{#                            <a href="/common/member/seller/list/">#}
+{#                                    <i class="fa fa-circle-o"></i>#}
+{#                                    Member List#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            {%endif%}#}
+{#                        </ul>#}
+{#            </li>#}
+{#            {%endif%}#}
 
             {% include "customer/_menu.html" %}
 
