@@ -1,7 +1,7 @@
 
 var storeListPageVue = new CommonListPageVue({
         data: {
-            list_api_tag: 'store:api-store-list',
+            list_api_tag:   'store:api-store-list',
             delete_api_tag: 'store:api-store-delete',
             detail_api_tag: 'store:api-store-detail',
 

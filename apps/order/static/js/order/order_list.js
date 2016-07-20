@@ -1,7 +1,7 @@
 
 var orderListPageVue = new OrderListPageVue({
         data: {
-            list_api_tag: 'order:api-order-list',
+            list_api_tag:   'order:api-order-list',
             delete_api_tag: 'order:api-order-delete',
             detail_api_tag: 'order:api-order-detail',
             
@@ -9,6 +9,8 @@ var orderListPageVue = new OrderListPageVue({
             list_url_tag:   'order:order-list-short',
             detail_url_tag: 'order:order-detail-short',
             update_url_tag: 'order:order-update',
+            list_url:       Urls['order:order-list'](),
+
             finished_items: [],
             ongoing_items: [],
             finished_currentPage: 1,

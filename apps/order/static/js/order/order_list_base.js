@@ -9,7 +9,9 @@ var OrderListPageVue = CommonListPageVue.extend({
             var _init = typeof init !== 'undefined' ? init : false;
             var self = this;
             var url;
-            if (self.list_api_tag)
+            if (self.list_url)
+                url = self.list_url;
+            else if (self.list_api_tag)
                 url = Urls[self.list_api_tag]();
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);

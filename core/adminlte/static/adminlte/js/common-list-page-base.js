@@ -13,6 +13,8 @@ var CommonListPageVue = Vue.extend({
             list_url_tag:undefined,
             detail_url_tag:undefined,
             update_url_tag:undefined,
+            list_url:undefined,
+            
             items: [],
             userName: $("#adminlte_page_user_name").val(),
             appName: $("#adminlte_page_app_name").val(),
@@ -28,6 +30,7 @@ var CommonListPageVue = Vue.extend({
             this.loadData({});
         }
 
+        // link for create new
         var create_btn=$('a#create');
         create_btn.prop('href',Urls[this.create_url_tag]());
     },
@@ -167,7 +170,9 @@ var CommonListPageVue = Vue.extend({
         loadData: function (data) {
             var self = this;
             var url;
-            if (self.list_api_tag)
+            if (self.list_url)
+                url = self.list_url;
+            else if (self.list_api_tag)
                 url = Urls[self.list_api_tag]();
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
