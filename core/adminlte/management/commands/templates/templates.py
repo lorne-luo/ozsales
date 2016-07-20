@@ -6,35 +6,42 @@ LIST_TEMPLATES = '''
   <th class="text-center hidden-sm hidden-xs" style="width:60px;">
     <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
   </th>
-<% table_head %>
+  <% table_head %>
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
 {% block table_row %}
-  <td class="text-center hidden-sm hidden-xs">
-    ##[$index+1]
-    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-  </td>
-<% table_row %>
-  {% block item_buttons %}
-  <td class="text-right hidden-sm hidden-xs">
-    {% if page_model_perms.view %}
-    <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
-      <i class="fa fa-bars fa-inverse"></i>
-    </a>
-    {% endif %}
-    {% if page_model_perms.change %}
-      <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
-        <i class="fa fa-pencil fa-inverse"></i>
-      </a>
-    {% endif %}
-    {% if page_model_perms.delete %}
-      <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" class="btn btn-danger btn-sm" href="javascript:void(0);">
-        <i class="fa fa-trash-o fa-inverse"></i>
-      </a>
-    {% endif %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
     </td>
-  {% endblock %}
+<% table_row %>
+    {% block item_buttons %}
+      <td class="text-right hidden-sm hidden-xs">
+        {% if page_model_perms.view %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+             class="btn btn-info btn-sm">
+            <i class="fa fa-bars fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.change %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+             class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.delete %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+             v-on:click="removeOne" class="btn btn-danger btn-sm" href="javascript:void(0);">
+            <i class="fa fa-trash-o fa-inverse"></i>
+          </a>
+        {% endif %}
+      </td>
+    {% endblock %}
+  </tr>
+  </tbody>
 {% endblock %}
 
 {% block common_list_footer_page_script %}
@@ -45,7 +52,7 @@ LIST_TEMPLATES = '''
 TABLE_HEAD_TEMPLATES = '''  <th>%s</th>
 '''
 
-TABLE_ROW_TEMPLATES = '''  <td>{!! item.%s !!}</td>
+TABLE_ROW_TEMPLATES = '''    <td>{!! item.%s !!}</td>
 '''
 
 LIST_JS = '''

@@ -1,124 +1,129 @@
 {% extends "adminlte/base.html" %}
 {% load static adminlte_tags %}
 {% block content_title %}
-    {{ page_title }}
+  {{ page_title }}
 {% endblock %}
 
 {% block content %}
-    <div class="row" id="commonDataTableRow">
-        <div class="col-xs-12">
-            <div class="box box-info">
-                <div class="box-header with-border">
-                    <div class="row">
-                        <div class="col-xs-5 col-sm-6">
-                            {% block common_list_buttons %}
-                                {% if page_model_perms.add %}
-                                <a class="btn btn-primary" id="create">
-                                    <i class="fa fa-plus"></i>
-                                    <b>新增</b>
-                                </a>
-                                {% endif %}
-                                {% if page_model_perms.delete %}
-                                <button class="btn btn-danger" v-on:click="removeSelected">
-                                    <i class="fa fa-trash-o"></i>
-                                    删除
-                                </button>
-                                {% endif %}
-                            {% endblock %}
-                        </div>
-                        <div class="col-xs-7 col-sm-6">
-                            <div class="input-group">
-                                <input type="text" name="search" id="tableSearch" placeholder="关键字" v-on:keypress.13="search" class="form-control input-sm pull-right">
-
-                                <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-default" v-on:click="resetSearch">
-                                        <i class="fa fa-times-circle"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-default" v-on:click="search">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {% block tab_content %}
-                <!-- /.box-header -->
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-hover" id="commonTable">
-                        <thead>
-                            <tr>
-                                {% block table_head %}
-                                <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-                                    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
-                                </th>
-                                {% for title in table_titles %}
-                                    {% with 'ID,id,'|split:',' as tlist %}
-                                        {% if title in tlist %}
-                                            <th class="hidden-sm hidden-xs">{{ title }}</th>
-                                        {% else %}
-                                            <th>{{ title }}</th>
-                                        {% endif %}
-                                    {% endwith %}
-                                {% endfor %}
-                                {% endblock %}
-                            </tr>
-                        </thead>
-                        <tbody v-for="item in items">
-                            <tr>
-                                {% block table_row %}
-                                <td class="text-center hidden-sm hidden-x">
-                                    ##[$index+1]
-                                    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-                                </td>
-                                {% for field in table_fields %}
-                                    {% if field == 'id' %}
-                                        {% block item_buttons %}
-                                        <td class="text-right hidden-sm hidden-xs">
-                                            {% if page_model_perms.view %}
-                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
-                                               <i class="fa fa-bars fa-inverse"></i>
-                                            </a>
-                                            {% endif %}
-                                            {% if page_model_perms.change %}
-                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
-                                                <i class="fa fa-pencil fa-inverse"></i>
-                                            </a>
-                                            {% endif %}
-                                            {% if page_model_perms.delete %}
-                                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                                                <i class="fa fa-trash-o fa-inverse"></i>
-                                            </a>
-                                            {% endif %}
-                                        </td>
-                                        {% endblock %}
-                                    {% else %}
-                                        <td>
-                                            {!! item.{{ field }} !!}
-                                        </td>
-                                    {% endif %}
-                                {% endfor %}
-                                {% endblock %}
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                {% endblock %}
-
-                {% block common_list_pagination %}
-                    <div class="box-footer clearfix">
-                        {% include 'adminlte/common_list_pagination.html' %}
-                    </div>
-                {% endblock %}
+  <div class="row" id="commonDataTableRow">
+    <div class="col-xs-12">
+      <div class="box box-info">
+        <div class="box-header with-border">
+          <div class="row">
+            <div class="col-xs-5 col-sm-6">
+              {% block common_list_buttons %}
+                {% if page_model_perms.add %}
+                  <a class="btn btn-primary" id="create">
+                    <i class="fa fa-plus"></i>
+                    <b>新增</b>
+                  </a>
+                {% endif %}
+                {% if page_model_perms.delete %}
+                  <button class="btn btn-danger" v-on:click="removeSelected">
+                    <i class="fa fa-trash-o"></i>
+                    删除
+                  </button>
+                {% endif %}
+              {% endblock %}
             </div>
+            <div class="col-xs-7 col-sm-6">
+              <div class="input-group">
+                <input type="text" name="search" id="tableSearch" placeholder="关键字" v-on:keypress.13="search"
+                       class="form-control input-sm pull-right">
+
+                <div class="input-group-btn">
+                  <button class="btn btn-sm btn-default" v-on:click="resetSearch">
+                    <i class="fa fa-times-circle"></i>
+                  </button>
+                  <button class="btn btn-sm btn-default" v-on:click="search">
+                    <i class="fa fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {% block tab_content %}
+          <!-- /.box-header -->
+          <div class="box-body table-responsive no-padding">
+            <table class="table table-hover" id="commonTable">
+              <thead>
+              <tr>
+                {% block table_head %}
+                  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+                    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+                  </th>
+                  {% for title in table_titles %}
+                    {% with 'ID,id,'|split:',' as tlist %}
+                      {% if title in tlist %}
+                        <th class="hidden-sm hidden-xs">{{ title }}</th>
+                      {% else %}
+                        <th>{{ title }}</th>
+                      {% endif %}
+                    {% endwith %}
+                  {% endfor %}
+                {% endblock %}
+              </tr>
+              </thead>
+              {% block table_row %}
+                <tbody v-for="item in items">
+                <tr>
+                  <td class="text-center hidden-sm hidden-x">
+                    ##[$index+1]
+                    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+                  </td>
+                  {% for field in table_fields %}
+                    {% if field == 'id' %}
+                      {% block item_buttons %}
+                        <td class="text-right hidden-sm hidden-xs">
+                          {% if page_model_perms.view %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
+                               href="#[item.detail_url]" class="btn btn-info btn-sm">
+                              <i class="fa fa-bars fa-inverse"></i>
+                            </a>
+                          {% endif %}
+                          {% if page_model_perms.change %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
+                               href="#[item.edit_url]" class="btn btn-warning btn-sm">
+                              <i class="fa fa-pencil fa-inverse"></i>
+                            </a>
+                          {% endif %}
+                          {% if page_model_perms.delete %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
+                               data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);"
+                               class="btn btn-danger btn-sm">
+                              <i class="fa fa-trash-o fa-inverse"></i>
+                            </a>
+                          {% endif %}
+                        </td>
+                      {% endblock %}
+                    {% else %}
+                      <td>
+                        {!! item.{{ field }} !!}
+                      </td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+                </tbody>
+              {% endblock %}
+            </table>
+          </div>
+        {% endblock %}
+
+        {% block common_list_pagination %}
+          <div class="box-footer clearfix">
+            {% include 'adminlte/common_list_pagination.html' %}
+          </div>
+        {% endblock %}
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 {% block footer_page_script %}
-    <script type="text/javascript" src="{% static 'adminlte/js/common-list-page-base.js' %}"></script>
-    {% block common_list_footer_page_script %}
-        <script type="text/javascript" src="{% static 'adminlte/js/common-list-page.js' %}"></script>
-    {% endblock %}
+  <script type="text/javascript" src="{% static 'adminlte/js/common-list-page-base.js' %}"></script>
+  {% block common_list_footer_page_script %}
+    <script type="text/javascript" src="{% static 'adminlte/js/common-list-page.js' %}"></script>
+  {% endblock %}
 {% endblock %}
