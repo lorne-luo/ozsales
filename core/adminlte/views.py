@@ -57,11 +57,11 @@ class CommonContextMixin(object):
 
         common_dict = {
             'default_dashboard_title': default_dashboard_title,
-            'page_title': page_title,
+            'page_title': page_title.title(),
             'page_model': getattr(self, 'model', ''),
             'page_app_name': self.app_name,
             'page_model_name': self.model_name,
-            'page_model_verbose_name': getattr(self, 'model')._meta.verbose_name,
+            'page_model_verbose_name': getattr(self, 'model')._meta.verbose_name.title(),
             'page_system_name': settings.SITE_NAME,
             'page_system_subhead': '',
             'page_model_perms': page_model_perms

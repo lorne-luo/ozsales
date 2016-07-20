@@ -60,7 +60,7 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
             list_url_tag:   '<% app_name %>:<% model_name %>-list',
             update_url_tag: '<% app_name %>:<% model_name %>-update',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
-            list_url:       Urls['<% app_name %>:api-<% model_name %>-list']()
+            list_url:       Urls['<% app_name %>:api-<% model_name %>-list']() + '?'
         }
     }
 );
