@@ -52,16 +52,15 @@ TABLE_ROW_TEMPLATES = '''    <td>{!! item.%s !!}</td>
 LIST_JS = '''
 var <% model_name %>ListPageVue = new CommonListPageVue({
         data: {
-            add_api_tag: '<% app_name %>:api-<% model_name %>-list',
+            // API
             list_api_tag: '<% app_name %>:api-<% model_name %>-list',
+            detail_api_tag: '<% app_name %>:api-<% model_name %>-detail',
             delete_api_tag: '<% app_name %>:api-<% model_name %>-delete',
-            retrieve_api_tag: '<% app_name %>:api-<% model_name %>-detail',
-            update_api_tag: '<% app_name %>:api-<% model_name %>-detail',
-
+            // page
             create_url_tag: '<% app_name %>:<% model_name %>-add',
             list_url_tag:   '<% app_name %>:<% model_name %>-list',
-            detail_url_tag: '<% app_name %>:<% model_name %>-detail',
-            update_url_tag: '<% app_name %>:<% model_name %>-update'
+            update_url_tag: '<% app_name %>:<% model_name %>-update',
+            detail_url_tag: '<% app_name %>:<% model_name %>-detail'
         }
     }
 );

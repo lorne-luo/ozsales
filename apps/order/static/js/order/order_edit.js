@@ -1,11 +1,9 @@
 var OrderEditPageVue = CommonFormPageVue.extend({
     data: function () {
         return {
-            add_api_tag: 'order:api-order-list',
             list_api_tag: 'order:api-order-list',
             delete_api_tag: 'order:api-order-delete',
-            retrieve_api_tag: 'order:api-order-detail',
-            update_api_tag: 'order:api-order-detail',
+            detail_api_tag: 'order:api-order-detail',
 
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',

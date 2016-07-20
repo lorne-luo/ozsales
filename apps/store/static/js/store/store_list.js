@@ -1,11 +1,9 @@
 
 var storeListPageVue = new CommonListPageVue({
         data: {
-            add_api_tag: 'store:api-store-list',
             list_api_tag: 'store:api-store-list',
             delete_api_tag: 'store:api-store-delete',
-            retrieve_api_tag: 'store:api-store-detail',
-            update_api_tag: 'store:api-store-detail',
+            detail_api_tag: 'store:api-store-detail',
 
             create_url_tag: 'store:store-add',
             list_url_tag:   'store:store-list',

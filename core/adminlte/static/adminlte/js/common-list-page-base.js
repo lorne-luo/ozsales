@@ -4,12 +4,15 @@ var CommonListPageVue = Vue.extend({
     },
     data: function(){
         return {
+            // api
             list_api_tag:undefined,
+            delete_api_tag:undefined,
+            detail_api_tag:undefined,
+            // page
             create_url_tag:undefined,
+            list_url_tag:undefined,
             detail_url_tag:undefined,
             update_url_tag:undefined,
-            delete_api_tag:undefined,
-            list_url_tag:undefined,
             items: [],
             userName: $("#adminlte_page_user_name").val(),
             appName: $("#adminlte_page_app_name").val(),
