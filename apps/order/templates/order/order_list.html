@@ -39,28 +39,16 @@
             <thead>
                 <tr>
                     <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-                        <input type="checkbox"
-                               name="checkboxAllRow" class="checkboxAllRow"
-                               v-on:click="toggleAllBox"/>
+                        <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
                     </th>
                     <th class="visible-sm visible-xs" id="show_all_detail" v-on:click="show_all_detail">
                         <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
                     </th>
-                    <th>
-                        Date
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th>
-                        Status
-                    </th>
-                    <th>
-                        Price
-                    </th>
-                    <th class="hidden-sm hidden-xs">
-                        Ship
-                    </th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Price</th>
+                    <th class="hidden-sm hidden-xs">Ship</th>
                     <th class="hidden-sm hidden-xs"></th>
                 </tr>
                 </thead>
@@ -71,9 +59,7 @@
                 <tbody v-for="item in ongoing_items">
                     <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
-                            <input type="checkbox" class="minimal"
-                                   name="checkboxRow"
-                                   value="#[item.id]"/>
+                            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
                         </td>
                         <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}" style="width:50px">
                             <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
@@ -130,20 +116,17 @@
                         </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                               class="btn btn-info btn-sm"  data-pk="#[item.id]" data-customer="#[item.customer]" v-on:click="detail">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
                                <i class="fa fa-bars fa-inverse"></i>
                             </a>
                             {% endif %}
                             {% if page_model_perms.change %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
                                 <i class="fa fa-pencil fa-inverse"></i>
                             </a>
                             {% endif %}
                             {% if page_model_perms.delete %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash-o fa-inverse"></i>
                             </a>
                             {% endif %}
@@ -165,54 +148,36 @@
 
         <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
-            <li v-if="ongoing_totalPage > 1">
-                <a href="javascript:void(0);"
-                   page="1" v-on:click="page_ongoing">首页</a>
-            </li>
-            <template v-if="ongoing_totalPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">首页</a>
-                </li>
-            </template>
             <li v-if="ongoing_currentPage > 1">
-                <a href="javascript:void(0);"
-                   page="#[ongoing_currentPage-1]"
-                   v-on:click="page_ongoing">
-                    上页</a>
+                <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold">首页</a>
             </li>
-            <template v-if="ongoing_currentPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">上页</a>
-                </li>
-            </template>
+            <li v-if="ongoing_currentPage == 1" class="disabled">
+                  <a href="javascript:void(0);">首页</a>
+            </li>
+            <li v-if="ongoing_currentPage > 1">
+                <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing" class="text-bold">上页</a>
+            </li>
+            <li v-if="ongoing_currentPage == 1" class="disabled">
+                  <a href="javascript:void(0);">上页</a>
+            </li>
             <li v-if="ongoing_currentPage < ongoing_totalPage">
-                <a href="javascript:void(0);"
-                   page="#[ongoing_currentPage+1]"
-                   v-on:click="page_ongoing">
-                    下页</a>
+                <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing" class="text-bold">下页</a>
             </li>
-            <template v-if="ongoing_currentPage == ongoing_totalPage">
-                <li class="disabled">
-                    <a href="javascript:void(0);">下页</a>
-                </li>
-            </template>
-            <li v-if="ongoing_totalPage > 1">
-                <a href="javascript:void(0);"
-                   page="#[ongoing_totalPage]"
-                   v-on:click="page_ongoing">末页</a>
+            <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+                  <a href="javascript:void(0);">下页</a>
             </li>
-            <template v-if="ongoing_totalPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">末页</a>
-                </li>
-            </template>
+            <li v-if="ongoing_currentPage < ongoing_totalPage">
+                <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" class="text-bold">末页</a>
+            </li>
+            <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+                  <a href="javascript:void(0);">末页</a>
+            </li>
         </ul>
-        <div class="form-group" style="line-height: 29px;">
+        <span>
             &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
-        </div>
+        </span>
         </div>
         <br/>
-
     </div>
 
     <div class="tab-pane" id="pane-FINISHED">
@@ -220,42 +185,22 @@
             <thead>
                 <tr>
                     <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-                        <input type="checkbox"
-                               name="checkboxAllRow" class="checkboxAllRow"
-                               v-on:click="toggleAllBox"/>
+                        <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
                     </th>
-                    <th>
-                        Date
-                    </th>
-                    <th>
-                        Name
-                    </th>
-                    <th class="hidden-sm hidden-xs">
-                        Status
-                    </th>
-                    <th class="hidden-sm hidden-xs">
-                        Ship
-                    </th>
-                    <th>
-                        Sell
-                    </th>
-                    <th>
-                        Cost
-                    </th>
-                    <th>
-                        Profit
-                    </th>
-                    <th class="hidden-sm hidden-xs">
-
-                    </th>
+                    <th>Date</th>
+                    <th>Name</th>
+                    <th class="hidden-sm hidden-xs">Status</th>
+                    <th class="hidden-sm hidden-xs">Ship</th>
+                    <th>Sell</th>
+                    <th>Cost</th>
+                    <th>Profit</th>
+                    <th class="hidden-sm hidden-xs"></th>
                 </tr>
                 </thead>
                 <tbody v-for="item in finished_items">
                     <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
                         <td class="text-center hidden-sm hidden-xs">
-                            <input type="checkbox" class="minimal"
-                                   name="checkboxRow"
-                                   value="#[item.id]"/>
+                            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
                         </td>
                         <td>
                             <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
@@ -289,20 +234,17 @@
                         </td>
                         <td class="text-right hidden-sm hidden-xs">
                             {% if page_model_perms.view %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                               class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
                                <i class="fa fa-bars fa-inverse"></i>
                             </a>
                             {% endif %}
                             {% if page_model_perms.change %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                               class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
                                 <i class="fa fa-pencil fa-inverse"></i>
                             </a>
                             {% endif %}
                             {% if page_model_perms.delete %}
-                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                               class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash-o fa-inverse"></i>
                             </a>
                             {% endif %}
@@ -328,51 +270,34 @@
 
         <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
-            <li v-if="finished_totalPage > 1">
-                <a href="javascript:void(0);"
-                   page="1" v-on:click="page_finished">首页</a>
-            </li>
-            <template v-if="finished_totalPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">首页</a>
-                </li>
-            </template>
             <li v-if="finished_currentPage > 1">
-                <a href="javascript:void(0);"
-                   page="#[finished_currentPage-1]"
-                   v-on:click="page_finished">
-                    上页</a>
+                <a href="javascript:void(0);" page="1" v-on:click="page_finished" class="text-bold">首页</a>
             </li>
-            <template v-if="finished_currentPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">上页</a>
-                </li>
-            </template>
+            <li v-if="finished_currentPage == 1" class="disabled">
+                <a href="javascript:void(0);">首页</a>
+            </li>
+            <li v-if="finished_currentPage > 1">
+                <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" class="text-bold">上页</a>
+            </li>
+            <li v-if="finished_currentPage == 1" class="disabled">
+                <a href="javascript:void(0);">上页</a>
+            </li>
             <li v-if="finished_currentPage < finished_totalPage">
-                <a href="javascript:void(0);"
-                   page="#[finished_currentPage+1]"
-                   v-on:click="page_finished">
-                    下页</a>
+                <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" class="text-bold">下页</a>
             </li>
-            <template v-if="finished_currentPage == finished_totalPage">
-                <li class="disabled">
-                    <a href="javascript:void(0);">下页</a>
-                </li>
-            </template>
-            <li v-if="finished_totalPage > 1">
-                <a href="javascript:void(0);"
-                   page="#[finished_totalPage]"
-                   v-on:click="page_finished">末页</a>
+            <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+                <a href="javascript:void(0);">下页</a>
             </li>
-            <template v-if="finished_totalPage == 1">
-                <li class="disabled">
-                    <a href="javascript:void(0);">末页</a>
-                </li>
-            </template>
+            <li v-if="finished_currentPage < finished_totalPage">
+                <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished" class="text-bold">末页</a>
+            </li>
+            <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+                <a href="javascript:void(0);">末页</a>
+            </li>
         </ul>
-        <div class="form-group" style="line-height: 29px;">
+        <span>
             &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第 #[finished_currentPage]/#[finished_totalPage] 页
-        </div>
+        </span>
         </div>
         <br/>
     </div>

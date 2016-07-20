@@ -23,8 +23,7 @@
                                 </a>
                                 {% endif %}
                                 {% if page_model_perms.delete %}
-                                <button class="btn btn-danger"
-                                        v-on:click="removeSelected">
+                                <button class="btn btn-danger" v-on:click="removeSelected">
                                     <i class="fa fa-trash-o"></i>
                                     删除
                                 </button>
@@ -33,19 +32,12 @@
                         </div>
                         <div class="col-xs-7">
                             <div class="input-group">
-                                <input type="text" name="search"
-                                       id="tableSearch"
-                                       class="form-control input-sm pull-right"
-                                       placeholder="关键字"
-                                       v-on:keypress.13="search">
-
+                                <input type="text" name="search" id="tableSearch" placeholder="关键字" v-on:keypress.13="search" class="form-control input-sm pull-right">
                                 <div class="input-group-btn">
-                                    <button class="btn btn-sm btn-default"
-                                            v-on:click="resetSearch">
+                                    <button class="btn btn-sm btn-default" v-on:click="resetSearch">
                                         <i class="fa fa-times-circle"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-default"
-                                            v-on:click="search">
+                                    <button class="btn btn-sm btn-default" v-on:click="search">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </div>
@@ -72,9 +64,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center" style="width:60px;">
-                                    <input type="checkbox"
-                                           name="checkboxAllRow" class="checkboxAllRow"
-                                           v-on:click="toggleAllBox"/>
+                                    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox" />
                                 </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
@@ -94,28 +84,23 @@
                             <tbody v-for="item in items">
                                 <tr v-if="item.id">
                                     <td class="text-center">
-                                        <input type="checkbox" class="minimal"
-                                               name="checkboxRow"
-                                               value="#[item.id]"/>
+                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]" />
                                     </td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
                                                 {% if page_model_perms.view %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                                   class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
                                                    <i class="fa fa-bars fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.change %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                                   class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
                                                     <i class="fa fa-pencil fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                                   class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
@@ -136,9 +121,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center" style="width:60px;">
-                                    <input type="checkbox"
-                                           name="checkboxAllRow" class="checkboxAllRow"
-                                           v-on:click="toggleAllBox"/>
+                                    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
                                 </th>
                                 {% for title in table_titles %}
                                     {% if title == 'ID' %}
@@ -158,28 +141,23 @@
                             <tbody v-for="item in items">
                                 <tr v-if="item.id">
                                     <td class="text-center">
-                                        <input type="checkbox" class="minimal"
-                                               name="checkboxRow"
-                                               value="#[item.id]"/>
+                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
                                     </td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
                                                 {% if page_model_perms.view %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="javascript:void(0);"
-                                                   class="btn btn-info btn-sm"  data-pk="#[item.id]" v-on:click="detail">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
                                                    <i class="fa fa-bars fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.change %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="javascript:void(0);"
-                                                   class="btn btn-warning btn-sm" data-pk="#[item.id]" v-on:click="update">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
                                                     <i class="fa fa-pencil fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-                                                   class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
