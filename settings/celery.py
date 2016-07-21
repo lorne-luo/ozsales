@@ -1,12 +1,11 @@
 from __future__ import absolute_import
-import datetime
 import os
-import urllib
 from celery import Celery
 from django.conf import settings
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from decimal import Decimal
+from yahoo_finance import Share, Currency
 from settings.settings import rate
 from utils.telstra_api import MessageSender
 
@@ -22,17 +21,11 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @periodic_task(run_every=crontab(minute=0, hour='12,20'))
 def get_aud_rmb():
-    url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
-    content = urllib.urlopen(url).read()
-    try:
-        if content.startswith('"AUDCNY'):
-            infos = content.split(',')
-            r = Decimal(infos[1])
-            rate.aud_rmb_rate = r
-            sender = MessageSender()
-            sender.send_to_self(r)
-            # rate.save()
-    except:
-        rate.aud_rmb_rate = 5
+    # url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
+    audcny = Currency('AUDCNY')
+    value = audcny.get_rate()
+    rate.aud_rmb_rate = Decimal(value)
+    sender = MessageSender()
+    sender.send_to_self(value)
 
     return rate.aud_rmb_rate
