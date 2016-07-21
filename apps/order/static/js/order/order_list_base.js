@@ -104,6 +104,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                     url,
                     $.param({'status': next_status}),
                     function (resp) {
+                        var status = resp['status'];
                         var td = $(event.target).closest('td');
                         self.update_status_button(td, resp);
                     }
@@ -149,7 +150,8 @@ var OrderListPageVue = CommonListPageVue.extend({
                     url,
                     $.param({'is_paid': true}),
                     function (resp) {
-                        if (resp['is_paid']) {
+                        var is_paid = resp['is_paid'];
+                        if (is_paid) {
                             $(event.target).closest('a.pay').remove();
                         }
                     }
