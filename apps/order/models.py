@@ -283,7 +283,7 @@ class OrderProduct(models.Model):
             brand_name = self.product.brand.short_name if self.product.brand.short_name else self.product.brand.name_en
             product_name = '%s %s' % (brand_name, self.product.name_cn)
         else:
-            product_name = str(self.product)
+            product_name = self.name
         return '%s=%dx%s' % (product_name, self.sell_price_rmb, self.amount)
 
     def get_link(self):
