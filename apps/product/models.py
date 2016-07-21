@@ -41,8 +41,9 @@ class Category(models.Model):
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_en = models.CharField(_('name_en'), max_length=128, null=False, blank=False)
+    name_en = models.CharField(_('name_en'), max_length=128, null=False, blank=False, unique=True)
     name_cn = models.CharField(_('name_cn'), max_length=128, null=True, blank=True)
+    short_name = models.CharField(_('Abbr'), max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)

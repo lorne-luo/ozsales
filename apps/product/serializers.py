@@ -30,5 +30,5 @@ class BrandSerializer(BaseSerializer):
     class Meta:
         model = Brand
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['name_en', 'name_cn', 'country', 'remarks', 'category']
+                 ['name_en', 'name_cn', 'country', 'short_name', 'remarks', 'category']
         read_only_fields = ['id']

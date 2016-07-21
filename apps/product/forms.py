@@ -29,17 +29,17 @@ class ProductDetailForm(ModelForm):
 class BrandAddForm(ModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
 
 
 class BrandUpdateForm(ModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
 
 
 class BrandDetailForm(ModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
 

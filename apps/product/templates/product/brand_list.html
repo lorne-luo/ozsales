@@ -7,7 +7,7 @@
   </th>
   <th>Name_En</th>
   <th>Name_Cn</th>
-  <th>Country</th>
+  <th>Abbr</th>
   <th>Category</th>
 
   <th class="hidden-sm hidden-xs"></th>
@@ -22,7 +22,7 @@
     </td>
     <td><a href="{!! item.edit_url !!}">{!! item.name_en !!}</a></td>
     <td><a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a></td>
-    <td>{!! item.country !!}</td>
+    <td>{!! item.short_name !!}</td>
     <td>{!! item.category !!}</td>
 
     {% block item_buttons %}
