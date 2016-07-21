@@ -25,7 +25,7 @@
   <tr>
     <th style="min-width: 44px">姓名</th>
     <td>
-      <a href="{% url 'admin:customer_customer_change' object.customer.pk %}">{{ object.customer }}</a>
+      <a href="{% url 'customer:customer-update' object.customer.pk %}">{{ object.customer }}</a>
       {% if object.customer.remarks %}
         - {{ object.customer.remarks }}
       {% endif %}
@@ -38,7 +38,7 @@
   <tr>
     <th>地址</th>
     <td>
-      <a href="#">{{ object.address }}</a>
+      <a href="{% url 'customer:customer-update' object.customer.pk %}#address_set_table">{{ object.address }}</a>
     </td>
   </tr>
   <tr>
