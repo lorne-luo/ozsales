@@ -65,9 +65,11 @@
                                     {% if page_title != default_dashboard_title %}
                                     <li class="active">
                                         {% if page_app_name and page_model_name %}
-                                            <a href="{% url 'adminlte:common_list_page' page_app_name page_model_name %}">
+                                          {% with page_app_name|add:":"|add:page_model_name|add:"-list" as list_url %}
+                                            <a href="{% url list_url %}">
                                                 {{ page_model_verbose_name }}
                                             </a>
+                                          {% endwith %}
                                         {% else %}
                                             {{ page_title }}
                                         {% endif %}
