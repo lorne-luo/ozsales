@@ -7,7 +7,7 @@ from models import Product, Brand
 
 # Serializer for product
 class ProductSerializer(BaseSerializer):
-    brand_display = serializers.CharField(source='brand')
+    brand_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -22,6 +22,9 @@ class ProductSerializer(BaseSerializer):
         else:
             img = '/static/img/no_image.jpg'
         return '<a href="%s" target="_blank"><img style="height:90px" src="%s"/></a>' % (img, img)
+
+    def get_brand_display(self, obj):
+        return str(obj.brand)
 
 
 class BrandSerializer(BaseSerializer):

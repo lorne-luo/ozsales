@@ -53,7 +53,10 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
-        return '%s' % self.name_en
+        if self.name_en.lower() == 'none':
+            return ''
+        else:
+            return self.name_en
 
 
 def get_product_pic_path(instance, filename):
