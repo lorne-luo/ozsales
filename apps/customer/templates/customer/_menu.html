@@ -21,14 +21,5 @@
         </li>
         {%endif%}
 
-        {% if perms.customer.add_address or perms.customer.change_address %}
-        <li>
-        <a href="{% url 'customer:address-list' %}">
-                <i class="fa fa-circle-o"></i>
-                Address
-            </a>
-        </li>
-        {%endif%}
-
     </ul>
 </li>
