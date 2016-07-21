@@ -19,7 +19,9 @@ class ModelForm(forms.ModelForm):
 
             field = self.fields.get(field_name)
             if type(field.widget) in (forms.TextInput, forms.DateInput, forms.EmailInput):
-                if field.required:
+                if field.help_text:
+                    field.widget.attrs['placeholder'] = field.help_text
+                elif field.required:
                     field.widget.attrs['placeholder'] = u'必填'
                 else:
                     field.widget.attrs['placeholder'] = u'选填'
