@@ -306,6 +306,17 @@
       </div><!-- //product_template -->
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      {{ object.address.name }} {{ object.address.id_number }}<br/>
+      {{ object.address }}<br/>
+      <br/>
+      {% for product in object.products.all %}
+        {{ product }}<br/>
+      {% endfor %}
+    </div>
+  </div>
 {% endblock %}
 
 {% block header_page_script %}

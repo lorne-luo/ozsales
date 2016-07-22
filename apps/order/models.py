@@ -252,7 +252,7 @@ class OrderProduct(models.Model):
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
-        return '%s X %s' % (self.name, self.amount)
+        return '%s = %d X %s' % (self.name, self.sell_price_rmb, self.amount)
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
