@@ -119,7 +119,6 @@ class OrderUpdateForm(ModelForm):
                 self.fields.pop('status')
                 self.fields.pop('cost_aud')
                 self.fields.pop('sell_rmb')
-                self.fields.pop('sell_price_rmb')
 
             if instance.finish_time:
                 self.fields['finish_time'].widget.attrs['readonly'] = True

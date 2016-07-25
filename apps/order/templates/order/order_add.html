@@ -32,7 +32,7 @@
     <div class="box-body">
       {% for field in form %}
         <div class="form-group">
-          <label for="id_{{ field.name }}" class="col-sm-2 control-label ln34">{{ field.label }}</label>
+          <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
           <div class="col-sm-6">
             {{ field }}
           </div>
@@ -44,7 +44,7 @@
       {% endfor %}
     </div>
     <div class="box-footer">
-      <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+      <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
     </div>
     </form>
   </div>

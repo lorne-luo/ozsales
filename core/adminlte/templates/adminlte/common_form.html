@@ -59,7 +59,13 @@
             {% endfor %}
         </div>
         <div class="box-footer">
-          <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
+{#          {% if object.id %}#}
+{#          <button type="button" style="width:108px" class="btn btn-danger"#}
+{#                  v-on:click="delete({{ object.id }}, $event)">删 除#}
+{#          </button>#}
+{#          {% endif %}#}
         </div>
     </form>
     </div>
@@ -68,6 +74,7 @@
 {% block header_page_script %}
     <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
     <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
 {% endblock %}
 
 {% block footer_base_script %}
