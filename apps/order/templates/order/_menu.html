@@ -9,7 +9,7 @@
 
     {% if perms.order.view_order %}
     <li>
-      <a href="{% url 'order:order-list-short' %}">
+      <a href="{% url 'order:order-list-short' %}" class="main">
         <i class="fa fa-circle-o"></i>
         Order
       </a>
@@ -21,14 +21,14 @@
     </li>
     {% endif %}
 
-{#        {% if perms.order.view_orderproduct %}#}
-{#        <li>#}
-{#            <a href="{% url 'order:orderproduct-list' %}">#}
-{#                <i class="fa fa-circle-o"></i>#}
-{#                OrderProduct#}
-{#            </a>#}
-{#        </li>#}
-{#        {%endif%}#}
+    {% if perms.order.view_orderproduct %}
+    <li>
+      <a href="{% url 'order:orderproduct-list' %}" class="main">
+        <i class="fa fa-circle-o"></i>
+        OrderProduct
+      </a>
+    </li>
+    {%endif%}
 
   </ul>
 </li>

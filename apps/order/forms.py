@@ -73,7 +73,7 @@ class OrderUpdateForm(ModelForm):
 
     class Meta:
         model = Order
-        fields = ['customer', 'address', 'total_amount', 'status','is_paid', 'paid_time', 'ship_time',
+        fields = ['customer', 'address', 'total_amount', 'status', 'is_paid', 'paid_time', 'ship_time',
                   'cost_aud', 'sell_rmb', 'sell_price_rmb', 'finish_time']
 
     def __init__(self, *args, **kwargs):
@@ -133,6 +133,33 @@ class OrderDetailForm(ModelForm):
         fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb',
                   'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb',
                   'profit_rmb', 'finish_time']
+
+
+# class OrderProductAddForm(ModelForm):
+#     """ Add form for OrderProduct """
+#
+#     class Meta:
+#         model = OrderProduct
+#         fields = ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+#                   'total_price_aud', 'store']
+
+
+class OrderProductDetailForm(ModelForm):
+    """ Detail form for OrderProduct """
+
+    class Meta:
+        model = OrderProduct
+        fields = ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+                  'total_price_aud', 'store']
+
+
+# class OrderProductUpdateForm(ModelForm):
+#     """ Update form for OrderProduct """
+#
+#     class Meta:
+#         model = OrderProduct
+#         fields = ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+#                   'total_price_aud', 'store']
 
 
 class OrderProductInlineAddForm(ModelForm):

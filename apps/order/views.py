@@ -74,6 +74,28 @@ class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVi
     }
 
 
+class OrderMemberListView(CommonContextMixin, ListView):
+    model = Order
+    template_name_suffix = '_member_list'  # order/order_member_list.html
+
+    def get(self, request, *args, **kwargs):
+        username = self.kwargs.get('username', None)
+
+        try:
+            user = Seller.objects.get(username=username)
+            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+
+            if user and not user.is_superuser:
+                if user.is_active:
+                    login(request, user)
+            else:
+                raise Http404
+        except Seller.DoesNotExist:
+            raise Http404
+
+        return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
+
+
 class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Order
     form_class = forms.OrderAddForm
@@ -267,50 +289,78 @@ class OrderViewSet(CommonViewSet):
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
-    search_fields = ['customer__name', 'status']
+    search_fields = ['customer__name', 'address__name', 'address__address']
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return Order.objects.all()
+            queryset = Order.objects.all()
         elif self.request.user.is_authenticated():
-            return Order.objects.filter(customer__seller=self.request.user)
+            queryset = Order.objects.filter(customer__seller=self.request.user)
         else:
-            return Order.objects.none()
+            queryset = Order.objects.none()
+
+        return queryset.select_related('address', 'customer')
+
+
+class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    """ List views for OrderProduct """
+    model = OrderProduct
+    template_name_suffix = '_list'  # order/orderproduct_list.html
+    permissions = {
+        "all": ("order.view_orderproduct",)
+    }
+
+
+# class OrderProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+#     """ Add views for OrderProduct """
+#     model = OrderProduct
+#     form_class = forms.OrderProductAddForm
+#     template_name = 'adminlte/common_form.html'
+#     permissions = {
+#         "all": ("orderproduct.add_orderproduct",)
+#     }
+#
+#     def get_success_url(self):
+#         return reverse('order:orderproduct-list')
+
+
+# class OrderProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+#     """ Update views for OrderProduct """
+#     model = OrderProduct
+#     form_class = forms.OrderProductUpdateForm
+#     template_name = 'adminlte/common_form.html'
+#     permissions = {
+#         "all": ("orderproduct.change_orderproduct",)
+#     }
+#
+#     def get_success_url(self):
+#         return reverse('order:orderproduct-list')
+
+
+class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Detail views for OrderProduct """
+    model = OrderProduct
+    form_class = forms.OrderProductDetailForm
+    template_name = 'adminlte/common_detail_new.html'
+    permissions = {
+        "all": ("orderproduct.view_orderproduct",)
+    }
 
 
 class OrderProductViewSet(CommonViewSet):
     """ api views for OrderProduct """
     serializer_class = serializers.OrderProductSerializer
-    filter_class = OrderFilter
     permission_classes = [permissions.DjangoModelPermissions]
-    search_fields = ['order__customer__name', 'status']
+    filter_fields = ['name']
+    search_fields = ['order__customer__name', 'name', 'product__name_en', 'product__name_cn', 'product__brand__name_en',
+                     'product__brand__name_cn']
 
     def get_queryset(self):
         if self.request.user.is_superuser:
-            return OrderProduct.objects.all()
+            queryset = OrderProduct.objects.all()
         elif self.request.user.is_authenticated():
-            return OrderProduct.objects.filter(order__customer__seller=self.request.user)
+            queryset = OrderProduct.objects.filter(order__customer__seller=self.request.user)
         else:
-            return OrderProduct.objects.none()
+            queryset = OrderProduct.objects.none()
 
-
-class OrderMemberListView(CommonContextMixin, ListView):
-    model = Order
-    template_name_suffix = '_member_list'  # order/order_member_list.html
-
-    def get(self, request, *args, **kwargs):
-        username = self.kwargs.get('username', None)
-
-        try:
-            user = Seller.objects.get(username=username)
-            user.backend = settings.AUTHENTICATION_BACKENDS[0]
-
-            if user and not user.is_superuser:
-                if user.is_active:
-                    login(request, user)
-            else:
-                raise Http404
-        except Seller.DoesNotExist:
-            raise Http404
-
-        return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
+        return queryset.select_related('order', 'product')

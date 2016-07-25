@@ -76,6 +76,39 @@ class OrderSerializer(BaseSerializer):
         return obj.get_product_summary()
 
 
-class OrderProductSerializer(serializers.ModelSerializer):
+class OrderProductSerializer(BaseSerializer):
+    """ Serializer for OrderProduct """
+    order_display = serializers.StringRelatedField(source='order', read_only=True)
+    store_display = serializers.StringRelatedField(source='store', read_only=True)
+    order_url = serializers.SerializerMethodField()
+    product_url = serializers.SerializerMethodField()
+
     class Meta:
         model = OrderProduct
+        fields = ['id', 'detail_url'] + \
+                 ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+                  'total_price_aud', 'store', 'order_display', 'order_url', 'product_url', 'store_display']
+        read_only_fields = ['id']
+
+    def get_order_url(self, obj):
+        user = self.context['request'].user
+
+        if user.has_perm('order.change_order'):
+            url_tag = 'order:order-update'
+            return reverse(url_tag, args=[obj.order.id])
+        elif user.has_perm('order.view_order'):
+            url_tag = 'order:order-detail'
+            return reverse(url_tag, args=[obj.order.id])
+        return None
+
+    def get_product_url(self, obj):
+        user = self.context['request'].user
+
+        if obj.product:
+            if user.has_perm('product.change_product'):
+                url_tag = 'product:product-update'
+                return reverse(url_tag, args=[obj.product.id])
+            elif user.has_perm('product.view_product'):
+                url_tag = 'product:product-detail'
+                return reverse(url_tag, args=[obj.product.id])
+        return None

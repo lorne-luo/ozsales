@@ -27,6 +27,15 @@ urlpatterns = patterns('apps.order.views',
 
 # reverse('order:api-order-list'), reverse('order:api-order-detail', kwargs={'pk': 1})
 router.register(r'api/order/order', views.OrderViewSet, base_name='api-order')
+
+# urls for orderproduct
+urlpatterns += patterns('',
+    # url(r'^order/orderproduct/add/$', login_required(views.OrderProductAddView.as_view()), name='orderproduct-add'),
+    url(r'^order/orderproduct/list/$', login_required(views.OrderProductListView.as_view()), name='orderproduct-list'),
+    url(r'^order/orderproduct/(?P<pk>\d+)/$', login_required(views.OrderProductDetailView.as_view()), name='orderproduct-detail'),
+    # url(r'^order/orderproduct/(?P<pk>\d+)/edit/$', login_required(views.OrderProductUpdateView.as_view()), name='orderproduct-update'),
+)
+
 router.register(r'api/order/orderproduct', views.OrderProductViewSet, base_name='api-orderproduct')
 
 
