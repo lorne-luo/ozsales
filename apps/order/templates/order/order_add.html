@@ -22,16 +22,7 @@
 
 {% block content %}
   <div class="box box-info">
-    {% if form.is_multipart %}
-      <form enctype="multipart/form-data"
-            method="post"
-            action=""
-            class="form-horizontal"
-            role="form" id="commonForm">
-    {% else %}
-      <form method="post" action="" class="form-horizontal"
-            role="form" id="commonForm">
-    {% endif %}
+    <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
     {% csrf_token %}
 
     <div class="box-header with-border">

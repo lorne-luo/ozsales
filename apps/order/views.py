@@ -152,26 +152,30 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         self.object = self.get_object()
 
         # order products
-        products_formset = forms.OrderProductFormSet(request.POST, prefix='products')
+        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
-            # if form.instance.product or form.instance.name:
-            #     form.fields['order'].initial = self.object.id
-            #     form.base_fields['order'].initial = self.object.id
-            #     form.changed_data.append('order')
-            #     form.instance.order_id = self.object.id
+            if form.instance.product or form.instance.name:
+                form.fields['order'].initial = self.object.id
+                form.base_fields['order'].initial = self.object.id
+                form.changed_data.append('order')
+                form.instance.order_id = self.object.id
+                if 'order' in form._errors:
+                    del form._errors['order']
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
         products_formset.save()
 
         # express orders
-        express_formset = ExpressOrderFormSet(request.POST, prefix='express_orders')
+        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
-            # if form.instance.track_id:
-            #     form.fields['order'].initial = self.object.id
-            #     form.base_fields['order'].initial = self.object.id
-            #     form.changed_data.append('order')
-            #     form.instance.order_id = self.object.id
+            if form.instance.track_id:
+                form.fields['order'].initial = self.object.id
+                form.base_fields['order'].initial = self.object.id
+                form.changed_data.append('order')
+                form.instance.order_id = self.object.id
+                if 'order' in form._errors:
+                    del form._errors['order']
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
@@ -207,6 +211,7 @@ class OrderAddDetailView(OrderUpdateView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
+        # fill express_orders-%s-order field
         products_formset_count = int(request.POST['products-TOTAL_FORMS'])
         express_formset_count = int(request.POST['express_orders-TOTAL_FORMS'])
         request.POST._mutable = True
@@ -224,26 +229,31 @@ class OrderAddDetailView(OrderUpdateView):
                 request.POST[key] = self.object.id
         request.POST._mutable = False
 
-        products_formset = forms.OrderProductFormSet(request.POST, prefix='products')
+        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
             if form.instance.product or form.instance.name:
-                if 'order' in form._errors:
-                    del form._errors['order']
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
+                if 'order' in form._errors:
+                    del form._errors['order']
+
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
+
         products_formset.save()
 
-        express_formset = ExpressOrderFormSet(request.POST, prefix='express_orders')
+        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
             if form.instance.track_id:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
+                if 'order' in form._errors:
+                    del form._errors['order']
+
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
