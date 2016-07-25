@@ -159,8 +159,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-                if 'order' in form._errors:
-                    del form._errors['order']
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
@@ -174,8 +172,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-                if 'order' in form._errors:
-                    del form._errors['order']
             if not form.is_valid():
                 return HttpResponse(str(form.errors))
 
