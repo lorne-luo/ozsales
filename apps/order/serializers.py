@@ -33,25 +33,15 @@ class OrderSerializer(BaseSerializer):
         read_only_fields = ['id']
 
     def get_detail_url(self, obj):
-        user = self.context['request'].user
-        app_label = self.Meta.model._meta.app_label
-        model_name = self.Meta.model._meta.model_name
-
-        change_perm_str = '%s.change_%s' % (app_label, model_name)
-        view_perm_str = '%s.view_%s' % (app_label, model_name)
-        if user.has_perm(change_perm_str):
-            return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
-        elif user.has_perm(view_perm_str):
-            return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
-        else:
-            return '#'
+        return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
 
     def get_customer_url(self, obj):
-        request = self.context.get('request', None)
-        if request.user.has_perm('customer.change_customer'):
+        user = self.context['request'].user
+        if user.has_perm('customer.change_customer'):
             return reverse('customer:customer-update', args=[obj.customer.id])
-        elif request.user.has_perm('customer.view_customer'):
+        elif user.has_perm('customer.view_customer'):
             return reverse('customer:customer-detail', args=[obj.customer.id])
+        return None
 
     def get_shipping_order(self, obj):
         return obj.get_shipping_orders()
