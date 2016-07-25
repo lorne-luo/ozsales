@@ -2,16 +2,18 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 
+{% block common_list_buttons %}{% endblock %}
+
 {% block table_head %}
   <th class="text-center hidden-sm hidden-xs" style="width:60px;">
     <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
   </th>
   <th>Order</th>
   <th>Product</th>
-  <th>Amount</th>
+  <th class="hidden-sm hidden-xs">Amount</th>
   <th>Sell RMB</th>
   <th>Cost AUD</th>
-  <th>Store</th>
+  <th class="hidden-sm hidden-xs">Store</th>
 
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
@@ -34,10 +36,10 @@
         {!! item.name !!}
       </template>
     </td>
-    <td>{!! item.amount !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.amount !!}</td>
     <td>{!! item.sell_price_rmb !!}</td>
     <td>{!! item.cost_price_aud !!}</td>
-    <td>{!! item.store !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.store !!}</td>
 
     {% block item_buttons %}
       <td class="text-right hidden-sm hidden-xs">
