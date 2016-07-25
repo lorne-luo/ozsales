@@ -25,7 +25,7 @@ var CommonFormPageVue = Vue.extend({
             $TOTAL_FORMS.val(parseInt($TOTAL_FORMS.val()) + 1);
 
             this.reset_row_color(form_name);
-            $("select[class$='form-control']").not("pp.hide select[class$='form-control']")
+            $("select[class$='form-control']").not(".hide select[class$='form-control']")
                 .chosen({search_contains: true, disable_search_threshold: 10});
         },
         delete_item: function (event, delete_url_tag, fields) {
