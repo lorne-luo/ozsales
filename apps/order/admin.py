@@ -55,7 +55,7 @@ admin.site.register(Order, OrderAdmin)
 
 class OrderProductAdmin(admin.ModelAdmin):
     list_display = ('product', 'name', 'order', 'amount', 'sell_price_rmb', 'cost_price_aud', 'store', 'create_time')
-    search_fields = ('name', 'product__name_en', 'product__name_cn')
+    search_fields = ('name', 'product__name_en', 'product__name_cn', 'order__customer__name', 'order__address__name')
 
 
 admin.site.register(OrderProduct, OrderProductAdmin)
