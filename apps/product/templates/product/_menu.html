@@ -9,7 +9,7 @@
 
     {% if perms.product.view_product %}
       <li>
-        <a href="{% url 'product:product-list' %}">
+        <a href="{% url 'product:product-list' %}" class="main">
           <i class="fa fa-circle-o"></i>
           Product
         </a>
@@ -23,7 +23,7 @@
 
     {% if perms.product.view_brand %}
       <li>
-        <a href="{% url 'product:brand-list' %}">
+        <a href="{% url 'product:brand-list' %}" class="main">
           <i class="fa fa-circle-o"></i>
           Brand
         </a>

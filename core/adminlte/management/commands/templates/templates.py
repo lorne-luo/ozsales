@@ -91,7 +91,7 @@ MENU_TEMPLATE='''{% load activelink %}
 MENU_APP_TEMPLATE='''
     {% if perms.<% app_name %>.view_<% model_name %> %}
     <li>
-      <a href="{% url '<% app_name %>:<% model_name %>-list' %}">
+      <a href="{% url '<% app_name %>:<% model_name %>-list' %}"  class="main">
         <i class="fa fa-circle-o"></i>
         <% MODEL_NAME %>
       </a>

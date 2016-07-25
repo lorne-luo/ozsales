@@ -4,6 +4,11 @@ input[type='checkbox'] {
     cursor: pointer;
 }
 
+.treeview-menu li a.main{
+    display:inline-block;
+    width:150px
+}
+
 @media (max-width: 767px) {
     .table-responsive > .table > thead > tr > th,
     .table-responsive > .table > tbody > tr > th,
