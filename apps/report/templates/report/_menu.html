@@ -13,11 +13,6 @@
         <i class="fa fa-circle-o"></i>
         MonthlyReport
       </a>
-      {% if perms.report.add_monthlyreport %}
-      <a href="{% url 'report:monthlyreport-add' %}" class="pull-right">
-         <i class="fa fa-plus" aria-hidden="true"></i>
-      </a>
-      {%endif%}
     </li>
     {%endif%}
 
