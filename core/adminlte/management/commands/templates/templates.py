@@ -6,7 +6,7 @@ LIST_TEMPLATES = '''
   <th class="text-center hidden-sm hidden-xs" style="width:60px;">
     <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
   </th>
-  <% table_head %>
+<% table_head %>
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
