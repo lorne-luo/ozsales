@@ -330,10 +330,7 @@ class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 #         "all": ("orderproduct.add_orderproduct",)
 #     }
 #
-#     def get_success_url(self):
-#         return reverse('order:orderproduct-list')
-
-
+#
 # class OrderProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
 #     """ Update views for OrderProduct """
 #     model = OrderProduct
@@ -342,9 +339,6 @@ class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 #     permissions = {
 #         "all": ("orderproduct.change_orderproduct",)
 #     }
-#
-#     def get_success_url(self):
-#         return reverse('order:orderproduct-list')
 
 
 class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

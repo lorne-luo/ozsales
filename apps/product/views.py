@@ -80,9 +80,6 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
 
-    def get_success_url(self):
-        return reverse('product:product-list')
-
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
@@ -92,9 +89,6 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     permissions = {
         "all": ("product.change_product",)
     }
-
-    def get_success_url(self):
-        return reverse('product:product-list')
 
 
 class ProductDetailView(CommonContextMixin, UpdateView):
@@ -132,9 +126,6 @@ class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
         "all": ("brand.add_brand",)
     }
 
-    def get_success_url(self):
-        return reverse('product:brand-list')
-
 
 class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     """ Update views for Brand """
@@ -144,9 +135,6 @@ class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     permissions = {
         "all": ("brand.change_brand",)
     }
-
-    def get_success_url(self):
-        return reverse('product:brand-list')
 
 
 class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

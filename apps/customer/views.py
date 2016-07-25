@@ -30,9 +30,6 @@ class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         "all": ("address.add_address",)
     }
 
-    def get_success_url(self):
-        return reverse('customer:address-list')
-
 
 class AddressUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Address
@@ -41,9 +38,6 @@ class AddressUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     permissions = {
         "all": ("address.change_address",)
     }
-
-    def get_success_url(self):
-        return reverse('customer:address-list')
 
 
 class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -82,12 +76,6 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
         "all": ("customer.add_customer",)
     }
 
-    def get_success_url(self):
-        if '_continue' in self.request.POST and self.object:
-            return reverse('customer:customer-update', args=[self.object.id])
-        else:
-            return reverse('customer:customer-list')
-
 
 class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
@@ -105,12 +93,6 @@ class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
         context['address_forms'] = address_forms
 
         return context
-
-    def get_success_url(self):
-        if '_continue' in self.request.POST and self.object:
-            return reverse('customer:customer-update', args=[self.object.id])
-        else:
-            return reverse('customer:customer-list')
 
     @transaction.atomic
     def post(self, request, *args, **kwargs):

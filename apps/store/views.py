@@ -28,9 +28,6 @@ class PageAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateVi
         "all": ("page.add_page",)
     }
 
-    def get_success_url(self):
-        return reverse('store:page-list')
-
 
 class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Page
@@ -39,9 +36,6 @@ class PageUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
     permissions = {
         "all": ("page.change_page",)
     }
-
-    def get_success_url(self):
-        return reverse('store:page-list')
 
 
 class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -80,9 +74,6 @@ class StoreAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
         "all": ("store.add_store",)
     }
 
-    def get_success_url(self):
-        return reverse('store:store-list')
-
 
 class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Store
@@ -91,9 +82,6 @@ class StoreUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     permissions = {
         "all": ("store.change_store",)
     }
-
-    def get_success_url(self):
-        return reverse('store:store-list')
 
 
 class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -113,4 +101,3 @@ class StoreViewSet(CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['id']
     search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
-

@@ -30,9 +30,6 @@ class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMix
         "all": ("<% model_name %>.add_<% model_name %>",)
     }
 
-    def get_success_url(self):
-        return reverse('<% app_name %>:<% model_name %>-list')
-
 
 class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     """ Update views for <% MODEL_NAME %> """
@@ -42,9 +39,6 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
     permissions = {
         "all": ("<% model_name %>.change_<% model_name %>",)
     }
-
-    def get_success_url(self):
-        return reverse('<% app_name %>:<% model_name %>-list')
 
 
 class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

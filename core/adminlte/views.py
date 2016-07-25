@@ -16,6 +16,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
 from core.adminlte import constants
+
+
 # from core.adminlte.models import Menu, SystemConfig, Permission
 # from core.messageset.models import Notification, Task
 # from core.organization.models import Staff
@@ -68,6 +70,14 @@ class CommonContextMixin(object):
         }
         context.update(common_dict)
         return context
+
+    def get_success_url(self):
+        if '_continue' in self.request.POST and self.object:
+            url_tag = '%s:%s-update' % (self.app_name, self.model_name)
+            return reverse(url_tag, args=[self.object.id])
+        else:
+            url_tag = '%s:%s-list' % (self.app_name, self.model_name)
+            return reverse(url_tag)
 
 
 class CommonPageViewMixin(object):
@@ -198,7 +208,6 @@ class CommonCreatePageView(CommonFormPageMixin, CreateView):
         self.object = None
         self.set_form_page_attributes(*args, **kwargs)
         return super(CommonCreatePageView, self).get(request, *args, **kwargs)
-
 
     def form_valid(self, form):
         form.instance.creator = self.request.user

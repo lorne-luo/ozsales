@@ -36,9 +36,6 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
         "all": ("expresscarrier.add_expresscarrier",)
     }
 
-    def get_success_url(self):
-        return reverse('express:expresscarrier-list')
-
 
 class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = ExpressCarrier
@@ -47,9 +44,6 @@ class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMi
     permissions = {
         "all": ("expresscarrier.change_expresscarrier",)
     }
-
-    def get_success_url(self):
-        return reverse('express:expresscarrier-list')
 
 
 class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -87,9 +81,6 @@ class ExpressCarrierViewSet(CommonViewSet):
 #         "all": ("expressorder.add_expressorder",)
 #     }
 #
-#     def get_success_url(self):
-#         return reverse('express:expressorder-list')
-#
 #
 # class ExpressOrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
 #     model = ExpressOrder
@@ -98,9 +89,6 @@ class ExpressCarrierViewSet(CommonViewSet):
 #     permissions = {
 #         "all": ("expressorder.change_expressorder",)
 #     }
-#
-#     def get_success_url(self):
-#         return reverse('express:expressorder-list')
 #
 #
 # class ExpressOrderDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

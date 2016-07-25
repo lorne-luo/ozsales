@@ -46,9 +46,6 @@ class NotificationUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixi
         "all": ("notification.change_notification",)
     }
 
-    def get_success_url(self):
-        return reverse('messageset:notification-list')
-
 
 class NotificationDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Notification
@@ -77,9 +74,6 @@ class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContext
         "all": ("notificationcontent.add_notificationcontent",)
     }
 
-    def get_success_url(self):
-        return reverse('messageset:notification-list')
-
     def post(self, request, *args, **kwargs):
         self.object = None
         form_class = self.get_form_class()
@@ -101,9 +95,6 @@ class NotificationContentUpdateView(MultiplePermissionsRequiredMixin, CommonCont
     permissions = {
         "all": ("notificationcontent.change_notificationcontent",)
     }
-
-    def get_success_url(self):
-        return reverse('messageset:notificationcontent-list')
 
 
 class NotificationContentDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -134,9 +125,6 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         "all": ("sitemailcontent.add_sitemailcontent",)
     }
 
-    def get_success_url(self):
-        return reverse('messageset:sitemail-list')
-
     def post(self, request, *args, **kwargs):
         self.object = None
         form_class = self.get_form_class()
@@ -158,9 +146,6 @@ class SiteMailContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextM
     permissions = {
         "all": ("sitemailcontent.change_sitemailcontent",)
     }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailcontent-list')
 
 
 class SiteMailContentDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):

@@ -28,9 +28,6 @@ class MonthlyReportAddView(MultiplePermissionsRequiredMixin, CommonContextMixin,
         "all": ("monthlyreport.add_monthlyreport",)
     }
 
-    def get_success_url(self):
-        return reverse('report:monthlyreport-list')
-
 
 class MonthlyReportUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     """ Update views for MonthlyReport """
@@ -40,9 +37,6 @@ class MonthlyReportUpdateView(MultiplePermissionsRequiredMixin, CommonContextMix
     permissions = {
         "all": ("monthlyreport.change_monthlyreport",)
     }
-
-    def get_success_url(self):
-        return reverse('report:monthlyreport-list')
 
 
 class MonthlyReportDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -60,5 +54,5 @@ class MonthlyReportViewSet(CommonViewSet):
     queryset = MonthlyReport.objects.all()
     serializer_class = serializers.MonthlyReportSerializer
     filter_fields = ['id']
-    search_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb', 'profit_rmb']
-
+    search_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb',
+                     'profit_rmb']
