@@ -288,7 +288,7 @@ class OrderViewSet(CommonViewSet):
     """ api views for Order """
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
-    permission_classes = [permissions.DjangoModelPermissions]
+    filter_fields = ['id']
     search_fields = ['customer__name', 'address__name', 'address__address']
 
     def get_queryset(self):
@@ -350,10 +350,9 @@ class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
 class OrderProductViewSet(CommonViewSet):
     """ api views for OrderProduct """
     serializer_class = serializers.OrderProductSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name']
-    search_fields = ['order__customer__name', 'name', 'product__name_en', 'product__name_cn', 'product__brand__name_en',
-                     'product__brand__name_cn']
+    filter_fields = ['id']
+    search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_en', 'product__name_cn',
+                     'product__brand__name_en', 'product__brand__name_cn']
 
     def get_queryset(self):
         if self.request.user.is_superuser:

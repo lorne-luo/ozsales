@@ -61,8 +61,7 @@ class <% MODEL_NAME %>ViewSet(CommonViewSet):
     """ API views for <% MODEL_NAME %> """
     queryset = <% MODEL_NAME %>.objects.all()
     serializer_class = serializers.<% MODEL_NAME %>Serializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = <% fields %>
+    filter_fields = ['id'] + <% fields %>
     search_fields = <% fields %>
 
 '''

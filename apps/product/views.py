@@ -163,6 +163,5 @@ class BrandViewSet(CommonViewSet):
     """ API views for Brand """
     queryset = Brand.objects.all()
     serializer_class = serializers.BrandSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name_en', 'name_cn', 'country', 'remarks']
+    filter_fields = ['name_en', 'name_cn']
     search_fields = ['name_en', 'name_cn', 'country', 'remarks']

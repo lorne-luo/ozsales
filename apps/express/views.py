@@ -65,7 +65,6 @@ class ExpressCarrierViewSet(CommonViewSet):
     """ api views for ExpressCarrier """
     queryset = ExpressCarrier.objects.all()
     serializer_class = serializers.ExpressCarrierSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
     search_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
 
@@ -119,6 +118,5 @@ class ExpressOrderViewSet(CommonViewSet):
     queryset = ExpressOrder.objects.all()
     serializer_class = serializers.ExpressOrderSerializer
     # filter_class = OrderFilter
-    permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
     search_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']

@@ -59,7 +59,6 @@ class MonthlyReportViewSet(CommonViewSet):
     """ API views for MonthlyReport """
     queryset = MonthlyReport.objects.all()
     serializer_class = serializers.MonthlyReportSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb', 'profit_rmb']
+    filter_fields = ['id']
     search_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb', 'profit_rmb']
 

@@ -60,7 +60,6 @@ class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
 class AddressViewSet(CommonViewSet):
     queryset = Address.objects.all()
     serializer_class = serializers.AddressSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
     search_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
 
@@ -147,7 +146,6 @@ class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
 class CustomerViewSet(CommonViewSet):
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['last_login', 'seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remarks', 'tags']
     search_fields = ['last_login', 'seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',

@@ -58,8 +58,7 @@ class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
 class PageViewSet(CommonViewSet):
     queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'url', 'store', 'price', 'original_price']
+    filter_fields = ['id']
     search_fields = ['title', 'url', 'store', 'price', 'original_price']
 
 
@@ -112,6 +111,6 @@ class StoreViewSet(CommonViewSet):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
+    filter_fields = ['id']
     search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
 
