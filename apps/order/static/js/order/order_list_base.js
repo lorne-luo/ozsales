@@ -100,15 +100,55 @@ var OrderListPageVue = CommonListPageVue.extend({
                 showLoaderOnConfirm: false,
                 animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
-                    url,
-                    $.param({'status': next_status}),
-                    function (resp) {
+                $.ajax({
+                    type: 'PATCH',
+                    url: url,
+                    data: {'status': next_status},
+                    dataType: 'json',
+                    error: function(response) {
+                        var text;
+                        switch(response.status) {
+                            case 400:
+                                text = '错误请求!';
+                                break;
+                            case 403:
+                                text = '对不起，没有权限进行此操作!';
+                                break;
+                            case 404:
+                                text = '找不到该页面!';
+                                break;
+                            case 405:
+                                text = '不允许该访问方法!';
+                                break;
+                            case 500:
+                                text = '服务器错误!';
+                                break;
+                            default:
+                                text = '操作失败，错误码'+response.status;
+                                break;
+                        }
+                        swal({
+                            title: text,
+                            type: "error",
+                            animation: false
+                        });
+                    },
+                    success: function (resp) {
                         var status = resp['status'];
                         var td = $(event.target).closest('td');
                         self.update_status_button(td, resp);
                     }
-                );
+                });
+
+                // $.AdminLTE.apiPost(
+                //     url,
+                //     $.param({'status': next_status}),
+                //     function (resp) {
+                //         var status = resp['status'];
+                //         var td = $(event.target).closest('td');
+                //         self.update_status_button(td, resp);
+                //     }
+                // );
             });
         },
         update_status_button: function (td, resp) {
@@ -146,16 +186,57 @@ var OrderListPageVue = CommonListPageVue.extend({
                 showLoaderOnConfirm: false,
                 animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
-                    url,
-                    $.param({'is_paid': true}),
-                    function (resp) {
+                $.ajax({
+                    type: 'PATCH',
+                    url: url,
+                    data: {'is_paid': true},
+                    dataType: 'json',
+                    error: function(response) {
+                        var text;
+                        switch(response.status) {
+                            case 400:
+                                text = '错误请求!';
+                                break;
+                            case 403:
+                                text = '对不起，没有权限进行此操作!';
+                                break;
+                            case 404:
+                                text = '找不到该页面!';
+                                break;
+                            case 405:
+                                text = '不允许该访问方法!';
+                                break;
+                            case 500:
+                                text = '服务器错误!';
+                                break;
+                            default:
+                                text = '操作失败，错误码'+response.status;
+                                break;
+                        }
+                        swal({
+                            title: text,
+                            type: "error",
+                            animation: false
+                        });
+                    },
+                    success: function (resp) {
                         var is_paid = resp['is_paid'];
                         if (is_paid) {
                             $(event.target).closest('a.pay').remove();
                         }
                     }
-                );
+                });
+                
+                // $.AdminLTE.apiPatch(
+                //     url,
+                //     $.param({'is_paid': true}),
+                //     function (resp) {
+                //         var is_paid = resp['is_paid'];
+                //         if (is_paid) {
+                //             $(event.target).closest('a.pay').remove();
+                //         }
+                //     }
+                // );
             });
         },
         detail: function (event) {
