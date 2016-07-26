@@ -188,6 +188,9 @@ var CommonListPageVue = Vue.extend({
                     self.currentPage = resp.current_page;
                 }
             );
+        },
+        reload: function (event) {
+            this.loadData({'page': this.currentPage});
         }
     }
 });

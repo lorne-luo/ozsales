@@ -24,6 +24,9 @@
     <li v-if="currentPage == totalPage" class="disabled">
         <a href="javascript:void(0);">末页</a>
     </li>
+    <li v-on:click="reload" class="text-bold" id="current_page">
+        <a href="javascript:void(0);">刷新</a>
+    </li>
 </ul>
 <div class="form-group">
     &nbsp;&nbsp;&nbsp;共 #[count] 条数据, 每页 #[perPage] 条, 第 #[currentPage]/#[totalPage] 页

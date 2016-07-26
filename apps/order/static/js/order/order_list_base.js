@@ -45,7 +45,15 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             }
-
+        },
+        reload: function (event) {
+            var page;
+            if ($('.tab-content #pane-FINISHED').hasClass('active')) {
+                page = this.finished_currentPage;
+            } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
+                page = this.ongoing_currentPage;
+            }
+            this.loadData({'page': page});
         },
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
