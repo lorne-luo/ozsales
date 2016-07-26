@@ -154,27 +154,37 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         # order products
         products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
-            if form.instance.product or form.instance.name:
+            form.is_valid()
+            if form.instance.product_id or form.instance.name:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-            if not form.is_valid():
-                return HttpResponse(str(form.errors))
+            else:
+                form._changed_data = []
+            if form._errors and 'order' in form._errors:
+                del form._errors['order']
 
+        if not products_formset.is_valid():
+            return HttpResponse(str(products_formset.errors))
         products_formset.save()
 
         # express orders
         express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
+            form.is_valid()
             if form.instance.track_id:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-            if not form.is_valid():
-                return HttpResponse(str(form.errors))
+            else:
+                form._changed_data = []
+            if form._errors and 'order' in form._errors:
+                del form._errors['order']
 
+        if not express_formset.is_valid():
+            return HttpResponse(str(express_formset.errors))
         express_formset.save()
 
         return super(OrderUpdateView, self).post(request, *args, **kwargs)
@@ -227,32 +237,36 @@ class OrderAddDetailView(OrderUpdateView):
 
         products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
-            if form.instance.product or form.instance.name:
+            form.is_valid()
+            if form.instance.product_id or form.instance.name:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-                if 'order' in form._errors:
-                    del form._errors['order']
+            else:
+                form._changed_data = []
+            if form._errors and 'order' in form._errors:
+                del form._errors['order']
 
-            if not form.is_valid():
-                return HttpResponse(str(form.errors))
-
+        if not products_formset.is_valid():
+            return HttpResponse(str(products_formset.errors))
         products_formset.save()
 
         express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
+            form.is_valid()
             if form.instance.track_id:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
                 form.changed_data.append('order')
                 form.instance.order_id = self.object.id
-                if 'order' in form._errors:
-                    del form._errors['order']
+            else:
+                form._changed_data = []
+            if form._errors and 'order' in form._errors:
+                del form._errors['order']
 
-            if not form.is_valid():
-                return HttpResponse(str(form.errors))
-
+        if not express_formset.is_valid():
+            return HttpResponse(str(express_formset.errors))
         express_formset.save()
 
         next = request.POST.get('next')
