@@ -8,7 +8,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils.crypto import get_random_string
-
+from django.utils import timezone
 from utils.enum import enum
 from settings.settings import rate
 from ..product.models import Product
@@ -84,7 +84,7 @@ class Order(models.Model):
 
     def set_paid(self):
         self.is_paid = True
-        self.paid_time = datetime.datetime.now()
+        self.paid_time = timezone.now()
         self.save(update_fields=['is_paid', 'paid_time'])
         self.update_monthly_report()
 
@@ -112,7 +112,7 @@ class Order(models.Model):
                 month = self.paid_time.month
                 MonthlyReport.stat(year, month)
             else:
-                self.paid_time = datetime.datetime.now()
+                self.paid_time = timezone.now()
                 self.save(update_fields=['paid_time'])
                 MonthlyReport.stat_current_month()
 
