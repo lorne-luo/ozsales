@@ -21,7 +21,8 @@ var orderListPageVue = new OrderListPageVue({
             ongoing_currentPage: 1,
             ongoing_totalPage: 1,
             ongoing_perPage: 10,
-            ongoing_count: 0
+            ongoing_count: 0,
+            ordering: '-id'
         }
     }
 );

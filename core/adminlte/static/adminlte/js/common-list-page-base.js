@@ -14,7 +14,7 @@ var CommonListPageVue = Vue.extend({
             detail_url_tag:undefined,
             update_url_tag:undefined,
             list_url:undefined,
-            
+
             items: [],
             userName: $("#adminlte_page_user_name").val(),
             appName: $("#adminlte_page_app_name").val(),
@@ -22,17 +22,21 @@ var CommonListPageVue = Vue.extend({
             currentPage: 1,
             totalPage: 1,
             perPage: 10,
+            search_keyword: undefined,
+            ordering: undefined,
             count: 0
         }
     },
     ready: function () {
         if(this.appName && this.modelName){
-            this.loadData({});
+            this.loadData(this.get_param());
         }
 
         // link for create new
-        var create_btn=$('a#create');
-        create_btn.prop('href',Urls[this.create_url_tag]());
+        if (this.create_url_tag) {
+            var create_btn = $('a#create');
+            create_btn.prop('href', Urls[this.create_url_tag]());
+        }
     },
     methods: {
         toggleAllBox: function (event) {
@@ -110,7 +114,7 @@ var CommonListPageVue = Vue.extend({
                         delUrl,
                         $.param({'pk': ids.toString()}),
                         function (resp) {
-                            self.loadData({});
+                            self.loadData(this.get_param());
                             swal({
                                 title: "删除成功!",
                                 type: "success",
@@ -131,7 +135,7 @@ var CommonListPageVue = Vue.extend({
             $.each(box, function (i, b) {
                 ids.push($(b).val());
             });
-            
+
             if (ids.length === 0) {
                 swal({
                     title: "请选择数据!",
@@ -155,17 +159,19 @@ var CommonListPageVue = Vue.extend({
             this.remove(pk);
         },
         search: function (event) {
-            this.loadData(
-                $.param({'search': $("#tableSearch").val()})
-            );
+            this.search_keyword = $("#tableSearch").val();
+            this.currentPage = 1;
+            this.loadData(this.get_param());
         },
         resetSearch: function (event) {
             $("#tableSearch").val('');
+            this.search_keyword = '';
             this.search(event);
         },
         page: function (event) {
             var num = $(event.target).attr('page');
-            this.loadData({'page': num});
+            this.currentPage = num;
+            this.loadData(this.get_param());
         },
         loadData: function (data) {
             var self = this;
@@ -189,8 +195,19 @@ var CommonListPageVue = Vue.extend({
                 }
             );
         },
+        get_param: function () {
+            var param = {};
+            if (this.currentPage)
+                param['page'] = this.currentPage;
+            if (this.ordering)
+                param['ordering'] = this.ordering;
+            if (this.search_keyword)
+                param['search'] = this.search_keyword;
+
+            return param;
+        },
         reload: function (event) {
-            this.loadData({'page': this.currentPage});
+            this.loadData(this.get_param());
         }
     }
 });

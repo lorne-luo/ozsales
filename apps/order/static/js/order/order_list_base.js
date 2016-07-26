@@ -1,8 +1,6 @@
 var OrderListPageVue = CommonListPageVue.extend({
     ready: function () {
-        if (this.appName && this.modelName) {
-            this.loadData({}, true);
-        }
+        this.loadData(this.get_param(), true);
     },
     methods: {
         loadData: function (data, init) {
@@ -17,7 +15,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
             if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
-                url = url + '?ordering=-id&status=FINISHED';
+                url = url + '?status=FINISHED';
 
                 $.AdminLTE.apiGet(
                     url,
@@ -31,7 +29,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-id';
+                url = url + '?status__in=CREATED,SHIPPING,DELIVERED';
 
                 $.AdminLTE.apiGet(
                     url,
@@ -53,15 +51,20 @@ var OrderListPageVue = CommonListPageVue.extend({
             } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
                 page = this.ongoing_currentPage;
             }
-            this.loadData({'page': page});
+            this.currentPage = page;
+            this.loadData(this.get_param());
         },
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
-            this.loadData({'page': num});
+            this.ongoing_currentPage = num;
+            this.currentPage = num;
+            this.loadData(this.get_param());
         },
         page_finished: function (event) {
             var num = $(event.target).attr('page');
-            this.loadData({'page': num});
+            this.finished_currentPage = num;
+            this.currentPage = num;
+            this.loadData(this.get_param());
         },
         show_detail: function (pk, event) {
             if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {

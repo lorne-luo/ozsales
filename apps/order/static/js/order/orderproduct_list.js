@@ -6,11 +6,12 @@ var orderproductListPageVue = new CommonListPageVue({
             detail_api_tag: 'order:api-orderproduct-detail',
             delete_api_tag: 'order:api-orderproduct-delete',
             // page
-            create_url_tag: 'order:orderproduct-add',
+            // create_url_tag: 'order:orderproduct-add',
             list_url_tag:   'order:orderproduct-list',
             update_url_tag: 'order:orderproduct-update',
             detail_url_tag: 'order:orderproduct-detail',
-            list_url:       Urls['order:api-orderproduct-list']() + '?'
+            list_url:       Urls['order:api-orderproduct-list']() + '?',
+            ordering: '-id',
         }
     }
 );
