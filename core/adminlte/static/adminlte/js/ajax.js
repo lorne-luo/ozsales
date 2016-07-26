@@ -37,6 +37,7 @@
             url: url,
             data: data,
             dataType: 'json',
+            cache: false,
             error: function(response) {
                 var text;
                 switch(response.status) {

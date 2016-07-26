@@ -1,11 +1,6 @@
 {% extends "adminlte/common_tab_list.html" %}
 {% load static %}
 
-{% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
-{% endblock %}
-
 {% block common_list_buttons %}
   {% if page_model_perms.add %}
     <a class="btn btn-primary" id="create">
@@ -314,5 +309,9 @@
   </div>
 {% endblock %}
 
-{% block common_list_pagination %}
+{% block common_list_pagination %}{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
 {% endblock %}
