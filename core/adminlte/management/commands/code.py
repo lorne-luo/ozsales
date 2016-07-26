@@ -237,6 +237,7 @@ class Command(BaseCommand):
 
     def get_reverse_js(self):
         management.call_command('js_reverse')
+        management.call_command('collectstatic_js_reverse')
 
     def run(self):
         self.stdout.write('\n######### %s #########' % self.urls_file)
