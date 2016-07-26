@@ -49,6 +49,9 @@
                     case 404:
                         text = '找不到该页面!';
                         break;
+                    case 405:
+                        text = '不允许该访问方法!';
+                        break;
                     case 500:
                         text = '服务器错误!';
                         break;
