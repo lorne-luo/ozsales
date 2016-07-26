@@ -91,7 +91,7 @@
             <template v-if="item.is_paid">
             </template>
             <template v-else>
-              <a class="label-as-badge label label-danger" v-on:click="pay(item.id, $event)">
+              <a class="label-as-badge label label-danger pay" v-on:click="pay(item.id, $event)">
                 <i class="fa fa-jpy"></i>
               </a>
             </template>
