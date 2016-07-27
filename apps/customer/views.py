@@ -101,14 +101,19 @@ class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
         # customer address
         address_formset = forms.AddressFormSet(request.POST, request.FILES, prefix='address_set')
         for form in address_formset:
+            form.is_valid()
             if form.instance.address or form.instance.name:
                 form.fields['customer'].initial = self.object.id
                 form.base_fields['customer'].initial = self.object.id
                 form.changed_data.append('customer')
-                form.instance.order_id = self.object.id
-            if not form.is_valid():
-                return HttpResponse(str(form.errors))
+                form.instance.customer_id = self.object.id
+            else:
+                form._changed_data = []
+            if form._errors and 'customer' in form._errors:
+                del form._errors['customer']
 
+        if not address_formset.is_valid():
+            return HttpResponse(str(address_formset.errors))
         address_formset.save()
 
         return super(CustomerUpdateView, self).post(request, *args, **kwargs)
