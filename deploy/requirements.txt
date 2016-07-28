@@ -29,3 +29,4 @@ uwsgi==2.0.12
 pycurl
 python-dateutil
 yahoo-finance
+gunicorn==18.0
