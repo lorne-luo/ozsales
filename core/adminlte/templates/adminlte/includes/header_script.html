@@ -1,13 +1,23 @@
 {% load static %}
 <!-- Header Script -->
-<script type="text/javascript" src="{% static 'plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'plugins/underscore/underscore-min.js' %}"></script>
-<script type="text/javascript" src="{% static 'plugins/underscore/underscore.string.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'plugins/vue/dist/vue.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'plugins/sweetalert/dist/sweetalert.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'django_js_reverse/js/reverse.js' %}"></script>
+{# jQuery 2.1.4 #}
+{#<script type="text/javascript" src="{% static 'plugins/jQuery/jQuery-2.1.4.min.js' %}"></script>#}
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"
+        integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw=" crossorigin="anonymous"></script>
+{# Bootstrap 3.3.4 #}
+{#<script type="text/javascript" src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>#}
+<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+{#<script type="text/javascript" src="{% static 'plugins/sweetalert/dist/sweetalert.min.js' %}"></script>#}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+{#<script type="text/javascript" src="{% static 'plugins/underscore/underscore-min.js' %}"></script>#}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+{#<script type="text/javascript" src="{% static 'plugins/underscore/underscore.string.min.js' %}"></script>#}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.string/3.2.1/underscore.string.min.js"></script>
+{#<script type="text/javascript" src="{% static 'plugins/vue/dist/vue.min.js' %}"></script>#}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
 
+<!-- django_js_reverse -->
+<script type="text/javascript" src="{% static 'django_js_reverse/js/reverse.js' %}"></script>
 <!-- AdminLTE App -->
 <script type="text/javascript" src="{% static 'adminlte/js/app.min.js' %}"></script>
 <!-- 全局配置 -->
