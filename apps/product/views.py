@@ -1,14 +1,15 @@
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import Http404
-from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 from django.views.generic import ListView, CreateView, UpdateView
-from rest_framework.permissions import AllowAny
+from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from core.adminlte.views import CommonContextMixin
+from core.adminlte.views import CommonContextMixin, CommonViewSet
 from core.api.views import CommonListCreateAPIView
-from models import Product
-from forms import ProductForm
+from models import Product, Brand
+import serializers
+import forms
 
 
 class ProductList(MultiplePermissionsRequiredMixin, TemplateView):
@@ -33,7 +34,7 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': ProductForm(), }
+        context = {'form': forms.ProductForm(),}
         if pk:
             product = get_object_or_404(Product, id=pk)
             context['product'] = product
@@ -43,11 +44,9 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
 class ProductListView(CommonContextMixin, ListView):
     model = Product
+
     # template_name_suffix = '_list'
     # template_name = 'product_list.html'
-    # permissions = {
-    # "all": ("product.view_product",)
-    # }
 
     def get_template_names(self):
         if not self.request.user.is_authenticated():
@@ -56,13 +55,19 @@ class ProductListView(CommonContextMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        if self.request.user.is_superuser:
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
+            context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        else:
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Sell Price']
+            context['table_fields'] = ['pic', 'link', 'brand', 'safe_sell_price']
+        context['brands'] = Brand.objects.all()
         return context
 
 
 class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Product
+    form_class = forms.ProductAddForm
     # template_name_suffix = '_create'
     template_name = 'adminlte/common_form.html'
     permissions = {
@@ -78,33 +83,73 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
+    form_class = forms.ProductAddForm
     # template_name_suffix = '_form'
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("product.change_product",)
     }
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
-              'safe_sell_price']
 
 
-class ProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class ProductDetailView(CommonContextMixin, UpdateView):
     model = Product
     # template_name_suffix = '_form'
-    template_name = 'adminlte/common_detail.html'
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'category', 'safe_sell_price']
+
+
+class ProductViewSet(CommonViewSet):
+    """
+     A viewset for viewing and editing  instances.
+    """
+    queryset = Product.objects.all()
+    serializer_class = serializers.ProductSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_fields = ['name_en', 'name_cn', 'brand__id', 'brand__name_cn', 'brand__name_en']
+    search_fields = ['name_en', 'name_cn', 'brand__name_cn', 'brand__name_en']
+
+
+class BrandListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    """ List views for Brand """
+    model = Brand
+    template_name_suffix = '_list'  # product/brand_list.html
     permissions = {
-        "all": ("product.view_product",)
+        "all": ("product.view_brand",)
     }
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'category', 'normal_price', 'bargain_price',
-              'safe_sell_price']
 
 
-class PublicListAPIView(CommonListCreateAPIView):
-    ''' Public API view for Product '''
-    model = Product
-    permission_classes = (AllowAny,)
+class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    """ Add views for Brand """
+    model = Brand
+    form_class = forms.BrandAddForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("brand.add_brand",)
+    }
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        return Http404
+class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Update views for Brand """
+    model = Brand
+    form_class = forms.BrandUpdateForm
+    template_name = 'adminlte/common_form.html'
+    permissions = {
+        "all": ("brand.change_brand",)
+    }
+
+
+class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Detail views for Brand """
+    model = Brand
+    form_class = forms.BrandDetailForm
+    template_name = 'adminlte/common_detail_new.html'
+    permissions = {
+        "all": ("brand.view_brand",)
+    }
+
+
+class BrandViewSet(CommonViewSet):
+    """ API views for Brand """
+    queryset = Brand.objects.all()
+    serializer_class = serializers.BrandSerializer
+    filter_fields = ['name_en', 'name_cn']
+    search_fields = ['name_en', 'name_cn', 'country', 'remarks']

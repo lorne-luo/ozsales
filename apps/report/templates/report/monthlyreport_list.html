@@ -1,0 +1,72 @@
+{% extends "adminlte/common_list.html" %}
+{% load static %}
+
+{% block common_list_buttons %}{% endblock %}
+
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th>Month</th>
+  <th class="hidden-sm hidden-xs">Order Count</th>
+  <th class="hidden-sm hidden-xs">Parcel Count</th>
+  <th class="hidden-sm hidden-xs">Cost AUD</th>
+  <th class="hidden-sm hidden-xs">Shipping Fee</th>
+  <th class="hidden-sm hidden-xs">Sell Price RMB</th>
+  <th class="hidden-sm hidden-xs">Profit RMB</th>
+  <th class="hidden-sm hidden-xs"></th>
+
+  <th class="visible-sm visible-xs">Count</th>
+  <th class="visible-sm visible-xs">Cost</th>
+  <th class="visible-sm visible-xs">Profit</th>
+
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td>{!! item.month !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.order_count !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.parcel_count !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.cost_aud !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.shipping_fee !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.sell_price_rmb !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.profit_rmb !!}</td>
+
+    {% block item_buttons %}
+      <td class="text-right hidden-sm hidden-xs">
+        {% if page_model_perms.view %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+             class="btn btn-info btn-sm">
+            <i class="fa fa-bars fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.change %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+             class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.delete %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+             v-on:click="removeOne" class="btn btn-danger btn-sm" href="javascript:void(0);">
+            <i class="fa fa-trash-o fa-inverse"></i>
+          </a>
+        {% endif %}
+      </td>
+    {% endblock %}
+
+    <td class="visible-sm visible-xs">{!! item.order_count !!}/{!! item.parcel_count !!}</td>
+    <td class="visible-sm visible-xs">{!! item.cost_aud !!}/{!! item.shipping_fee !!}</td>
+    <td class="visible-sm visible-xs">{!! item.sell_price_rmb !!}/{!! item.profit_rmb !!}</td>
+  </tr>
+  </tbody>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/report/monthlyreport_list.js' %}"></script>
+{% endblock %}

@@ -2,188 +2,93 @@
 {% load activelink %}
 
 <aside class="main-sidebar">
-    <section class="sidebar">
-        <ul class="sidebar-menu">
-            <li class="header">HEADER</li>
-            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
-                <a href="/member/home/">
-                    <i class="fa fa-dashboard"></i>
-                    <span>{{ default_dashboard_title }}</span>
-                </a>
-            </li>
+  <section class="sidebar">
+    <ul class="sidebar-menu">
+      <li class="header">HEADER</li>
+      <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+        <a href="/member/home/">
+          <i class="fa fa-dashboard"></i>
+          <span>{{ default_dashboard_title }}</span>
+        </a>
+      </li>
 
-            {% if perms.member.change_seller or perms.member.view_seller %}
-            <li class="treeview active {% ifstartswith '/common/member/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Members</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/common/member/seller/profile/">
-                                    <i class="fa fa-circle-o"></i>
-                                    My Profile
-                                </a>
-                            </li>
-                            {% if perms.member.add_seller %}
-                            <li>
-                            <a href="/common/member/seller/create/">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Member
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.member.change_seller %}
-                            <li>
-                            <a href="/common/member/seller/list/">
-                                    <i class="fa fa-circle-o"></i>
-                                    Member List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+      {#            {% if perms.member.change_seller or perms.member.view_seller %}#}
+      {#            <li class="treeview {% ifstartswith '/common/member/' %}active{% endifstartswith %}">#}
+      {#                <a href="javascript:void(0)">#}
+      {#                            <i class='fa fa-cloud'></i>#}
+      {#                            <b>Members</b>#}
+      {#                            <i class="fa fa-angle-left pull-right"></i>#}
+      {#                        </a>#}
+      {#                        <ul class="treeview-menu">#}
+      {#                            <li>#}
+      {#                            <a href="/common/member/seller/profile/">#}
+      {#                                    <i class="fa fa-circle-o"></i>#}
+      {#                                    My Profile#}
+      {#                                </a>#}
+      {#                            </li>#}
+      {#                            {% if perms.member.add_seller %}#}
+      {#                            <li>#}
+      {#                            <a href="/common/member/seller/create/">#}
+      {#                                    <i class="fa fa-circle-o"></i>#}
+      {#                                    New Member#}
+      {#                                </a>#}
+      {#                            </li>#}
+      {#                            {%endif%}#}
+      {#                            {% if perms.member.change_seller %}#}
+      {#                            <li>#}
+      {#                            <a href="/common/member/seller/list/">#}
+      {#                                    <i class="fa fa-circle-o"></i>#}
+      {#                                    Member List#}
+      {#                                </a>#}
+      {#                            </li>#}
+      {#                            {%endif%}#}
+      {#                        </ul>#}
+      {#            </li>#}
+      {#            {%endif%}#}
 
-            {% if perms.customer.add_customer or perms.customer.view_customer %}
-            <li class="treeview active {% ifstartswith '/common/customer/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Customers</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            {% if perms.customer.change_customer %}
-                            <li>
-                            <a href="/common/customer/customer/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Customer
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.customer.change_customer %}
-                            <li>
-                            <a href="/common/customer/customer/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Customer List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+      {% include "customer/_menu.html" %}
 
-            {% if perms.order.add_order or perms.order.view_order %}
-            <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Orders</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            {% if perms.order.change_order %}
+      {% include "order/_menu.html" %}
 
-                            <li>
-                            <a href="/common/order/order/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Order
-                                </a>
-                            </li>
-                            {%endif%}
-                            {% if perms.order.change_order %}
-                            <li>
-                            <a href="/common/order/order/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Order List
-                                </a>
-                            </li>
-                            {%endif%}
-                        </ul>
-            </li>
-            {%endif%}
+      {% include "product/_menu.html" %}
 
-            {% if perms.product.add_product or perms.product.view_product %}
-            <li class="treeview active {% ifstartswith '/common/product/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Products</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/common/product/product/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Product
-                                </a>
-                            </li>
-                            <li>
-                            <a href="/common/product/product/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Product List
-                                </a>
-                            </li>
-                        </ul>
-            </li>
-            {%endif%}
+      {% include "express/_menu.html" %}
 
-            {% if perms.express.add_expresscarrier or perms.product.view_expressorder %}
-            <li class="treeview active {% ifstartswith '/common/order/' %}active{% endifstartswith %}">
-                <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Express</b>
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/common/express/expressorder/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Orders
-                                </a>
-                            </li>
-                            <li>
-                            <a href="/common/express/expresscarrier/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Carriers
-                                </a>
-                            </li>
-                        </ul>
-            </li>
-            {%endif%}
+      {% include "store/_menu.html" %}
 
-            {% include "store/_menu.html" %}
+      {% include "report/_menu.html" %}
 
-{#            {% recursetree page_menus %}#}
-{#                <li {% if not node.is_leaf_node %}#}
-{#                        class="treeview {% if node.app_name in request.path_info %} active{% endif %}"#}
-{#                    {% endif %}>#}
-{#                    {% if not node.is_leaf_node %}#}
-{#                        <a href="javascript:void(0)">#}
-{#                            <i class='fa {{ node.icon }}'></i>#}
-{#                            <span>{{ node.name }}</span>#}
-{#                            <i class="fa fa-angle-left pull-right"></i>#}
-{#                        </a>#}
-{#                        <ul class="treeview-menu">#}
-{#                            {{ children }}#}
-{#                        </ul>#}
-{#                    {% else %}#}
-{#                        {% with node.url as menu_url %}#}
-{#                            {% if not menu_url %}#}
-{#                                {% url 'common:common_list_page' node.app_name node.model_name as menu_url %}#}
-{#                            {% endif %}#}
-{#                            <li {% if menu_url == request.path_info %}#}
-{#                                    class='active'#}
-{#                                {% endif %}>#}
-{#                                <a href="{{ menu_url }}">#}
-{#                                    <i class="fa {{ node.icon }}"></i>#}
-{#                                    {{ node.name }}#}
-{#                                </a>#}
-{#                            </li>#}
-{#                        {% endwith %}#}
-{##}
-{#                    {% endif %}#}
-{#                </li>#}
-{#            {% endrecursetree %}#}
-        </ul>
-    </section>
+      {#            {% recursetree page_menus %}#}
+      {#                <li {% if not node.is_leaf_node %}#}
+      {#                        class="treeview {% if node.app_name in request.path_info %} active{% endif %}"#}
+      {#                    {% endif %}>#}
+      {#                    {% if not node.is_leaf_node %}#}
+      {#                        <a href="javascript:void(0)">#}
+      {#                            <i class='fa {{ node.icon }}'></i>#}
+      {#                            <span>{{ node.name }}</span>#}
+      {#                            <i class="fa fa-angle-left pull-right"></i>#}
+      {#                        </a>#}
+      {#                        <ul class="treeview-menu">#}
+      {#                            {{ children }}#}
+      {#                        </ul>#}
+      {#                    {% else %}#}
+      {#                        {% with node.url as menu_url %}#}
+      {#                            {% if not menu_url %}#}
+      {#                                {% url 'common:common_list_page' node.app_name node.model_name as menu_url %}#}
+      {#                            {% endif %}#}
+      {#                            <li {% if menu_url == request.path_info %}#}
+      {#                                    class='active'#}
+      {#                                {% endif %}>#}
+      {#                                <a href="{{ menu_url }}">#}
+      {#                                    <i class="fa {{ node.icon }}"></i>#}
+      {#                                    {{ node.name }}#}
+      {#                                </a>#}
+      {#                            </li>#}
+      {#                        {% endwith %}#}
+      {##}
+      {#                    {% endif %}#}
+      {#                </li>#}
+      {#            {% endrecursetree %}#}
+    </ul>
+  </section>
 </aside>

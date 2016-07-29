@@ -1,0 +1,62 @@
+{% extends "adminlte/common_list.html" %}
+{% load static %}
+
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th>Name</th>
+  <th>Mobile Number</th>
+  <th>Address</th>
+  <th>Customer</th>
+  <th>ID number</th>
+  <th>ID Front</th>
+  <th>ID Back</th>
+
+  <th class="hidden-sm hidden-xs"></th>
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td><a href="{!! item.edit_url !!}">{!! item.name !!}</a></td>
+    <td>{!! item.mobile !!}</td>
+    <td>{!! item.address !!}</td>
+    <td>{!! item.customer !!}</td>
+    <td>{!! item.id_number !!}</td>
+    <td><img height="60px" src="{!! item.id_photo_front !!}"/></td>
+    <td><img height="60px" src="{!! item.id_photo_back !!}"/></td>
+
+    {% block item_buttons %}
+      <td class="text-right hidden-sm hidden-xs">
+        {% if page_model_perms.view %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+             class="btn btn-info btn-sm">
+            <i class="fa fa-bars fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.change %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+             class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.delete %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
+             class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
+            <i class="fa fa-trash-o fa-inverse"></i>
+          </a>
+        {% endif %}
+      </td>
+    {% endblock %}
+  </tr>
+  </tbody>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/customer/address_list.js' %}"></script>
+{% endblock %}

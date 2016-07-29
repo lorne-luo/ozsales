@@ -1,0 +1,59 @@
+
+{% extends "adminlte/common_detail_new.html" %}
+{% load static adminlte_tags %}
+
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% if page_app_name and page_model_name %}
+                <a href="{% url 'product:product-list' %}">
+                    {{ page_model_verbose_name }}
+                </a>
+            {% else %}
+                {{ page_title }}
+            {% endif %}
+            </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
+{% block menu %}
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+                <a href="#">
+                    <i class="fa fa-dashboard"></i>
+                    <span>{{ default_dashboard_title }}</span>
+                </a>
+            </li>
+
+            <li class="treeview active">
+                <a href="javascript:void(0)">
+                    <i class='fa fa-cloud'></i>
+                    <b>Products</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{% url 'product:product-list' %}">
+                            <i class="fa fa-circle-o"></i>
+                            All Products
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>
+{% endblock %}

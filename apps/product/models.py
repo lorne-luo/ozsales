@@ -41,10 +41,11 @@ class Category(models.Model):
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
-    name_cn = models.CharField(_(u'name_cn'), max_length=128, null=True, blank=True)
+    name_en = models.CharField(_('name_en'), max_length=128, null=False, blank=False, unique=True)
+    name_cn = models.CharField(_('name_cn'), max_length=128, null=True, blank=True)
+    short_name = models.CharField(_('Abbr'), max_length=128, null=True, blank=True)
     country = models.ForeignKey(Country, blank=True, null=True, verbose_name=_('country'))
-    category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
 
     class Meta:
@@ -52,7 +53,10 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
-        return '%s' % self.name_en
+        if self.name_en.lower() == 'none':
+            return ''
+        else:
+            return self.name_en
 
 
 def get_product_pic_path(instance, filename):
@@ -79,14 +83,14 @@ class Product(models.Model):
     spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
-    category = models.ManyToManyField(Category, blank=True, null=True, verbose_name=_('category'))
+    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
     tb_url = models.URLField(_(u'TB URL'), null=True, blank=True)
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
-    page = models.ManyToManyField(Page, verbose_name=_('page'), null=True, blank=True)
+    page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
 
     class Meta:
         verbose_name_plural = _('Product')
@@ -106,7 +110,6 @@ class Product(models.Model):
             queryset = Product.objects.all()
             return queryset
 
-
     def __str__(self):
         spec = ''
         if self.spec1:
@@ -116,19 +119,19 @@ class Product(models.Model):
         if self.spec3:
             spec += ' ' + self.spec3
 
-        if self.brand:
+        if self.brand and self.brand.name_en.lower() != 'none':
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
 
     def get_edit_link(self):
-        url = reverse('product-update-view', args=[self.id])
+        url = reverse('product:product-update-view', args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
-        url = reverse('product-detail-view', args=[self.id])
+        url = reverse('product:product-detail-view', args=[self.id])
         return u'<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_detail_link.short_description = 'Name'
@@ -154,11 +157,13 @@ class Product(models.Model):
             spec += ' ' + self.spec2
         if self.spec3:
             spec += ' ' + self.spec3
-        return '%s %s %s' % (self.brand.name_en, self.name_cn, spec)
+        if self.brand and self.brand.name_en.lower() != 'none':
+            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+        else:
+            return '%s%s' % (self.name_cn, spec)
 
     get_name_cn.allow_tags = True
     get_name_cn.short_description = 'CN Name'
 
     def sell_price_text(self):
         return '%srmb' % self.safe_sell_price
-

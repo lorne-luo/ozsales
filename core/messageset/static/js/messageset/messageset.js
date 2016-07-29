@@ -37,12 +37,32 @@ var messagesetVue = new Vue({
         loadData: function(modelName, data){
             var self = this,
                 url = $.AdminLTE.getApiUrl(self.appName, modelName);
-            $.AdminLTE.apiGet(
-                url, data,
-                function(resp){
+            $.ajax({
+                type: 'GET',
+                url: url,
+                data: data,
+                dataType: 'json',
+                error: function(response) {
+                    if (response.status==403){
+                    }
+                    switch(modelName) {
+                        case 'sitemailreceive':
+                            $('li.messages-menu').hide();
+                            break;
+                        case 'notification':
+                            $('li.notifications-menu').hide();
+                            break;
+                        case 'task':
+                            $('li.tasks-menu').hide();
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                success: function(resp){
                     self[modelName] = resp.results;
                 }
-            );
+            });
         }
     }
 });

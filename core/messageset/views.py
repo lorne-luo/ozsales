@@ -14,7 +14,7 @@ import forms
 
 
 @login_required
-@require_http_methods(["PATCH"])
+@require_http_methods(["POST"])
 def sitemail_markall(request):
     SiteMailReceive.objects.exclude(
         status=SiteMailReceive.DELETED
@@ -33,21 +33,9 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 
     def get_context_data(self, **kwargs):
         context = super(NotificationListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'标题', u'内容', u'接收人', u'读取状态', u'读取时间', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'receiver', 'status', 'read_time', 'creator', 'deleted_at'] + ['id']
+        context['table_titles'] = [u'标题', u'内容', u'状态']
+        context['table_fields'] = ['link', 'content', 'status']
         return context
-
-
-class NotificationAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = Notification
-    form_class = forms.NotificationAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("notification.add_notification",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:notification-list')
 
 
 class NotificationUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -57,9 +45,6 @@ class NotificationUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixi
     permissions = {
         "all": ("notification.change_notification",)
     }
-
-    def get_success_url(self):
-        return reverse('messageset:notification-list')
 
 
 class NotificationDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -81,44 +66,35 @@ class NotificationViewSet(CommonViewSet):
     search_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
-# views for NotificationContent
-
-class NotificationContentListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    model = NotificationContent
-    template_name_suffix = '_list'  # notificationcontent/notificationcontent_list.html
-    permissions = {
-        "all": ("messageset.view_notificationcontent",)
-    }
-
-    def get_context_data(self, **kwargs):
-        context = super(NotificationContentListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'标题', u'内容', u'状态', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'contents', 'status', 'creator', 'deleted_at'] + ['id']
-        return context
-
-
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = NotificationContent
     form_class = forms.NotificationContentAddForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'messageset/notificationcontent_form.html'
     permissions = {
         "all": ("notificationcontent.add_notificationcontent",)
     }
 
-    def get_success_url(self):
-        return reverse('messageset:notificationcontent-list')
+    def post(self, request, *args, **kwargs):
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            self.object = notification_content = form.save(commit=False)
+            notification_content.creator = request.user
+            notification_content.save()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+
+            return self.form_invalid(form)
 
 
 class NotificationContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = NotificationContent
     form_class = forms.NotificationContentUpdateForm
-    template_name = 'adminlte/common_form.html'
+    template_name = 'messageset/notificationcontent_form.html'
     permissions = {
         "all": ("notificationcontent.change_notificationcontent",)
     }
-
-    def get_success_url(self):
-        return reverse('messageset:notificationcontent-list')
 
 
 class NotificationContentDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -149,19 +125,19 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         "all": ("sitemailcontent.add_sitemailcontent",)
     }
 
-    def get_success_url(self):
-        return reverse('messageset:sitemail-list')
-
     def post(self, request, *args, **kwargs):
+        self.object = None
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         if form.is_valid():
             sitemail = form.save(commit=False)
-            sitemail.creator=request.user
+            sitemail.creator = request.user
             sitemail.save()
             return HttpResponseRedirect(self.get_success_url())
         else:
+
             return self.form_invalid(form)
+
 
 class SiteMailContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = SiteMailContent
@@ -170,9 +146,6 @@ class SiteMailContentUpdateView(MultiplePermissionsRequiredMixin, CommonContextM
     permissions = {
         "all": ("sitemailcontent.change_sitemailcontent",)
     }
-
-    def get_success_url(self):
-        return reverse('messageset:sitemailcontent-list')
 
 
 class SiteMailContentDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -205,7 +178,7 @@ class SiteMailReceiveListView(MultiplePermissionsRequiredMixin, CommonContextMix
 
     def get_context_data(self, **kwargs):
         context = super(SiteMailReceiveListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'主题',  u'发件人', u'读取状态', u'收件时间'] + ['']
+        context['table_titles'] = [u'主题', u'发件人', u'读取状态', u'收件时间'] + ['']
         context['table_fields'] = ['title', 'sender', 'status', 'send_time'] + ['id']
         return context
 
@@ -262,33 +235,9 @@ class TaskListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + [u'主题', u'内容', u'发件人', u'读取状态', u'数据创建人', u'数据删除时间'] + ['']
-        context['table_fields'] = ['link'] + ['title', 'content', 'sender', 'status', 'creator', 'deleted_at'] + ['id']
+        context['table_titles'] = [u'名称', u'状态', u'进度', u'开始时间']
+        context['table_fields'] = ['link', 'status', 'percent', 'start_time']
         return context
-
-
-class TaskAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    model = Task
-    form_class = forms.TaskAddForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("task.add_task",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:task-list')
-
-
-class TaskUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    model = Task
-    form_class = forms.TaskUpdateForm
-    template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("task.change_task",)
-    }
-
-    def get_success_url(self):
-        return reverse('messageset:task-list')
 
 
 class TaskDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
@@ -306,6 +255,5 @@ class TaskViewSet(CommonViewSet):
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name', 'percent', 'start_app', 'status', 'start_time', 'end_time', 'creator']
-    search_fields = ['name', 'percent', 'start_app', 'status', 'start_time', 'end_time', 'creator']
-
+    filter_fields = ['name', 'start_app', 'status']
+    search_fields = ['name', 'start_app', 'status']

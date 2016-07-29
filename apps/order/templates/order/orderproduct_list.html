@@ -1,0 +1,72 @@
+
+{% extends "adminlte/common_list.html" %}
+{% load static %}
+
+{% block common_list_buttons %}{% endblock %}
+
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th>Order</th>
+  <th>Product</th>
+  <th class="hidden-sm hidden-xs">Amount</th>
+  <th>Sell RMB</th>
+  <th>Cost AUD</th>
+  <th class="hidden-sm hidden-xs">Store</th>
+
+  <th class="hidden-sm hidden-xs"></th>
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td>
+      <a href="{!! item.order_url !!}">{!! item.order_display !!}</a>
+    </td>
+    <td>
+      <template v-if="item.product">
+        <a href="{!! item.product_url !!}">{!! item.name !!}</a>
+      </template>
+      <template v-else>
+        {!! item.name !!}
+      </template>
+    </td>
+    <td class="hidden-sm hidden-xs">{!! item.amount !!}</td>
+    <td>{!! item.sell_price_rmb !!}</td>
+    <td>{!! item.cost_price_aud !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.store_display !!}</td>
+
+    {% block item_buttons %}
+      <td class="text-right hidden-sm hidden-xs">
+        {% if page_model_perms.view %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+             class="btn btn-info btn-sm">
+            <i class="fa fa-bars fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.change %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+             class="btn btn-warning btn-sm">
+            <i class="fa fa-pencil fa-inverse"></i>
+          </a>
+        {% endif %}
+        {% if page_model_perms.delete %}
+          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+             v-on:click="removeOne" class="btn btn-danger btn-sm" href="javascript:void(0);">
+            <i class="fa fa-trash-o fa-inverse"></i>
+          </a>
+        {% endif %}
+      </td>
+    {% endblock %}
+  </tr>
+  </tbody>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/order/orderproduct_list.js' %}"></script>
+{% endblock %}

@@ -14,10 +14,12 @@ from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
 from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
 from templates.forms import FORMS_HEADER, FORMS_MODEL_TEMPLATE
 from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
-from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE
+from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE, TABLE_HEAD_TEMPLATES, \
+    TABLE_ROW_TEMPLATES
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
+
 
 class Command(BaseCommand):
     help = ''' Create code
@@ -115,7 +117,10 @@ class Command(BaseCommand):
     def get_fields_and_titles(self, model):
         titles = []
         fields = []
-        for mf in model._meta.fields:
+
+        # normal fields + many-to-many fields
+        meta_fields = model._meta.fields + model._meta.many_to_many
+        for mf in meta_fields:
             if mf.name == 'id':
                 continue
             elif isinstance(mf, models.fields.DateTimeField):
@@ -157,6 +162,11 @@ class Command(BaseCommand):
     def create_file(self, file_path, content):
         if os.path.isfile(file_path) and not self.is_overwrite:
             file_path += '.code'
+
+        base_dir = os.path.dirname(file_path)
+        if not os.path.exists(base_dir):
+            os.makedirs(base_dir)
+
         with open(file_path, 'w+') as f:
             f.write(content)
 
@@ -175,8 +185,16 @@ class Command(BaseCommand):
             content = content.replace('<% MODEL_NAME %>', model.__name__). \
                 replace('<% model_name %>', model.__name__.lower()). \
                 replace('<% fields %>', str(fields)). \
-                replace('<% titles %>', self.get_chinese_titles(titles))
+                replace('<% titles %>', self.get_chinese_titles(titles)). \
+                replace('<% table_head %>', self.get_table_head(titles)). \
+                replace('<% table_row %>', self.get_table_row(fields))
         return content
+
+    def get_table_head(self, titles):
+        return ''.join([TABLE_HEAD_TEMPLATES % t for t in titles])
+
+    def get_table_row(self, fields):
+        return ''.join([TABLE_ROW_TEMPLATES % f for f in fields])
 
     def get_urls_content(self):
         content = URLS_HEADER
@@ -219,6 +237,7 @@ class Command(BaseCommand):
 
     def get_reverse_js(self):
         management.call_command('js_reverse')
+        management.call_command('collectstatic_js_reverse')
 
     def run(self):
         self.stdout.write('\n######### %s #########' % self.urls_file)
@@ -252,7 +271,8 @@ class Command(BaseCommand):
         self.stdout.write('')
         self.stderr.write('# Remember make below step:')
         self.stdout.write('')
-        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (self.app_str, self.app_name))
+        self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (
+            self.app_str, self.app_name))
         self.stdout.write('')
         self.stderr.write(
             " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")

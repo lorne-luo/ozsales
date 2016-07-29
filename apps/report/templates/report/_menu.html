@@ -1,0 +1,20 @@
+{% load activelink %}
+<li class="treeview active {% ifstartswith '/report/' %}active{% endifstartswith %}">
+  <a href="javascript:void(0)">
+    <i class='fa fa-cloud'></i>
+    <b>Report</b>
+    <i class="fa fa-angle-left pull-right"></i>
+  </a>
+  <ul class="treeview-menu menu-open" style="display: block;">
+
+    {% if perms.report.view_monthlyreport %}
+    <li>
+      <a href="{% url 'report:monthlyreport-list' %}" class="main">
+        <i class="fa fa-circle-o"></i>
+        MonthlyReport
+      </a>
+    </li>
+    {%endif%}
+
+  </ul>
+</li>

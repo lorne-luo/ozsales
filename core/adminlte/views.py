@@ -6,6 +6,7 @@ from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django.http import JsonResponse
+from django.conf import settings
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
 from rest_framework.generics import GenericAPIView
@@ -15,16 +16,11 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
 from core.adminlte import constants
+
+
 # from core.adminlte.models import Menu, SystemConfig, Permission
 # from core.messageset.models import Notification, Task
 # from core.organization.models import Staff
-
-
-def get_system_config_value(key_name):
-    try:
-        return 'site name'
-    except:
-        return u'未找到 %s 系统配置项' % key_name
 
 
 class CommonContextMixin(object):
@@ -63,17 +59,25 @@ class CommonContextMixin(object):
 
         common_dict = {
             'default_dashboard_title': default_dashboard_title,
-            'page_title': page_title,
+            'page_title': page_title.title(),
             'page_model': getattr(self, 'model', ''),
             'page_app_name': self.app_name,
             'page_model_name': self.model_name,
-            'page_model_verbose_name': getattr(self, 'model')._meta.verbose_name,
-            'page_system_name': get_system_config_value('system_name'),
-            'page_system_subhead': get_system_config_value('system_subhead'),
+            'page_model_verbose_name': getattr(self, 'model')._meta.verbose_name.title(),
+            'page_system_name': settings.SITE_NAME,
+            'page_system_subhead': '',
             'page_model_perms': page_model_perms
         }
         context.update(common_dict)
         return context
+
+    def get_success_url(self):
+        if '_continue' in self.request.POST and self.object:
+            url_tag = '%s:%s-update' % (self.app_name, self.model_name)
+            return reverse(url_tag, args=[self.object.id])
+        else:
+            url_tag = '%s:%s-list' % (self.app_name, self.model_name)
+            return reverse(url_tag)
 
 
 class CommonPageViewMixin(object):
@@ -118,8 +122,8 @@ class CommonPageViewMixin(object):
             'page_model': getattr(self, 'model', ''),
             'page_app_name': getattr(self, 'app_name', ''),
             'page_model_name': getattr(self, 'model_name', ''),
-            'page_system_name': get_system_config_value('system_name'),
-            'page_system_subhead': get_system_config_value('system_subhead')
+            'page_system_name': settings.SITE_NAME,
+            'page_system_subhead': ''
         }
         context.update(common_dict)
         return context
@@ -205,7 +209,6 @@ class CommonCreatePageView(CommonFormPageMixin, CreateView):
         self.set_form_page_attributes(*args, **kwargs)
         return super(CommonCreatePageView, self).get(request, *args, **kwargs)
 
-
     def form_valid(self, form):
         form.instance.creator = self.request.user
         return super(CommonCreatePageView, self).form_valid(form)
@@ -258,7 +261,7 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
 
 
 # class CommonBatchDeleteView(GenericAPIView):
-#     permission_classes = [permissions.DjangoModelPermissions]
+# permission_classes = [permissions.DjangoModelPermissions]
 #
 #     def post(self, request):
 #         pk = self.request.POST.get('pk')
@@ -282,9 +285,7 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         """ for batch delete """
         pk = request.DATA.get('pk')
         pk = pk.split(',')
-        objects = self.queryset.filter(pk__in=pk)
-        for obj in objects:
-            obj.delete()
+        self.get_queryset().filter(pk__in=pk).delete()
         return JsonResponse({'success': True}, status=200)
 
     @list_route(methods=['post', 'get'])
@@ -344,6 +345,8 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         #     "error": ""
         # }
         # return Response(result)
+
+
 #
 # class AbstractViewSet(PaginateByMaxMixin, ModelViewSet):
 #     """ provide list/retrive/patch/delete restful api for model """

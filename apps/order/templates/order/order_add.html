@@ -1,0 +1,51 @@
+{% extends "adminlte/common_form.html" %}
+{% load static adminlte_tags %}
+
+{% block breadcrumb %}
+  <ol class="breadcrumb">
+    <li>
+      <a href="#">
+        <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+      </a>
+    </li>
+    {% if page_title != default_dashboard_title %}
+      <li class="active">
+        {{ page_title }}
+      </li>
+    {% endif %}
+    {% if object != None %}
+      <li class="active">{{ page_title }}详情</li>
+    {% endif %}
+  </ol>
+{% endblock %}
+
+
+{% block content %}
+  <div class="box box-info">
+    <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
+    {% csrf_token %}
+
+    <div class="box-header with-border">
+      <h3 class="box-title">{{ object }}</h3>
+    </div>
+
+    <div class="box-body">
+      {% for field in form %}
+        <div class="form-group">
+          <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
+          <div class="col-sm-6">
+            {{ field }}
+          </div>
+          <div class="col-sm-4">
+            {{ field.errors }}
+            <p class="help-block">{{ field.help_text }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="box-footer">
+      <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
+    </div>
+    </form>
+  </div>
+{% endblock %}

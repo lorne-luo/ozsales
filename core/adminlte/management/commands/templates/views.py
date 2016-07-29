@@ -12,23 +12,17 @@ import forms
 '''
 
 VIEWS_MODEL_TEMPLATE = '''
-# views for <% MODEL_NAME %>
-
 class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    """ List views for <% MODEL_NAME %> """
     model = <% MODEL_NAME %>
     template_name_suffix = '_list'  # <% app_name %>/<% model_name %>_list.html
     permissions = {
         "all": ("<% app_name %>.view_<% model_name %>",)
     }
 
-    def get_context_data(self, **kwargs):
-        context = super(<% MODEL_NAME %>ListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Link'] + <% titles %> + ['']
-        context['table_fields'] = ['link'] + <% fields %> + ['id']
-        return context
-
 
 class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    """ Add views for <% MODEL_NAME %> """
     model = <% MODEL_NAME %>
     form_class = forms.<% MODEL_NAME %>AddForm
     template_name = 'adminlte/common_form.html'
@@ -36,11 +30,9 @@ class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMix
         "all": ("<% model_name %>.add_<% model_name %>",)
     }
 
-    def get_success_url(self):
-        return reverse('<% app_name %>:<% model_name %>-list')
-
 
 class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Update views for <% MODEL_NAME %> """
     model = <% MODEL_NAME %>
     form_class = forms.<% MODEL_NAME %>UpdateForm
     template_name = 'adminlte/common_form.html'
@@ -48,11 +40,9 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
         "all": ("<% model_name %>.change_<% model_name %>",)
     }
 
-    def get_success_url(self):
-        return reverse('<% app_name %>:<% model_name %>-list')
-
 
 class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Detail views for <% MODEL_NAME %> """
     model = <% MODEL_NAME %>
     form_class = forms.<% MODEL_NAME %>DetailForm
     template_name = 'adminlte/common_detail_new.html'
@@ -61,13 +51,11 @@ class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContext
     }
 
 
-# api views for <% MODEL_NAME %>
-
 class <% MODEL_NAME %>ViewSet(CommonViewSet):
+    """ API views for <% MODEL_NAME %> """
     queryset = <% MODEL_NAME %>.objects.all()
     serializer_class = serializers.<% MODEL_NAME %>Serializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = <% fields %>
+    filter_fields = ['id'] + <% fields %>
     search_fields = <% fields %>
 
 '''

@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User
-from ..member.models import Seller
+from apps.member.models import Seller
 
 
 class MyCustomBackend:
@@ -24,4 +24,13 @@ class MyCustomBackend:
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
+            return None
+
+
+class UsernameBackend:
+    def authenticate(self, username=None):
+        try:
+            user = Seller.objects.get(username=username)
+            return user
+        except Seller.DoesNotExist:
             return None

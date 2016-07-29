@@ -4,14 +4,12 @@ var sitemailListPageVue = new CommonListPageVue({
         firstCount: true,
         unReadItemsCount: 0,
         showBox: 'in',
-        add_api_tag: 'messageset:api-sitemailreceive-list',
         list_api_tag: 'messageset:api-sitemailreceive-list',
         delete_api_tag: 'messageset:api-sitemailreceive-delete',
-        retrieve_api_tag: 'messageset:api-sitemailreceive-detail',
-        update_api_tag: 'messageset:api-sitemailreceive-detail',
-        destroy_api_tag: 'messageset:api-sitemailreceive-detail',
+        detail_api_tag: 'messageset:api-sitemailreceive-detail',
 
         create_url_tag: 'messageset:sitemail-add',
+        list_url_tag:   'messageset:sitemail-list',
         receive_detail_url_tag: 'messageset:sitemailreceive-detail',
         send_detail_url_tag: 'messageset:sitemailsend-detail',
         update_url_tag: 'messageset:sitemailreceive-update'
@@ -69,7 +67,7 @@ var sitemailListPageVue = new CommonListPageVue({
                 data = {'status': status};
             }
             self.loadData(data);
-            $(event.target).siblings().removeClass('btn-primary').addClass('btn-link');
+            $(event.target).siblings('.btn-primary').removeClass('btn-primary').addClass('btn-link');
             $(event.target).addClass('btn-primary').removeClass('btn-link');
         },
         allStatus: function (event) {
@@ -91,14 +89,16 @@ var sitemailListPageVue = new CommonListPageVue({
                 confirmButtonText: "确定!",
                 cancelButtonText: "取消",
                 closeOnConfirm: false,
-                showLoaderOnConfirm: true
+                showLoaderOnConfirm: true,
+                animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
+                $.AdminLTE.apiPost(
                     Urls['messageset:api-sitemail_markall'](), {},
                     function (resp) {
                         swal({
                             title: "标识更新成功!",
-                            type: "success"
+                            type: "success",
+                            animation: false
                         }, function () {
                             self.loadData({});
                         });

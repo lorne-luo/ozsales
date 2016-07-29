@@ -287,4 +287,4 @@ class CustomAdminSite(AdminSite):
         ], context, current_app=self.name)
 
 
-member_site = CustomAdminSite(name='member', app_name='member')
+member_site = CustomAdminSite(name='member')

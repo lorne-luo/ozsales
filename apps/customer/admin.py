@@ -7,6 +7,7 @@ from ..order.forms import OrderInline
 
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name', 'add_order_link', 'get_primary_address', 'order_count', 'last_order_time')
+    list_display_links = ['name', 'get_primary_address']
     search_fields = ('name', 'mobile')
     inlines = [AddressAddInline, ]
     ordering = ['-last_order_time']
