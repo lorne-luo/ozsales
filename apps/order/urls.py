@@ -2,9 +2,10 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
+from core.api.routers import PostHackedRouter
 import views
 
-router = DefaultRouter()
+router = PostHackedRouter()
 router.include_root_view = False
 
 urlpatterns = patterns('apps.order.views',
