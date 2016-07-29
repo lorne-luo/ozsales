@@ -9,7 +9,6 @@
     <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
   </th>
   <th>Name</th>
-  <th class="hidden-sm hidden-xs">Email</th>
   <th>Mobile</th>
   <th>Order Count</th>
   <th class="hidden-sm hidden-xs">Primary Address</th>
@@ -27,7 +26,6 @@
       <i class="fa fa-plus-square text-primary" aria-hidden="true" v-if="item.address_set.length"></i>
     </td>
     <td><a href="{!! item.edit_url !!}">{!! item.name !!}</a></td>
-    <td class="hidden-sm hidden-xs">{!! item.email !!}</td>
     <td>{!! item.mobile !!}</td>
     <td>{!! item.order_count !!}</td>
     <td class="hidden-sm hidden-xs">{!! item.primary_address_display !!}</td>
