@@ -1,4 +1,3 @@
-
 (function ($) {
     var getCookie = function (name) {
         var cookieValue = null;
@@ -31,16 +30,16 @@
         }
     });
 
-    var sendRequest = function(type, url, data, callback){
+    var sendRequest = function (type, url, data, callback) {
         $.ajax({
             type: type,
             url: url,
             data: data,
             dataType: 'json',
             cache: false,
-            error: function(response) {
+            error: function (response) {
                 var text;
-                switch(response.status) {
+                switch (response.status) {
                     case 400:
                         text = '错误请求!';
                         break;
@@ -57,7 +56,7 @@
                         text = '服务器错误!';
                         break;
                     default:
-                        text = '操作失败，错误码'+response.status;
+                        text = '操作失败，错误码' + response.status;
                         break;
                 }
                 swal({
@@ -70,7 +69,7 @@
         });
     };
 
-    $.AdminLTE.getApiUrl = function(app, model){
+    $.AdminLTE.getApiUrl = function (app, model) {
         return Urls['common_api:listcreate_api'](app, model);
     };
 

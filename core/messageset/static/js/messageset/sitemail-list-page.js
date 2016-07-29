@@ -92,7 +92,7 @@ var sitemailListPageVue = new CommonListPageVue({
                 showLoaderOnConfirm: true,
                 animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
+                $.AdminLTE.apiPost(
                     Urls['messageset:api-sitemail_markall'](), {},
                     function (resp) {
                         swal({

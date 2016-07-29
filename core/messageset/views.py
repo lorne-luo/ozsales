@@ -14,7 +14,7 @@ import forms
 
 
 @login_required
-@require_http_methods(["PATCH"])
+@require_http_methods(["POST"])
 def sitemail_markall(request):
     SiteMailReceive.objects.exclude(
         status=SiteMailReceive.DELETED

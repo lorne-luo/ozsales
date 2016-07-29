@@ -111,7 +111,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                 showLoaderOnConfirm: false,
                 animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
+                $.AdminLTE.apiPost(
                     url,
                     $.param({'status': next_status}),
                     function (resp) {
@@ -157,7 +157,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                 showLoaderOnConfirm: false,
                 animation: false
             }, function () {
-                $.AdminLTE.apiPatch(
+                $.AdminLTE.apiPost(
                     url,
                     $.param({'is_paid': true}),
                     function (resp) {
