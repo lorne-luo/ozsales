@@ -110,7 +110,7 @@ var CommonListPageVue = Vue.extend({
                     showLoaderOnConfirm: true,
                     animation: false
                 }, function () {
-                    $.AdminLTE.apiDelete(
+                    $.AdminLTE.apiPost(
                         delUrl,
                         $.param({'pk': ids.toString()}),
                         function (resp) {

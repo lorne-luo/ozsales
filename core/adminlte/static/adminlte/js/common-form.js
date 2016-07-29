@@ -48,7 +48,7 @@ var CommonFormPageVue = Vue.extend({
                     animation: false
                 }, function () {
                     var deleteUrl = Urls[delete_url_tag]();
-                    $.AdminLTE.apiDelete(
+                    $.AdminLTE.apiPost(
                         deleteUrl,
                         $.param({'pk': pk}),
                         function (resp) {
@@ -129,7 +129,7 @@ var CommonFormPageVue = Vue.extend({
                 animation: false
             }, function () {
                 var deleteUrl = Urls[self.delete_api_tag]();
-                $.AdminLTE.apiDelete(
+                $.AdminLTE.apiPost(
                     deleteUrl,
                     $.param({'pk': pk}),
                     function (resp) {
