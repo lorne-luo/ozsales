@@ -16,5 +16,14 @@
     </li>
     {%endif%}
 
+    {% if user.is_superuser %}
+    <li>
+      <a target="_blank" href="/admin/order/order/?status__in=CREATED,SHIPPING,DELIVERED" class="main">
+        <i class="fa fa-circle-o"></i>Admin
+      </a>
+    </li>
+    {% endif %}
+
   </ul>
 </li>
+
