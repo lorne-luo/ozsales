@@ -13,7 +13,7 @@ class OrderSerializer(BaseSerializer):
     shipping_order = serializers.SerializerMethodField()
     paid_url = serializers.SerializerMethodField()
     public_link = serializers.SerializerMethodField()
-    create_time_display = serializers.SerializerMethodField()
+    create_time = serializers.DateTimeField(format='%m-%d', input_formats=None)
     next_status_url = serializers.SerializerMethodField()
     next_status = serializers.SerializerMethodField()
     product_summary = serializers.SerializerMethodField()
@@ -29,7 +29,7 @@ class OrderSerializer(BaseSerializer):
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
                   'product_summary', 'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
-                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time_display', 'finish_time', 'id']
+                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'id']
         read_only_fields = ['id']
 
     def get_detail_url(self, obj):
@@ -58,9 +58,6 @@ class OrderSerializer(BaseSerializer):
 
     def get_public_link(self, obj):
         return obj.get_id_link()
-
-    def get_create_time_display(self, obj):
-        return obj.create_time.strftime('%m-%d')
 
     def get_product_summary(self, obj):
         return obj.get_product_summary()

@@ -26,11 +26,11 @@
           <th class="text-center hidden-sm hidden-xs" style="width:60px;">
             <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
           </th>
-          <th class="hidden-sm hidden-xs">Create Time</th>
-          <th>Customer</th>
-          <th>Status</th>
-          <th>Shipping</th>
-          <th>Price</th>
+          <th>日期</th>
+          <th>姓名</th>
+          <th>状态</th>
+          <th>物流</th>
+          <th>价格</th>
         </tr>
         </thead>
         <tfoot>
@@ -42,8 +42,8 @@
           <td class="text-center hidden-sm hidden-xs">
             <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
           </td>
-          <td class="hidden-sm hidden-xs">
-            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
           </td>
           <td>
             <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
@@ -66,13 +66,15 @@
             {!! item.shipping_order !!}
           </td>
           <td>
-            {!! item.sell_price_rmb !!}
-            <template v-if="item.is_paid">
-              (已支付)
-            </template>
-            <template v-else>
-              (<b>未支付</b>)
-            </template>
+            <a target="_blank" href="{!! item.detail_url !!}">
+              {!! item.sell_price_rmb !!}
+              <template v-if="item.is_paid">
+                (已支付)
+              </template>
+              <template v-else>
+                (<b>未支付</b>)
+              </template>
+            </a>
           </td>
         </tr>
         </tbody>
@@ -122,11 +124,11 @@
           <th class="text-center hidden-sm hidden-xs" style="width:60px;">
             <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
           </th>
-          <th class="hidden-sm hidden-xs">Create Time</th>
-          <th>Customer</th>
-          <th class="hidden-sm hidden-xs">Status</th>
-          <th>Shipping</th>
-          <th>Price</th>
+          <th>日期</th>
+          <th>姓名</th>
+          <th class="hidden-sm hidden-xs">状态</th>
+          <th>物流</th>
+          <th>价格</th>
         </tr>
         </thead>
         <tbody v-for="item in finished_items">
@@ -134,8 +136,8 @@
           <td class="text-center hidden-sm hidden-xs">
             <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
           </td>
-          <td class="hidden-sm hidden-xs">
-            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time_display !!}</a>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
           </td>
           <td>
             <a target="_blank" href="{!! item.detail_url !!}">{!! item.customer_display !!}</a>
@@ -158,7 +160,9 @@
             {!! item.shipping_order !!}
           </td>
           <td>
-            {!! item.sell_price_rmb !!}
+            <a target="_blank" href="{!! item.detail_url !!}">
+              {!! item.sell_price_rmb !!}
+            </a>
           </td>
         </tr>
         </tbody>

@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.conf import settings
 from rest_framework import serializers
 from core.api.serializers import BaseSerializer
 from models import MonthlyReport
@@ -6,6 +7,7 @@ from models import MonthlyReport
 
 class MonthlyReportSerializer(BaseSerializer):
     """ Serializer for MonthlyReport """
+    month = serializers.DateField(format='%Y-%m', input_formats=None)
     cost_aud = serializers.IntegerField()
     cost_rmb = serializers.IntegerField()
     shipping_fee = serializers.IntegerField()
@@ -15,6 +17,6 @@ class MonthlyReportSerializer(BaseSerializer):
     class Meta:
         model = MonthlyReport
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb', 'profit_rmb']
+                 ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb',
+                  'profit_rmb']
         read_only_fields = ['id']
-
