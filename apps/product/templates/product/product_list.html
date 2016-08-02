@@ -9,7 +9,7 @@
   <th>名称</th>
   <th class="hidden-sm hidden-xs">品牌</th>
   <th>售价</th>
-  {% if user.is_authenticated %}
+  {% if user.is_superuser %}
     <th>成本</th>
     <th class="hidden-sm hidden-xs">折扣</th>
     <th class="hidden-sm hidden-xs"></th>
