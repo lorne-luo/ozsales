@@ -4,14 +4,13 @@
 {% block common_list_buttons %}
   {% if page_model_perms.add %}
     <a class="btn btn-primary" id="create">
-      <i class="fa fa-plus"></i>
-      <b>新订单</b>
+      <i class="fa fa-plus"></i> 新订单
     </a>
   {% endif %}
   {% if page_model_perms.delete %}
-    <button class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
+    <a class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
       <i class="fa fa-trash-o"></i> 删除
-    </button>
+    </a>
   {% endif %}
 {% endblock %}
 
@@ -109,26 +108,10 @@
           <td class="hidden-sm hidden-xs">
             {!! item.shipping_order !!}
           </td>
-          <td class="text-right hidden-sm hidden-xs">
-            {% if page_model_perms.view %}
-              <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
-                 class="btn btn-info btn-sm">
-                <i class="fa fa-bars fa-inverse"></i>
-              </a>
-            {% endif %}
-            {% if page_model_perms.change %}
-              <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
-                 class="btn btn-warning btn-sm">
-                <i class="fa fa-pencil fa-inverse"></i>
-              </a>
-            {% endif %}
-            {% if page_model_perms.delete %}
-              <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
-                 v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                <i class="fa fa-trash-o fa-inverse"></i>
-              </a>
-            {% endif %}
-          </td>
+
+          {% block item_buttons %}
+            {{ block.super }}
+          {% endblock %}
         </tr>
         <tr class="hide" id="detail_{!! item.id !!}">
           <td colspan="4" class="hidden-sm hidden-xs"></td>

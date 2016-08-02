@@ -3,11 +3,9 @@
 
 {% block common_list_buttons %}
     {% if page_model_perms.delete %}
-    <button class="btn btn-danger"
-            v-on:click="removeSelected">
-        <i class="fa fa-trash-o"></i>
-        删除
-    </button>
+    <a class="btn btn-danger" v-on:click="removeSelected">
+        <i class="fa fa-trash-o"></i> 删除
+    </a>
     {% endif %}
 {% endblock %}
 

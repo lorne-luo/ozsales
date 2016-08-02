@@ -34,8 +34,7 @@ var CommonListPageVue = Vue.extend({
 
         // link for create new
         if (this.create_url_tag) {
-            var create_btn = $('a#create');
-            create_btn.prop('href', Urls[this.create_url_tag]());
+            $('a#create').prop('href', Urls[this.create_url_tag]());
         }
     },
     methods: {

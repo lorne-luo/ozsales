@@ -8,10 +8,10 @@ var orderproductListPageVue = new CommonListPageVue({
             // page
             // create_url_tag: 'order:orderproduct-add',
             list_url_tag:   'order:orderproduct-list',
-            update_url_tag: 'order:orderproduct-update',
+            // update_url_tag: 'order:orderproduct-update',
             detail_url_tag: 'order:orderproduct-detail',
             list_url:       Urls['order:api-orderproduct-list']() + '?',
-            ordering: '-id',
+            ordering: '-id'
         }
     }
 );

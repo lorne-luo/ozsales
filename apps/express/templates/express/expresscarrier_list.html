@@ -34,26 +34,7 @@
     </td>
 
     {% block item_buttons %}
-      <td class="text-right hidden-sm hidden-xs">
-        {% if page_model_perms.view %}
-          <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
-             class="btn btn-info btn-sm">
-            <i class="fa fa-bars fa-inverse"></i>
-          </a>
-        {% endif %}
-        {% if page_model_perms.change %}
-          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
-             class="btn btn-warning btn-sm">
-            <i class="fa fa-pencil fa-inverse"></i>
-          </a>
-        {% endif %}
-        {% if page_model_perms.delete %}
-          <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" href="javascript:void(0);"
-             class="btn btn-danger btn-sm" data-pk="#[item.id]" v-on:click="removeOne">
-            <i class="fa fa-trash-o fa-inverse"></i>
-          </a>
-        {% endif %}
-      </td>
+      {{ block.super }}
     {% endblock %}
   </tr>
   </tbody>
