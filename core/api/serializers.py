@@ -26,8 +26,7 @@ class BaseSerializer(serializers.ModelSerializer):
             url_tag = '%s:%s-update' % (app_label, model_name)
             return reverse(url_tag, args=[obj.id])
         elif self.has_perm('view'):
-            url_tag = '%s:%s-detail' % (app_label, model_name)
-            return reverse(url_tag, args=[obj.id])
+            return self.get_detail_url(obj)
         return None
 
     def has_perm(self, perm):
