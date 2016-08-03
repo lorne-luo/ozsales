@@ -170,7 +170,7 @@ class OrderProductInlineAddForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en')
+        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['class'] = 'form-control'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['amount'].widget.attrs['class'] = 'form-control'
@@ -195,7 +195,7 @@ class OrderProductInlineForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en')
+        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)
