@@ -7,10 +7,10 @@
   </th>
   <th>Name</th>
   <th>Short Name</th>
-  <th>Address</th>
+  <th class="hidden-sm hidden-xs">Address</th>
   <th>Domain</th>
-  <th>Search URL</th>
-  <th>Shipping Rate</th>
+  <th class="hidden-sm hidden-xs">Search URL</th>
+  <th class="hidden-sm hidden-xs">Shipping Rate</th>
 
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
@@ -18,16 +18,16 @@
 {% block table_row %}
   <tbody v-for="item in items">
   <tr>
-    <td class="text-center">
+    <td class="text-center hidden-sm hidden-xs">
       ##[$index+1]
       <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
     </td>
     <td><a href="{!! item.edit_url !!}">{!! item.name !!}</a></td>
     <td>{!! item.short_name !!}</td>
-    <td>{!! item.address !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.address !!}</td>
     <td>{!! item.domain !!}</td>
-    <td>{!! item.search_url !!}</td>
-    <td>{!! item.shipping_rate !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.search_url !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.shipping_rate !!}</td>
 
     {% block item_buttons %}
       {{ block.super }}
