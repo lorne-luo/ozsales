@@ -5,7 +5,7 @@
   <section class="sidebar">
     <ul class="sidebar-menu">
       <li class="header">HEADER</li>
-      <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
+      <li {% if request.path_info == '/' %}class="active"{% endif %}>
         <a href="/member/home/">
           <i class="fa fa-dashboard"></i>
           <span>{{ default_dashboard_title }}</span>

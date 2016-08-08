@@ -1,25 +1,9 @@
 {% load activelink %}
-<li class="treeview active {% ifstartswith '/store/' %}active{% endifstartswith %}">
-  <a href="javascript:void(0)">
-    <i class='fa fa-cloud'></i>
-    <b>Store</b>
-    <i class="fa fa-angle-left pull-right"></i>
+
+{% url 'store:store-list' as menu_url %}
+<li {% if request.path_info == menu_url %}class="active"{% endif %}>
+  <a href="{{ menu_url }}">
+    <i class="fa fa-dashboard"></i>
+    <span>Store</span>
   </a>
-  <ul class="treeview-menu menu-open" style="display: block;">
-
-    {% if perms.store.view_store %}
-    <li>
-      <a href="{% url 'store:store-list' %}" class="main">
-        <i class="fa fa-circle-o"></i>
-        Store
-      </a>
-      {% if perms.store.add_store %}
-      <a href="{% url 'store:store-add' %}" class="pull-right">
-         <i class="fa fa-plus" aria-hidden="true"></i>
-      </a>
-      {%endif%}
-    </li>
-    {%endif%}
-
-  </ul>
 </li>

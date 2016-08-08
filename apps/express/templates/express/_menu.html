@@ -1,23 +1,9 @@
 {% load activelink %}
-<li class="treeview active {% ifstartswith '/express/' %}active{% endifstartswith %}">
-    <a href="javascript:void(0)">
-        <i class='fa fa-cloud'></i>
-        <b>Express</b>
-        <i class="fa fa-angle-left pull-right"></i>
-    </a>
-    <ul class="treeview-menu menu-open" style="display: block;">
-        {% if perms.express.view_expresscarrier %}
-        <li>
-            <a href="{% url 'express:expresscarrier-list' %}" class="main">
-                <i class="fa fa-circle-o"></i>
-                ExpressCarrier
-            </a>
-            {% if perms.express.add_expresscarrier %}
-            <a href="{% url 'express:expresscarrier-add' %}" class="pull-right">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </a>
-            {%endif%}
-        </li>
-        {%endif%}
-    </ul>
+
+{% url 'express:expresscarrier-list' as menu_url %}
+<li {% if request.path_info == menu_url %}class="active"{% endif %}>
+  <a href="{{ menu_url }}">
+    <i class="fa fa-dashboard"></i>
+    <span>ExpressCarrier</span>
+  </a>
 </li>
