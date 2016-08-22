@@ -27,7 +27,9 @@
       <a v-if="item.pic" href="{!! item.pic !!}" target="_blank"><img style="height:75px" src="{!! item.pic !!}"/></a>
       <img v-else style="height:75px" src="/static/img/no_image.jpg"/>
     </td>
-    <td class="hidden-sm hidden-xs"><a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a></td>
+    <td class="hidden-sm hidden-xs">
+      <a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a><br/>{!! item.name_en !!}
+    </td>
     <td class="hidden-sm hidden-xs">{!! item.brand_display !!}</td>
     <td class="visible-sm visible-xs"><a href="{!! item.edit_url !!}">{!! item.brand_display !!} {!! item.name_cn !!}</a>
     </td>
