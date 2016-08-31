@@ -15,7 +15,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
-                     'Trifecta', 'filco', 'bose', 'headphone']
+                     'Trifecta', 'filco']
 
 
 def get_rss(url):
@@ -100,7 +100,7 @@ def ozbargin_task():
 
 
 smzdm_last_date = 'schedule.smzdm.last_date'
-smzdm_keywords = [u'蓝牙耳机', u'无线耳机']
+smzdm_keywords = []
 
 
 @periodic_task(run_every=crontab(minute='*/15', hour='8-23'))
