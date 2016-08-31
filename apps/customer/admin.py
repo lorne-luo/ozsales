@@ -21,7 +21,6 @@ class CustomerAdmin(admin.ModelAdmin):
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
-        self.form = CustomerAddForm
         self.inlines = [AddressChangeInline, OrderInline]
         return super(CustomerAdmin, self).change_view(request, object_id, form_url, extra_context)
 
