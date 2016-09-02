@@ -11,8 +11,8 @@
   <th>Order</th>
   <th>Product</th>
   <th class="hidden-sm hidden-xs">Amount</th>
-  <th>Sell RMB</th>
-  <th>Cost AUD</th>
+  <th>RMB</th>
+  <th>AUD</th>
   <th class="hidden-sm hidden-xs">Store</th>
 
   <th class="hidden-sm hidden-xs"></th>
@@ -37,8 +37,8 @@
       </template>
     </td>
     <td class="hidden-sm hidden-xs">{!! item.amount !!}</td>
-    <td>{!! item.sell_price_rmb !!}</td>
-    <td>{!! item.cost_price_aud !!}</td>
+    <td>{!! item.sell_price_rmb*1 !!} / {!! item.sell_price_rmb*item.amount !!}</td>
+    <td>{!! item.cost_price_aud*1 !!} / {!! item.cost_price_aud*item.amount !!}</td>
     <td class="hidden-sm hidden-xs">{!! item.store_display !!}</td>
 
     {% block item_buttons %}
