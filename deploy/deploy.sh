@@ -10,7 +10,7 @@ updated=$(git pull 2>/dev/null)
 if [ "$updated" == 'Already up-to-date.' ]; then
     # Nothing to do, exit cleanly
     #exit 0
-    COMMIT_INFO=[`date +%Y-%m-%d\ %H:%M:%S`]\ No\ updates,\ restart.
+    COMMIT_INFO=No\ updates,\ restart.
 else
     # Code has been updated, rebuild the app
 
@@ -20,7 +20,8 @@ else
     COMMIT_INFO=`git show -s --date=iso8601 --format='{"commit": "%h", "date": "%ad", "comment": "%s"}'`
 
     # And eventually restart the app
-    supervisorctl restart ozsales
+    #supervisorctl restart ozsales
 fi
 
 echo [`date +%Y-%m-%d\ %H:%M:%S`] $COMMIT_INFO >> $WORKDIR/media/upgrade.txt
+exec "$@"
