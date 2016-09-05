@@ -103,7 +103,7 @@ smzdm_last_date = 'schedule.smzdm.last_date'
 smzdm_keywords = []
 
 
-@periodic_task(run_every=crontab(minute='*/15', hour='8-23'))
+@periodic_task(run_every=crontab(minute='*/20', hour='8-23'))
 def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
