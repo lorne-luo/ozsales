@@ -19,7 +19,7 @@ class MessageSender(object):
     TOKEN_EXPIRY = datetime.datetime.now()
     _instance = None
     LENGTH_PER_SMS = 160
-    SMS_TXT_PATH=os.path.join(settings.MEDIA_ROOT, 'sms.txt')
+    SMS_TXT_PATH = os.path.join(settings.MEDIA_ROOT, 'sms.txt')
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -78,7 +78,7 @@ class MessageSender(object):
     def send_to_self(self, content):
         my_number = '0413725868'
         try:
-            with open(SMS_TXT_PATH, 'r+') as f:
+            with open(self.SMS_TXT_PATH, 'r+') as f:
                 all_content = f.read()
                 f.seek(0, 0)
                 f.write('%s\n\n%s' % (content[:500], all_content[:6000]))
