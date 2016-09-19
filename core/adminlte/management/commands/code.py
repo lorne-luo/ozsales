@@ -6,6 +6,7 @@ import shutil
 from django.db import models
 from optparse import make_option
 from django.core import management
+from django.utils.module_loading import import_string
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from optparse import make_option
@@ -80,15 +81,8 @@ class Command(BaseCommand):
 
         self.run()
 
-    def import_module(self, name):
-        components = name.split('.')
-        mod = __import__(components[0])
-        for comp in components[1:]:
-            mod = getattr(mod, comp)
-        return mod
-
     def scan_models(self, name):
-        mod = self.import_module(name)
+        mod = import_string(name)
         if isinstance(mod, types.ModuleType):
             self.module = mod
             self.import_model(mod)
