@@ -80,7 +80,6 @@ MIDDLEWARE_CLASSES = (
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     # 'core.adminlte.middleware.ApiPermissionCheck',
     # 'core.adminlte.middleware.MenuMiddleware',
 )
@@ -174,6 +173,8 @@ LOGIN_URL = '/member/login/'
 LOGOUT_URL = '/member/login/'
 
 LOGIN_REDIRECT_URL = '/member/profile/'
+
+SESSION_COOKIE_AGE = 604800 # 1 week
 
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
