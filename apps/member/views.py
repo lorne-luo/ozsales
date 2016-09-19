@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.cache import never_cache
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
@@ -18,6 +21,10 @@ from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailF
 log = logging.getLogger(__name__)
 
 
+@sensitive_post_parameters()
+@csrf_exempt
+@ensure_csrf_cookie
+@never_cache
 def member_login(request):
     if request.method == 'GET':
         c = csrf(request)
@@ -164,6 +171,7 @@ def user_delete(request, pk):
     except Seller.DoesNotExist:
         pass
     return redirect('seller-index')
+
 
 class AgentView(TemplateView):
     template_name = 'member/agent.html'
