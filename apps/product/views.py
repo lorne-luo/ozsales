@@ -152,4 +152,4 @@ class BrandViewSet(CommonViewSet):
     queryset = Brand.objects.all()
     serializer_class = serializers.BrandSerializer
     filter_fields = ['name_en', 'name_cn']
-    search_fields = ['name_en', 'name_cn', 'country', 'remarks']
+    search_fields = ['name_en', 'name_cn']
