@@ -266,11 +266,12 @@ class OrderProduct(models.Model):
                 self.cost_price_aud = 0
         self.total_price_aud = self.cost_price_aud * self.amount
 
-        if not self.sell_price_rmb:
+        if not isinstance(self.sell_price_rmb, int):
             if self.product and self.product.safe_sell_price:
                 self.sell_price_rmb = self.product.safe_sell_price
             else:
                 self.sell_price_rmb = 0
+
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product and not self.name:
