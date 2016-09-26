@@ -30,7 +30,7 @@ def member_login(request):
         c = csrf(request)
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
-        return render_to_response('registration/login.html', RequestContext(request, c))
+        return render_to_response('adminlte/login.html', RequestContext(request, c))
 
     elif request.method == 'POST':
         old_user = request.user or None
@@ -47,7 +47,7 @@ def member_login(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                next_page = reverse('member-profile')
+                next_page = reverse('order:order-list-short')
 
             return HttpResponseRedirect(next_page)
 
