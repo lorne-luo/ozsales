@@ -24,5 +24,6 @@ else
     #supervisorctl restart ozsales
 fi
 
-echo [`date +%Y-%m-%d\ %H:%M:%S`] $COMMIT_INFO >> $WORKDIR/media/upgrade.txt
+touch $WORKDIR/media/upgrade.txt
+sed  -i '1i ['"`date +%Y-%m-%d\ %H:%M:%S`"'] '"$COMMIT_INFO" $WORKDIR/media/upgrade.txt
 exec "$@"
