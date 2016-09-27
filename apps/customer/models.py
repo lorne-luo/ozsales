@@ -171,6 +171,15 @@ def create_password(sender, instance=None, created=False, **kwargs):
         instance.generate_password()
 
 
+@receiver(post_save, sender=Customer)
+def customer_post_save(sender, instance=None, created=False, **kwargs):
+    if not instance.primary_address:
+        addr_set = instance.address_set.all()
+        if addr_set.count():
+            instance.primary_address = addr_set[0]
+            instance.save(update_fields=['primary_address'])
+
+
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
@@ -205,16 +214,6 @@ class Address(models.Model):
 
     def __str__(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        addr_set = Address.objects.filter(customer=self.customer)
-        count = addr_set.count()
-        super(Address, self).save(force_insert, force_update, using, update_fields)
-
-        if not count:
-            super(Address, self).save(force_insert, force_update, using, update_fields)
-            self.customer.primary_address = self
-            self.customer.save()
 
     def get_customer_link(self):
         url = reverse('admin:customer_customer_change', args=[self.customer.id])
