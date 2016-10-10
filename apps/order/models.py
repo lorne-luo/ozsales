@@ -285,7 +285,7 @@ class OrderProduct(models.Model):
             product_name = '%s %s' % (brand_name, self.product.name_cn)
         else:
             product_name = self.name
-        return '%s=%dx%s' % (product_name, self.sell_price_rmb, self.amount)
+        return '%s x %s' % (product_name, self.amount)
 
     def get_link(self):
         if self.product:
