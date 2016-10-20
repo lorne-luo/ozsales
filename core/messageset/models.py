@@ -7,9 +7,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import models
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
-from core.adminlte.constants import ReadStatus, TaskStatus, MailStatus, \
-    UsableStatus, \
-    DICT_NULL_BLANK_TRUE
+from core.libs.constants import ReadStatus, TaskStatus, MailStatus, UsableStatus, DICT_NULL_BLANK_TRUE
 
 
 class AbstractMessageContent(models.Model, UsableStatus):

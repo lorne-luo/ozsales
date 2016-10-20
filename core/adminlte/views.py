@@ -15,7 +15,7 @@ from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
-from core.adminlte import constants
+from core.libs import constants
 
 
 # from core.adminlte.models import Menu, SystemConfig, Permission
