@@ -1,0 +1,12 @@
+
+Automatically create code:
+
+Usage: ./manage.py code [--overwrite] <module_name>
+
+Example:
+
+    ./manage.py code apps.product
+
+    ./manage.py code -o apps.product.models.Product
+
+    ./manage.py code apps/product/
