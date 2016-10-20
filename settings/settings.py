@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     # common app
     'core.adminlte',
     'core.messageset',
+    'core.autocode',
 
     'apps',
     'apps.member',
