@@ -280,7 +280,10 @@ class OrderProduct(models.Model):
 
     def get_summary(self):
         if self.product:
-            brand_name = self.product.brand.short_name if self.product.brand.short_name else self.product.brand.name_en
+            if self.product.brand:
+                brand_name = self.product.brand.short_name if self.product.brand.short_name else self.product.brand.name_en
+            else:
+                brand_name = ''
             product_name = '%s %s' % (brand_name, self.product.name_cn)
         else:
             product_name = self.name
