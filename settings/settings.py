@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     # common app
     'core.adminlte',
     'core.messageset',
+    'core.autocode',
 
     'apps',
     'apps.member',
@@ -80,8 +81,8 @@ MIDDLEWARE_CLASSES = (
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'core.adminlte.middleware.ApiPermissionCheck',
-    # 'core.adminlte.middleware.MenuMiddleware',
+    # 'core.libs.middleware.ApiPermissionCheck',
+    # 'core.libs.middleware.MenuMiddleware',
 )
 
 ROOT_URLCONF = 'settings.urls'

@@ -266,11 +266,12 @@ class OrderProduct(models.Model):
                 self.cost_price_aud = 0
         self.total_price_aud = self.cost_price_aud * self.amount
 
-        if not self.sell_price_rmb:
+        if self.sell_price_rmb is None:
             if self.product and self.product.safe_sell_price:
                 self.sell_price_rmb = self.product.safe_sell_price
             else:
                 self.sell_price_rmb = 0
+
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product and not self.name:
@@ -287,7 +288,7 @@ class OrderProduct(models.Model):
             product_name = '%s %s' % (brand_name, self.product.name_cn)
         else:
             product_name = self.name
-        return '%s=%dx%s' % (product_name, self.sell_price_rmb, self.amount)
+        return '%s x %s' % (product_name, self.amount)
 
     def get_link(self):
         if self.product:

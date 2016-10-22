@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
-from core.adminlte.views import  ChangePasswordView, ChangePasswordDoneView
+from core.views.views import  ChangePasswordView, ChangePasswordDoneView
 
 def if_installed(appname, *args, **kwargs):
     ret = url(*args, **kwargs)
@@ -52,7 +52,7 @@ urlpatterns = patterns('',
     url('^auth/change-password-done/$', ChangePasswordDoneView.as_view(), name='password_change_done'),
 
     # for common views
-    url(r'^', include('core.adminlte.urls', namespace='adminlte')),
+    # url(r'^', include('core.views.urls', namespace='adminlte')),
 
     # for common api
     url(r'^api/v1/', include('core.api.urls', namespace='common_api')),

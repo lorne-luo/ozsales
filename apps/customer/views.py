@@ -4,9 +4,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.db import transaction
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.adminlte.views import CommonContextMixin, CommonViewSet
+from core.views.views import CommonContextMixin, CommonViewSet
 from models import Address, Customer, InterestTag
 import serializers
 import forms

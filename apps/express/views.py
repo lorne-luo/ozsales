@@ -1,18 +1,8 @@
-from django.shortcuts import render
-
-from rest_framework import permissions
-from core.adminlte.views import CommonContextMixin, CommonViewSet
-from .models import ExpressOrder
-import serializers
-from django_filters import Filter, FilterSet
-
 # coding=utf-8
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.adminlte.views import CommonContextMixin, CommonViewSet
+from core.views.views import CommonContextMixin, CommonViewSet
 from models import ExpressCarrier, ExpressOrder
 import serializers
 import forms

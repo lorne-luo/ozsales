@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.views.generic import ListView, CreateView, UpdateView
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from core.adminlte.views import CommonContextMixin, CommonViewSet
+from core.views.views import CommonContextMixin, CommonViewSet
 from core.api.views import CommonListCreateAPIView
 from models import Product, Brand
 import serializers
@@ -152,4 +152,4 @@ class BrandViewSet(CommonViewSet):
     queryset = Brand.objects.all()
     serializer_class = serializers.BrandSerializer
     filter_fields = ['name_en', 'name_cn']
-    search_fields = ['name_en', 'name_cn', 'country', 'remarks']
+    search_fields = ['name_en', 'name_cn']

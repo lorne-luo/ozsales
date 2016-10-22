@@ -10,9 +10,8 @@ from django.forms.models import inlineformset_factory, modelformset_factory
 from django_filters import FilterSet
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
-from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from core.adminlte.views import CommonContextMixin, CommonViewSet
+from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
 from ..customer.models import Customer
