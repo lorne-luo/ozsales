@@ -113,7 +113,7 @@ var CommonListPageVue = Vue.extend({
                         delUrl,
                         $.param({'pk': ids.toString()}),
                         function (resp) {
-                            self.loadData(this.get_param());
+                            self.loadData(self.get_param());
                             swal({
                                 title: "删除成功!",
                                 type: "success",
