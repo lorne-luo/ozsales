@@ -16,7 +16,7 @@
     {% include "adminlte/includes/header_script.html" %}
 
     {% block header_base_style %}{% endblock %}
-    {% block header_base_script %}{% endblock %}
+    {% block header_base_script %}{{ form.media }}{% endblock %}
     {% block header_page_script %}{% endblock %}
 
     <!--[if lt IE 9]>

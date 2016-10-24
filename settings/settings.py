@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'django_nose',
     'dbsettings',
     'djcelery',
+    'tinymce',
     'kombu.transport.django',
 
     # common app
@@ -219,6 +220,24 @@ REDIS_DB = 0
 BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
+
+# ----------------------------------------- TINYMCE -----------------------------------------------
+
+TINYMCE_JS_URL = '/static/tinymce/js/tinymce/tinymce.min.js'
+TINYMCE_SPELLCHECKER = False
+TINYMCE_DEFAULT_CONFIG = {
+    'selector': 'textarea',
+    'theme': 'modern',
+    'plugins': 'link image preview codesample contextmenu table code',
+    'toolbar1': 'bold italic underline | alignleft aligncenter alignright alignjustify '
+               '| bullist numlist | outdent indent | table | link image | codesample | preview code',
+    'contextmenu': 'formats | link image',
+    'menubar': False,
+    'inline': False,
+    'statusbar': False,
+    'height': 200,
+    'language': 'zh_CN'
+}
 
 # ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
 

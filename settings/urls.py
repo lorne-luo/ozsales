@@ -63,6 +63,9 @@ urlpatterns = patterns('',
     # for dbsettings
     (r'^admin/settings/', include('dbsettings.urls')),
 
+    # for django-tinymce
+    url(r'^tinymce/', include('tinymce.urls')),
+
     # for js reverse
     # url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 
