@@ -2,6 +2,7 @@
 import datetime
 from django.conf import settings
 from django.utils import timezone
+from tinymce import HTMLField
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import models
@@ -14,7 +15,7 @@ class AbstractMessageContent(models.Model, UsableStatus):
     title = models.CharField(
         verbose_name=u'标题', max_length=200
     )
-    contents = models.TextField(
+    contents = HTMLField(
         verbose_name=u'内容'
     )
     status = models.PositiveSmallIntegerField(
