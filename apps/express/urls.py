@@ -30,10 +30,10 @@ router.register(r'api/express/expresscarrier', views.ExpressCarrierViewSet, base
 #     url(r'^express/expressorder/(?P<pk>\d+)/$', login_required(views.ExpressOrderDetailView.as_view()), name='expressorder-detail'),
 #     url(r'^express/expressorder/(?P<pk>\d+)/edit/$', login_required(views.ExpressOrderUpdateView.as_view()), name='expressorder-update'),
 # )
-#
-#
-# # reverse('express:api-expressorder-list'), reverse('express:api-expressorder-detail', kwargs={'pk': 1})
-# router.register(r'api/express/expressorder', views.ExpressOrderViewSet, base_name='api-expressorder')
+
+
+# reverse('express:api-expressorder-list'), reverse('express:api-expressorder-detail', kwargs={'pk': 1})
+router.register(r'api/express/expressorder', views.ExpressOrderViewSet, base_name='api-expressorder')
 
 
 urlpatterns += router.urls
