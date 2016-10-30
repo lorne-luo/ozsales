@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils.crypto import get_random_string
 from django.utils import timezone
+from calendar import monthrange
 from utils.enum import enum
 from settings.settings import rate
 from ..product.models import Product
@@ -107,14 +108,16 @@ class Order(models.Model):
         if self.is_paid and not self.status == ORDER_STATUS.CREATED:
             from ..report.models import MonthlyReport
 
-            if self.paid_time:
-                year = self.paid_time.year
-                month = self.paid_time.month
-                MonthlyReport.stat(year, month)
-            else:
-                self.paid_time = timezone.now()
+            if not self.paid_time:
+                if timezone.now().month == self.ship_time.month:
+                    self.paid_time = timezone.now()
+                else:
+                    first = timezone.now().replace(day=1, month=self.ship_time.month)
+                    lastMonth = first - datetime.timedelta(days=1)
+                    self.paid_time = lastMonth
                 self.save(update_fields=['paid_time'])
-                MonthlyReport.stat_current_month()
+
+            MonthlyReport.stat(self.paid_time.year, self.paid_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
