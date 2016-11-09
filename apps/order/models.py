@@ -95,10 +95,11 @@ class Order(models.Model):
             if self.is_paid:
                 self.finish_time = datetime.datetime.now()
                 self.save(update_fields=['status', 'finish_time'])
-                customer = self.customer
+
+                customer = Customer.objects.get(id=self.customer_id)
                 customer.last_order_time = self.create_time
-                customer.order_count = customer.order_set.count()
-                customer.save()
+                customer.order_count = customer.order_set.filter(status=ORDER_STATUS.FINISHED).count()
+                customer.save(update_fields=['last_order_time', 'order_count'])
         else:
             self.save(update_fields=['status'])
 
