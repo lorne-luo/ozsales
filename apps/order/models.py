@@ -107,18 +107,12 @@ class Order(models.Model):
 
     def update_monthly_report(self):
         if self.is_paid and not self.status == ORDER_STATUS.CREATED:
-            from ..report.models import MonthlyReport
-
             if not self.paid_time:
-                if timezone.now().month == self.ship_time.month:
-                    self.paid_time = timezone.now()
-                else:
-                    first = timezone.now().replace(day=1, month=self.ship_time.month)
-                    lastMonth = first - datetime.timedelta(days=1)
-                    self.paid_time = lastMonth
+                self.paid_time = timezone.now()
                 self.save(update_fields=['paid_time'])
 
-            MonthlyReport.stat(self.paid_time.year, self.paid_time.month)
+            from ..report.models import MonthlyReport
+            MonthlyReport.stat(self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:

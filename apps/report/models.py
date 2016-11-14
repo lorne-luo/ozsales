@@ -50,7 +50,7 @@ class MonthlyReport(models.Model):
 
         report.reset()
 
-        all_orders = Order.objects.filter(is_paid=True, paid_time__year=year, paid_time__month=month). \
+        all_orders = Order.objects.filter(is_paid=True, create_time__year=year, create_time__month=month). \
             exclude(status=ORDER_STATUS.CREATED)
         for order in all_orders:
             if order.customer.name == u'罗韬':
