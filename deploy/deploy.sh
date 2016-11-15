@@ -3,7 +3,7 @@
 # Simple deploy script
 ##################
 
-WORKDIR=/data/django/ozsales/
+WORKDIR="$(dirname "$(pwd)")"
 cd $WORKDIR
 
 updated=$(git pull 2>/dev/null)
