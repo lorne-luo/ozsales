@@ -120,7 +120,7 @@ class Seller(AbstractBaseUser, PermissionsMixin):
 
 class UserSession(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    session = models.ForeignKey(Session, unique=True, on_delete=models.CASCADE)
+    session = models.OneToOneField(Session, on_delete=models.CASCADE)
 
 
 @receiver(user_logged_in)
