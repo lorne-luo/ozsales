@@ -7,6 +7,8 @@ WORKDIR="$(dirname "$(pwd)")"
 cd $WORKDIR
 
 updated=$(git pull 2>/dev/null)
+echo $updated
+
 if [ "$updated" == 'Already up-to-date.' ]; then
     # Nothing to do, exit cleanly
     #exit 0
