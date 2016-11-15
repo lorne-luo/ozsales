@@ -36,8 +36,8 @@
     <th>产品</th>
     <td>
       {% for prod in object.products.all %}
-        {% if prod.get_link %}
-          <a target="_blank" href="{{ prod.get_link }}">
+        {% if prod.product and prod.product.pic %}
+          <a target="_blank" href="{{ prod.product.pic.url }}">
             {% if prod.name %}
               {{ prod.name }}
             {% else %}
