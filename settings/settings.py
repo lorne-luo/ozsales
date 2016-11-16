@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -42,11 +42,13 @@ INSTALLED_APPS = (
     'django_nose',
     'dbsettings',
     'djcelery',
+    'tinymce',
     'kombu.transport.django',
 
     # common app
     'core.adminlte',
     'core.messageset',
+    'core.autocode',
 
     'apps',
     'apps.member',
@@ -55,6 +57,8 @@ INSTALLED_APPS = (
     'apps.product',
     'apps.order',
     'apps.store',
+    'apps.report',
+    'apps.schedule',
     'apps.registration',
     'utils',
 
@@ -70,6 +74,7 @@ INSTALLED_APPS = (
 
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -77,9 +82,8 @@ MIDDLEWARE_CLASSES = (
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # 'core.adminlte.middleware.ApiPermissionCheck',
-    # 'core.adminlte.middleware.MenuMiddleware',
+    # 'core.libs.middleware.ApiPermissionCheck',
+    # 'core.libs.middleware.MenuMiddleware',
 )
 
 ROOT_URLCONF = 'settings.urls'
@@ -153,6 +157,7 @@ TEMPLATE_LOADERS = (
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
+    'django.core.context_processors.media',
     'django.contrib.auth.context_processors.auth',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
@@ -170,6 +175,8 @@ LOGIN_URL = '/member/login/'
 LOGOUT_URL = '/member/login/'
 
 LOGIN_REDIRECT_URL = '/member/profile/'
+
+SESSION_COOKIE_AGE = 604800 # 1 week
 
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
@@ -214,11 +221,29 @@ BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
 
+# ----------------------------------------- TINYMCE -----------------------------------------------
+
+TINYMCE_JS_URL = '/static/tinymce/js/tinymce/tinymce.min.js'
+TINYMCE_SPELLCHECKER = False
+TINYMCE_DEFAULT_CONFIG = {
+    'selector': 'textarea',
+    'theme': 'modern',
+    'plugins': 'link image preview codesample contextmenu table code',
+    'toolbar1': 'bold italic underline | alignleft aligncenter alignright alignjustify '
+               '| bullist numlist | outdent indent | table | link image | codesample | preview code',
+    'contextmenu': 'formats | link image',
+    'menubar': False,
+    'inline': False,
+    'statusbar': False,
+    'height': 200,
+    'language': 'zh_CN'
+}
+
 # ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
 
 REST_FRAMEWORK = {
     #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 15,
     'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
     'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
     'UNICODE_JSON': True,
@@ -272,6 +297,10 @@ REST_FRAMEWORK = {
     )
 }
 
+
+# ----------------------------------------- CONSTANTS -----------------------------------------------
+SITE_NAME = 'OZ SALE'
+
 # ----------------------------------------- DBSETTINGS -----------------------------------------------
 
 import dbsettings
@@ -281,3 +310,9 @@ class ForexRate(dbsettings.Group):
 
 
 rate = ForexRate()
+
+
+# for development env!
+# rename settings_dev.py.example to settings_dev.py
+if os.path.exists(os.path.join(BASE_DIR, "settings/settings_dev.py")):
+    execfile(os.path.join(BASE_DIR, "settings/settings_dev.py"))

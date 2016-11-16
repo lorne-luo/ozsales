@@ -2,20 +2,20 @@
 import datetime
 from django.conf import settings
 from django.utils import timezone
+from tinymce import HTMLField
+from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import models
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
-from core.adminlte.constants import ReadStatus, TaskStatus, MailStatus, \
-    UsableStatus, \
-    DICT_NULL_BLANK_TRUE
+from core.libs.constants import ReadStatus, TaskStatus, MailStatus, UsableStatus, DICT_NULL_BLANK_TRUE
 
 
 class AbstractMessageContent(models.Model, UsableStatus):
     title = models.CharField(
         verbose_name=u'标题', max_length=200
     )
-    contents = models.TextField(
+    contents = HTMLField(
         verbose_name=u'内容'
     )
     status = models.PositiveSmallIntegerField(
@@ -51,7 +51,7 @@ class SiteMailContent(AbstractMessageContent):
     receivers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True,
         related_name='sitemail_receivers',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         help_text=u'不选则发送给全体用户'
     )
 
@@ -217,7 +217,7 @@ class NotificationContent(AbstractMessageContent):
     receivers = models.ManyToManyField(
         settings.AUTH_USER_MODEL, blank=True,
         related_name='notification_receivers',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         help_text=u'不选则发送给全体用户'
     )
 
@@ -255,7 +255,7 @@ class Notification(models.Model, ReadStatus):
     receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='+',
-        verbose_name=u'接收人',
+        verbose_name=u'收件人',
         **DICT_NULL_BLANK_TRUE
     )
     status = models.PositiveSmallIntegerField(
@@ -402,8 +402,8 @@ class Task(models.Model, TaskStatus):
             )
 
 
-@receiver(m2m_changed, sender=SiteMailContent.receivers.through)
-def create_sitemail_datas(sender, instance, **kwargs):
+@receiver(post_save, sender=SiteMailContent)
+def create_sitemail_datas(sender, instance, created, **kwargs):
     """
     发送邮件时，向收件箱和发件箱添加数据，
     这里将来可以替换为异步消息队列
@@ -411,19 +411,26 @@ def create_sitemail_datas(sender, instance, **kwargs):
     :param instance:
     :param kwargs:
     """
-    kwargs = {
-        'title': instance.title,
-        'content': instance,
-        'sender': instance.creator,
-        'creator': instance.creator
-    }
-    SiteMailSend(**kwargs).save()
-    for user in instance.receivers.all():
-        tmp_kwargs = {
-            'receiver': user,
+    if created:
+        kwargs = {
+            'title': instance.title,
+            'content': instance,
+            'sender': instance.creator,
+            'creator': instance.creator
         }
-        tmp_kwargs.update(kwargs)
-        SiteMailReceive(**tmp_kwargs).save()
+
+        # if no receivers filed, send to all
+        if not instance.receivers.count():
+            instance.receivers = get_user_model().objects.all()
+            instance.save()
+
+        SiteMailSend(**kwargs).save()
+        for user in instance.receivers.all():
+            tmp_kwargs = {
+                'receiver': user,
+            }
+            tmp_kwargs.update(kwargs)
+            SiteMailReceive(**tmp_kwargs).save()
 
 
 @receiver(m2m_changed, sender=NotificationContent.receivers.through)

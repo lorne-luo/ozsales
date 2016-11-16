@@ -1,25 +1,26 @@
 # coding=utf-8
 from rest_framework import serializers
-from .models import Customer
+from core.api.serializers import BaseSerializer
+from .models import Customer, Address
 
 
-class CustomerSerializer(serializers.ModelSerializer):
-    primary_address = serializers.CharField()
-    name = serializers.SerializerMethodField('get_link')
+# Serializer for address
+class AddressSerializer(BaseSerializer):
+    class Meta:
+        model = Address
+        fields = ['id', 'edit_url', 'detail_url'] + \
+                 ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
+        read_only_fields = ['id']
+
+
+# Serializer for customer
+class CustomerSerializer(BaseSerializer):
+    primary_address_display = serializers.CharField(source='primary_address')
+    address_set = AddressSerializer(many=True, read_only=True)
 
     class Meta:
         model = Customer
-        fields = Customer.Config.list_display_fields + ('id',)
-        read_only_fields = (
-            'id', 'date_joined'
-        )
-
-    def get_link(self, obj):
-        request = self.context.get('request', None)
-        change_perm_str = '%s.change_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
-        view_perm_str = '%s.view_%s' % (self.Meta.model._meta.app_label, self.Meta.model._meta.model_name)
-        if request.user.has_perm(change_perm_str):
-            return obj.get_edit_link()
-        elif request.user.has_perm(view_perm_str):
-            return obj.get_detail_link()
-        return obj.name
+        fields = ['id', 'edit_url', 'detail_url'] + \
+                 ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remarks', 'tags',
+                  'primary_address_display', 'address_set']
+        read_only_fields = ['id']

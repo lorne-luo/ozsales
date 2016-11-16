@@ -1,11 +1,13 @@
+# coding=utf-8
 from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
+from core.api.routers import PostHackedRouter
 import views
 
 
 urlpatterns = []
-router = DefaultRouter()
+router = PostHackedRouter()
 router.include_root_view = False
 
 # urls for page
@@ -16,7 +18,8 @@ urlpatterns += patterns('',
     url(r'^store/page/(?P<pk>\d+)/edit/$', login_required(views.PageUpdateView.as_view()), name='page-update'),
 )
 
-# reverse('store:api-page-list'),reverse('store:api-page-detail', kwargs={'pk': 1})
+
+# reverse('store:api-page-list'), reverse('store:api-page-detail', kwargs={'pk': 1})
 router.register(r'api/store/page', views.PageViewSet, base_name='api-page')
 
 
@@ -28,7 +31,8 @@ urlpatterns += patterns('',
     url(r'^store/store/(?P<pk>\d+)/edit/$', login_required(views.StoreUpdateView.as_view()), name='store-update'),
 )
 
-# reverse('store:api-store-list'),reverse('store:api-store-detail', kwargs={'pk': 1})
+
+# reverse('store:api-store-list'), reverse('store:api-store-detail', kwargs={'pk': 1})
 router.register(r'api/store/store', views.StoreViewSet, base_name='api-store')
 
 

@@ -1,6 +1,51 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th></th>
+  <th>名称</th>
+  <th class="hidden-sm hidden-xs">品牌</th>
+  <th>售价</th>
+  {% if user.is_superuser %}
+    <th>成本</th>
+    <th class="hidden-sm hidden-xs">折扣</th>
+    <th class="hidden-sm hidden-xs"></th>
+  {% endif %}
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td>
+      <a v-if="item.pic" href="{!! item.pic !!}" target="_blank"><img style="height:75px" src="{!! item.pic !!}"/></a>
+      <img v-else style="height:75px" src="/static/img/no_image.jpg"/>
+    </td>
+    <td class="hidden-sm hidden-xs">
+      <a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a><br/>{!! item.name_en !!}
+    </td>
+    <td class="hidden-sm hidden-xs">{!! item.brand_display !!}</td>
+    <td class="visible-sm visible-xs"><a href="{!! item.edit_url !!}">{!! item.brand_display !!} {!! item.name_cn !!}</a>
+    </td>
+    <td>{!! item.safe_sell_price !!}</td>
+    {% if user.is_superuser %}
+      <td>{!! item.normal_price !!}</td>
+      <td class="hidden-sm hidden-xs">{!! item.bargain_price !!}</td>
+
+      {% block item_buttons %}
+        {{ block.super }}
+      {% endblock %}
+    {% endif %}
+  </tr>
+  </tbody>
+{% endblock %}
+
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/product/product_list.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/product/product_list.js' %}"></script>
 {% endblock %}

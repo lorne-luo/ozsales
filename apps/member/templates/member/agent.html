@@ -1,0 +1,95 @@
+
+{% extends "adminlte/base.html" %}
+{% load adminlte_tags %}
+
+{% block content_title %}
+    <b>代理方法</b>
+{% endblock %}
+{% block breadcrumb %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="box box-info">
+                <div class="box-body table-responsive no-padding">
+
+                    <h3>总数的放适当</h3>
+                    <a href="/media/pic.zip">sadf</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block table_content2 %}
+    <tr>
+        <th style="min-width: 44px">姓名</th>
+        <td>
+            {{ object.customer }}
+        </td>
+    </tr>
+    <tr>
+        <th>地址</th>
+        <td>
+            {{ object.address }}
+        </td>
+    </tr>
+    <tr>
+        <th>产品</th>
+        <td>
+            {% for prod in object.products.all %}
+                {% if prod.get_link %}
+                    <a target="_blank" href="{{ prod.get_link }}"> {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}</a>
+                    = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% else %}
+                    {{ prod.name }} = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th>总价</th>
+        <td>
+            {% ifequal object.origin_sell_rmb object.sell_price_rmb %}
+                {{ object.origin_sell_rmb }}
+                {% if object.is_paid %}
+                    (已支付)
+                {% else %}
+                    (<b>未支付</b>)
+                {% endif %}
+            {% else %}
+                {{ object.sell_price_rmb }}
+                {% if object.is_paid %}
+                    (已支付)
+                {% else %}
+                    (<b>未支付</b>)
+                {% endif %}
+                (Original: {{ object.origin_sell_rmb }})
+            {% endifequal %}
+        </td>
+    </tr>
+
+    <tr>
+        <th>物流</th>
+        <td>
+            {% for ex in object.express_orders.all %}
+                [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
+                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th>状态</th>
+        <td>
+            {{ object.status }}
+        </td>
+    </tr>
+{% endblock %}
+
+
+{% block menu %}
+
+{% endblock %}

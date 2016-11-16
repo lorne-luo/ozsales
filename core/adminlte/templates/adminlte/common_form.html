@@ -34,46 +34,47 @@
 {% endblock %}
 
 {% block content %}
-            <div class="box box-info">
-                {% if form.is_multipart %}
-                    <form enctype="multipart/form-data"
-                          method="post"
-                          action=""
-                          class="form-horizontal"
-                          role="form" id="commonForm">
-                {% else %}
-                    <form method="post" action="" class="form-horizontal"
-                          role="form" id="commonForm">
-                {% endif %}
-                {% csrf_token %}
+    <div class="box box-info">
+        <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
+        {% csrf_token %}
 
-                <div class="box-header with-border">
-                  <h3 class="box-title">{{ object }}</h3>
-                </div>
+        <div class="box-header with-border">
+          <h3 class="box-title">{{ object }}</h3>
+        </div>
 
-                <div class="box-body">
-                    {% for field in form %}
-                        <div class="form-group">
-                            <label for="id_{{ field.name }}" class="col-sm-2 control-label">{{ field.label }}</label>
-                            <div class="col-sm-6">
-                                {{ field }}
-                            </div>
-                            <div class="col-sm-4">
-                                <p class="help-block">{{ field.help_text }}</p>
-                            </div>
-                        </div>
-                    {% endfor %}
+        <div class="box-body">
+            {% for field in form %}
+                <div class="form-group {% if field.errors %}error{% endif %}">
+                    <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
+                    <div class="col-sm-6 col-xs-9">
+                        {{ field }}
+                    </div>
+                    {% if field.errors %}
+                    <div class="col-sm-4 col-xs-12">
+                        {{ field.errors }}
+                        <span class="help-block">{{ field.help_text }}</span>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="box-footer">
-                  <button type="submit" class="btn btn-primary col-sm-offset-2">保 存</button>
-                </div>
-            </form>
-            </div>
+            {% endfor %}
+        </div>
+        <div class="box-footer">
+          <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
+          <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
+{#          {% if object.id %}#}
+{#          <button type="button" style="width:108px" class="btn btn-danger"#}
+{#                  v-on:click="delete({{ object.id }}, $event)">删 除#}
+{#          </button>#}
+{#          {% endif %}#}
+        </div>
+    </form>
+    </div>
 {% endblock %}
 
 {% block header_page_script %}
     <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
     <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
+    <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
 {% endblock %}
 
 {% block footer_base_script %}
@@ -85,8 +86,11 @@
         $('#commonForm select').addClass('form-control');
         $('#commonForm textarea').addClass('form-control');
 
+        $("select[class$='form-control'][readonly=true]").prop('disabled', true);
+
         jQuery(document).ready(function($) {
-            $("select[class$='form-control']").chosen({search_contains: true,disable_search_threshold: 10});
+            $("select[class$='form-control']").not(".hide select[class$='form-control']")
+                    .chosen({search_contains: true,disable_search_threshold: 10});
         });
     </script>
 {% endblock %}

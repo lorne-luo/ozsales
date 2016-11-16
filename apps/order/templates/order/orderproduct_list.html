@@ -1,0 +1,53 @@
+
+{% extends "adminlte/common_list.html" %}
+{% load static %}
+
+{% block common_list_buttons %}{% endblock %}
+
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th>Order</th>
+  <th>Product</th>
+  <th class="hidden-sm hidden-xs">Amount</th>
+  <th>RMB</th>
+  <th>AUD</th>
+  <th class="hidden-sm hidden-xs">Store</th>
+
+  <th class="hidden-sm hidden-xs"></th>
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td>
+      <a href="{!! item.order_url !!}">{!! item.order_display !!}</a>
+    </td>
+    <td>
+      <template v-if="item.product">
+        <a href="{!! item.product_url !!}">{!! item.name !!}</a>
+      </template>
+      <template v-else>
+        {!! item.name !!}
+      </template>
+    </td>
+    <td class="hidden-sm hidden-xs">{!! item.amount !!}</td>
+    <td>{!! item.sell_price_rmb*1 !!} / {!! item.sell_price_rmb*item.amount !!}</td>
+    <td>{!! item.cost_price_aud*1 !!} / {!! item.cost_price_aud*item.amount !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.store_display !!}</td>
+
+    {% block item_buttons %}
+      {{ block.super }}
+    {% endblock %}
+  </tr>
+  </tbody>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/order/orderproduct_list.js' %}"></script>
+{% endblock %}

@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.cache import never_cache
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
@@ -18,12 +21,16 @@ from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailF
 log = logging.getLogger(__name__)
 
 
+@sensitive_post_parameters()
+@csrf_exempt
+@ensure_csrf_cookie
+@never_cache
 def member_login(request):
     if request.method == 'GET':
         c = csrf(request)
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
-        return render_to_response('registration/login.html', RequestContext(request, c))
+        return render_to_response('adminlte/login.html', RequestContext(request, c))
 
     elif request.method == 'POST':
         old_user = request.user or None
@@ -40,7 +47,7 @@ def member_login(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                next_page = reverse('member-profile')
+                next_page = reverse('order:order-list-short')
 
             return HttpResponseRedirect(next_page)
 
@@ -164,3 +171,11 @@ def user_delete(request, pk):
     except Seller.DoesNotExist:
         pass
     return redirect('seller-index')
+
+
+class AgentView(TemplateView):
+    template_name = 'member/agent.html'
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)

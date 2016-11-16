@@ -1,9 +1,3 @@
-/**
- * Created by lyhapple on 15/11/6.
- */
-
-// todo: ajax部分方法待优化
-
 (function ($) {
     var getCookie = function (name) {
         var cookieValue = null;
@@ -36,15 +30,16 @@
         }
     });
 
-    var sendRequest = function(type, url, data, callback){
+    var sendRequest = function (type, url, data, callback) {
         $.ajax({
             type: type,
             url: url,
             data: data,
             dataType: 'json',
-            error: function(response) {
+            cache: false,
+            error: function (response) {
                 var text;
-                switch(response.status) {
+                switch (response.status) {
                     case 400:
                         text = '错误请求!';
                         break;
@@ -54,23 +49,27 @@
                     case 404:
                         text = '找不到该页面!';
                         break;
+                    case 405:
+                        text = '不允许该访问方法!';
+                        break;
                     case 500:
                         text = '服务器错误!';
                         break;
                     default:
-                        text = '操作失败，错误码'+response.status;
+                        text = '操作失败，错误码' + response.status;
                         break;
                 }
                 swal({
                     title: text,
-                    type: "error"
+                    type: "error",
+                    animation: false
                 });
             },
             success: callback
         });
     };
 
-    $.AdminLTE.getApiUrl = function(app, model){
+    $.AdminLTE.getApiUrl = function (app, model) {
         return Urls['common_api:listcreate_api'](app, model);
     };
 

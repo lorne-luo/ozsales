@@ -21,7 +21,7 @@ admin.site.register(Brand, BrandAdmin)
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'get_pic_link', 'get_name_cn', 'safe_sell_price', 'normal_price', 'bargain_price')
+    list_display = ('__str__', 'get_pic_link', 'name_en', 'safe_sell_price', 'normal_price', 'bargain_price')
     ordering = ['brand']
     search_fields = ('name_en', 'name_cn', 'brand__name_en', 'brand__name_cn')
 

@@ -1,0 +1,45 @@
+{% extends "adminlte/common_list.html" %}
+{% load static %}
+
+{% block table_head %}
+  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+  </th>
+  <th>名称</th>
+  <th class="hidden-sm hidden-xs">Name</th>
+  <th class="hidden-sm hidden-xs">Website</th>
+  <th>Rate</th>
+  <th>Default</th>
+
+  <th class="hidden-sm hidden-xs"></th>
+{% endblock %}
+
+{% block table_row %}
+  <tbody v-for="item in items">
+  <tr>
+    <td class="text-center hidden-sm hidden-xs">
+      ##[$index+1]
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+    </td>
+    <td>
+      <a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a>
+    </td>
+    <td class="hidden-sm hidden-xs">{!! item.name_en !!}</td>
+    <td class="hidden-sm hidden-xs">{!! item.website !!}</td>
+    <td>{!! item.rate !!}</td>
+    <td>
+      <template v-if="item.is_default">
+        <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+      </template>
+    </td>
+
+    {% block item_buttons %}
+      {{ block.super }}
+    {% endblock %}
+  </tr>
+  </tbody>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/express/expresscarrier_list.js' %}"></script>
+{% endblock %}

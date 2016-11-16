@@ -1,6 +1,6 @@
 <header class="main-header">
     {% block branding %}
-        <a href="#" class="logo">
+        <a href="#" class="logo hidden-sm hidden-xs">
             <span class="logo-mini">{{ page_system_name|first }}</span>
             <span class="logo-lg">{{ page_system_name }}</span>
         </a>
@@ -13,15 +13,18 @@
 
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav" id="messagesetVue">
-                {% if request.user.is_authenticated %}
-                {% include "messageset/includes/header_sitemails.html" %}
-                {% include "messageset/includes/header_notifications.html" %}
-                {% include "messageset/includes/header_tasks.html" %}
+                {% if user.is_authenticated %}
+{#                {% include "messageset/includes/header_sitemails.html" %}#}
+{#                {% include "messageset/includes/header_notifications.html" %}#}
+{#                {% include "messageset/includes/header_tasks.html" %}#}
                 {% include "adminlte/includes/header_account.html" %}
                 {% endif %}
+
+                {% if user.is_superuser %}
                 <li>
                     <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                 </li>
+                {% endif %}
             </ul>
         </div>
     </nav>

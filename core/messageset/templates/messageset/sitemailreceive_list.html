@@ -71,7 +71,7 @@
         </div>
         <div class="col-md-9">
             <div class="row">
-                <div class="box">
+                <div class="box box-info">
                     <div class="box-header">
                         <div class="row">
                             <div class="col-xs-12 col-sm-8">
@@ -87,23 +87,23 @@
                                         v-on:click="readStatus">
                                     已读
                                 </button>
-                                <button class="btn btn-link"
+                                <button class="btn btn-info"
                                         v-on:click="markAllRead">
                                     标记为已读
                                 </button>
-                                <div class="checkbox pull-left btn-link"
-                                     style="margin-top: 7px; margin-right: 12px;">
-                                    <label>
-                                        <input type="checkbox"
-                                               name="checkboxAllRow"
-                                               v-on:click="toggleAllBox"/> 全选
-                                    </label>
-                                </div>
-                                <button class="btn btn-link"
+{#                                <div class="checkbox pull-left btn-link"#}
+{#                                     style="margin-top: 7px; margin-right: 12px;">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" class="checkboxAllRow"#}
+{#                                               name="checkboxAllRow"#}
+{#                                               v-on:click="toggleAllBox"/> 全选#}
+{#                                    </label>#}
+{#                                </div>#}
+                                <a class="btn btn-danger"
                                         v-on:click="removeSelected">
                                     <i class="fa fa-trash-o"></i>
                                     删除
-                                </button>
+                                </a>
                             </div>
                             <div class="col-xs-12 col-sm-4">
                                 <div class="input-group">
@@ -136,11 +136,8 @@
                                 <tr>
                                     <th class="text-center" style="width:40px;">
                                         <input type="checkbox"
-                                               name="checkboxAllRow"
+                                               name="checkboxAllRow" class="checkboxAllRow"
                                                v-on:click="toggleAllBox"/>
-                                    </th>
-                                    <th class="text-center" style="width:40px;">
-                                        #
                                     </th>
                                     {% for title in table_titles %}
                                         {% if title == 'ID' %}
@@ -160,10 +157,10 @@
                             <tbody v-for="item in items">
                                     <tr>
                                         <td class="text-center">
+                                            ##[$index+1]
                                             <input type="checkbox" class="minimal" name="checkboxRow"
                                                    value="#[item.id]"/>
                                         </td>
-                                        <td class="text-center">#[$index+1]</td>
                                         {% for field in table_fields %}
                                             {% if field == 'id' %}
                                                 <td>

@@ -2,15 +2,18 @@ import re
 from django.db import models
 from django.core.mail import send_mail
 from django.core import validators
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.contrib.auth.hashers import is_password_usable, make_password
+from django.contrib.sessions.models import Session
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_save, m2m_changed
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.utils.http import urlquote
 from django.utils.encoding import python_2_unicode_compatible
+from django.contrib.auth.signals import user_logged_in, user_logged_out
 
 
 @python_2_unicode_compatible
@@ -106,5 +109,31 @@ class Seller(AbstractBaseUser, PermissionsMixin):
         if self.email:
             send_mail(subject, message, from_email, [self.email])
 
+    def logout_all(self):
+        user_sessions = UserSession.objects.filter(user=self)
+
+        for s in user_sessions:
+            s.session.delete()
+
+        user_sessions.delete()
 
 
+class UserSession(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, unique=True, on_delete=models.CASCADE)
+
+
+@receiver(user_logged_in)
+def session_post_login(sender, request, user, **kwargs):
+    request.session.save()
+    UserSession.objects.get_or_create(
+        session_id=request.session.session_key,
+        defaults={
+            'user': user
+        }
+    )
+
+
+@receiver(user_logged_out)
+def session_post_logout(sender, request, user, **kwargs):
+    UserSession.objects.filter(session_id=request.session.session_key).delete()

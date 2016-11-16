@@ -2,13 +2,37 @@
 {% load static %}
 {% load activelink %}
 
+{% block breadcrumb %}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+        <li class="active">
+            {% if page_app_name and page_model_name %}
+                <a href="{% url 'product:product-list' %}">
+                    {{ page_model_verbose_name }}
+                </a>
+            {% else %}
+                {{ page_title }}
+            {% endif %}
+            </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
+{% endblock %}
+
 {% block menu %}
 <aside class="main-sidebar">
     <section class="sidebar">
         <ul class="sidebar-menu">
             <li class="header">HEADER</li>
             <li {% if request.path_info == '/member/home/' %}class="active"{% endif %}>
-                <a href="/member/home/">
+                <a href="#">
                     <i class="fa fa-dashboard"></i>
                     <span>{{ default_dashboard_title }}</span>
                 </a>
@@ -16,26 +40,55 @@
 
             <li class="treeview active">
                 <a href="javascript:void(0)">
-                            <i class='fa fa-cloud'></i>
-                            <b>Products</b>
-                            <i class="fa fa-angle-left pull-right"></i>
+                    <i class='fa fa-cloud'></i>
+                    <b>Products</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    <li>
+                        <a href="{% url 'product:product-list' %}">
+                            <i class="fa fa-circle-o"></i>
+                            All Products
                         </a>
-                        <ul class="treeview-menu">
-                            <li>
-                            <a href="/product/product/create">
-                                    <i class="fa fa-circle-o"></i>
-                                    New Product
-                                </a>
-                            </li>
-                            <li>
-                            <a href="/product/product/list">
-                                    <i class="fa fa-circle-o"></i>
-                                    Product List
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="treeview active">
+                <a href="javascript:void(0)">
+                    <i class='fa fa-cloud'></i>
+                    <b>Brand</b>
+                    <i class="fa fa-angle-left pull-right"></i>
+                </a>
+                <ul class="treeview-menu">
+                    {% for brand in brands %}
+                    <li>
+                        <a class="brand_select" data-pk="{{ brand.pk }}" v-on:click="brand_select" href="javascript:void(0)">
+                            <i class="fa fa-circle-o"></i>
+                            {% ifnotequal brand.name_cn brand.name_en %}
+                                {{ brand.name_en }} {{ brand.name_cn }}
+                            {% else %}
+                                {{ brand.name_cn|default:brand.name_en }}
+                            {% endifnotequal %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
             </li>
         </ul>
     </section>
 </aside>
+{% endblock %}
+
+{% block common_list_footer_page_script %}
+    <script type="text/javascript" src="{% static 'js/product/product_list.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('a.brand_select').off('click').click(function () {
+                var pk = $(this).attr('data-pk');
+                productListPageVue.loadData(
+                    $.param({'brand__id': pk})
+                );
+            });
+        });
+    </script>
 {% endblock %}

@@ -1,32 +1,31 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 {% block common_list_buttons %}
-    <button class="btn btn-primary"
-            v-on:click="create">
-        <i class="fa fa-pencil"></i>
-        写信
-    </button>
-    <button class="btn btn-link"
+    <a class="btn btn-primary" id="create">
+        <i class="fa fa-plus"></i>
+        <b>写信</b>
+    </a>
+    <a class="btn btn-link"
             v-on:click="allStatus">
         全部
-    </button>
-    <button class="btn btn-link"
+    </a>
+    <a class="btn btn-link"
             v-on:click="unReadStatus">
         未读
-    </button>
-    <button class="btn btn-link"
+    </a>
+    <a class="btn btn-link"
             v-on:click="readStatus">
         已读
-    </button>
-    <button class="btn btn-link"
+    </a>
+    <a class="btn btn-link"
             v-on:click="markAllRead">
         全部标记为已读
-    </button>
-    <button class="btn btn-link"
+    </a>
+    <a class="btn btn-link"
             v-on:click="removeSelected">
         <i class="fa fa-trash-o"></i>
         删除
-    </button>
+    </a>
 {% endblock %}
 
 

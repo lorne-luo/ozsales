@@ -8,13 +8,13 @@
 {% block content %}
     <div class="row">
         <div class="col-sm-12">
-            <div class="box">
+            <div class="box box-info">
                 <div class="box-body table-responsive no-padding">
                     <table class="table">
                     {% for field in object.Config.list_form_fields %}
                         {% ifnotequal field 'id' %}
                             <tr>
-                                <th style="width:150px;">{{ object|render_field_label:field }}:</th>
+                                <th>{{ object|render_field_label:field }}:</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
                         {% endifnotequal %}

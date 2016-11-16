@@ -1,0 +1,306 @@
+{% extends "adminlte/common_tab_list.html" %}
+{% load static %}
+
+{% block common_list_buttons %}
+  {% if page_model_perms.add %}
+    <a class="btn btn-primary" id="create">
+      <i class="fa fa-plus"></i> 新订单
+    </a>
+  {% endif %}
+  {% if page_model_perms.delete %}
+    <a class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
+      <i class="fa fa-trash-o"></i> 删除
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block tab_nav %}
+  <ul class="nav nav-tabs">
+    <li data-status="ONGOING" class="active">
+      <a data-toggle="tab" href="#pane-ONGOING"> 进行中</a>
+    </li>
+    <li data-status="FINISHED">
+      <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
+    </li>
+  </ul>
+{% endblock %}
+
+{% block tab_content %}
+  <div class="tab-content">
+    <div class="tab-pane active" id="pane-ONGOING">
+      <table class="table table-hover" data-status="ONGOING">
+        <thead>
+        <tr>
+          <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+            <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+          </th>
+          <th class="visible-sm visible-xs" id="show_all_detail" style="width:50px;" v-on:click="show_all_detail">
+            <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
+          </th>
+          <th>Date</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Price</th>
+          <th class="hidden-sm hidden-xs">Ship</th>
+          <th class="hidden-sm hidden-xs"></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+        <tbody v-for="item in ongoing_items">
+        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+          <td class="text-center hidden-sm hidden-xs">
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]" />
+          </td>
+          <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}">
+            <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
+          </td>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
+          </td>
+          <td>
+            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
+          </td>
+          <td>
+            <template v-if="item.status == 'CREATED'">
+              <a class="label label-info" v-on:click="next_ship_status(item.id,item.next_status,'在途', $event)">新建</a>
+            </template>
+            <template v-if="item.status == 'SHIPPING'">
+              <a class="label label-success" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">在途</a>
+            </template>
+            <template v-if="item.status == 'DELIVERED'">
+              <a class="label label-warning" v-on:click="next_ship_status(item.id,item.next_status,'完成', $event)">寄达</a>
+            </template>
+            <template v-if="item.status == 'FINISHED'">
+              <a class="label label-danger" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">完成</a>
+            </template>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
+            RMB:
+            <template v-if="item.origin_sell_rmb == item.sell_price_rmb">
+              {!! item.sell_price_rmb !!}
+            </template>
+            <template v-else>
+              [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
+            </template>
+            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+            <template v-if="item.is_paid">
+            </template>
+            <template v-else>
+              <a class="label-as-badge label label-danger pay" v-on:click="pay(item.id, $event)">
+                <i class="fa fa-jpy"></i>
+              </a>
+            </template>
+          </td>
+          <td class="visible-sm visible-xs">
+            <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
+            <template v-if="item.is_paid">
+            </template>
+            <template v-else>
+              <a class="label-as-badge label label-danger pull-right pay" v-on:click="pay(item.id, $event)">
+                <i class="fa fa-jpy" aria-hidden="true"></i>
+              </a>
+            </template>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            {!! item.shipping_order !!}
+          </td>
+
+          {% block item_buttons %}
+            {{ block.super }}
+          {% endblock %}
+        </tr>
+        <tr class="hide" id="detail_{!! item.id !!}">
+          <td colspan="4" class="hidden-sm hidden-xs"></td>
+          <td colspan="100%">
+            <div>{!! item.address_display !!}</div>
+            <div class="pull-left">
+              {!! item.product_summary !!}
+            </div>
+            <div class="pull-right visible-sm visible-xs">
+              {!! item.shipping_order !!}
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div class="form-inline" align="center">
+        <ul class="pagination pagination-sm no-margin form-group">
+          <li v-if="ongoing_currentPage > 1">
+            <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold">首页</a>
+          </li>
+          <li v-if="ongoing_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">首页</a>
+          </li>
+          <li v-if="ongoing_currentPage > 1">
+            <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing"
+               class="text-bold">上页</a>
+          </li>
+          <li v-if="ongoing_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">上页</a>
+          </li>
+          <li v-if="ongoing_currentPage < ongoing_totalPage">
+            <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing"
+               class="text-bold">下页</a>
+          </li>
+          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+            <a href="javascript:void(0);">下页</a>
+          </li>
+          <li v-if="ongoing_currentPage < ongoing_totalPage">
+            <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" class="text-bold">末页</a>
+          </li>
+          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
+            <a href="javascript:void(0);">末页</a>
+          </li>
+          <li v-on:click="reload" class="text-bold">
+            <a href="javascript:void(0);">刷新</a>
+          </li>
+        </ul>
+        <div class="form-group">
+            &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
+        </div>
+      </div>
+      <br/>
+    </div>
+
+    <div class="tab-pane" id="pane-FINISHED">
+      <table class="table table-hover" data-status="FINISHED">
+        <thead>
+        <tr>
+          <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+            <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+          </th>
+          <th>Date</th>
+          <th>Name</th>
+          <th class="hidden-sm hidden-xs">Status</th>
+          <th class="hidden-sm hidden-xs">Ship</th>
+          <th>Sell</th>
+          <th>Cost</th>
+          <th>Profit</th>
+          <th class="hidden-sm hidden-xs"></th>
+        </tr>
+        </thead>
+        <tbody v-for="item in finished_items">
+        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+          <td class="text-center hidden-sm hidden-xs">
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+          </td>
+          <td>
+            <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
+          </td>
+          <td>
+            <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            <span class="label label-danger">{!! item.status !!}</span>
+          </td>
+          <td class="hidden-sm hidden-xs">
+            {!! item.shipping_order !!}
+          </td>
+          {#                        <td>#}
+          {#                            AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>#}
+          {#                            RMB:{% ifequal item.origin_sell_rmb item.sell_price_rmb %}#}
+          {#                                {!! item.origin_sell_rmb !!}#}
+          {#                            {% else %}#}
+          {#                                [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}#}
+          {#                            {% endifequal %}#}
+          {#                            - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}#}
+          {#                        </td>#}
+          <td>
+            <a href="{!! item.edit_url !!}">{!! item.sell_price_rmb !!}</a>
+          </td>
+          <td>
+            {!! item.total_cost_rmb !!}
+          </td>
+          <td>
+            {!! item.profit_rmb !!}
+          </td>
+          <td class="text-right hidden-sm hidden-xs">
+            {% if page_model_perms.view %}
+              <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+                 class="btn btn-info btn-sm">
+                <i class="fa fa-bars fa-inverse"></i>
+              </a>
+            {% endif %}
+            {% if page_model_perms.change %}
+              <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+                 class="btn btn-warning btn-sm">
+                <i class="fa fa-pencil fa-inverse"></i>
+              </a>
+            {% endif %}
+            {% if page_model_perms.delete %}
+              <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+                 v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                <i class="fa fa-trash-o fa-inverse"></i>
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+        <tr class="hide hidden-md hidden-lg" id="detail_{!! item.id !!}">
+          <td colspan="8">
+            <div>{!! item.address_display !!}</div>
+            <div class="pull-left">
+              {!! item.product_summary !!}
+            </div>
+            <div class="pull-left">
+              {!! item.shipping_order !!}
+            </div>
+          </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+      </table>
+
+      <div class="form-inline" align="center">
+        <ul class="pagination pagination-sm no-margin form-group">
+          <li v-if="finished_currentPage > 1">
+            <a href="javascript:void(0);" page="1" v-on:click="page_finished" class="text-bold">首页</a>
+          </li>
+          <li v-if="finished_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">首页</a>
+          </li>
+          <li v-if="finished_currentPage > 1">
+            <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" class="text-bold">上页</a>
+          </li>
+          <li v-if="finished_currentPage == 1" class="disabled">
+            <a href="javascript:void(0);">上页</a>
+          </li>
+          <li v-if="finished_currentPage < finished_totalPage">
+            <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" class="text-bold">下页</a>
+          </li>
+          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+            <a href="javascript:void(0);">下页</a>
+          </li>
+          <li v-if="finished_currentPage < finished_totalPage">
+            <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished"
+               class="text-bold">末页</a>
+          </li>
+          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
+            <a href="javascript:void(0);">末页</a>
+          </li>
+          <li v-on:click="reload" class="text-bold">
+            <a href="javascript:void(0);">刷新</a>
+          </li>
+        </ul>
+        <div class="form-group">
+            &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第 #[finished_currentPage]/#[finished_totalPage] 页
+        </div>
+      </div>
+      <br/>
+    </div>
+  </div>
+{% endblock %}
+
+{% block common_list_pagination %}{% endblock %}
+
+{% block common_list_footer_page_script %}
+  <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
+{% endblock %}

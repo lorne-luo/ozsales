@@ -8,7 +8,6 @@ from django import template
 from django.db.models import ImageField
 from utils.converter import format_datetime
 
-
 register = template.Library()
 
 
@@ -72,3 +71,21 @@ def render_field_value(obj, a):
                 return ret
 
     return value
+
+
+@register.filter
+def startswith(value, arg):
+    """Usage, {% if value|starts_with:"arg" %}"""
+    return value.startswith(arg)
+
+
+@register.filter
+def endswith(value, arg):
+    """Usage, {% if value|endswith:"arg" %}"""
+    return value.endswith(arg)
+
+
+@register.filter
+def split(value, arg):
+    """Usage, {% if value|split:"," %}"""
+    return value.split(arg)

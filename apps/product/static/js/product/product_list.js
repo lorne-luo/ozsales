@@ -1,10 +1,15 @@
 var productListPageVue = new CommonListPageVue({
         data: {
-            url: Urls['allowany-product-list'](),
-            create_url_tag: 'product-add-view',
-            detail_url_tag: 'product-detail-view',
-            update_url_tag: 'product-update-view',
-            delete_url_tag: 'product-add'
+            // API
+            list_api_tag:   'product:api-product-list',
+            detail_api_tag: 'product:api-product-detail',
+            delete_api_tag: 'product:api-product-delete',
+            // page
+            create_url_tag: 'product:product-add',
+            list_url_tag:   'product:product-list',
+            update_url_tag: 'product:product-update',
+            detail_url_tag: 'product:product-detail',
+            list_url:       Urls['product:api-product-list']()
         }
     }
 );

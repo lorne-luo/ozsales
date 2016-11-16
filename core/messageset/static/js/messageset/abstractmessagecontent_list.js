@@ -1,14 +1,12 @@
 
 var abstractmessagecontentListPageVue = new CommonListPageVue({
         data: {
-            add_api_tag: 'messageset:api-abstractmessagecontent-list',
             list_api_tag: 'messageset:api-abstractmessagecontent-list',
             delete_api_tag: 'messageset:api-abstractmessagecontent-delete',
-            retrieve_api_tag: 'messageset:api-abstractmessagecontent-detail',
-            update_api_tag: 'messageset:api-abstractmessagecontent-detail',
-            destroy_api_tag: 'messageset:api-abstractmessagecontent-detail',
+            detail_api_tag: 'messageset:api-abstractmessagecontent-detail',
 
             create_url_tag: 'messageset:abstractmessagecontent-add',
+            list_url_tag:   'messageset:abstractmessagecontent-list',
             detail_url_tag: 'messageset:abstractmessagecontent-detail',
             update_url_tag: 'messageset:abstractmessagecontent-update'
         }

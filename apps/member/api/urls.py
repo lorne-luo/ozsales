@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from rest_framework.routers import DefaultRouter
+from core.api.routers import PostHackedRouter
 import views
 
 
@@ -9,7 +10,7 @@ urlpatterns = patterns('',
 	url(r'^groups_and_users/$', views.GroupsAndUsersList.as_view(), name='groups-and-users'),
 )
 
-router = DefaultRouter()
+router = PostHackedRouter()
 router.include_root_view = False
 router.register(r'user', views.SellerViewSet, 'user')
 

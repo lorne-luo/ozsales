@@ -399,9 +399,9 @@ function _init() {
         //Get the parent menu
         var parent = $this.parents('ul').first();
         //Close all open menus within the parent
-        var ul = parent.find('ul:visible').slideUp('normal');
+        // var ul = parent.find('ul:visible').slideUp('normal');
         //Remove the menu-open class from the parent
-        ul.removeClass('menu-open');
+        // ul.removeClass('menu-open');
         //Get the parent li
         var parent_li = $this.parent("li");
 
@@ -409,7 +409,7 @@ function _init() {
         checkElement.slideDown('normal', function () {
           //Add the class active to the parent li
           checkElement.addClass('menu-open');
-          parent.find('li.active').removeClass('active');
+          // parent.find('li.active').removeClass('active');
           parent_li.addClass('active');
           //Fix the layout in case the sidebar stretches over the height of the window
           _this.layout.fix();

@@ -54,8 +54,8 @@
           <span class="arrow {% ifstartswith '/order/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/order/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'order-add' %}">New Order</a></li>
-            <li><a href="{% url 'order-index' %}">Order List</a></li>
+            <li><a href="{% url 'order:order-add' %}">New Order</a></li>
+            <li><a href="{% url 'order:order-list-short' %}">Order List</a></li>
         </ul>
       </li>
       {%endif%}
@@ -68,8 +68,8 @@
           <span class="arrow {% ifstartswith '/product/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/product/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'product-add' %}">Add Product</a></li>
-            <li><a href="{% url 'product-list' %}">Product List</a></li>
+            <li><a href="{% url 'product:product-add' %}">Add Product</a></li>
+            <li><a href="{% url 'product:product-list' %}">Product List</a></li>
         </ul>
       </li>
       {%endif%}
