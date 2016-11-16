@@ -3,13 +3,11 @@
 # Simple deploy script
 ##################
 
-WORKDIR="$(dirname "$(pwd)")"
+WORKDIR="$(pwd)"
 cd $WORKDIR
-
 updated=$(git pull 2>/dev/null)
-echo $updated
 
-if [ "$updated" == 'Already up-to-date.' ]; then
+if [ "$updated" == "Already up-to-date." ]; then
     # Nothing to do, exit cleanly
     #exit 0
     COMMIT_INFO=No\ updates,\ restart.
