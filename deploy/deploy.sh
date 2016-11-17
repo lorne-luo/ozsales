@@ -3,11 +3,11 @@
 # Simple deploy script
 ##################
 
-WORKDIR="$(pwd)"
+WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )"
 cd $WORKDIR
-updated=$(git pull 2>/dev/null)
+PULL_INFO=$(git pull 2>/dev/null)
 
-if [ "$updated" == "Already up-to-date." ]; then
+if [ "$PULL_INFO" == "Already up-to-date." ]; then
     # Nothing to do, exit cleanly
     #exit 0
     COMMIT_INFO=No\ updates,\ restart.
