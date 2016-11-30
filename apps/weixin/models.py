@@ -4,12 +4,13 @@ import time
 import logging
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.http import urlquote
+from django.utils.http import urlquote, urlunquote
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from wechat_sdk import WechatConf, WechatBasic
 from wechat_sdk.exceptions import OfficialAPIError
+import conf as wx_conf
 
 log = logging.getLogger(__name__)
 
@@ -93,14 +94,11 @@ class WxApp(models.Model):
 
         return conf
 
-        # def update_token(self):
-
     @property
     def api(self):
         return WechatBasic(conf=self.conf)
 
-    def get_login_url(self, scope='snsapi_userinfo', state=''):
+    def get_login_url(self, scope=wx_conf.SCOPE_USERINFO, state=''):
         url = reverse('weixin:auth', args=[self.name])
-        domain = 'http://luotao2.net'
-        template = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s%s&response_type=code&scope=%s&state=%s#wechat_redirect'
-        return template % (self.app_id, domain, urlquote(url), scope, state)
+        template = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=http://%s%s&response_type=code&scope=%s&state=%s#wechat_redirect'
+        return template % (self.app_id, wx_conf.BIND_DOMAIN, urlquote(url), scope, urlquote(state))
