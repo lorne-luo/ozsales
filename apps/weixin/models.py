@@ -20,6 +20,8 @@ class WxApp(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=False, blank=False)
     app_secret = models.CharField(_(u'App Secret'), max_length=128, null=False, blank=False)
+    mch_id = models.CharField(_(u'MCH ID'), max_length=128, null=True, blank=True)   # 商户ID
+    api_key = models.CharField(_(u'API Key'), max_length=128, null=True, blank=True) # 商户API密钥 只参与签名 不需要上传
     access_token = models.CharField(_(u'Access Token'), max_length=512, null=True, blank=True)
     token_expiry = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                         verbose_name=_(u'Token Expiry'))
