@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'apps.report',
     'apps.schedule',
     'apps.registration',
+    'apps.weixin',
     'utils',
 
     # third_app
