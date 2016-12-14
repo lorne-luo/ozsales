@@ -111,11 +111,27 @@ class Seller(AbstractBaseUser, PermissionsMixin):
 
     def logout_all(self):
         user_sessions = UserSession.objects.filter(user=self)
-
         for s in user_sessions:
             s.session.delete()
-
         user_sessions.delete()
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(Seller, on_delete=models.CASCADE)
+    name = models.CharField(max_length=32, blank=True, null=True)
+    nickname = models.CharField(max_length=32, blank=True, null=True)
+    wx_openid = models.CharField(max_length=64, blank=True, null=True)
+    wx_id = models.CharField(max_length=32, blank=True, null=True)
+    headimg_url = models.CharField(max_length=256, blank=True, null=True)
+    mobile = models.CharField(max_length=18, blank=True, null=True)
+    sex = models.CharField(max_length=5, blank=True, null=True)
+    country = models.CharField(max_length=32, blank=True, null=True)
+    province = models.CharField(max_length=32, blank=True, null=True)
+    city = models.CharField(max_length=32, blank=True, null=True)
+    subscribe_time = models.DateField(blank=True, null=True)
+    unionid = models.CharField(max_length=64, blank=True, null=True)
+    remark = models.CharField(max_length=256, blank=True, null=True)
+    group_id = models.IntegerField(blank=True, null=True)
 
 
 class UserSession(models.Model):
