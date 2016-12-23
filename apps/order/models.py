@@ -278,15 +278,7 @@ class OrderProduct(models.Model):
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        if self.product:
-            if self.product.brand:
-                brand_name = self.product.brand.short_name if self.product.brand.short_name else self.product.brand.name_en
-            else:
-                brand_name = ''
-            product_name = '%s %s' % (brand_name, self.product.name_cn)
-        else:
-            product_name = self.name
-        return '%s x %s' % (product_name, self.amount)
+        return '%s x %s' % (self.name, self.amount)
 
     def get_link(self):
         if self.product:
