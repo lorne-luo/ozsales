@@ -1,3 +1,4 @@
+#coding:utf-8
 import os
 
 from django.db import models
@@ -35,8 +36,8 @@ class InterestTag(models.Model):
 
 
 @python_2_unicode_compatible
-class Customer(AbstractBaseUser):
-    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('Member'))
+class Customer(models.Model):
+    seller = models.OneToOneField(Seller, blank=True, null=True, verbose_name=_('Member'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
@@ -47,18 +48,6 @@ class Customer(AbstractBaseUser):
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
                                         related_name=_('primary_address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
-    remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
-    groups = models.ManyToManyField(Group, verbose_name=_('groups'),
-                                    blank=True, related_name="customer_set", related_query_name="customer")
-    user_permissions = models.ManyToManyField(Permission,
-                                              verbose_name=_('customer permissions'), blank=True,
-                                              help_text=_('Specific permissions for this customer.'),
-                                              related_name="customer_set", related_query_name="customer")
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True, null=True)
-
-    objects = UserManager()
-    USERNAME_FIELD = 'name'
-    REQUIRED_FIELDS = ['email']
 
     class Meta:
         verbose_name_plural = _('Customer')
@@ -95,52 +84,6 @@ class Customer(AbstractBaseUser):
         return u'<a href="%s">%s</a>' % (url, self.name)
 
     get_detail_link.short_description = 'Name'
-
-    def get_full_name(self):
-        return self.name.strip()
-
-    def get_short_name(self):
-        return self.name.strip()
-
-    def clean(self):
-        if not is_password_usable(self.password):
-            self.password = make_password(self.password)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # Note: this is not called on bulk operations
-        self.clean()
-        super(Customer, self).save(force_insert, force_update, using, update_fields)
-
-    def get_token(self):
-        '''
-         Get user's token for authentification via rest-api. Creates new if
-         does not exist yet.
-        '''
-        token, _created = Token.objects.get_or_create(user=self)
-        return token
-
-    def renew_token(self):
-        ''' Delete token and create a new one (since token is PK) '''
-        token, created = Token.objects.get_or_create(user=self)
-
-        if not created:
-            token.delete()
-            token, _created = Token.objects.get_or_create(user=self)
-
-        return token
-
-    def get_absolute_url(self):
-        return "/customer/%s" % urlquote(self.email)
-
-    def email_user(self, subject, message, from_email=None):
-        if self.email:
-            send_mail(subject, message, from_email, [self.email])
-
-    def generate_password(self):
-        '''
-        Regenerate a password
-        '''
-        self.password = get_random_string(8, 'abcdefghjklmnpqrstuvwxyz0123456789')
 
     def add_order_link(self):
         # order_root = reverse('admin:app_list', kwargs={'app_label': 'order'})
