@@ -237,6 +237,7 @@
       <div class="hide" id="{{ express_forms.prefix }}_template">
         <div class="form-group">
           <div class="col-lg-1 col-md-1 hidden-xs hidden-sm"></div>
+          <input id="id_{{ express_forms.prefix }}-id" name="{{ express_forms.prefix }}-id" type="hidden">
           <input id="id_{{ express_forms.prefix }}-order" name="{{ express_forms.prefix }}-order" type="hidden"
                  value="{{ object.id }}">
           <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
@@ -268,6 +269,7 @@
 
       <div class="hide" id="{{ product_forms.prefix }}_template">
         <div class="form-group">
+          <input id="id_{{ product_forms.prefix }}-id" name="{{ product_forms.prefix }}-id" type="hidden">
           <input id="id_{{ product_forms.prefix }}-order" name="{{ product_forms.prefix }}-order" type="hidden"
                  value="{{ object.id }}">
           <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
