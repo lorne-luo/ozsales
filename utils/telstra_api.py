@@ -26,6 +26,13 @@ class MessageSender(object):
             cls._instance = super(MessageSender, cls).__new__(cls, *args, **kwargs)
         return cls._instance
 
+    def clean_content(self, content):
+        content = unicode(content)
+        content = content.replace('%', 'percent')
+        if len(content) > MessageSender.LENGTH_PER_SMS:
+            content = content[:MessageSender.LENGTH_PER_SMS]
+        return content
+
     def get_token(self):
         buffer = StringIO()
         c = pycurl.Curl()
@@ -55,10 +62,7 @@ class MessageSender(object):
         c = pycurl.Curl()
         c.setopt(c.URL, MessageSender.SEND_URL)
 
-        content = unicode(content)
-        if len(content) > MessageSender.LENGTH_PER_SMS:
-            content = content[:MessageSender.LENGTH_PER_SMS]
-
+        content = self.clean_content(content)
         c.setopt(pycurl.HTTPHEADER, ['Authorization: Bearer %s' % MessageSender.TOKEN])
         post_dict = {'to': unicode(to), 'body': unicode(content)}
         post_data = json.dumps(post_dict)
