@@ -69,8 +69,10 @@ def ozbargin_task():
         # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+            new_last_date = new_last_date.replace(tzinfo=pytz.UTC)
         elif not item_date.tzinfo and last_date.tzinfo:
             last_date = last_date.replace(tzinfo=None)
+            new_last_date = new_last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
@@ -136,8 +138,10 @@ def smzdm_task():
         # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+            new_last_date = new_last_date.replace(tzinfo=pytz.UTC)
         elif not item_date.tzinfo and last_date.tzinfo:
             last_date = last_date.replace(tzinfo=None)
+            new_last_date = new_last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
