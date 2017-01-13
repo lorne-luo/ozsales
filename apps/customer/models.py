@@ -127,12 +127,6 @@ class Customer(models.Model):
     get_primary_address.short_description = 'Primary Addr'
 
 
-@receiver(pre_save, sender=Customer)
-def create_password(sender, instance=None, created=False, **kwargs):
-    if not instance.id:
-        instance.generate_password()
-
-
 @receiver(post_save, sender=Customer)
 def customer_post_save(sender, instance=None, created=False, **kwargs):
     if not instance.primary_address:

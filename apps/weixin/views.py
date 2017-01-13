@@ -1,15 +1,21 @@
 # coding=utf-8
 import logging
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlquote, urlunquote
+from django.contrib.auth import authenticate, login
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
+from django.contrib.auth.models import Group
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from core.views.views import CommonContextMixin, CommonViewSet
+from apps.member.models import Seller
+from apps.customer.models import Customer
 from wechat_sdk.lib.request import WechatRequest
+from wechat_sdk.exceptions import WechatAPIException
 
 from models import WxApp
 import conf
@@ -39,18 +45,25 @@ def wx_auth(request, app_name):
     except ObjectDoesNotExist:
         raise Http404
 
-    code = request.GET.get("code")
+    code = request.GET.get("code", None)
+    if code is None:
+        return HttpResponse('No Code Provided.')
+
     wechat_request = WechatRequest()
-    response_json = wechat_request.get(
-        url='https://api.weixin.qq.com/sns/oauth2/access_token',
-        params={
-            'grant_type': 'authorization_code',
-            'appid': app.app_id,
-            'secret': app.app_secret,
-            'code': code
-        },
-        access_token=app.access_token
-    )
+    try:
+        response_json = wechat_request.get(
+            url='https://api.weixin.qq.com/sns/oauth2/access_token',
+            params={
+                'grant_type': 'authorization_code',
+                'appid': app.app_id,
+                'secret': app.app_secret,
+                'code': code
+            },
+            access_token=app.access_token
+        )
+    except WechatAPIException as e:
+        return HttpResponse('Error[%s] %s' % (e.errcode, e.errmsg))
+
     openid = response_json['openid']
     request.session['wx_openid'] = openid
     scope = response_json['scope']
@@ -70,24 +83,43 @@ def wx_auth(request, app_name):
             access_token=token
         )
 
-        print userinfo_json
-        openid = userinfo_json['openid']
-        nickname = userinfo_json['nickname']
-        headimgurl = userinfo_json['headimgurl']
-        sex = userinfo_json['sex']
-        province = userinfo_json['province']
-        city = userinfo_json['city']
-        country = userinfo_json['country']
-        unionid = userinfo_json.get('unionid', None)
-        privilege_list = userinfo_json['privilege']
-        language = userinfo_json['language']
+        nickname = userinfo_json.get('nickname')
+        nickname = unicode(nickname.encode('ISO-8859-1'), 'utf8')
+
+        customer = Customer.objects.filter(openid=openid).first()
+        if not customer:
+            customer = Customer()
+            customer.openid = openid
+
+            customer.nickname = nickname
+            customer.headimg_url = userinfo_json['headimgurl']
+            customer.sex = userinfo_json['sex']
+            customer.province = userinfo_json['province']
+            customer.city = userinfo_json['city']
+            customer.country = userinfo_json['country']
+            customer.unionid = userinfo_json.get('unionid', None)
+            customer.privilege = userinfo_json['privilege']
+            customer.language = userinfo_json['language']
         # 关于UnionID机制
         # 1、请注意，网页授权获取用户基本信息也遵循UnionID机制。即如果开发者有在多个公众号，或在公众号、移动应用之间统一用户帐号的需求，需要前往微信开放平台（open.weixin.qq.com）绑定公众号后，才可利用UnionID机制来满足上述需求。
         # 2、UnionID机制的作用说明：如果开发者拥有多个移动应用、网站应用和公众帐号，可通过获取用户基本信息中的unionid来区分用户的唯一性，因为同一用户，对同一个微信开放平台下的不同应用（移动应用、网站应用和公众帐号），unionid是相同的。
 
-        # todo login wx user
+        seller = Seller.objects.filter(username=customer.openid).first()
 
-    state = request.GET.get('state', '')  # next url
+        if not seller:
+            seller = Seller(username=customer.openid)
+            seller.groups.add(Group.objects.get(name='Customer'))
+        seller.name = nickname
+        seller.save()
+
+        customer.seller = seller
+        customer.nickname = nickname
+        customer.save()
+
+        seller.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, seller)
+
+    state = request.GET.get('state', None)  # next url
     if state:
         url = urlunquote(state)
     else:
