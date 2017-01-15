@@ -59,7 +59,7 @@ def wx_auth(request, app_name):
                 'secret': app.app_secret,
                 'code': code
             },
-            access_token=app.access_token
+            access_token=app.get_access_token()
         )
     except WechatAPIException as e:
         return HttpResponse('Error[%s] %s' % (e.errcode, e.errmsg))

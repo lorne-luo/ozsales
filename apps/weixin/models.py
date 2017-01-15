@@ -48,6 +48,12 @@ class WxApp(models.Model):
             return True
         return self.ticket_expiry - timezone.now() < datetime.timedelta(seconds=60)
 
+    def get_access_token(self):
+        return self.conf.access_token if self.is_token_expired() else self.access_token
+
+    def get_jsapi_ticket(self):
+        return self.conf.jsapi_ticket if self.is_ticket_expired() else self.jsapi_ticket
+
     def to_timestamp(self, dt):
         return time.mktime(dt.timetuple())
 
