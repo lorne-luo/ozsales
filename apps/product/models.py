@@ -4,6 +4,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
+from taggit.managers import TaggableManager
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
@@ -91,6 +92,8 @@ class Product(models.Model):
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
+
+    tags = TaggableManager()
 
     class Meta:
         verbose_name_plural = _('Product')
