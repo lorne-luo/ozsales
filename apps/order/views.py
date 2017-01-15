@@ -82,7 +82,7 @@ class OrderMemberListView(CommonContextMixin, ListView):
 
         try:
             user = Seller.objects.get(username=username)
-            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
 
             if user and not user.is_superuser:
                 if user.is_active:

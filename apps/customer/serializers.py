@@ -21,6 +21,6 @@ class CustomerSerializer(BaseSerializer):
     class Meta:
         model = Customer
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remarks', 'tags',
+                 ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remark', 'tags',
                   'primary_address_display', 'address_set']
         read_only_fields = ['id']

@@ -48,24 +48,10 @@ class InterestTagInline(admin.TabularInline):
     verbose_name_plural = 'Tag'
 
 
-from django import forms
-
-
-class CustomerAddForm2(forms.ModelForm):
-    class Meta:
-        model = Customer
-        fields = ['name', 'email', 'mobile', 'groups', 'tags']
-
-    def __init__(self, *args, **kwargs):
-        super(CustomerAddForm2, self).__init__(*args, **kwargs)
-        self.fields['groups'].help_text = ''
-        self.fields['tags'].help_text = ''
-
-
 class CustomerEditForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'primary_address', 'groups', 'tags', 'order_count']
+        fields = ['name', 'email', 'mobile', 'primary_address', 'tags', 'order_count']
 
     def __init__(self, *args, **kwargs):
         super(CustomerEditForm, self).__init__(*args, **kwargs)
@@ -74,7 +60,6 @@ class CustomerEditForm(forms.ModelForm):
             self.fields['primary_address'].queryset = Address.objects.filter(customer=instance)
             self.fields['order_count'].widget.attrs['readonly'] = True
 
-        self.fields['groups'].help_text = ''
         self.fields['tags'].help_text = ''
 
     def remove_holddown(self):
@@ -107,19 +92,19 @@ class AddressDetailForm(ModelForm):
 class CustomerAddForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'remarks', 'tags']
+        fields = ['name', 'email', 'mobile', 'remark', 'tags']
 
 
 class CustomerDetailForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remarks', 'tags']
+        fields = ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remark', 'tags']
 
 
 class CustomerUpdateForm(ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'primary_address', 'order_count', 'remarks', 'tags']
+        fields = ['name', 'email', 'mobile', 'primary_address', 'order_count', 'remark', 'tags']
 
     def __init__(self, *args, **kwargs):
         super(CustomerUpdateForm, self).__init__(*args, **kwargs)

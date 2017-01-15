@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'apps.report',
     'apps.schedule',
     'apps.registration',
+    'apps.weixin',
     'utils',
 
     # third_app
@@ -169,6 +170,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 # Auth
 AUTH_USER_MODEL = 'member.Seller'
+AUTH_PROFILE_MODULE = 'customer.customer'
 
 LOGIN_URL = '/member/login/'
 
