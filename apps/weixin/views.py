@@ -90,7 +90,6 @@ def wx_auth(request, app_name):
         if not customer:
             customer = Customer()
             customer.openid = openid
-
             customer.nickname = nickname
             customer.headimg_url = userinfo_json['headimgurl']
             customer.sex = userinfo_json['sex']
@@ -100,6 +99,7 @@ def wx_auth(request, app_name):
             customer.unionid = userinfo_json.get('unionid', None)
             customer.privilege = userinfo_json['privilege']
             customer.language = userinfo_json['language']
+
         # 关于UnionID机制
         # 1、请注意，网页授权获取用户基本信息也遵循UnionID机制。即如果开发者有在多个公众号，或在公众号、移动应用之间统一用户帐号的需求，需要前往微信开放平台（open.weixin.qq.com）绑定公众号后，才可利用UnionID机制来满足上述需求。
         # 2、UnionID机制的作用说明：如果开发者拥有多个移动应用、网站应用和公众帐号，可通过获取用户基本信息中的unionid来区分用户的唯一性，因为同一用户，对同一个微信开放平台下的不同应用（移动应用、网站应用和公众帐号），unionid是相同的。
@@ -108,12 +108,13 @@ def wx_auth(request, app_name):
 
         if not seller:
             seller = Seller(username=customer.openid)
-            seller.groups.add(Group.objects.get(name='Customer'))
         seller.name = nickname
         seller.save()
+        seller.groups.add(Group.objects.get(name='Customer'))
 
         customer.seller = seller
         customer.nickname = nickname
+        customer.name = customer.name if customer.name else customer.nickname
         customer.save()
 
         seller.backend = 'django.contrib.auth.backends.ModelBackend'
