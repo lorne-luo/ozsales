@@ -85,6 +85,9 @@ class Product(models.Model):
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
+    full_price = models.DecimalField(_(u'full price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price = models.DecimalField(_(u'sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
