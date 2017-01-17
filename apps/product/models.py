@@ -75,8 +75,21 @@ def get_product_pic_path(instance, filename):
     return os.path.join(instance.get_pic_path(), filename)
 
 
+class ProductState(object):
+    ON_SELL = 'ON_SELL'
+    NOT_SELL = 'NOT_SELL'
+    NO_STOCK = 'NO_STOCK'
+
+    CHOICES = (
+            (ON_SELL, ON_SELL),
+            (NOT_SELL, NOT_SELL),
+            (NO_STOCK, NO_STOCK)
+        )
+
+
 @python_2_unicode_compatible
 class Product(models.Model):
+    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
     pic = models.ImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'))
@@ -85,6 +98,8 @@ class Product(models.Model):
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
+    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)  # unit: KG
+    sold_count = models.IntegerField(_(u'Sold Count'), default=0, null=False, blank=False)
     full_price = models.DecimalField(_(u'full price'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price = models.DecimalField(_(u'sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
 
@@ -96,6 +111,11 @@ class Product(models.Model):
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
     uuid = models.CharField(max_length=36, unique=True, null=True, blank=True)
+
+    summary = models.TextField(_(u'summary'), null=True, blank=True)
+    description = models.TextField(_(u'description'), null=True, blank=True)
+    state = models.CharField(_(u'state'), max_length=32, null=True, blank=True, default=ProductState.ON_SELL,
+                             choices=ProductState.CHOICES)
 
     tags = TaggableManager()
 
