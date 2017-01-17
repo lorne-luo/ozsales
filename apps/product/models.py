@@ -1,5 +1,5 @@
 import os
-
+import uuid
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
@@ -70,9 +70,9 @@ def get_product_pic_path(instance, filename):
         filename = '%s_%s' % (filename, instance.spec2)
     if instance.spec3:
         filename = '%s_%s' % (filename, instance.spec3)
-    filename = filename.replace(' ', '-').replace('', '')
-    filename = '%s%s%s.%s' % (PRODUCT_PHOTO_FOLDER, os.sep, filename, ext)
-    return filename
+    filename = filename.replace(' ', '-')
+    filename = '%s.%s' % (filename, ext)
+    return os.path.join(instance.get_pic_path(), filename)
 
 
 @python_2_unicode_compatible
@@ -87,7 +87,7 @@ class Product(models.Model):
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     full_price = models.DecimalField(_(u'full price'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price = models.DecimalField(_(u'sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    
+
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -95,6 +95,7 @@ class Product(models.Model):
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
+    uuid = models.CharField(max_length=36, unique=True, null=True, blank=True)
 
     tags = TaggableManager()
 
@@ -129,6 +130,23 @@ class Product(models.Model):
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
+
+    def __init__(self, *args, **kwargs):
+        super(Product, self).__init__(*args, **kwargs)
+        self.set_uuid()
+
+    def set_uuid(self):
+        if not self.uuid:
+            uuid_str = uuid.uuid4().hex
+            while (Product.objects.filter(uuid=uuid_str).exists()):
+                uuid_str = uuid.uuid4().hex
+
+            self.uuid = uuid_str
+
+    def get_pic_path(self):
+        if not self.uuid:
+            self.set_uuid()
+        return os.path.join(PRODUCT_PHOTO_FOLDER, self.uuid)
 
     def get_edit_link(self):
         url = reverse('product:product-update-view', args=[self.id])
