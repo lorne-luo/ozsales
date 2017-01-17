@@ -16,20 +16,23 @@ from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
 
-ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED')
+ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, u'创建'),
     (ORDER_STATUS.SHIPPING, u'在途'),
     (ORDER_STATUS.DELIVERED, u'寄达'),
     (ORDER_STATUS.FINISHED, u'完成'),
+    (ORDER_STATUS.CANCELED, u'取消')
 )
 
 
 @python_2_unicode_compatible
 class Order(models.Model):
+    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    address_copy = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('address'))
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Paid Time'))
@@ -48,6 +51,8 @@ class Order(models.Model):
     origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True,
                                           null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
@@ -118,7 +123,16 @@ class Order(models.Model):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
 
-        return super(Order, self).save()
+        super(Order, self).save()
+
+        if self.id and not self.code:
+            code = str(self.id % 10000).zfill(5)
+            self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
+            self.save(update_fields=['code'])
+
+    def get_total_fee(self):
+        # 微信支付金额单位:分
+        return int(self.payment_price * 100)
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
@@ -234,6 +248,7 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
+
 
 
 @python_2_unicode_compatible
