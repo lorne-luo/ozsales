@@ -52,7 +52,7 @@ class Customer(models.Model):
     # weixin user info
     # https://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
     # https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
-    is_subscribe = models.BooleanField(default=False, blank=False, null=False)
+    is_subscribe = models.BooleanField(default=False, blank=False, null=False) # 用户是否关注公众账号
     nickname = models.CharField(max_length=32, blank=True, null=True)
     openid = models.CharField(max_length=64, blank=True, null=True)
     sex = models.CharField(max_length=5, blank=True, null=True)

@@ -15,6 +15,7 @@ from settings.settings import rate
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
+from ..weixin.models import WxOrder, WxPayment
 
 ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED')
 
@@ -248,7 +249,6 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
-
 
 
 @python_2_unicode_compatible
