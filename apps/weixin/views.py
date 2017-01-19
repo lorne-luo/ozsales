@@ -18,7 +18,7 @@ from apps.customer.models import Customer
 from wechat_sdk.lib.request import WechatRequest
 from wechat_sdk.exceptions import WechatAPIException
 from weixin.login import WeixinLogin
-from models import WxApp
+from models import WxApp, WxPayment
 import conf
 
 # import serializers
@@ -105,3 +105,15 @@ def wx_auth(request, app_name):
 
 def wx_index(request, app_name):
     return HttpResponse('test page for ' + app_name)
+
+
+def wx_pay_notify(request, app_name):
+    try:
+        app = WxApp.objects.get(name=app_name)
+    except ObjectDoesNotExist:
+        raise Http404
+
+    # todo create weixin payment
+    payment = WxPayment()
+
+    return HttpResponse(status=200)
