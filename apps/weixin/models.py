@@ -13,6 +13,7 @@ from wechat_sdk import WechatConf, WechatBasic
 from wechat_sdk.exceptions import OfficialAPIError
 from weixin.login import WeixinLogin
 from weixin.mp import WeixinMP
+from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 
 log = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class WxApp(models.Model):
     app_id = models.CharField(_(u'App ID'), max_length=128, null=False, blank=False)
     app_secret = models.CharField(_(u'App Secret'), max_length=128, null=False, blank=False)
     mch_id = models.CharField(_(u'MCH ID'), max_length=128, null=True, blank=True)  # 商户ID
-    api_key = models.CharField(_(u'API Key'), max_length=128, null=True, blank=True)  # 商户API密钥 只参与签名 不需要上传
+    mch_key = models.CharField(_(u'MCH Key'), max_length=128, null=True, blank=True)  # 商户API密钥 只参与签名 不需要上传
     access_token = models.CharField(_(u'Access Token'), max_length=512, null=True, blank=True)
     token_expiry = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                         verbose_name=_(u'Token Expiry'))
@@ -109,10 +110,15 @@ class WxApp(models.Model):
                         '/tmp/.%s_access_token' % self.name,
                         '/tmp/.%s_jsapi_ticket' % self.name)
 
+    @property
+    def pay(self):
+        url = reverse('weixin:pay_notify', args=[self.name])
+        full_url = 'http://%s%s' % (wx_conf.BIND_DOMAIN, url)
+        pay = WeixinPay(self.app_id, self.mch_id, self.mch_key, full_url)
+        return pay
+
     def get_login_url(self, scope=wx_conf.SCOPE_USERINFO, state=''):
         url = reverse('weixin:auth', args=[self.name])
-        # template = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=http://%s%s&response_type=code&scope=%s&state=%s#wechat_redirect'
-        # return template % (self.app_id, wx_conf.BIND_DOMAIN, urlquote(url), scope, urlquote(state))
         full_url = 'http://%s%s' % (wx_conf.BIND_DOMAIN, url)
         wx_login = WeixinLogin(self.app_id, self.app_secret)
         return wx_login.authorize(full_url, scope, state)
@@ -171,6 +177,19 @@ class WxOrder(models.Model):
     def parse_xml_resp(self, xml_resp):
         pass
 
+    def get_jsapi(self):
+        app = WxApp.objects.get(app_id=self.appid)
+        # fixme self.xml_response format
+        package = "prepay_id={0}".format(self.xml_response["prepay_id"])
+        timestamp = str(int(time.time()))
+        nonce_str = app.pay.nonce_str
+        raw = dict(appId=app.pay.app_id, timeStamp=timestamp,
+                   nonceStr=nonce_str, package=package, signType="MD5")
+        sign = app.pay.sign(raw)
+        jsapi_dict = dict(package=package, appId=app.pay.app_id,
+                          timeStamp=timestamp, nonceStr=nonce_str, sign=sign)
+        return jsapi_dict
+
 
 class WxPayment(models.Model):
     # https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
@@ -214,13 +233,19 @@ class WxPayment(models.Model):
         pass
 
 
-def create_wxorder(order):
+def create_wxorder(order, app):
     # request weixin unified order api
     # todo request weixin order api
+    try:
+        out_trade_no = app.pay.nonce_str
+        raw = app.pay.unified_order(trade_type="JSAPI", openid="openid", body=u"测试", out_trade_no=out_trade_no,
+                                    total_fee=1, attach="other info", spbill_create_ip='1.1.1.1')
+    except WeixinError as e:
+        log.info(e.message)
+        return None
+
     wx_order = WxOrder(order=order)
+    # update order
 
 
-def create_wxpayment(data):
-    # request weixin unified order api
-    # todo request weixin order api
-    payment = WxPayment()
+
