@@ -11,6 +11,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from wechat_sdk import WechatConf, WechatBasic
 from wechat_sdk.exceptions import OfficialAPIError
+from weixin.login import WeixinLogin
+from weixin.mp import WeixinMP
 
 log = logging.getLogger(__name__)
 
@@ -37,22 +39,46 @@ class WxApp(models.Model):
     def __str__(self):
         return '%s' % self.name
 
+    @property
     def is_token_expired(self):
         # expired return true
         if not isinstance(self.token_expiry, datetime.datetime):
             return True
         return self.token_expiry - timezone.now() < datetime.timedelta(seconds=60)
 
+    @property
     def is_ticket_expired(self):
         if not isinstance(self.ticket_expiry, datetime.datetime):
             return True
         return self.ticket_expiry - timezone.now() < datetime.timedelta(seconds=60)
 
     def get_access_token(self):
-        return self.conf.access_token if self.is_token_expired() else self.access_token
+        if self.is_token_expired:
+            try:
+                conf = WechatConf(appid=self.app_id, appsecret=self.app_secret)
+                access_token_dict = conf.get_access_token()
+                self.access_token = access_token_dict['access_token']
+                self.token_expiry = self.from_timestamp(access_token_dict['access_token_expires_at'])
+                self.save(update_fields=['access_token', 'token_expiry'])
+                log.info('Update token = %s, %s' % (self.access_token, self.token_expiry))
+            except OfficialAPIError as e:
+                log.error('[get_access_token] code=%s, %s' % (e.errcode, e.errmsg))
+
+        return self.access_token
 
     def get_jsapi_ticket(self):
-        return self.conf.jsapi_ticket if self.is_ticket_expired() else self.jsapi_ticket
+        if self.is_ticket_expired:
+            try:
+                conf = WechatConf(appid=self.app_id, appsecret=self.app_secret)
+                jsapi_ticket_dict = conf.get_jsapi_ticket()
+                self.jsapi_ticket = jsapi_ticket_dict['jsapi_ticket']
+                self.ticket_expiry = self.from_timestamp(jsapi_ticket_dict['jsapi_ticket_expires_at'])
+                self.save(update_fields=['jsapi_ticket', 'ticket_expiry'])
+                log.info('Update jsapi_ticket = %s, %s' % (self.jsapi_ticket, self.ticket_expiry))
+            except OfficialAPIError as e:
+                log.error('[get_jsapi_ticket] code=%s, %s' % (e.errcode, e.errmsg))
+
+        return self.jsapi_ticket
 
     def to_timestamp(self, dt):
         return time.mktime(dt.timetuple())
@@ -64,52 +90,32 @@ class WxApp(models.Model):
     def conf(self):
         conf_dict = {
             'appid': self.app_id,
-            'appsecret': self.app_secret
+            'appsecret': self.app_secret,
+            'access_token': self.get_access_token(),
+            'access_token_expires_at': self.to_timestamp(self.token_expiry),
+            'jsapi_ticket': self.get_jsapi_ticket,
+            'jsapi_ticket_expires_at': self.to_timestamp(self.ticket_expiry)
         }
-        if not self.is_token_expired():
-            conf_dict.update({
-                'access_token': self.access_token,
-                'access_token_expires_at': self.to_timestamp(self.token_expiry)
-            })
 
-        if not self.is_ticket_expired():
-            conf_dict.update({
-                'jsapi_ticket': self.jsapi_ticket,
-                'jsapi_ticket_expires_at': self.to_timestamp(self.ticket_expiry)
-            })
-
-        conf = WechatConf(**conf_dict)
-
-        if self.is_token_expired():
-            try:
-                access_token_dict = conf.get_access_token()
-                self.access_token = access_token_dict['access_token']
-                self.token_expiry = self.from_timestamp(access_token_dict['access_token_expires_at'])
-                log.info('Update token = %s, %s' % (self.access_token, self.token_expiry))
-                self.save(update_fields=['access_token', 'token_expiry'])
-            except OfficialAPIError as e:
-                log.error('[get_access_token] code=%s, %s' % (e.errcode, e.errmsg))
-
-        if self.is_ticket_expired():
-            try:
-                jsapi_ticket_dict = conf.get_jsapi_ticket()
-                self.jsapi_ticket = jsapi_ticket_dict['jsapi_ticket']
-                self.ticket_expiry = self.from_timestamp(jsapi_ticket_dict['jsapi_ticket_expires_at'])
-                log.info('Update jsapi_ticket = %s, %s' % (self.jsapi_ticket, self.ticket_expiry))
-                self.save(update_fields=['jsapi_ticket', 'ticket_expiry'])
-            except OfficialAPIError as e:
-                log.error('[get_jsapi_ticket] code=%s, %s' % (e.errcode, e.errmsg))
-
-        return conf
+        return WechatConf(**conf_dict)
 
     @property
     def api(self):
         return WechatBasic(conf=self.conf)
 
+    @property
+    def mp(self):
+        return WeixinMP(self.app_id, self.app_secret,
+                        '/tmp/.%s_access_token' % self.name,
+                        '/tmp/.%s_jsapi_ticket' % self.name)
+
     def get_login_url(self, scope=wx_conf.SCOPE_USERINFO, state=''):
         url = reverse('weixin:auth', args=[self.name])
-        template = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=http://%s%s&response_type=code&scope=%s&state=%s#wechat_redirect'
-        return template % (self.app_id, wx_conf.BIND_DOMAIN, urlquote(url), scope, urlquote(state))
+        # template = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=http://%s%s&response_type=code&scope=%s&state=%s#wechat_redirect'
+        # return template % (self.app_id, wx_conf.BIND_DOMAIN, urlquote(url), scope, urlquote(state))
+        full_url = 'http://%s%s' % (wx_conf.BIND_DOMAIN, url)
+        wx_login = WeixinLogin(self.app_id, self.app_secret)
+        return wx_login.authorize(full_url, scope, state)
 
 
 class WxReturnCode(object):
@@ -119,6 +125,26 @@ class WxReturnCode(object):
     CHOICES = (
         (FAIL, FAIL),
         (SUCCESS, SUCCESS),
+    )
+
+
+class PaymentStatus(object):
+    SUCCESS = 'SUCCESS'
+    REFUND = 'REFUND'
+    NOTPAY = 'NOTPAY'
+    CLOSED = 'CLOSED'
+    REVOKED = 'REVOKED'
+    USERPAYING = 'USERPAYING'  # 用户支付中
+    PAYERROR = 'PAYERROR'  # 支付失败
+
+    CHOICES = (
+        (SUCCESS, '支付成功'),
+        (REFUND, '已退款'),
+        (NOTPAY, '未付款'),
+        (CLOSED, '支付关闭'),
+        (REVOKED, '已撤销'),
+        (USERPAYING, '支付中'),
+        (PAYERROR, '支付失败'),
     )
 
 
@@ -142,25 +168,8 @@ class WxOrder(models.Model):
     code_url = models.CharField(max_length=32, blank=True, null=True)  # 二维码链接
     xml_response = models.TextField(blank=True, null=True)  # unifiedorder统一下单接口返回的原始xml
 
-
-class PaymentStatus(object):
-    SUCCESS = 'SUCCESS'
-    REFUND = 'REFUND'
-    NOTPAY = 'NOTPAY'
-    CLOSED = 'CLOSED'
-    REVOKED = 'REVOKED'
-    USERPAYING = 'USERPAYING'  # 用户支付中
-    PAYERROR = 'PAYERROR'  # 支付失败
-
-    CHOICES = (
-        (SUCCESS, '支付成功'),
-        (REFUND, '已退款'),
-        (NOTPAY, '未付款'),
-        (CLOSED, '支付关闭'),
-        (REVOKED, '已撤销'),
-        (USERPAYING, '支付中'),
-        (PAYERROR, '支付失败'),
-    )
+    def parse_xml_resp(self, xml_resp):
+        pass
 
 
 class WxPayment(models.Model):
@@ -200,6 +209,9 @@ class WxPayment(models.Model):
     # 交易状态描述,对当前查询订单状态的描述和下一步操作的指引
     trade_state_desc = models.CharField(max_length=256, blank=True, null=True)
     xml_response = models.TextField(blank=True, null=True)  # 原始xml信息
+
+    def parse_xml_resp(self, xml_resp):
+        pass
 
 
 def create_wxorder(order):

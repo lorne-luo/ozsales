@@ -35,3 +35,4 @@ Wand==0.4.3
 enum34
 django-tinymce4-lite==1.2.0
 pyenchant
+weixin-python
