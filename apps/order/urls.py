@@ -23,6 +23,10 @@ urlpatterns = patterns('apps.order.views',
     url(r'^order/list/$', login_required(views.OrderListView.as_view()), name='order-list'),
     url(r'^order/$', login_required(views.OrderListView.as_view()), name='order-list-short'),
     url(r'^order/(?P<username>\w+)/$', views.OrderMemberListView.as_view(), name='order-member'),
+
+    # payment
+    url(r'^order/(?P<pk>\d+)/pay/$', login_required(views.OrderPayView.as_view()), name='order-pay'),
+
 )
 
 
