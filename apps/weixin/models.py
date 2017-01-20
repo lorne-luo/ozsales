@@ -171,16 +171,19 @@ class WxOrder(models.Model):
     trade_type = models.CharField(max_length=16, blank=True, null=True)  # 交易类型
     # 预支付交易会话标识,微信生成的预支付回话标识，用于后续接口调用中使用，该值有效期为2小时
     prepay_id = models.CharField(max_length=64, blank=True, null=True)  # 预支付交易会话标识
-    code_url = models.CharField(max_length=32, blank=True, null=True)  # 二维码链接
     xml_response = models.TextField(blank=True, null=True)  # unifiedorder统一下单接口返回的原始xml
 
-    def parse_xml_resp(self, xml_resp):
-        pass
+    @property
+    def is_success(self):
+        if self.return_code == WxReturnCode.SUCCESS and self.result_code == WxReturnCode.SUCCESS and self.prepay_id:
+            return True
+        else:
+            return False
 
     def get_jsapi(self):
         app = WxApp.objects.get(app_id=self.appid)
         # fixme self.xml_response format
-        package = "prepay_id={0}".format(self.xml_response["prepay_id"])
+        package = "prepay_id={0}".format(self.prepay_id)
         timestamp = str(int(time.time()))
         nonce_str = app.pay.nonce_str
         raw = dict(appId=app.pay.app_id, timeStamp=timestamp,
@@ -231,21 +234,6 @@ class WxPayment(models.Model):
 
     def parse_xml_resp(self, xml_resp):
         pass
-
-
-def create_wxorder(order, app):
-    # request weixin unified order api
-    # todo request weixin order api
-    try:
-        out_trade_no = app.pay.nonce_str
-        raw = app.pay.unified_order(trade_type="JSAPI", openid="openid", body=u"测试", out_trade_no=out_trade_no,
-                                    total_fee=1, attach="other info", spbill_create_ip='1.1.1.1')
-    except WeixinError as e:
-        log.info(e.message)
-        return None
-
-    wx_order = WxOrder(order=order)
-    # update order
 
 
 

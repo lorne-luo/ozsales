@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -12,10 +13,13 @@ from django.utils import timezone
 from calendar import monthrange
 from utils.enum import enum
 from settings.settings import rate
+from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
-from ..weixin.models import WxOrder, WxPayment
+
+log = logging.getLogger(__name__)
+
 
 ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED')
 
@@ -57,6 +61,8 @@ class Order(models.Model):
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
+
+    app_id = models.CharField(_(u'App ID'), max_length=128, null=False, blank=False)
 
     def __str__(self):
         if self.id:
@@ -249,6 +255,50 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
+
+    @property
+    def app(self):
+        from ..weixin.models import WxApp
+        app = WxApp.objects.get(app_id=self.app_id)
+        return app
+
+    def create_wxorder(self, user_ip, trade_type="JSAPI"):
+        from ..weixin.models import WxOrder
+
+        wx_order = self.wxorder if self.wxorder else WxOrder(order=self)
+        if wx_order.is_success:
+            return wx_order
+
+        # request weixin unified order api
+        # todo request weixin order api
+        try:
+            out_trade_no = self.app.pay.nonce_str
+            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
+                                        out_trade_no=out_trade_no,
+                                        total_fee=self.get_total_fee(), attach="other info", spbill_create_ip=user_ip)
+        except WeixinError as e:
+            log.info(e.message)
+            return None
+
+        wx_order.return_code = raw.return_code
+        wx_order.return_msg = raw.return_msg
+        wx_order.result_code = raw.result_code
+        wx_order.appid = raw.app_id
+        wx_order.mch_id = raw.mch_id
+        wx_order.device_info = raw.device_info
+        wx_order.nonce_str = raw.nonce_str
+        wx_order.sign = raw.sign
+        wx_order.err_code = raw.err_code
+        wx_order.err_code_des = raw.err_code_des
+        wx_order.trade_type = raw.trade_type
+        wx_order.prepay_id = raw.prepay_id
+
+        wx_order.save()
+        return wx_order
+
+    def get_jsapi(self, ip):
+        wx_order = self.create_wxorder(ip)
+        return wx_order.get_jsapi()
 
 
 @python_2_unicode_compatible
