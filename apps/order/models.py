@@ -52,8 +52,7 @@ class Order(models.Model):
                                      verbose_name=_(u'Ship Time'))
     total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True,
-                                          null=True)
+    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
     remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
@@ -264,21 +263,23 @@ class Order(models.Model):
         app = WxApp.objects.get(app_id=self.app_id)
         return app
 
-    def create_wxorder(self, user_ip, trade_type="JSAPI"):
+    def get_wxorder(self, user_ip, trade_type="JSAPI"):
         from ..weixin.models import WxOrder
 
         wx_order = self.wxorder if self.wxorder else WxOrder(order=self)
         if wx_order.is_success:
-            return wx_order
+            if self.get_total_fee() == wx_order.total_fee:
+                return wx_order
+            else:
+                # order price changed, delete old create new
+                wx_order.delete()
+                wx_order = WxOrder(order=self)
 
         # request weixin unified order api
-        # todo request weixin order api
         try:
-            out_trade_no = self.app.pay.nonce_str
             raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
-                                             out_trade_no=out_trade_no,
-                                             total_fee=self.get_total_fee(), attach="other info",
-                                             spbill_create_ip=user_ip)
+                                             out_trade_no=self.code,
+                                             total_fee=self.get_total_fee(), spbill_create_ip=user_ip)
         except WeixinError as e:
             log.info(e.message)
             return None
@@ -295,12 +296,14 @@ class Order(models.Model):
         wx_order.err_code_des = raw.err_code_des
         wx_order.trade_type = raw.trade_type
         wx_order.prepay_id = raw.prepay_id
+        wx_order.total_fee = self.get_total_fee()
 
         wx_order.save()
         return wx_order
 
     def get_jsapi(self, ip):
-        wx_order = self.create_wxorder(ip)
+        # create wx order and get jsapi
+        wx_order = self.get_wxorder(ip)
         return wx_order.get_jsapi()
 
 

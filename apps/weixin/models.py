@@ -171,6 +171,7 @@ class WxOrder(models.Model):
     trade_type = models.CharField(max_length=16, blank=True, null=True)  # 交易类型
     # 预支付交易会话标识,微信生成的预支付回话标识，用于后续接口调用中使用，该值有效期为2小时
     prepay_id = models.CharField(max_length=64, blank=True, null=True)  # 预支付交易会话标识
+    total_fee = models.PositiveIntegerField(blank=True, null=True)  # 订单金额 单位分
     xml_response = models.TextField(blank=True, null=True)  # unifiedorder统一下单接口返回的原始xml
 
     @property
@@ -180,16 +181,31 @@ class WxOrder(models.Model):
         else:
             return False
 
-    def get_jsapi(self):
+    @property
+    def app(self):
         app = WxApp.objects.get(app_id=self.appid)
-        # fixme self.xml_response format
+        return app
+
+    @property
+    def out_trade_no(self):
+        return self.order.code
+
+    def close(self):
+        result = self.app.pay.order_close(self.out_trade_no)
+        if result.return_code == WxReturnCode.SUCCESS and result.result_code == WxReturnCode.SUCCESS:
+            self.delete()
+            return True
+
+        return False
+
+    def get_jsapi(self):
         package = "prepay_id={0}".format(self.prepay_id)
         timestamp = str(int(time.time()))
-        nonce_str = app.pay.nonce_str
-        raw = dict(appId=app.pay.app_id, timeStamp=timestamp,
+        nonce_str = self.app.pay.nonce_str
+        raw = dict(appId=self.appid, timeStamp=timestamp,
                    nonceStr=nonce_str, package=package, signType="MD5")
-        sign = app.pay.sign(raw)
-        jsapi_dict = dict(package=package, appId=app.pay.app_id,
+        sign = self.app.pay.sign(raw)
+        jsapi_dict = dict(package=package, appId=self.app.pay.app_id,
                           timeStamp=timestamp, nonceStr=nonce_str, sign=sign)
         return jsapi_dict
 
