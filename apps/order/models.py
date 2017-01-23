@@ -20,7 +20,6 @@ from ..store.models import Store
 
 log = logging.getLogger(__name__)
 
-
 ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED')
 
 ORDER_STATUS_CHOICES = (
@@ -129,6 +128,9 @@ class Order(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
+
+        if self.address:
+            self.address_copy = str(self.address)
 
         super(Order, self).save()
 
@@ -274,8 +276,9 @@ class Order(models.Model):
         try:
             out_trade_no = self.app.pay.nonce_str
             raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
-                                        out_trade_no=out_trade_no,
-                                        total_fee=self.get_total_fee(), attach="other info", spbill_create_ip=user_ip)
+                                             out_trade_no=out_trade_no,
+                                             total_fee=self.get_total_fee(), attach="other info",
+                                             spbill_create_ip=user_ip)
         except WeixinError as e:
             log.info(e.message)
             return None

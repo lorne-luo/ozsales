@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('order', '0013_auto_20170118_1632'),
         ('weixin', '0002_auto_20161130_1613'),
     ]
 
