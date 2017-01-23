@@ -175,7 +175,7 @@ class WxOrder(models.Model):
 
     @property
     def is_success(self):
-        if self.return_code == WxReturnCode.SUCCESS and self.result_code == WxReturnCode.SUCCESS and self.prepay_id:
+        if self.return_code.upper() == WxReturnCode.SUCCESS == self.result_code.upper() and self.prepay_id:
             return True
         else:
             return False
@@ -209,6 +209,7 @@ class WxPayment(models.Model):
     nonce_str = models.CharField(max_length=32, blank=True, null=True)  # 返回的随机字符串
     # 微信返回的签名值 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3
     sign = models.CharField(max_length=32, blank=True, null=True)
+    sign_type = models.CharField(max_length=32, blank=True, null=True, default='MD5')
     err_code = models.CharField(max_length=32, blank=True, null=True)  # 错误代码
     err_code_des = models.CharField(max_length=128, blank=True, null=True)  # 错误信息描述
     openid = models.CharField(max_length=128, blank=True, null=True)
@@ -217,10 +218,6 @@ class WxPayment(models.Model):
     bank_type = models.CharField(max_length=16, blank=True, null=True)
     total_fee = models.PositiveIntegerField(blank=True, null=True)  # 订单总金额，单位为分
     fee_type = models.CharField(max_length=8, blank=True, null=True)  # 货币种类
-    cash_fee = models.PositiveIntegerField(blank=True, null=True)  # 现金支付金额
-    cash_fee_type = models.CharField(max_length=16, blank=True, null=True)  # 现金支付货币类型
-    coupon_fee = models.PositiveIntegerField(blank=True, null=True)  # 代金券或立减优惠金额
-    coupon_count = models.PositiveIntegerField(blank=True, null=True)  # 代金券或立减优惠使用数量
     out_trade_no = models.CharField(max_length=32, blank=True, null=True)  # 商户系统的订单号，与请求一致
     attach = models.CharField(max_length=128, blank=True, null=True)  # 商家数据包，原样返回
     # 支付完成时间，格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010
@@ -232,8 +229,9 @@ class WxPayment(models.Model):
     trade_state_desc = models.CharField(max_length=256, blank=True, null=True)
     xml_response = models.TextField(blank=True, null=True)  # 原始xml信息
 
-    def parse_xml_resp(self, xml_resp):
-        pass
-
-
-
+    @property
+    def is_success(self):
+        if self.return_code.upper() == WxReturnCode.SUCCESS == self.result_code.upper():
+            return True
+        else:
+            return False
