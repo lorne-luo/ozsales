@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlquote, urlunquote
+from django.utils import timezone
 from django.contrib.auth import authenticate, login
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
@@ -18,11 +19,11 @@ from apps.customer.models import Customer
 from wechat_sdk.lib.request import WechatRequest
 from wechat_sdk.exceptions import WechatAPIException
 from weixin.login import WeixinLogin
+from weixin.base import Map
 from models import WxApp, WxPayment
+from ..order.models import Order
 import conf
 
-# import serializers
-# import forms
 log = logging.getLogger(__name__)
 
 
@@ -113,7 +114,28 @@ def wx_pay_notify(request, app_name):
     except ObjectDoesNotExist:
         raise Http404
 
+    result = Map(app.pay.to_dict(request.body))
+
     # todo create weixin payment
-    payment = WxPayment()
+    try:
+        order = Order.objects.get(code=result.out_trade_no)
+    except Order.DoesNotExist:
+        log.error('[Paymen Notify] Order.code = %s not found' % result.out_trade_no)
+        raise Http404
+
+    wx_payment = WxPayment(order=order, return_code=result.return_code, return_msg=result.return_msg,
+                           result_code=result.result_code, appid=result.appid, mch_id=result.mch_id,
+                           device_info=result.device_info, nonce_str=result.nonce_str, sign=result.sign,
+                           sign_type=result.sign_type, err_code=result.err_code, err_code_des=result.err_code_des,
+                           openid=result.openid, is_subscribe=result.is_subscribe, trade_type=result.trade_type,
+                           bank_type=result.bank_type, total_fee=result.total_fee, fee_type=result.fee_type,
+                           attach=result.attach, time_end=result.time_end,
+                           transaction_id=result.transaction_id, xml_response=request.body)
+    wx_payment.save()
+
+    if wx_payment.is_success:
+        wx_payment.order.is_paid = True
+        wx_payment.order.paid_time = timezone.now()
+        wx_payment.save(update_fields=['is_paid', 'paid_time'])
 
     return HttpResponse(status=200)
