@@ -17,7 +17,7 @@ from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from apps.member.models import Seller
-
+from apps.product.models import Product
 
 @python_2_unicode_compatible
 class InterestTag(models.Model):
@@ -32,6 +32,11 @@ class InterestTag(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+
+class CartProduct(models.Model):
+    product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
+    amount = models.IntegerField(_('Amount'), blank=True, null=True, )
 
 
 @python_2_unicode_compatible
@@ -67,6 +72,7 @@ class Customer(models.Model):
     subscribe_time = models.DateField(blank=True, null=True)
     remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
     groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
+    cart = models.ManyToManyField(CartProduct, blank=True, verbose_name=_('cart'))
 
     class Meta:
         verbose_name_plural = _('Customer')
@@ -212,3 +218,4 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
+
