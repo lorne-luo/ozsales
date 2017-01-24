@@ -1,4 +1,4 @@
-#coding:utf-8
+# coding:utf-8
 import os
 
 from django.db import models
@@ -19,6 +19,7 @@ from django.core.urlresolvers import reverse
 from apps.member.models import Seller
 from apps.product.models import Product
 
+
 @python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
@@ -37,6 +38,13 @@ class InterestTag(models.Model):
 class CartProduct(models.Model):
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     amount = models.IntegerField(_('Amount'), blank=True, null=True, )
+
+    class Meta:
+        verbose_name_plural = _('CartProducts')
+        verbose_name = _('CartProduct')
+
+    def __str__(self):
+        return '%s x %s' % (self.product.get_name_cn(), self.amount)
 
 
 @python_2_unicode_compatible
@@ -57,7 +65,7 @@ class Customer(models.Model):
     # weixin user info
     # https://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
     # https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
-    is_subscribe = models.BooleanField(default=False, blank=False, null=False) # 用户是否关注公众账号
+    is_subscribe = models.BooleanField(default=False, blank=False, null=False)  # 用户是否关注公众账号
     nickname = models.CharField(max_length=32, blank=True, null=True)
     openid = models.CharField(max_length=64, blank=True, null=True)
     sex = models.CharField(max_length=5, blank=True, null=True)
@@ -67,7 +75,7 @@ class Customer(models.Model):
     language = models.CharField(max_length=64, null=True, blank=True)
     # 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像）
     headimg_url = models.URLField(max_length=256, blank=True, null=True)
-    privilege = models.CharField(max_length=256,blank=True, null=True)
+    privilege = models.CharField(max_length=256, blank=True, null=True)
     unionid = models.CharField(max_length=64, blank=True, null=True)
     subscribe_time = models.DateField(blank=True, null=True)
     remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
@@ -218,4 +226,3 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
-

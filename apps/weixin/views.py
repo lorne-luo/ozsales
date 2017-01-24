@@ -2,7 +2,7 @@
 import logging
 import json
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.http import urlquote, urlunquote
 from django.utils import timezone
@@ -20,7 +20,7 @@ from wechat_sdk.lib.request import WechatRequest
 from wechat_sdk.exceptions import WechatAPIException
 from weixin.login import WeixinLogin
 from weixin.base import Map
-from models import WxApp, WxPayment
+from models import WxApp, WxPayment, WxReturnCode
 from ..order.models import Order
 import conf
 
@@ -116,6 +116,10 @@ def wx_pay_notify(request, app_name):
 
     result = Map(app.pay.to_dict(request.body))
 
+    if not app.pay.check(result):
+        return JsonResponse({'return_code': WxReturnCode.FAIL,
+                             'return_msg': '签名验证失败'})
+
     # todo create weixin payment
     try:
         order = Order.objects.get(code=result.out_trade_no)
@@ -136,6 +140,12 @@ def wx_pay_notify(request, app_name):
     if wx_payment.is_success:
         wx_payment.order.is_paid = True
         wx_payment.order.paid_time = timezone.now()
-        wx_payment.save(update_fields=['is_paid', 'paid_time'])
+        wx_payment.order.save(update_fields=['is_paid', 'paid_time'])
 
-    return HttpResponse(status=200)
+    customer = Customer.objects.filter(openid=wx_payment.openid).first()
+    if customer:
+        customer.is_subscribe = wx_payment.is_subscribe
+        customer.save(update_fields=['is_subscribe'])
+
+    return JsonResponse({'return_code': WxReturnCode.SUCCESS,
+                         'return_msg': 'OK'})
