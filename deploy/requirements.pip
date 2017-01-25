@@ -36,3 +36,4 @@ enum34
 django-tinymce4-lite==1.2.0
 pyenchant
 weixin-python
+jsonfield==1.0.3

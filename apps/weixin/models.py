@@ -12,6 +12,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from wechat_sdk import WechatConf, WechatBasic
 from wechat_sdk.exceptions import OfficialAPIError
 from weixin.login import WeixinLogin
+from weixin.base import Map
 from weixin.mp import WeixinMP
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 
@@ -181,6 +182,9 @@ class WxOrder(models.Model):
         else:
             return False
 
+    def get_raw_response(self):
+        return Map(WeixinPay(None, None, None, None).to_dict(self.xml_response)) if self.xml_response else None
+
     @property
     def app(self):
         app = WxApp.objects.get(app_id=self.appid)
@@ -251,3 +255,6 @@ class WxPayment(models.Model):
             return True
         else:
             return False
+
+    def get_raw_response(self):
+        return Map(WeixinPay(None, None, None, None).to_dict(self.xml_response)) if self.xml_response else None
