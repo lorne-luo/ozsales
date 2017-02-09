@@ -13,14 +13,14 @@ class CustomerAdmin(admin.ModelAdmin):
     ordering = ['-last_order_time']
 
     def add_view(self, request, form_url='', extra_context=None):
-        self.exclude = ['password', 'groups', 'user_permissions', 'last_login', 'primary_address']
+        self.exclude = ['password', 'primary_address']
         self.form = ModelForm
         self.inlines = [AddressAddInline]
 
         return super(CustomerAdmin, self).add_view(request, form_url, extra_context)
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
-        self.exclude = ['password', 'groups', 'user_permissions', 'last_login']
+        self.exclude = ['password']
         self.inlines = [AddressChangeInline, OrderInline]
         return super(CustomerAdmin, self).change_view(request, object_id, form_url, extra_context)
 

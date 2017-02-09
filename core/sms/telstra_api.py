@@ -6,6 +6,7 @@ import logging
 from urllib import urlencode
 from StringIO import StringIO
 from django.conf import settings
+from .models import Sms
 
 log = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class MessageSender(object):
     TOKEN_EXPIRY = datetime.datetime.now()
     _instance = None
     LENGTH_PER_SMS = 160
-    SMS_TXT_PATH = os.path.join(settings.MEDIA_ROOT, 'sms.txt')
+    my_number = '0413725868'
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -54,7 +55,7 @@ class MessageSender(object):
         MessageSender.TOKEN_EXPIRY = datetime.datetime.now() + datetime.timedelta(seconds=sec)
         # log.info(MessageSender.TOKEN, MessageSender.TOKEN_EXPIRY)
 
-    def send_sms(self, to, content):
+    def send_sms(self, to, content, app_name=None):
         if MessageSender.TOKEN_EXPIRY <= datetime.datetime.now() or not MessageSender.TOKEN:
             self.get_token()
 
@@ -74,22 +75,19 @@ class MessageSender(object):
         response = buffer.getvalue().decode('utf-8')
         # log.info('Response = ' % response)
         data = json.loads(response)
+
+        sms = Sms(app_name=app_name, send_to=to, content=content)
         if 'messageId' in data:
+            sms.success = True
+            sms.save()
             return True, data['messageId']
         elif 'status' in data:
+            sms.success = False
+            sms.save()
             return False, data['status']
 
-    def send_to_self(self, content):
-        my_number = '0413725868'
-        try:
-            with open(self.SMS_TXT_PATH, 'r+') as f:
-                all_content = f.read()
-                f.seek(0, 0)
-                f.write('%s\n\n%s' % (content[:500], all_content[:6000]))
-        except Exception as e:
-            log.info('[SMS] sms.txt error %s' % e.message)
-
-        return self.send_sms(my_number, content)
+    def send_to_self(self, content, app_name=None):
+        return self.send_sms(self.my_number, content, app_name)
 
 
 if __name__ == '__main__':

@@ -127,10 +127,9 @@ class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
 
 
 # api views for Customer
-
 class CustomerViewSet(CommonViewSet):
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
-    filter_fields = ['last_login', 'seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
+    filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'mobile', 'primary_address__name']

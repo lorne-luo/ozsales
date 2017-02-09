@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import redis
-import pytz
-import logging
 import datetime
-from dateutil import parser
+import logging
+import urllib2
+import pytz
+import redis
+from decimal import Decimal
+from yahoo_finance import Currency
 from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
-from utils.telstra_api import MessageSender
+from dateutil import parser
+from core.sms.telstra_api import MessageSender
+from settings.settings import rate
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -166,3 +169,15 @@ def smzdm_task():
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(smzdm_last_date, new_last_date)
+
+
+@periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
+def get_aud_rmb():
+    # url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
+    audcny = Currency('AUDCNY')
+    value = audcny.get_rate()
+    rate.aud_rmb_rate = Decimal(value)
+    sender = MessageSender()
+    sender.send_to_self(value)
+
+    return rate.aud_rmb_rate
