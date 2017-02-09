@@ -1,11 +1,9 @@
 # coding=utf-8
-
-import urllib
-from rest_framework.response import Response
+from django.http import HttpResponse
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import AllowAny
-from django.http import HttpResponse
-from utils.telstra_api import MessageSender
+from rest_framework.response import Response
+from core.sms.telstra_api import MessageSender
 
 
 def sms_send(request):

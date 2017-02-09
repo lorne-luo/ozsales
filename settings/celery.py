@@ -1,13 +1,15 @@
 from __future__ import absolute_import
+
 import os
+from decimal import Decimal
 from celery import Celery
-from django.conf import settings
 from celery.task import periodic_task
 from celery.task.schedules import crontab
-from decimal import Decimal
-from yahoo_finance import Share, Currency
+from django.conf import settings
+from yahoo_finance import Currency
+
+from core.sms.telstra_api import MessageSender
 from settings.settings import rate
-from utils.telstra_api import MessageSender
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings.settings')

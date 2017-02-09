@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import redis
-import pytz
-import logging
 import datetime
-from dateutil import parser
+import logging
+import urllib2
+import pytz
+import redis
 from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
-from utils.telstra_api import MessageSender
+from dateutil import parser
+from core.sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
