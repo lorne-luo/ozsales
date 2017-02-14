@@ -54,6 +54,8 @@ class ExpressOrder(models.Model):
 
         if not self.address and self.order and self.order.address:
             self.address = self.order.address
+
+        self.track_id = self.track_id.upper()
         return super(ExpressOrder, self).save()
 
     def get_track_url(self):
