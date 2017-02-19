@@ -128,7 +128,7 @@ class OrderUpdateForm(ModelForm):
                 self.fields.pop('finish_time')
 
         if not instance.address:
-            default_address=Customer.objects.filter(pk=instance.customer_id).first().primary_address
+            default_address = Customer.objects.filter(pk=instance.customer_id).first().primary_address
             self.initial['address'] = default_address
             self.fields['address'].initial = default_address
 
@@ -179,6 +179,7 @@ class OrderProductInlineAddForm(ModelForm):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['class'] = 'form-control'
+        self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['amount'].widget.attrs['class'] = 'form-control'
         self.fields['sell_price_rmb'].widget.attrs['class'] = 'form-control'
@@ -186,6 +187,7 @@ class OrderProductInlineAddForm(ModelForm):
         self.fields['cost_price_aud'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['store'].widget.attrs['autocomplete'] = 'off'
         self.fields['order'].widget = forms.HiddenInput()
 
         instance = getattr(self, 'instance', None)
@@ -203,7 +205,9 @@ class OrderProductInlineForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['store'].widget.attrs['autocomplete'] = 'off'
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:

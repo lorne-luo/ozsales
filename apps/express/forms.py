@@ -68,7 +68,8 @@ class ExpressOrderInlineAddForm(ModelForm):
         super(ExpressOrderInlineAddForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['order'].widget.attrs['class'] = 'form-control'
-        self.fields['carrier'].widget.attrs['class'] = 'form-control'
+        self.fields['carrier'].widget.attrs['class'] = 'form-control1'
+        self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
         self.fields['track_id'].widget.attrs['class'] = 'form-control'
         self.fields['address'].widget.attrs['class'] = 'form-control'
         self.fields['fee'].widget.attrs['class'] = 'form-control'
@@ -85,6 +86,7 @@ class ExpressOrderInlineEditForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
+        self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
 
 
 ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm,
