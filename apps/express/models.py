@@ -57,7 +57,6 @@ class ExpressOrder(models.Model):
 
         if not self.pk:
             self.track_id = self.track_id.upper()
-            self.address = self.order.address
             self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
                                                          address=self.address,
                                                          id_upload=True).exists()
