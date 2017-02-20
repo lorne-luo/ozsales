@@ -148,6 +148,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     def save_product_formset(self,request):
         products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
+            form.is_valid()
             if form.instance.product_id or form.instance.name:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
@@ -159,8 +160,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
             if form._errors and 'order' in form._errors:
                 del form._errors['order']
 
-            form.is_valid()
-
         if not products_formset.is_valid():
             raise SuspiciousOperation(str(products_formset.errors))
         products_formset.save()
@@ -168,6 +167,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     def save_express_formset(self,request):
         express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
+            form.is_valid()
             if form.instance.track_id:
                 form.fields['order'].initial = self.object.id
                 form.base_fields['order'].initial = self.object.id
@@ -178,8 +178,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
                 form._changed_data = []
             if form._errors and 'order' in form._errors:
                 del form._errors['order']
-
-            form.is_valid()
 
         if not express_formset.is_valid():
             raise SuspiciousOperation(str(express_formset.errors))
