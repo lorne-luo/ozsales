@@ -278,7 +278,7 @@ class OrderProduct(models.Model):
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        return '%s x %s' % (self.name, self.amount)
+        return u'%s = ¥%d x %d' % (self.name, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:
