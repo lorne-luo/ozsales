@@ -147,7 +147,7 @@
 {#          <li v-if="ongoing_currentPage == 1" class="disabled">#}
 {#            <a href="javascript:void(0);">上页</a>#}
 {#          </li>#}
-          <li class="disabled">
+          <li v-on:click="reload" class="disabled">
             <a style="width: 45px" href="javascript:void(0);">#[ongoing_currentPage]</a>
           </li>
           <li v-if="ongoing_currentPage < ongoing_totalPage">
@@ -168,9 +168,9 @@
 {#          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">#}
 {#            <a href="javascript:void(0);">末页</a>#}
 {#          </li>#}
-          <li v-on:click="reload" class="text-bold">
-            <a href="javascript:void(0);">刷新</a>
-          </li>
+{#          <li v-on:click="reload" class="text-bold">#}
+{#            <a href="javascript:void(0);">刷新</a>#}
+{#          </li>#}
         </ul>
         <div class="form-group">
             &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
@@ -296,7 +296,7 @@
 {#          <li v-if="finished_currentPage == 1" class="disabled">#}
 {#            <a href="javascript:void(0);">上页</a>#}
 {#          </li>#}
-          <li class="disabled">
+          <li v-on:click="reload" class="disabled">
             <a style="width: 45px" href="javascript:void(0);" title="第#[finished_currentPage]页">#[finished_currentPage]</a>
           </li>
           <li v-if="finished_currentPage < finished_totalPage">
@@ -317,9 +317,9 @@
 {#          <li v-if="finished_currentPage == finished_totalPage" class="disabled">#}
 {#            <a href="javascript:void(0);">末页</a>#}
 {#          </li>#}
-          <li v-on:click="reload" class="text-bold">
-            <a href="javascript:void(0);">刷新</a>
-          </li>
+{#          <li v-on:click="reload" class="text-bold">#}
+{#            <a href="javascript:void(0);">刷新</a>#}
+{#          </li>#}
         </ul>
         <div class="form-group">
             &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第 #[finished_currentPage]/#[finished_totalPage] 页
