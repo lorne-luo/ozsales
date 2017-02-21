@@ -30,6 +30,7 @@ ORDER_STATUS_CHOICES = (
 class Order(models.Model):
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Paid Time'))
