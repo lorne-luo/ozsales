@@ -108,7 +108,7 @@ class Order(models.Model):
         else:
             self.save(update_fields=['status'])
 
-        self.update_monthly_report()
+        self.update_price()
 
     def update_monthly_report(self):
         if self.is_paid and not self.status == ORDER_STATUS.CREATED:
@@ -144,8 +144,6 @@ class Order(models.Model):
         return self.aud_rmb_rate or rate.aud_rmb_rate
 
     def update_price(self):
-        if True:
-            return
         self.total_amount = 0
         self.product_cost_aud = 0
         self.product_cost_rmb = 0
