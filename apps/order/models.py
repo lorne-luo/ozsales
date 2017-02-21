@@ -49,6 +49,7 @@ class Order(models.Model):
                                           null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
@@ -100,6 +101,9 @@ class Order(models.Model):
                 customer.last_order_time = self.create_time
                 customer.order_count = customer.order_set.filter(status=ORDER_STATUS.FINISHED).count()
                 customer.save(update_fields=['last_order_time', 'order_count'])
+        elif status_value == ORDER_STATUS.SHIPPING:
+            self.aud_rmb_rate = rate.aud_rmb_rate
+            self.save(update_fields=['status', 'aud_rmb_rate'])
         else:
             self.save(update_fields=['status'])
 
@@ -117,7 +121,8 @@ class Order(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
-
+        if not self.pk:
+            self.aud_rmb_rate = rate.aud_rmb_rate
         return super(Order, self).save()
 
     def get_link(self):
@@ -134,7 +139,12 @@ class Order(models.Model):
     get_id_link.allow_tags = True
     get_id_link.short_description = 'ID'
 
+    def get_aud_rmb_rate(self):
+        return self.aud_rmb_rate or rate.aud_rmb_rate
+
     def update_price(self):
+        if True:
+            return
         self.total_amount = 0
         self.product_cost_aud = 0
         self.product_cost_rmb = 0
@@ -147,7 +157,7 @@ class Order(models.Model):
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
-        self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
+        self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -156,7 +166,7 @@ class Order(models.Model):
                 self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
+        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
 
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
