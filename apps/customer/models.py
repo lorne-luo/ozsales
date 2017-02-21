@@ -169,7 +169,10 @@ class Address(models.Model):
         verbose_name = _('Address')
 
     def __str__(self):
-        return '%s,%s,%s' % (self.name, self.mobile, self.address)
+        return self.get_text()
+
+    def get_text(self):
+        return u'%s,%s,%s' % (self.name, self.mobile, self.address)
 
     def get_customer_link(self):
         url = reverse('admin:customer_customer_change', args=[self.customer.id])

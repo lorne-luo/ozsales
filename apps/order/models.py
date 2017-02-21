@@ -122,6 +122,10 @@ class Order(models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
+
+        if self.address:
+            self.address_text = self.address.get_text()
+
         if not self.pk:
             self.aud_rmb_rate = rate.aud_rmb_rate
         return super(Order, self).save()
