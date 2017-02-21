@@ -12,6 +12,7 @@ from celery.task.schedules import crontab
 from dateutil import parser
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
+from ..express.models import ExpressOrder
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -181,3 +182,12 @@ def get_aud_rmb():
     sender.send_to_self(value)
 
     return rate.aud_rmb_rate
+
+
+@periodic_task(run_every=crontab(hour=10, minute=30))
+def express_id_upload_task():
+    unupload_order = ExpressOrder.objects.filter(id_upload=False)
+    if unupload_order.exists():
+        ids = ','.join([o.track_id for o in unupload_order])
+        sender = MessageSender()
+        sender.send_to_self('Upload ID for %s' % ids)
