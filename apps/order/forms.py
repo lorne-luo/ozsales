@@ -107,12 +107,14 @@ class OrderUpdateForm(ModelForm):
                     instance.shipping_fee = 0
                 cost_aud = '%s + %s = %s (%s)' % (instance.product_cost_aud, instance.shipping_fee,
                                                   instance.total_cost_aud, instance.total_cost_rmb)
+                self.initial['cost_aud'] = cost_aud
                 self.fields['cost_aud'].initial = cost_aud
                 self.fields['cost_aud'].widget.attrs['readonly'] = True
 
                 sell_rmb = '[%s] ' % instance.origin_sell_rmb if instance.origin_sell_rmb != instance.sell_price_rmb else ''
                 sell_rmb += '%s - %s = %s' % (instance.sell_price_rmb, instance.total_cost_rmb,
                                               instance.profit_rmb)
+                self.initial['sell_rmb'] = sell_rmb
                 self.fields['sell_rmb'].initial = sell_rmb
                 self.fields['sell_rmb'].widget.attrs['readonly'] = True
             else:
@@ -124,6 +126,11 @@ class OrderUpdateForm(ModelForm):
                 self.fields['finish_time'].widget.attrs['readonly'] = True
             else:
                 self.fields.pop('finish_time')
+
+        if not instance.address:
+            default_address = Customer.objects.filter(pk=instance.customer_id).first().primary_address
+            self.initial['address'] = default_address
+            self.fields['address'].initial = default_address
 
 
 class OrderDetailForm(ModelForm):
@@ -172,6 +179,7 @@ class OrderProductInlineAddForm(ModelForm):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['class'] = 'form-control'
+        self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['amount'].widget.attrs['class'] = 'form-control'
         self.fields['sell_price_rmb'].widget.attrs['class'] = 'form-control'
@@ -179,6 +187,7 @@ class OrderProductInlineAddForm(ModelForm):
         self.fields['cost_price_aud'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['class'] = 'form-control'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['store'].widget.attrs['autocomplete'] = 'off'
         self.fields['order'].widget = forms.HiddenInput()
 
         instance = getattr(self, 'instance', None)
@@ -196,7 +205,9 @@ class OrderProductInlineForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+        self.fields['store'].widget.attrs['autocomplete'] = 'off'
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)
         if instance and instance.pk:

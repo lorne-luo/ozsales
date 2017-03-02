@@ -309,7 +309,7 @@ SITE_NAME = 'OZ SALE'
 import dbsettings
 
 class ForexRate(dbsettings.Group):
-    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=4.6)
+    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=5.3)
 
 
 rate = ForexRate()

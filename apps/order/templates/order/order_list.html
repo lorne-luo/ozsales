@@ -130,35 +130,47 @@
 
       <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
+          <li v-if="ongoing_currentPage-2 > 1">
+            <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold" title="第1页">首页</a>
+          </li>
+{#          <li v-if="ongoing_currentPage == 1" class="disabled">#}
+{#            <a href="javascript:void(0);" title="第1页">首页</a>#}
+{#          </li>#}
           <li v-if="ongoing_currentPage > 1">
-            <a href="javascript:void(0);" page="1" v-on:click="page_ongoing" class="text-bold">首页</a>
+{#            <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing" title="第#[ongoing_currentPage-1]页"#}
+{#               class="text-bold">上页</a>#}
+              <template v-for="n in 2">
+                <a v-if="ongoing_currentPage-2+n > 0" href="javascript:void(0);" page="#[ongoing_currentPage-2+n]" style="width: 45px"
+                   title="第#[ongoing_currentPage-2+n]页" v-on:click="page_ongoing" class="text-bold">#[ongoing_currentPage-2+n]</a>
+              </template>
           </li>
-          <li v-if="ongoing_currentPage == 1" class="disabled">
-            <a href="javascript:void(0);">首页</a>
-          </li>
-          <li v-if="ongoing_currentPage > 1">
-            <a href="javascript:void(0);" page="#[ongoing_currentPage-1]" v-on:click="page_ongoing"
-               class="text-bold">上页</a>
-          </li>
-          <li v-if="ongoing_currentPage == 1" class="disabled">
-            <a href="javascript:void(0);">上页</a>
+{#          <li v-if="ongoing_currentPage == 1" class="disabled">#}
+{#            <a href="javascript:void(0);">上页</a>#}
+{#          </li>#}
+          <li v-on:click="reload" class="disabled">
+            <a style="width: 45px" href="javascript:void(0);">#[ongoing_currentPage]</a>
           </li>
           <li v-if="ongoing_currentPage < ongoing_totalPage">
-            <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing"
-               class="text-bold">下页</a>
+            <template v-for="n in 2">
+                <a v-if="ongoing_currentPage+n+1 <=ongoing_totalPage" href="javascript:void(0);" page="#[ongoing_currentPage+n+1]" style="width: 45px"
+                   title="第#[ongoing_currentPage+n+1]页" v-on:click="page_ongoing" class="text-bold">#[ongoing_currentPage+n+1]</a>
+            </template>
+{#            <a href="javascript:void(0);" page="#[ongoing_currentPage+1]" v-on:click="page_ongoing" title="第#[ongoing_currentPage+1]页"#}
+{#               class="text-bold">下页</a>#}
           </li>
-          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
-            <a href="javascript:void(0);">下页</a>
+{#          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">#}
+{#            <a href="javascript:void(0);">下页</a>#}
+{#          </li>#}
+          <li v-if="ongoing_currentPage+2 < ongoing_totalPage">
+            <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" title="第#[ongoing_totalPage]页"
+              class="text-bold">末页</a>
           </li>
-          <li v-if="ongoing_currentPage < ongoing_totalPage">
-            <a href="javascript:void(0);" page="#[ongoing_totalPage]" v-on:click="page_ongoing" class="text-bold">末页</a>
-          </li>
-          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">
-            <a href="javascript:void(0);">末页</a>
-          </li>
-          <li v-on:click="reload" class="text-bold">
-            <a href="javascript:void(0);">刷新</a>
-          </li>
+{#          <li v-if="ongoing_currentPage == ongoing_totalPage" class="disabled">#}
+{#            <a href="javascript:void(0);">末页</a>#}
+{#          </li>#}
+{#          <li v-on:click="reload" class="text-bold">#}
+{#            <a href="javascript:void(0);">刷新</a>#}
+{#          </li>#}
         </ul>
         <div class="form-group">
             &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
@@ -174,6 +186,9 @@
           <th class="text-center hidden-sm hidden-xs" style="width:60px;">
             <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
           </th>
+          <th class="visible-sm visible-xs" id="show_all_detail" style="width:50px;" v-on:click="show_all_detail">
+            <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
+          </th>
           <th>Date</th>
           <th>Name</th>
           <th class="hidden-sm hidden-xs">Status</th>
@@ -188,6 +203,9 @@
         <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
           <td class="text-center hidden-sm hidden-xs">
             <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+          </td>
+          <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}">
+            <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
           </td>
           <td>
             <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
@@ -240,13 +258,14 @@
             {% endif %}
           </td>
         </tr>
-        <tr class="hide hidden-md hidden-lg" id="detail_{!! item.id !!}">
-          <td colspan="8">
+        <tr class="hide" id="detail_{!! item.id !!}">
+          <td colspan="3" class="hidden-sm hidden-xs"></td>
+          <td colspan="100%">
             <div>{!! item.address_display !!}</div>
             <div class="pull-left">
               {!! item.product_summary !!}
             </div>
-            <div class="pull-left">
+            <div class="pull-right visible-sm visible-xs">
               {!! item.shipping_order !!}
             </div>
           </td>
@@ -261,33 +280,46 @@
       <div class="form-inline" align="center">
         <ul class="pagination pagination-sm no-margin form-group">
           <li v-if="finished_currentPage > 1">
-            <a href="javascript:void(0);" page="1" v-on:click="page_finished" class="text-bold">首页</a>
+            <a v-if="finished_currentPage-2 > 1" href="javascript:void(0);" page="1" v-on:click="page_finished" title="第1页" class="text-bold">首页</a>
           </li>
-          <li v-if="finished_currentPage == 1" class="disabled">
-            <a href="javascript:void(0);">首页</a>
-          </li>
+{#          <li v-if="finished_currentPage == 1" class="disabled">#}
+{#            <a href="javascript:void(0);">首页</a>#}
+{#          </li>#}
           <li v-if="finished_currentPage > 1">
-            <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" class="text-bold">上页</a>
+{#            <a href="javascript:void(0);" page="#[finished_currentPage-1]" v-on:click="page_finished" title="第#[finished_currentPage-1]页"#}
+{#               class="text-bold">上页</a>#}
+            <template v-for="n in 2">
+                <a v-if="finished_currentPage-2+n > 0" href="javascript:void(0);" page="#[finished_currentPage-2+n]" style="width: 45px"
+                   title="第#[finished_currentPage-2+n]页" v-on:click="page_finished" class="text-bold">#[finished_currentPage-2+n]</a>
+            </template>
           </li>
-          <li v-if="finished_currentPage == 1" class="disabled">
-            <a href="javascript:void(0);">上页</a>
+{#          <li v-if="finished_currentPage == 1" class="disabled">#}
+{#            <a href="javascript:void(0);">上页</a>#}
+{#          </li>#}
+          <li v-on:click="reload" class="disabled">
+            <a style="width: 45px" href="javascript:void(0);" title="第#[finished_currentPage]页">#[finished_currentPage]</a>
           </li>
           <li v-if="finished_currentPage < finished_totalPage">
-            <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" class="text-bold">下页</a>
+            <template v-for="n in 2">
+                <a v-if="finished_currentPage+n+1 <=finished_totalPage" href="javascript:void(0);" page="#[finished_currentPage+n+1]" style="width: 45px"
+                   title="第#[finished_currentPage+n+1]页" v-on:click="page_finished" class="text-bold">#[finished_currentPage+n+1]</a>
+            </template>
+{#            <a href="javascript:void(0);" page="#[finished_currentPage+1]" v-on:click="page_finished" title="第#[finished_currentPage+1]页"#}
+{#               class="text-bold">下页</a>#}
           </li>
-          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
-            <a href="javascript:void(0);">下页</a>
-          </li>
-          <li v-if="finished_currentPage < finished_totalPage">
-            <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished"
+{#          <li v-if="finished_currentPage == finished_totalPage" class="disabled">#}
+{#            <a href="javascript:void(0);">下页</a>#}
+{#          </li>#}
+          <li v-if="finished_currentPage+2 < finished_totalPage">
+            <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished" title="第#[finished_totalPage]页"
                class="text-bold">末页</a>
           </li>
-          <li v-if="finished_currentPage == finished_totalPage" class="disabled">
-            <a href="javascript:void(0);">末页</a>
-          </li>
-          <li v-on:click="reload" class="text-bold">
-            <a href="javascript:void(0);">刷新</a>
-          </li>
+{#          <li v-if="finished_currentPage == finished_totalPage" class="disabled">#}
+{#            <a href="javascript:void(0);">末页</a>#}
+{#          </li>#}
+{#          <li v-on:click="reload" class="text-bold">#}
+{#            <a href="javascript:void(0);">刷新</a>#}
+{#          </li>#}
         </ul>
         <div class="form-group">
             &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第 #[finished_currentPage]/#[finished_totalPage] 页

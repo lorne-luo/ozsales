@@ -47,5 +47,5 @@ def sms_record(request):
     sms_list = Sms.objects.all().order_by('-time')[:20]
     sms_records = ''
     for sms in sms_list:
-        sms_records += '[%s]%s| %s </br>\n' % (sms.time, sms.send_to, sms.content)
+        sms_records += '[%s] %s | %s\n\n' % (sms.time.strftime("%Y-%m-%d %H:%M:%S"), sms.send_to, sms.content)
     return HttpResponse(sms_records, content_type="text/plain")

@@ -12,6 +12,7 @@ from celery.task.schedules import crontab
 from dateutil import parser
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
+from ..express.models import ExpressOrder
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -34,7 +35,7 @@ def utf8sub(s, length):
     return s[:length]
 
 
-@periodic_task(run_every=crontab(minute='*/15', hour='7-24'))
+@periodic_task(run_every=crontab(minute='*/15', hour='7-0'))
 def ozbargin_task():
     url = 'https://www.ozbargain.com.au/feed'
     all_deals_url = 'https://www.ozbargain.com.au/deals/feed'
@@ -108,7 +109,7 @@ smzdm_last_date = 'schedule.smzdm.last_date'
 smzdm_keywords = []
 
 
-@periodic_task(run_every=crontab(minute='*/20', hour='7-24'))
+@periodic_task(run_every=crontab(minute='*/20', hour='7-0'))
 def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
@@ -181,3 +182,12 @@ def get_aud_rmb():
     sender.send_to_self(value)
 
     return rate.aud_rmb_rate
+
+
+@periodic_task(run_every=crontab(hour=10, minute=30))
+def express_id_upload_task():
+    unupload_order = ExpressOrder.objects.filter(id_upload=False)
+    if unupload_order.exists():
+        ids = ','.join([o.track_id for o in unupload_order])
+        sender = MessageSender()
+        sender.send_to_self('Upload ID for %s' % ids)

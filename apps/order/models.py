@@ -36,7 +36,7 @@ class Order(models.Model):
     code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    address_copy = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('address'))
+    address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Paid Time'))
@@ -57,6 +57,7 @@ class Order(models.Model):
     payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
     remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
@@ -110,10 +111,13 @@ class Order(models.Model):
                 customer.last_order_time = self.create_time
                 customer.order_count = customer.order_set.filter(status=ORDER_STATUS.FINISHED).count()
                 customer.save(update_fields=['last_order_time', 'order_count'])
+        elif status_value == ORDER_STATUS.SHIPPING:
+            self.aud_rmb_rate = rate.aud_rmb_rate
+            self.save(update_fields=['status', 'aud_rmb_rate'])
         else:
             self.save(update_fields=['status'])
 
-        self.update_monthly_report()
+        self.update_price()
 
     def update_monthly_report(self):
         if self.is_paid and not self.status == ORDER_STATUS.CREATED:
@@ -129,7 +133,10 @@ class Order(models.Model):
             self.address = self.customer.primary_address
 
         if self.address:
-            self.address_copy = str(self.address)
+            self.address_text = self.address.get_text()
+
+        if not self.pk:
+            self.aud_rmb_rate = rate.aud_rmb_rate
 
         super(Order, self).save()
 
@@ -137,6 +144,7 @@ class Order(models.Model):
             code = str(self.id % 10000).zfill(5)
             self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
             self.save(update_fields=['code'])
+
 
     def get_total_fee(self):
         # 微信支付金额单位:分
@@ -156,6 +164,9 @@ class Order(models.Model):
     get_id_link.allow_tags = True
     get_id_link.short_description = 'ID'
 
+    def get_aud_rmb_rate(self):
+        return self.aud_rmb_rate or rate.aud_rmb_rate
+
     def update_price(self):
         self.total_amount = 0
         self.product_cost_aud = 0
@@ -169,7 +180,7 @@ class Order(models.Model):
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
-        self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
+        self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -178,7 +189,7 @@ class Order(models.Model):
                 self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
+        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
 
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
@@ -349,7 +360,7 @@ class OrderProduct(models.Model):
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        return '%s x %s' % (self.name, self.amount)
+        return u'%s = ¥%d x %d' % (self.name, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:
