@@ -35,16 +35,28 @@ class InterestTag(models.Model):
         return '%s' % self.name
 
 
+class CustomerCart(models.Model):
+    customer = models.OneToOneField('Customer', blank=False, null=False, verbose_name=_('Customer'))
+    coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
+    origin_price = models.DecimalField(_(u'Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    final_price = models.DecimalField(_(u'Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+
+    def __str__(self):
+        return '%s' % self.customer.name
+
+
 class CartProduct(models.Model):
+    cart = models.ForeignKey('CustomerCart', blank=True, null=True, verbose_name=_('Cart'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     amount = models.IntegerField(_('Amount'), blank=True, null=True, )
 
     class Meta:
         verbose_name_plural = _('CartProducts')
         verbose_name = _('CartProduct')
+        unique_together = ('cart', 'product')
 
     def __str__(self):
-        return '%s x %s' % (self.product.get_name_cn(), self.amount)
+        return '[%s]%s x %s' % (self.cart.customer.name, self.product.get_name_cn(), self.amount)
 
 
 @python_2_unicode_compatible
@@ -80,7 +92,6 @@ class Customer(models.Model):
     subscribe_time = models.DateField(blank=True, null=True)
     remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
     groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
-    cart = models.ManyToManyField(CartProduct, blank=True, verbose_name=_('cart'))
 
     class Meta:
         verbose_name_plural = _('Customer')
