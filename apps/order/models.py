@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -12,22 +13,29 @@ from django.utils import timezone
 from calendar import monthrange
 from utils.enum import enum
 from settings.settings import rate
+from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
 
-ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED')
+log = logging.getLogger(__name__)
+
+ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED', 'CLOSED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, u'创建'),
+    (ORDER_STATUS.CONFIRMED, u'确认'),
     (ORDER_STATUS.SHIPPING, u'在途'),
     (ORDER_STATUS.DELIVERED, u'寄达'),
     (ORDER_STATUS.FINISHED, u'完成'),
+    (ORDER_STATUS.CANCELED, u'取消'),
+    (ORDER_STATUS.CLOSED, u'关闭')
 )
 
 
 @python_2_unicode_compatible
 class Order(models.Model):
+    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
@@ -46,13 +54,16 @@ class Order(models.Model):
                                      verbose_name=_(u'Ship Time'))
     total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True,
-                                          null=True)
+    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
+
+    app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
     def __str__(self):
         if self.id:
@@ -128,7 +139,17 @@ class Order(models.Model):
 
         if not self.pk:
             self.aud_rmb_rate = rate.aud_rmb_rate
-        return super(Order, self).save()
+
+        super(Order, self).save()
+
+        if self.id and not self.code:
+            code = str(self.id % 10000).zfill(5)
+            self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
+            self.save(update_fields=['code'])
+
+    def get_total_fee(self):
+        # 微信支付金额单位:分
+        return int(self.payment_price * 100)
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
@@ -247,6 +268,55 @@ class Order(models.Model):
 
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
+
+    @property
+    def app(self):
+        from ..weixin.models import WxApp
+        app = WxApp.objects.get(app_id=self.app_id)
+        return app
+
+    def get_wxorder(self, user_ip, trade_type="JSAPI"):
+        from ..weixin.models import WxOrder
+
+        wx_order = self.wxorder if self.wxorder else WxOrder(order=self)
+        if wx_order.is_success:
+            if self.get_total_fee() == wx_order.total_fee:
+                return wx_order
+            else:
+                # order price changed, delete old create new
+                wx_order.delete()
+                wx_order = WxOrder(order=self)
+
+        # request weixin unified order api
+        try:
+            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
+                                             out_trade_no=self.code,
+                                             total_fee=self.get_total_fee(), spbill_create_ip=user_ip)
+        except WeixinError as e:
+            log.info(e.message)
+            return None
+
+        wx_order.return_code = raw.return_code
+        wx_order.return_msg = raw.return_msg
+        wx_order.result_code = raw.result_code
+        wx_order.appid = raw.app_id
+        wx_order.mch_id = raw.mch_id
+        wx_order.device_info = raw.device_info
+        wx_order.nonce_str = raw.nonce_str
+        wx_order.sign = raw.sign
+        wx_order.err_code = raw.err_code
+        wx_order.err_code_des = raw.err_code_des
+        wx_order.trade_type = raw.trade_type
+        wx_order.prepay_id = raw.prepay_id
+        wx_order.total_fee = self.get_total_fee()
+
+        wx_order.save()
+        return wx_order
+
+    def get_jsapi(self, ip):
+        # create wx order and get jsapi
+        wx_order = self.get_wxorder(ip)
+        return wx_order.get_jsapi()
 
 
 @python_2_unicode_compatible

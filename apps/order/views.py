@@ -273,6 +273,32 @@ class OrderDetailView(CommonContextMixin, UpdateView):
         return obj
 
 
+class OrderPayView(CommonContextMixin, UpdateView):
+    model = Order
+    form_class = forms.OrderDetailForm
+    template_name = 'order/order_detail.html'
+
+    def get_ip(self, **kwargs):
+        ''' Reads IP, with alternative way for vestek ? '''
+        if self.request.META.get('HTTP_X_FORWARDED_FOR'):
+            ip_data = self.request.META.get('HTTP_X_FORWARDED_FOR').split(', ')[0]
+            ip = ip_data if ip_data != 'unknown' else None
+        else:
+            ip = self.request.META.get('REMOTE_ADDR')
+
+        if ip is None:
+            return None
+
+        return ip.strip()
+
+    def get_context_data(self, **kwargs):
+        from ..weixin.models import WxApp
+        context = super(OrderPayView, self).get_context_data(**kwargs)
+        self.object = self.get_object()
+        context['jsapi'] = self.object.get_jsapi(self.get_ip())
+        return context
+
+
 class OrderFilter(FilterSet):
     class Meta:
         model = Order
