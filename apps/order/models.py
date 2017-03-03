@@ -20,14 +20,16 @@ from ..store.models import Store
 
 log = logging.getLogger(__name__)
 
-ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED')
+ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED', 'CLOSED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, u'创建'),
+    (ORDER_STATUS.CONFIRMED, u'确认'),
     (ORDER_STATUS.SHIPPING, u'在途'),
     (ORDER_STATUS.DELIVERED, u'寄达'),
     (ORDER_STATUS.FINISHED, u'完成'),
-    (ORDER_STATUS.CANCELED, u'取消')
+    (ORDER_STATUS.CANCELED, u'取消'),
+    (ORDER_STATUS.CLOSED, u'关闭')
 )
 
 
@@ -61,7 +63,7 @@ class Order(models.Model):
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
 
-    app_id = models.CharField(_(u'App ID'), max_length=128, null=False, blank=False)
+    app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
     def __str__(self):
         if self.id:
@@ -144,7 +146,6 @@ class Order(models.Model):
             code = str(self.id % 10000).zfill(5)
             self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
             self.save(update_fields=['code'])
-
 
     def get_total_fee(self):
         # 微信支付金额单位:分

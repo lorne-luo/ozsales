@@ -43,7 +43,7 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    url(r'^customer/add_cart', login_required(views_api.AddCart.as_view()), base_name='api-add-cart'),
+    url(r'^customer/add_cart', views_api.AddCart.as_view(), name='api-add-cart'),
 )
 
 # reverse('customer:api-customer-list'), reverse('customer:api-customer-detail', kwargs={'pk': 1})
