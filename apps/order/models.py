@@ -62,7 +62,7 @@ class Order(models.Model):
     aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
-
+    coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
     def __str__(self):
@@ -391,3 +391,24 @@ def update_price_from_orderproduct(sender, instance=None, created=False, update_
 def order_product_deleted(sender, **kwargs):
     order_product = kwargs['instance']
     order_product.order.update_price()
+
+
+def confirm_order_from_cart(cart):
+    order = Order(customer=cart.customer, coupon=cart.coupon, payment_price=0, origin_sell_rmb=0)
+    order.save()
+
+    for cart_product in cart.products.all():
+        product = OrderProduct(product=cart_product.product, order=order, amount=cart_product.amount,
+                               name=cart_product.product.get_name_cn(),
+                               sell_price_rmb=cart_product.product.safe_sell_price,
+                               total_price_rmb=cart_product.amount * cart_product.product.safe_sell_price)
+        product.save()
+        order.origin_sell_rmb += product.total_price_rmb
+        cart_product.delete()
+
+    cart.coupon = None
+    cart.save(update_fields=['coupon'])
+
+    # todo coupon
+    order.payment_price = order.origin_sell_rmb
+    order.save(update_fields=['origin_sell_rmb', 'payment_price'])

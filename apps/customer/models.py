@@ -7,7 +7,7 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
 from django.db.models import Q
-from django.db.models.signals import post_save, pre_save, m2m_changed
+from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
 from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
@@ -39,10 +39,24 @@ class CustomerCart(models.Model):
     customer = models.OneToOneField('Customer', blank=False, null=False, verbose_name=_('Customer'))
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     origin_price = models.DecimalField(_(u'Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    final_price = models.DecimalField(_(u'Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_(u'Price'), max_digits=8, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return '%s' % self.customer.name
+
+    def update_price(self):
+        self.origin_price = 0
+        self.payment_price = 0
+        for p in self.products:
+            self.origin_price += p.product.safe_sell_price * p.amount
+
+        # todo coupon
+        self.payment_price = self.origin_price
+        self.save(update_fields=['payment_price', 'origin_price'])
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.update_price()
+        super(CustomerCart, self).save()
 
 
 class CartProduct(models.Model):
@@ -240,3 +254,15 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
+
+
+@receiver(post_delete, sender=CartProduct)
+def cart_product_deleted(sender, **kwargs):
+    cart_product = kwargs['instance']
+    cart_product.cart.update_price()
+
+
+@receiver(post_save, sender=CartProduct)
+def cart_product_post_save(sender, instance=None, created=False, update_fields=None, **kwargs):
+    if instance.cart:
+        instance.cart.update_price()
