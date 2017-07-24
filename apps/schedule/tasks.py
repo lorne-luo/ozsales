@@ -19,7 +19,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
-                     'Trifecta', 'filco', 'Supercheap Auto', 'SCA', 'autobarn', 'Repco', 'engine oil']
+                     'Trifecta', 'filco', 'logitech']
 
 
 def get_rss(url):
