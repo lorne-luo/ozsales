@@ -16,6 +16,7 @@ urlpatterns += patterns('',
     url(r'^report/monthlyreport/list/$', login_required(views.MonthlyReportListView.as_view()), name='monthlyreport-list'),
     url(r'^report/monthlyreport/(?P<pk>\d+)/$', login_required(views.MonthlyReportDetailView.as_view()), name='monthlyreport-detail'),
     url(r'^report/monthlyreport/(?P<pk>\d+)/edit/$', login_required(views.MonthlyReportUpdateView.as_view()), name='monthlyreport-update'),
+    url(r'^report/total_report/$', views.TotalReport.as_view(),name='total-report'),
 )
 
 
