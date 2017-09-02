@@ -89,10 +89,10 @@ def ozbargin_task():
             excludes = subscribe.get_exclude_list()
 
             # check keywords
-            if any([x.lower() in title.lower() for x in excludes]):
+            if any([x.lower() in title.lower() for x in excludes if x]):
                 continue
 
-            flag = any([key.lower() in title.lower() for key in includes])
+            flag = any([key.lower() in title.lower() for key in includes if key])
             if votes_pos > 30:
                 title = '* %s' % title
                 flag = True
