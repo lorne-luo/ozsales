@@ -80,4 +80,5 @@ class TotalReport(TemplateView):
                 'total_sell_price': Order.objects.aggregate(Sum('sell_price_rmb'))['sell_price_rmb__sum'],
                 'total_cost_aud': Order.objects.aggregate(Sum('product_cost_aud'))['product_cost_aud__sum'],
                 'total_profit_rmb': Order.objects.aggregate(Sum('profit_rmb'))['profit_rmb__sum'],
+                'total_express_fee': Order.objects.aggregate(Sum('shipping_fee'))['shipping_fee__sum'],
                 }
