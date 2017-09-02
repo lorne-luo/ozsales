@@ -22,6 +22,7 @@ apps_urlpatterns = patterns('',
     url(r'^', include('apps.express.urls', namespace='express')),
     url(r'^', include('apps.report.urls', namespace='report')),
     url(r'^', include('apps.weixin.urls', namespace='weixin')),
+    url(r'^', include('apps.schedule.urls', namespace='schedule')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
 )
 # Member frontend

@@ -335,33 +335,13 @@ class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
     }
 
 
-# class OrderProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-#     """ Add views for OrderProduct """
-#     model = OrderProduct
-#     form_class = forms.OrderProductAddForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("orderproduct.add_orderproduct",)
-#     }
-#
-#
-# class OrderProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-#     """ Update views for OrderProduct """
-#     model = OrderProduct
-#     form_class = forms.OrderProductUpdateForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("orderproduct.change_orderproduct",)
-#     }
-
-
 class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     """ Detail views for OrderProduct """
     model = OrderProduct
     form_class = forms.OrderProductDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("orderproduct.view_orderproduct",)
+        "all": ("order.view_orderproduct",)
     }
 
 

@@ -13,13 +13,14 @@ from dateutil import parser
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
 from ..express.models import ExpressOrder
+from .models import DealSubscribe
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
-                     'Trifecta', 'filco', 'logitech']
+                     'Trifecta', 'filco']
 
 
 def get_rss(url):
@@ -37,13 +38,13 @@ def utf8sub(s, length):
 
 @periodic_task(run_every=crontab(minute='*/15', hour='7-0'))
 def ozbargin_task():
-    url = 'https://www.ozbargain.com.au/feed'
-    all_deals_url = 'https://www.ozbargain.com.au/deals/feed'
+    url = 'https://www.ozbargain.com.au/deals/feed'
 
-    if not ozbargin_keywords:
+    subscribe_list = DealSubscribe.objects.filter(is_active=True)
+    if not subscribe_list.count():
         return
 
-    data = urllib2.urlopen(urllib2.Request(all_deals_url))
+    data = urllib2.urlopen(urllib2.Request(url))
     soup = BeautifulSoup(data, "html.parser")
     items = soup.find_all("item")
     last_date_str = r.get(ozbargin_last_date)
@@ -83,24 +84,28 @@ def ozbargin_task():
         elif item_date > new_last_date:
             new_last_date = item_date
 
-        # check keywords
-        flag = False
-        for key in ozbargin_keywords:
-            if key.lower() in title.lower() or votes_pos > 30:
-                if votes_pos > 30:
-                    title = '* %s' % title
-                flag = True
-                break
+        sender = MessageSender()
+        for subscribe in subscribe_list:
+            includes = subscribe.get_keyword_list()
+            excludes = subscribe.get_exclude_list()
 
-        if flag:
-            text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
-            description = ' '.join(x.strip() for x in text_list)
-            summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
-            content = summary + description
-            sender = MessageSender()
-            result, detail = sender.send_to_self(content)
-            # print 'sending', content
-            log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
+            # check keywords
+            if any([x.lower() in title.lower() for x in excludes if x]):
+                continue
+
+            flag = any([key.lower() in title.lower() for key in includes if key])
+            if votes_pos > 30:
+                title = '* %s' % title
+                flag = True
+
+            if flag:
+                text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
+                description = ' '.join(x.strip() for x in text_list)
+                summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
+                content = summary + description
+                result, detail = sender.send_to_self(content)
+                # print 'sending', content
+                log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(ozbargin_last_date, new_last_date)
 
