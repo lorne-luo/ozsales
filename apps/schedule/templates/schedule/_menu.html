@@ -7,14 +7,14 @@
   </a>
   <ul class="treeview-menu menu-open" style="display: block;">
 
-    {% if perms.schedule.view_dealtask %}
+    {% if perms.schedule.view_dealsubscribe %}
     <li>
-      <a href="{% url 'schedule:dealtask-list' %}"  class="main">
+      <a href="{% url 'schedule:dealsubscribe-list' %}"  class="main">
         <i class="fa fa-circle-o"></i>
-        DealTask
+        DealSubscribe
       </a>
-      {% if perms.schedule.add_dealtask %}
-      <a href="{% url 'schedule:dealtask-add' %}" class="pull-right">
+      {% if perms.schedule.add_dealsubscribe %}
+      <a href="{% url 'schedule:dealsubscribe-add' %}" class="pull-right">
          <i class="fa fa-plus" aria-hidden="true"></i>
       </a>
       {%endif%}

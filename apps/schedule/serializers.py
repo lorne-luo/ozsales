@@ -4,8 +4,8 @@ from core.api.serializers import BaseSerializer
 from models import DealSubscribe
 
 
-class DealTaskSerializer(BaseSerializer):
-    """ Serializer for DealTask """
+class DealSubscribeSerializer(BaseSerializer):
+    """ Serializer for DealSubscribe """
 
     class Meta:
         model = DealSubscribe

@@ -10,17 +10,17 @@ urlpatterns = []
 router = PostHackedRouter()
 router.include_root_view = False
 
-# urls for dealtask
+# urls for DealSubscribe
 urlpatterns += patterns('',
-    url(r'^schedule/dealtask/add/$', login_required(views.DealTaskAddView.as_view()), name='dealtask-add'),
-    url(r'^schedule/dealtask/list/$', login_required(views.DealTaskListView.as_view()), name='dealtask-list'),
-    url(r'^schedule/dealtask/(?P<pk>\d+)/$', login_required(views.DealTaskDetailView.as_view()), name='dealtask-detail'),
-    url(r'^schedule/dealtask/(?P<pk>\d+)/edit/$', login_required(views.DealTaskUpdateView.as_view()), name='dealtask-update'),
-)
+                        url(r'^schedule/dealsubscribe/add/$', login_required(views.DealSubscribeAddView.as_view()), name='dealsubscribe-add'),
+                        url(r'^schedule/dealsubscribe/list/$', login_required(views.DealSubscribeListView.as_view()), name='dealsubscribe-list'),
+                        url(r'^schedule/dealsubscribe/(?P<pk>\d+)/$', login_required(views.DealSubscribeDetailView.as_view()), name='dealsubscribe-detail'),
+                        url(r'^schedule/dealsubscribe/(?P<pk>\d+)/edit/$', login_required(views.DealSubscribeUpdateView.as_view()), name='dealsubscribe-update'),
+                        )
 
 
-# reverse('schedule:api-dealtask-list'), reverse('schedule:api-dealtask-detail', kwargs={'pk': 1})
-router.register(r'api/schedule/dealtask', views.DealTaskViewSet, base_name='api-dealtask')
+# reverse('schedule:api-dealsubscribe-list'), reverse('schedule:api-dealsubscribe-detail', kwargs={'pk': 1})
+router.register(r'api/schedule/dealsubscribe', views.DealSubscribeViewSet, base_name='api-dealsubscribe')
 
 
 urlpatterns += router.urls

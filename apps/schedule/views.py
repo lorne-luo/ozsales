@@ -10,49 +10,49 @@ import serializers
 import forms
 
 
-class DealTaskListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-    """ List views for DealTask """
+class DealSubscribeListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+    """ List views for DealSubscribe """
     model = DealSubscribe
-    template_name_suffix = '_list'  # schedule/dealtask_list.html
+    template_name_suffix = '_list'  # schedule/dealsubscribe_list.html
     permissions = {
-        "all": ("schedule.view_dealtask",)
+        "all": ("schedule.view_dealsubscribe",)
     }
 
 
-class DealTaskAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-    """ Add views for DealTask """
+class DealSubscribeAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+    """ Add views for DealSubscribe """
     model = DealSubscribe
-    form_class = forms.DealTaskAddForm
+    form_class = forms.DealSubscribeAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("dealtask.add_dealtask",)
+        "all": ("schedule.add_dealsubscribe",)
     }
 
 
-class DealTaskUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    """ Update views for DealTask """
+class DealSubscribeUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Update views for DealSubscribe """
     model = DealSubscribe
-    form_class = forms.DealTaskUpdateForm
+    form_class = forms.DealSubscribeUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("dealtask.change_dealtask",)
+        "all": ("schedule.change_dealsubscribe",)
     }
 
 
-class DealTaskDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-    """ Detail views for DealTask """
+class DealSubscribeDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    """ Detail views for DealSubscribe """
     model = DealSubscribe
-    form_class = forms.DealTaskDetailForm
+    form_class = forms.DealSubscribeDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("dealtask.view_dealtask",)
+        "all": ("schedule.view_dealsubscribe",)
     }
 
 
-class DealTaskViewSet(CommonViewSet):
-    """ API views for DealTask """
+class DealSubscribeViewSet(CommonViewSet):
+    """ API views for DealSubscribe """
     queryset = DealSubscribe.objects.all()
-    serializer_class = serializers.DealTaskSerializer
+    serializer_class = serializers.DealSubscribeSerializer
     filter_fields = ['id'] + ['includes', 'excludes', 'is_active']
     search_fields = ['includes', 'excludes', 'is_active']
 

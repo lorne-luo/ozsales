@@ -3,24 +3,24 @@ from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from models import DealSubscribe
 
 
-class DealTaskAddForm(ModelForm):
-    """ Add form for DealTask """
+class DealSubscribeAddForm(ModelForm):
+    """ Add form for DealSubscribe """
 
     class Meta:
         model = DealSubscribe
         fields = ['includes', 'excludes', 'is_active']
 
 
-class DealTaskDetailForm(ModelForm):
-    """ Detail form for DealTask """
+class DealSubscribeDetailForm(ModelForm):
+    """ Detail form for DealSubscribe """
 
     class Meta:
         model = DealSubscribe
         fields = ['includes', 'excludes', 'is_active']
 
 
-class DealTaskUpdateForm(ModelForm):
-    """ Update form for DealTask """
+class DealSubscribeUpdateForm(ModelForm):
+    """ Update form for DealSubscribe """
 
     class Meta:
         model = DealSubscribe
