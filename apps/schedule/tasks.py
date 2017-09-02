@@ -40,7 +40,8 @@ def utf8sub(s, length):
 def ozbargin_task():
     url = 'https://www.ozbargain.com.au/deals/feed'
 
-    if not DealSubscribe.objects.filter(is_active=True).count():
+    subscribe_list = DealSubscribe.objects.filter(is_active=True)
+    if not subscribe_list.count():
         return
 
     data = urllib2.urlopen(urllib2.Request(url))
@@ -84,7 +85,7 @@ def ozbargin_task():
             new_last_date = item_date
 
         sender = MessageSender()
-        for subscribe in DealSubscribe.objects.filter(is_active=True):
+        for subscribe in subscribe_list:
             includes = subscribe.get_keyword_list()
             excludes = subscribe.get_exclude_list()
 
