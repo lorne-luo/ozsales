@@ -15,9 +15,13 @@ class DealSubscribe(models.Model):
     create_at = models.DateTimeField(_(u'create at'), auto_now_add=True, null=True)
 
     def get_keyword_list(self):
-        return self.includes.split(' ')
+        includes = self.includes.replace(',', ' ')
+        return includes.split(' ')
+
+    def get_exclude_list(self):
+        excludes = self.excludes.replace(',', ' ')
+        return excludes.split(' ')
 
     def send_msg(self, msg):
         sender = MessageSender()
         sender.send_sms(self.mobile, msg, 'DealSubscribe #%s' % self.id)
-

@@ -20,7 +20,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
-                     'Trifecta', 'filco', 'logitech']
+                     'Trifecta', 'filco']
 
 
 def get_rss(url):
@@ -85,14 +85,17 @@ def ozbargin_task():
 
         sender = MessageSender()
         for subscribe in DealSubscribe.objects.filter(is_active=True):
+            includes = subscribe.get_keyword_list()
+            excludes = subscribe.get_exclude_list()
+
             # check keywords
-            flag = False
-            for key in subscribe.get_keyword_list():
-                if key.lower() in title.lower() or votes_pos > 30:
-                    if votes_pos > 30:
-                        title = '* %s' % title
-                    flag = True
-                    break
+            if any([x.lower() in title.lower() for x in excludes]):
+                continue
+
+            flag = any([key.lower() in title.lower() for key in includes])
+            if votes_pos > 30:
+                title = '* %s' % title
+                flag = True
 
             if flag:
                 text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
