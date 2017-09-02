@@ -24,7 +24,7 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
     form_class = forms.ExpressCarrierAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("expresscarrier.add_expresscarrier",)
+        "all": ("express.add_expresscarrier",)
     }
 
 
@@ -33,7 +33,7 @@ class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMi
     form_class = forms.ExpressCarrierUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("expresscarrier.change_expresscarrier",)
+        "all": ("express.change_expresscarrier",)
     }
 
 
@@ -42,7 +42,7 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
     form_class = forms.ExpressCarrierDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("expresscarrier.view_expresscarrier",)
+        "all": ("express.view_expresscarrier",)
     }
 
 

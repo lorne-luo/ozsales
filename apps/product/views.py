@@ -123,7 +123,7 @@ class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
     form_class = forms.BrandAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("brand.add_brand",)
+        "all": ("product.add_brand",)
     }
 
 
@@ -133,7 +133,7 @@ class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     form_class = forms.BrandUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("brand.change_brand",)
+        "all": ("product.change_brand",)
     }
 
 
@@ -143,7 +143,7 @@ class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     form_class = forms.BrandDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("brand.view_brand",)
+        "all": ("product.view_brand",)
     }
 
 

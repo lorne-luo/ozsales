@@ -30,7 +30,7 @@ class MonthlyReportAddView(MultiplePermissionsRequiredMixin, CommonContextMixin,
     form_class = forms.MonthlyReportAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("monthlyreport.add_monthlyreport",)
+        "all": ("report.add_monthlyreport",)
     }
 
 
@@ -40,7 +40,7 @@ class MonthlyReportUpdateView(MultiplePermissionsRequiredMixin, CommonContextMix
     form_class = forms.MonthlyReportUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("monthlyreport.change_monthlyreport",)
+        "all": ("report.change_monthlyreport",)
     }
 
 
@@ -50,7 +50,7 @@ class MonthlyReportDetailView(MultiplePermissionsRequiredMixin, CommonContextMix
     form_class = forms.MonthlyReportDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("monthlyreport.view_monthlyreport",)
+        "all": ("report.view_monthlyreport",)
     }
 
 
