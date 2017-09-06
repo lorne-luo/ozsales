@@ -1,4 +1,10 @@
 var OrderEditPageVue = CommonFormPageVue.extend({
+    ready: function () {
+        $("#address-text").text($("#id_address option:selected").text());
+        $("#id_address").change(function () {
+            $("#address-text").text($("option:selected", this).text());
+        });
+    },
     data: function () {
         return {
             list_api_tag: 'order:api-order-list',
