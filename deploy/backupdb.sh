@@ -1,2 +1,2 @@
-DATE=`date +%F`
-mysqldump -uroot -proot ozsales > /home/luotao/backup/ozsales/`date +%F`.sql
+mysqldump -uroot -proot ozsales | gzip -c > /home/luotao/backup/ozsales/`date +%d`.sql.gz
+
