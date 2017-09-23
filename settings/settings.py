@@ -15,7 +15,6 @@ from decimal import Decimal
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -69,11 +68,10 @@ INSTALLED_APPS = (
     'django_js_reverse',
     'activelink',
     'rest_framework',
-    'rest_framework.authtoken', # must come after accounts for migrations to work
+    'rest_framework.authtoken',  # must come after accounts for migrations to work
     'taggit',
     'easy_thumbnails',
 )
-
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
@@ -91,7 +89,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'settings.urls'
 
 WSGI_APPLICATION = 'settings.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -168,7 +165,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'dealer.contrib.django.context_processor',
 )
 
-
 # Auth
 AUTH_USER_MODEL = 'member.Seller'
 AUTH_PROFILE_MODULE = 'customer.customer'
@@ -179,7 +175,7 @@ LOGOUT_URL = '/member/login/'
 
 LOGIN_REDIRECT_URL = '/member/profile/'
 
-SESSION_COOKIE_AGE = 604800 # 1 week
+SESSION_COOKIE_AGE = 604800 * 4  # 1 week
 
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
@@ -194,7 +190,6 @@ PRODUCT_PHOTO_FOLDER = 'product'
 
 # for django-guardian
 ANONYMOUS_USER_ID = -1
-
 
 # Test
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -233,7 +228,7 @@ TINYMCE_DEFAULT_CONFIG = {
     'theme': 'modern',
     'plugins': 'link image preview codesample contextmenu table code',
     'toolbar1': 'bold italic underline | alignleft aligncenter alignright alignjustify '
-               '| bullist numlist | outdent indent | table | link image | codesample | preview code',
+                '| bullist numlist | outdent indent | table | link image | codesample | preview code',
     'contextmenu': 'formats | link image',
     'menubar': False,
     'inline': False,
@@ -245,7 +240,7 @@ TINYMCE_DEFAULT_CONFIG = {
 # ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
 
 REST_FRAMEWORK = {
-    #'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
+    # 'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
     'PAGE_SIZE': 15,
     'PAGINATE_BY_PARAM': 'limit',  # Allow client to override, using `?limit=xxx`.
     'MAX_PAGINATE_BY': 999,  # Maximum limit allowed when using `?limit=xxx`.
@@ -270,9 +265,9 @@ REST_FRAMEWORK = {
         # 'rest_framework.renderers.JSONRenderer',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        #'rest_framework.permissions.AllowAny',
-        #'rest_framework.permissions.IsAuthenticated',
-        #'rest_framework.permissions.DjangoObjectPermissions',
+        # 'rest_framework.permissions.AllowAny',
+        # 'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.DjangoObjectPermissions',
         # 'utils.api.permission.ObjectPermissions',
         'core.api.permission.CommonAPIPermissions',
     ],
@@ -284,7 +279,7 @@ REST_FRAMEWORK = {
         'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
-        #'rest_framework.filters.DjangoObjectPermissionsFilter', #Will exclusively use guardian tables for access
+        # 'rest_framework.filters.DjangoObjectPermissionsFilter', #Will exclusively use guardian tables for access
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
@@ -300,7 +295,6 @@ REST_FRAMEWORK = {
     )
 }
 
-
 # ----------------------------------------- CONSTANTS -----------------------------------------------
 SITE_NAME = 'OZ SALE'
 
@@ -308,12 +302,12 @@ SITE_NAME = 'OZ SALE'
 
 import dbsettings
 
+
 class ForexRate(dbsettings.Group):
     aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=5.3)
 
 
 rate = ForexRate()
-
 
 # for development env!
 # rename settings_dev.py.example to settings_dev.py
