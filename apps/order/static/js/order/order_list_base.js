@@ -54,6 +54,11 @@ var OrderListPageVue = CommonListPageVue.extend({
             this.currentPage = page;
             this.loadData(this.get_param());
         },
+        makr_as_purchased: function (event) {
+            var productID = $(event.target).val();
+            var url = Urls[self.product_detail_api_tag](productID);
+            console.log(url);
+        },
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
             this.ongoing_currentPage = num;

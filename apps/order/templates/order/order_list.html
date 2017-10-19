@@ -118,6 +118,7 @@
           <td colspan="100%">
             <div>{!! item.address_display !!}</div>
             <div class="pull-left">
+                <input type="checkbox" v-on:click="makr_as_purchased($event)" name="markPurchased" value="#[item.id]" />
               {!! item.product_summary !!}
             </div>
             <div class="pull-right visible-sm visible-xs">
