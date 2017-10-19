@@ -330,6 +330,7 @@ class OrderProduct(models.Model):
     cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
+    is_purchased = models.BooleanField(default=False)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
