@@ -105,6 +105,7 @@ class Order(models.Model):
     def set_status(self, status_value):
         self.status = status_value
         if status_value == ORDER_STATUS.FINISHED:
+            self.products.update(is_purchased=True)
             if self.is_paid:
                 self.finish_time = datetime.datetime.now()
                 self.save(update_fields=['status', 'finish_time'])
@@ -116,6 +117,7 @@ class Order(models.Model):
         elif status_value == ORDER_STATUS.SHIPPING:
             self.aud_rmb_rate = rate.aud_rmb_rate
             self.save(update_fields=['status', 'aud_rmb_rate'])
+            self.products.update(is_purchased=True)
         else:
             self.save(update_fields=['status'])
 
@@ -330,6 +332,7 @@ class OrderProduct(models.Model):
     cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
+    is_purchased = models.BooleanField(default=False)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):

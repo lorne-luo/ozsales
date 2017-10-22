@@ -4,6 +4,7 @@ var orderListPageVue = new OrderListPageVue({
             // API
             list_api_tag:   'order:api-order-list',
             detail_api_tag: 'order:api-order-detail',
+            product_detail_api_tag: 'order:api-orderproduct-detail',
             delete_api_tag: 'order:api-order-delete',
             // page
             create_url_tag: 'order:order-add',
