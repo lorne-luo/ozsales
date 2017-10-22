@@ -202,7 +202,7 @@ class Product(models.Model):
         if self.spec3:
             spec += ' ' + self.spec3
         if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+            return '%s %s%s' % (self.brand.name_cn, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
 
