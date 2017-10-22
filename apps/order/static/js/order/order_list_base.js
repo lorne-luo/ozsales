@@ -15,10 +15,10 @@ var OrderListPageVue = CommonListPageVue.extend({
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
             if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
-                url = url + '?status=FINISHED';
+                var api_url = url + '?status=FINISHED';
 
                 $.AdminLTE.apiGet(
-                    url,
+                    api_url,
                     data,
                     function (resp) {
                         self.finished_items = resp.results;
@@ -28,11 +28,27 @@ var OrderListPageVue = CommonListPageVue.extend({
                         self.finished_currentPage = resp.current_page;
                     }
                 );
-            } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                url = url + '?status__in=CREATED,SHIPPING,DELIVERED';
+            }
+            if ($('.tab-content #pane-CREATED').hasClass('active') || _init) {
+                var api_url = url + '?status=CREATED';
 
                 $.AdminLTE.apiGet(
-                    url,
+                    api_url,
+                    data,
+                    function (resp) {
+                        self.created_items = resp.results;
+                        self.created__count = resp.count;
+                        self.created_perPage = resp.per_page;
+                        self.created_totalPage = resp.total_page;
+                        self.created_currentPage = resp.current_page;
+                    }
+                );
+            }
+            if ($('.tab-content #pane-ONGOING').hasClass('active') && !_init) {
+                var api_url = url + '?status__in=CREATED,SHIPPING,DELIVERED';
+
+                $.AdminLTE.apiGet(
+                    api_url,
                     data,
                     function (resp) {
                         self.ongoing_items = resp.results;
@@ -48,6 +64,8 @@ var OrderListPageVue = CommonListPageVue.extend({
             var page;
             if ($('.tab-content #pane-FINISHED').hasClass('active')) {
                 page = this.finished_currentPage;
+            } else if ($('.tab-content #pane-CREATED').hasClass('active')) {
+                page = this.created_currentPage;
             } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
                 page = this.ongoing_currentPage;
             }
@@ -68,6 +86,12 @@ var OrderListPageVue = CommonListPageVue.extend({
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
             this.ongoing_currentPage = num;
+            this.currentPage = num;
+            this.loadData(this.get_param());
+        },
+        page_created: function (event) {
+            var num = $(event.target).attr('page');
+            this.created_currentPage = num;
             this.currentPage = num;
             this.loadData(this.get_param());
         },
