@@ -103,9 +103,10 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         show_detail: function (pk, event) {
             if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {
+                var table = $(event.target).closest('table');
                 var tr = $(event.target).closest('tr');
                 var td = $('td.show_detail', tr);
-                if ($('#detail_' + pk).toggleClass('hide').hasClass('hide')) {
+                if ($('#detail_' + pk, table).toggleClass('hide').hasClass('hide')) {
                     td.html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
                 } else {
                     td.html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');
