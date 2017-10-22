@@ -118,8 +118,12 @@
           <td colspan="100%">
             <div>{!! item.address_display !!}</div>
             <div class="pull-left">
-                <input type="checkbox" v-on:click="makr_as_purchased($event)" name="markPurchased" value="#[item.id]" />
-              {!! item.product_summary !!}
+                <template v-for="product in item.products">
+                    <span>
+                        <input type="checkbox" v-on:click="makr_as_purchased($event)" checked="#[product.is_purchased]" name="markPurchased" value="#[product.id]" />
+                        {!! product.name !!}x{!! product.amount !!}
+                    </span><br/>
+                  </template>
             </div>
             <div class="pull-right visible-sm visible-xs">
               {!! item.shipping_order !!}

@@ -56,8 +56,14 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         makr_as_purchased: function (event) {
             var productID = $(event.target).val();
-            var url = Urls[self.product_detail_api_tag](productID);
-            console.log(url);
+            var value = $(event.target).prop("checked")
+            var url = Urls[this.product_detail_api_tag](productID);
+            $.AdminLTE.apiPost(
+                url,
+                $.param({'is_purchased': value}),
+                function (resp) {
+                }
+            );
         },
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
