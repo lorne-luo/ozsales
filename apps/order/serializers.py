@@ -70,7 +70,7 @@ class OrderSerializer(BaseSerializer):
     total_cost_aud = serializers.IntegerField()
     total_cost_rmb = serializers.IntegerField()
     profit_rmb = serializers.IntegerField()
-    products = OrderProductDisplaySerializer(many=True)
+    products = OrderProductDisplaySerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
