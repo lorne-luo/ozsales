@@ -16,11 +16,11 @@
 
 {% block tab_nav %}
   <ul class="nav nav-tabs">
-    <li data-status="ONGOING" class="active">
-      <a data-toggle="tab" href="#pane-ONGOING"> 进行中</a>
+    <li data-status="CREATED" class="active">
+      <a data-toggle="tab" href="#pane-CREATED"> 未完成</a>
     </li>
-    <li data-status="CREATED" >
-      <a data-toggle="tab" href="#pane-CREATED"> 未发货</a>
+    <li data-status="ONGOING">
+      <a data-toggle="tab" href="#pane-ONGOING"> 在途中</a>
     </li>
     <li data-status="FINISHED">
       <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
@@ -30,7 +30,7 @@
 
 {% block tab_content %}
   <div class="tab-content">
-    <div class="tab-pane active" id="pane-ONGOING">
+    <div class="tab-pane" id="pane-ONGOING">
       <table class="table table-hover" data-status="ONGOING">
         <thead>
         <tr>
@@ -170,7 +170,7 @@
       <br/>
     </div>
 
-    <div class="tab-pane" id="pane-CREATED">
+    <div class="tab-pane active" id="pane-CREATED">
       <table class="table table-hover" data-status="CREATED">
         <thead>
         <tr>

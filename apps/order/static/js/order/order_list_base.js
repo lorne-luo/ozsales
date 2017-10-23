@@ -29,8 +29,8 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             }
-            if ($('.tab-content #pane-CREATED').hasClass('active') || _init) {
-                var api_url = url + '?status=CREATED';
+            if ($('.tab-content #pane-CREATED').hasClass('active') && !_init) {
+                var api_url = url + 'new/';
 
                 $.AdminLTE.apiGet(
                     api_url,
@@ -44,8 +44,8 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             }
-            if ($('.tab-content #pane-ONGOING').hasClass('active') && !_init) {
-                var api_url = url + '?status__in=CREATED,SHIPPING,DELIVERED';
+            if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
+                var api_url = url + '?status__in=SHIPPING,DELIVERED';
 
                 $.AdminLTE.apiGet(
                     api_url,
