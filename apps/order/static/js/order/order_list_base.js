@@ -37,7 +37,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                     data,
                     function (resp) {
                         self.created_items = resp.results;
-                        self.created__count = resp.count;
+                        self.created_count = resp.count;
                         self.created_perPage = resp.per_page;
                         self.created_totalPage = resp.total_page;
                         self.created_currentPage = resp.current_page;
