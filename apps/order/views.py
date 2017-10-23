@@ -6,7 +6,9 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.core.exceptions import ValidationError, SuspiciousOperation
 from django.forms.models import inlineformset_factory, modelformset_factory
+from rest_framework.decorators import list_route
 from django_filters import FilterSet
+from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
@@ -145,7 +147,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
         return context
 
-    def save_product_formset(self,request):
+    def save_product_formset(self, request):
         products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
         for form in products_formset:
             form.is_valid()
@@ -164,7 +166,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
             raise SuspiciousOperation(str(products_formset.errors))
         products_formset.save()
 
-    def save_express_formset(self,request):
+    def save_express_formset(self, request):
         express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
         for form in express_formset:
             form.is_valid()
@@ -308,6 +310,16 @@ class OrderFilter(FilterSet):
         }
 
 
+class NewOrderFilter(FilterSet):
+    class Meta:
+        model = Order
+
+    @property
+    def qs(self):
+        qs = super(NewOrderFilter, self).qs.filter(Q(status=ORDER_STATUS.CREATED) | Q(is_paid=False))
+        return qs
+
+
 class OrderViewSet(CommonViewSet):
     """ api views for Order """
     serializer_class = serializers.OrderSerializer
@@ -324,6 +336,11 @@ class OrderViewSet(CommonViewSet):
             queryset = Order.objects.none()
 
         return queryset.select_related('address', 'customer')
+
+    @list_route(methods=['post', 'get'])
+    def new(self, request, *args, **kwargs):
+        self.filter_class = NewOrderFilter
+        return super(OrderViewSet, self).list(self, request, *args, **kwargs)
 
 
 class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
