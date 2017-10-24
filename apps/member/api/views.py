@@ -20,7 +20,7 @@ class SellerViewSet(PaginateMaxModelViewSet):
     serializer_class = serializers.SellerUserSerializer
     permission_required = 'member.change_seller'
     # Exclude restframework's anonymous user which can cause 500s in url-versing due to its negative pk
-    queryset = Seller.objects.exclude(username='AnonymousUser').exclude(pk__lt=0)
+    queryset = Seller.objects.exclude(pk__lt=0)
 
 class Profile(generics.GenericAPIView):
     ''' Return current users's profile '''

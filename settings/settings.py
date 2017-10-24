@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     # common app
+    'core.auth_user',
     'core.adminlte',
     'core.messageset',
     'core.autocode',
@@ -129,7 +130,7 @@ TIME_FORMAT = 'H:i:s'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
+STATIC_ROOT = os.path.join(BASE_DIR, 'env', 'collectstatic')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
@@ -166,9 +167,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 # Auth
-AUTH_USER_MODEL = 'member.Seller'
-AUTH_PROFILE_MODULE = 'customer.customer'
-
+AUTH_USER_MODEL = 'auth_user.AuthUser'
+AUTH_PROFILE_MODULE = 'member.seller'
 LOGIN_URL = '/member/login/'
 
 LOGOUT_URL = '/member/login/'
