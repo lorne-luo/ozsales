@@ -55,7 +55,8 @@ class Seller(models.Model):
         self.auth_user.is_active = True
         self.start_at = timezone.now().date()
         self.expire_at = self.start_at + relativedelta(months=month)
-        self.auth_user.save(update_fields=['is_active', 'start_at', 'expire_at'])
+        self.auth_user.save(update_fields=['is_active'])
+        self.save(update_fields=['start_at', 'expire_at'])
 
     def disable(self):
         self.auth_user.is_active = False
