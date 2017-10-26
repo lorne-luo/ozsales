@@ -274,6 +274,10 @@ class Order(models.Model):
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
 
+    def update_track(self):
+        for express in self.express_orders.all():
+            express.update_track()
+
     @property
     def app(self):
         from ..weixin.models import WxApp

@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from dateutil import parser
+
+from apps.order.models import Order, ORDER_STATUS
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
 from ..express.models import ExpressOrder
@@ -196,3 +198,10 @@ def express_id_upload_task():
         ids = ','.join([o.track_id for o in unupload_order])
         sender = MessageSender()
         sender.send_to_self('Upload ID for %s' % ids)
+
+
+@periodic_task(run_every=crontab(minute='*/240', hour='7-0'))
+def update_delivery_tracking():
+    unfinished_order = Order.objects.filter(status=ORDER_STATUS.SHIPPING)
+    for order in unfinished_order:
+        order.update_track()

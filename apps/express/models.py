@@ -4,7 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
-
+import apps.express.tracker as tracker
 from ..order.models import Order
 from ..customer.models import Address
 
@@ -25,6 +25,11 @@ class ExpressCarrier(models.Model):
     def __str__(self):
         return '%s' % self.name_cn
 
+    def update_track(self, url):
+        # todo call tracker
+        if 'changjiangexpress' in self.website:
+            tracker.changjiang_track(url)
+
 
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
@@ -32,6 +37,7 @@ class ExpressOrder(models.Model):
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    latest_track = models.CharField(_('latest track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2,
                               blank=True, null=True)
     weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True,
@@ -87,6 +93,9 @@ class ExpressOrder(models.Model):
 
     def get_address(self):
         return self.order.address
+
+    def update_track(self):
+        self.carrier.update_track(self.get_track_url())
 
 
 @receiver(post_save, sender=ExpressOrder)
