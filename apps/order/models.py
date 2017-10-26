@@ -11,6 +11,8 @@ from django.db.models.signals import post_save, post_delete
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from calendar import monthrange
+
+from apps.member.models import Seller
 from utils.enum import enum
 from settings.settings import rate
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
@@ -35,7 +37,8 @@ ORDER_STATUS_CHOICES = (
 
 @python_2_unicode_compatible
 class Order(models.Model):
-    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
+    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
+    order_id = models.CharField(_(u'order id'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
@@ -144,10 +147,10 @@ class Order(models.Model):
 
         super(Order, self).save()
 
-        if self.id and not self.code:
-            code = str(self.id % 10000).zfill(5)
-            self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
-            self.save(update_fields=['code'])
+        if self.id and not self.order_id:
+            order_id = '0%s' % self.id
+            self.order_id = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, order_id)
+            self.save(update_fields=['order_id'])
 
     def get_total_fee(self):
         # 微信支付金额单位:分
@@ -291,8 +294,8 @@ class Order(models.Model):
 
         # request weixin unified order api
         try:
-            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
-                                             out_trade_no=self.code,
+            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.order_id,
+                                             out_trade_no=self.order_id,
                                              total_fee=self.get_total_fee(), spbill_create_ip=user_ip)
         except WeixinError as e:
             log.info(e.message)
