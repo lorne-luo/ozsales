@@ -30,7 +30,6 @@ class ExpressCarrier(models.Model):
         return '%s' % self.name_cn
 
     def update_track(self, url):
-        # todo call tracker
         try:
             if 'aupost' in self.website.lower():
                 return None, None
@@ -38,11 +37,16 @@ class ExpressCarrier(models.Model):
                 return tracker.sfx_track(url)
             elif 'changjiang' in self.website.lower():
                 return tracker.changjiang_track(url)
+            # todo more tracker
             else:
                 return tracker.table_last_tr(url)
         except Exception as ex:
             log.info('%s track failed: %s' % (self.name_en, ex))
             return None, str(ex)
+
+    def test_tracker(self):
+        last_order = self.expressorder_set.filter(is_delivered=True).order_by('-create_time').first()
+        last_order.test_tracker()
 
 
 @python_2_unicode_compatible
