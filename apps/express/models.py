@@ -37,7 +37,8 @@ class ExpressOrder(models.Model):
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    latest_track = models.CharField(_('latest track'), max_length=512, null=True, blank=True)
+    is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
+    last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2,
                               blank=True, null=True)
     weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True,
