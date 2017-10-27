@@ -249,7 +249,10 @@ class Order(models.Model):
     def get_shipping_orders(self):
         result = ''
         for ex in self.express_orders.all():
-            result += ex.get_tracking_link() + '<br/>'
+            if ex.is_delivered:
+                result += '<u>%s</u><br/>' % ex.get_tracking_link()
+            else:
+                result += ex.get_tracking_link() + '<br/>'
         return result
 
     get_status_button.allow_tags = True
