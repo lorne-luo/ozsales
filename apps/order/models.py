@@ -278,8 +278,18 @@ class Order(models.Model):
     get_customer_link.short_description = 'Customer'
 
     def update_track(self):
+        if self.express_orders.count() == 0:
+            return
+
+        all_finished = True
         for express in self.express_orders.all():
             express.update_track()
+            if not express.is_delivered:
+                all_finished = False
+
+        if self.status != ORDER_STATUS.SHIPPING and all_finished:
+            self.status = ORDER_STATUS.DELIVERED
+            self.save(update_fields=['status'])
 
     @property
     def app(self):
