@@ -31,7 +31,7 @@ class Seller(models.Model):
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
 
     def __str__(self):
-        return '%s#%s' % (self.id, self.name)
+        return '%s#%s' % (self.auth_user, self.name)
 
     @property
     def username(self):
