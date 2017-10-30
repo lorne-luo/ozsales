@@ -1,5 +1,6 @@
 # coding:utf-8
 import os
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.core.mail import send_mail
@@ -87,6 +88,12 @@ class CustomerManager(Manager):
 
         return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
 
+    def update_order_count(self):
+        qs = super(CustomerManager, self).get_queryset()
+        for item in qs:
+            item.order_count = item.order_set.count()
+            item.save(update_fields=['order_count'])
+
 
 @python_2_unicode_compatible
 class Customer(models.Model):
@@ -143,6 +150,16 @@ class Customer(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    @property
+    def total_spend(self):
+        return sum([x.sell_price_rmb for x in self.order_set.all()])
+
+    @property
+    def total_spend_year(self):
+        """total spend in recent one year"""
+        year_before = timezone.now() - relativedelta(years=1)
+        return sum([x.sell_price_rmb for x in self.order_set.all().filter(finish_time__gt=year_before)])
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
