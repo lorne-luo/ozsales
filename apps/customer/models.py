@@ -6,13 +6,16 @@ from django.core.mail import send_mail
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
+from django.core.exceptions import SuspiciousFileOperation
 from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
+
+from core.auth_user.models import AuthUser
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
@@ -73,6 +76,18 @@ class CartProduct(models.Model):
         return '[%s]%s x %s' % (self.cart.customer.name, self.product.get_name_cn(), self.amount)
 
 
+class CustomerManager(Manager):
+    def belong_to(self, seller):
+        if isinstance(seller, Seller):
+            seller_id = seller.id
+        elif isinstance(seller, AuthUser):
+            seller_id = seller.profile.id
+        else:
+            raise SuspiciousFileOperation('Should pass seller or user as parameter.')
+
+        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
+
+
 @python_2_unicode_compatible
 class Customer(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
@@ -106,6 +121,8 @@ class Customer(models.Model):
     subscribe_time = models.DateField(blank=True, null=True)
     remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
     groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
+
+    objects = CustomerManager()
 
     class Meta:
         verbose_name_plural = _('Customer')

@@ -1,5 +1,7 @@
 # coding=utf-8
+from django.db.models import Count
 from django.http import Http404
+from dal import autocomplete
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -33,3 +35,18 @@ class AddCart(GenericAPIView):
             cart_product.save()
 
         return Response({'success': True}, status=200)
+
+
+class CustomerAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            return Customer.objects.none()
+
+        qs = Customer.objects.belong_to(self.request.user).annotate(
+            order_count_num=Count('order')).order_by('-order_count_num')
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs

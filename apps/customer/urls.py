@@ -40,6 +40,7 @@ urlpatterns += patterns('',
     url(r'^customer/customer/list/$', login_required(views.CustomerListView.as_view()), name='customer-list'),
     url(r'^customer/customer/(?P<pk>\d+)/$', login_required(views.CustomerDetailView.as_view()), name='customer-detail'),
     url(r'^customer/customer/(?P<pk>\d+)/edit/$', login_required(views.CustomerUpdateView.as_view()), name='customer-update'),
+    url(r'^customer/customer/autocomplete/$', views_api.CustomerAutocomplete.as_view(), name='customer-autocomplete'),
 )
 
 urlpatterns += patterns('',
