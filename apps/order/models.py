@@ -102,27 +102,38 @@ class Order(models.Model):
     def set_paid(self):
         self.is_paid = True
         self.paid_time = timezone.now()
-        self.save(update_fields=['is_paid', 'paid_time'])
+        self.set_finish_time()
+        self.save()
         self.update_monthly_report()
+
+    def set_finish_time(self):
+        if self.is_paid and not self.finish_time and self.status in [ORDER_STATUS.SHIPPING,
+                                                                     ORDER_STATUS.DELIVERED,
+                                                                     ORDER_STATUS.FINISHED]:
+            self.finish_time = timezone.now()
 
     def set_status(self, status_value):
         self.status = status_value
         if status_value == ORDER_STATUS.FINISHED:
-            self.products.update(is_purchased=True)
             if self.is_paid:
-                self.finish_time = datetime.datetime.now()
-                self.save(update_fields=['status', 'finish_time'])
-
+                self.products.update(is_purchased=True)
+                self.express_orders.update(is_delivered=True)
                 customer = Customer.objects.get(id=self.customer_id)
                 customer.last_order_time = self.create_time
-                customer.order_count = customer.order_set.filter(status=ORDER_STATUS.FINISHED).count()
-                customer.save(update_fields=['last_order_time', 'order_count'])
+                customer.order_count = customer.order_set.filter(status__in=[ORDER_STATUS.SHIPPING,
+                                                                             ORDER_STATUS.DELIVERED,
+                                                                             ORDER_STATUS.FINISHED]).count()
+                customer.save()
+            else:
+                return
+        elif status_value == ORDER_STATUS.DELIVERED:
+            self.express_orders.update(is_delivered=True)
         elif status_value == ORDER_STATUS.SHIPPING:
             self.aud_rmb_rate = rate.aud_rmb_rate
-            self.save(update_fields=['status', 'aud_rmb_rate'])
             self.products.update(is_purchased=True)
-        else:
-            self.save(update_fields=['status'])
+
+        self.set_finish_time()
+        self.save()
 
         self.update_price()
 
@@ -278,7 +289,7 @@ class Order(models.Model):
     get_customer_link.short_description = 'Customer'
 
     def update_track(self):
-        if self.express_orders.count() == 0:
+        if self.express_orders.count() == 0 or self.status != ORDER_STATUS.SHIPPING:
             return
 
         all_finished = True
@@ -287,9 +298,8 @@ class Order(models.Model):
             if not express.is_delivered:
                 all_finished = False
 
-        if self.status != ORDER_STATUS.SHIPPING and all_finished:
-            self.status = ORDER_STATUS.DELIVERED
-            self.save(update_fields=['status'])
+        if all_finished:
+            self.set_status(ORDER_STATUS.DELIVERED)
 
     @property
     def app(self):
