@@ -1,11 +1,12 @@
 # coding=utf-8
 from django.db.models import Count
 from django.http import Http404
+from django.core.exceptions import PermissionDenied
 from dal import autocomplete
 from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
-from models import Customer, CustomerCart, CartProduct
+from apps.customer.models import Customer, CustomerCart, CartProduct, Address
 from ..product.models import Product
 
 
@@ -40,13 +41,28 @@ class AddCart(GenericAPIView):
 class CustomerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated():
-            return Customer.objects.none()
+        if not self.request.user.is_authenticated() or not self.request.user.is_seller:
+            raise PermissionDenied
 
         qs = Customer.objects.belong_to(self.request.user).annotate(
             order_count_num=Count('order')).order_by('-order_count_num')
 
         if self.q:
-            qs = qs.filter(name__istartswith=self.q)
+            qs = qs.filter(name__icontains=self.q)
+        return qs
 
+
+class AddressAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+
+        qs = Address.objects.belong_to(self.request.user)
+        cid = self.forwarded.get('customer')
+
+        if cid:
+            qs = qs.filter(customer_id=cid)
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
         return qs

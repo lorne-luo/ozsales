@@ -28,6 +28,7 @@ urlpatterns += patterns('',
     url(r'^customer/address/list/$', login_required(views.AddressListView.as_view()), name='address-list'),
     url(r'^customer/address/(?P<pk>\d+)/$', login_required(views.AddressDetailView.as_view()), name='address-detail'),
     url(r'^customer/address/(?P<pk>\d+)/edit/$', login_required(views.AddressUpdateView.as_view()), name='address-update'),
+    url(r'^customer/address/autocomplete/$', views_api.AddressAutocomplete.as_view(), name='address-autocomplete'),
 )
 
 # reverse('customer:api-address-list'), reverse('customer:api-address-detail', kwargs={'pk': 1})
