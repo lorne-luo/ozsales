@@ -8,9 +8,19 @@ class AuthUser(AbstractUser):
 
     @property
     def profile(self):
-        if getattr(self, 'seller'):
+        if self.is_seller:
             return self.seller
+        elif self.is_customer:
+            return self.customer
         return None
+
+    @property
+    def is_seller(self):
+        return getattr(self, 'seller') is not None
+
+    @property
+    def is_customer(self):
+        return getattr(self, 'customer') is not None
 
     def __str__(self):
         return '%s' % self.get_username()
