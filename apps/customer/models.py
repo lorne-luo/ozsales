@@ -10,7 +10,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 from django.db.models import Q, Manager
 from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
-from django.core.exceptions import SuspiciousFileOperation
+from django.core.exceptions import PermissionDenied
 from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
@@ -78,13 +78,13 @@ class CartProduct(models.Model):
 
 
 class CustomerManager(Manager):
-    def belong_to(self, seller):
-        if isinstance(seller, Seller):
-            seller_id = seller.id
-        elif isinstance(seller, AuthUser):
-            seller_id = seller.profile.id
+    def belong_to(self, obj):
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
         else:
-            raise SuspiciousFileOperation('Should pass seller or user as parameter.')
+            raise PermissionDenied
 
         return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
 
@@ -225,6 +225,25 @@ def get_id_photo_back_path(instance, filename):
     return filename
 
 
+class AddressManager(Manager):
+    def belong_to(self, obj):
+
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
+        else:
+            raise PermissionDenied
+
+
 @python_2_unicode_compatible
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
@@ -236,6 +255,8 @@ class Address(models.Model):
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
     id_photo_back = models.ImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True)
+
+    objects = AddressManager()
 
     class Meta:
         verbose_name_plural = _('Address')
