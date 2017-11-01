@@ -45,7 +45,7 @@ class ExpressCarrier(models.Model):
             return None, str(ex)
 
     def test_tracker(self):
-        last_order = self.expressorder_set.filter(is_delivered=True).order_by('-create_time').first()
+        last_order = self.express_orders.filter(is_delivered=True).order_by('-create_time').first()
         last_order.test_tracker()
 
 
