@@ -305,8 +305,9 @@ SITE_NAME = 'OZ SALE'
 import dbsettings
 
 
+# http://s.luotao.net/admin/settings/
 class ForexRate(dbsettings.Group):
-    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=5.3)
+    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=5.2)
 
 
 rate = ForexRate()
