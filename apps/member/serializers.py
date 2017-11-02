@@ -103,7 +103,7 @@ class MemberUserNameSerializer(serializers.ModelSerializer):
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
-        fields = Seller.Config.list_display_fields + ['id']
+        fields = ['name', 'email', 'mobile']
         read_only_fields = (
             'id', 'username', 'is_active', 'date_joined'
         )

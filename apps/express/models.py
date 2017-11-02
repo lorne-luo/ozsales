@@ -1,12 +1,16 @@
+import logging
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
-
+import apps.express.tracker as tracker
 from ..order.models import Order
 from ..customer.models import Address
+
+log = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
@@ -25,6 +29,25 @@ class ExpressCarrier(models.Model):
     def __str__(self):
         return '%s' % self.name_cn
 
+    def update_track(self, url):
+        try:
+            if 'aupost' in self.website.lower():
+                return None, None
+            elif 'emms' in self.website.lower():
+                return tracker.sfx_track(url)
+            elif 'changjiang' in self.website.lower():
+                return tracker.changjiang_track(url)
+            # todo more tracker
+            else:
+                return tracker.table_last_tr(url)
+        except Exception as ex:
+            log.info('%s track failed: %s' % (self.name_en, ex))
+            return None, str(ex)
+
+    def test_tracker(self):
+        last_order = self.express_orders.filter(is_delivered=True).order_by('-create_time').first()
+        last_order.test_tracker()
+
 
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
@@ -32,6 +55,8 @@ class ExpressOrder(models.Model):
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
+    last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2,
                               blank=True, null=True)
     weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True,
@@ -87,6 +112,20 @@ class ExpressOrder(models.Model):
 
     def get_address(self):
         return self.order.address
+
+    def update_track(self):
+        if not self.is_delivered:
+            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            if delivered is not None:
+                self.is_delivered = delivered
+                self.last_track = last_info[:512]
+                self.save(update_fields=['last_track', 'last_track'])
+
+    def test_tracker(self):
+        if self.is_delivered:
+            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            if not delivered:
+                log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
 
 
 @receiver(post_save, sender=ExpressOrder)

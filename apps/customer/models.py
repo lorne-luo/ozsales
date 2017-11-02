@@ -1,18 +1,22 @@
 # coding:utf-8
 import os
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.core.mail import send_mail
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
-from django.db.models import Q
+from django.db.models import Q, Manager
 from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
+from django.core.exceptions import PermissionDenied
 from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
+
+from core.auth_user.models import AuthUser
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
@@ -73,9 +77,27 @@ class CartProduct(models.Model):
         return '[%s]%s x %s' % (self.cart.customer.name, self.product.get_name_cn(), self.amount)
 
 
+class CustomerManager(Manager):
+    def belong_to(self, obj):
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        else:
+            raise PermissionDenied
+
+        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
+
+    def update_order_count(self):
+        qs = super(CustomerManager, self).get_queryset()
+        for item in qs:
+            item.order_count = item.order_set.count()
+            item.save(update_fields=['order_count'])
+
+
 @python_2_unicode_compatible
 class Customer(models.Model):
-    seller = models.OneToOneField(Seller, blank=True, null=True, verbose_name=_('Member'))
+    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
@@ -107,6 +129,8 @@ class Customer(models.Model):
     remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
     groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
 
+    objects = CustomerManager()
+
     class Meta:
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
@@ -126,6 +150,16 @@ class Customer(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    @property
+    def total_spend(self):
+        return sum([x.sell_price_rmb for x in self.order_set.all()])
+
+    @property
+    def total_spend_year(self):
+        """total spend in recent one year"""
+        year_before = timezone.now() - relativedelta(years=1)
+        return sum([x.sell_price_rmb for x in self.order_set.all().filter(finish_time__gt=year_before)])
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
@@ -191,6 +225,25 @@ def get_id_photo_back_path(instance, filename):
     return filename
 
 
+class AddressManager(Manager):
+    def belong_to(self, obj):
+
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
+        else:
+            raise PermissionDenied
+
+
 @python_2_unicode_compatible
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
@@ -202,6 +255,8 @@ class Address(models.Model):
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
     id_photo_back = models.ImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True)
+
+    objects = AddressManager()
 
     class Meta:
         verbose_name_plural = _('Address')

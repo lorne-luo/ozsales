@@ -124,7 +124,7 @@ def wx_pay_notify(request, app_name):
     try:
         order = Order.objects.get(code=result.out_trade_no)
     except Order.DoesNotExist:
-        log.error('[Paymen Notify] Order.code = %s not found' % result.out_trade_no)
+        log.error('[Paymen Notify] OrderID = %s not found' % result.out_trade_no)
         raise Http404
 
     wx_payment = WxPayment(order=order, return_code=result.return_code, return_msg=result.return_msg,
