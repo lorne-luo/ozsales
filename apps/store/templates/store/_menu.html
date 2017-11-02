@@ -1,9 +1,9 @@
 {% load activelink %}
 
 {% url 'store:store-list' as menu_url %}
-<li {% if request.path_info == menu_url %}class="active"{% endif %}>
+<li class="active">
   <a href="{{ menu_url }}">
     <i class="fa fa-dashboard"></i>
-    <span>Store</span>
+    <b>Store</b>
   </a>
 </li>

@@ -1,10 +1,7 @@
 import logging
-import json
-
-import serializers
 from ..models import Order
-from utils.api.views import PaginateMaxModelViewSet, PaginateMaxListAPIView
-from utils.api.permission import ModelPermissions
+from utils.api.views import PaginateMaxModelViewSet
+import serializers
 
 log = logging.getLogger(__name__)
 

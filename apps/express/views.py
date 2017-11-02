@@ -1,9 +1,10 @@
 # coding=utf-8
 from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import ExpressCarrier, ExpressOrder
+from ..order.models import ORDER_STATUS
 import serializers
 import forms
 
@@ -23,7 +24,7 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
     form_class = forms.ExpressCarrierAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("expresscarrier.add_expresscarrier",)
+        "all": ("express.add_expresscarrier",)
     }
 
 
@@ -32,7 +33,7 @@ class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMi
     form_class = forms.ExpressCarrierUpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("expresscarrier.change_expresscarrier",)
+        "all": ("express.change_expresscarrier",)
     }
 
 
@@ -41,7 +42,7 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
     form_class = forms.ExpressCarrierDetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("expresscarrier.view_expresscarrier",)
+        "all": ("express.view_expresscarrier",)
     }
 
 
@@ -98,3 +99,15 @@ class ExpressOrderViewSet(CommonViewSet):
     # filter_class = OrderFilter
     filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
     search_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
+
+
+def changjiang_view(request):
+    url_template = 'http://www.changjiangexpress.com/Home/Query?numbers=%s'
+    changjiang_carrier = ExpressCarrier.objects.get(name_cn=u'长江快递')
+    orders = ExpressOrder.objects.filter(carrier=changjiang_carrier).exclude(order__status=ORDER_STATUS.FINISHED)
+
+    order_id = ''
+    for o in orders:
+        order_id += o.track_id if not order_id else '%0A' + o.track_id
+
+    return HttpResponseRedirect(url_template % order_id)

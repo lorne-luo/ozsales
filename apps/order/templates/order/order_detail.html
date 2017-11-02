@@ -36,17 +36,17 @@
     <th>产品</th>
     <td>
       {% for prod in object.products.all %}
-        {% if prod.get_link %}
-          <a target="_blank" href="{{ prod.get_link }}">
+        {% if prod.product and prod.product.pic %}
+          <a target="_blank" href="{{ prod.product.pic.url }}">
             {% if prod.name %}
               {{ prod.name }}
             {% else %}
               {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}
             {% endif %}
           </a>
-          = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+          = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
         {% else %}
-          {{ prod.name }} = {{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+          {{ prod.name }} = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
         {% endif %}
       {% endfor %}
     </td>
@@ -54,7 +54,7 @@
   <tr>
     <th>总价</th>
     <td>
-      {{ object.sell_price_rmb }}
+      ¥{{ object.sell_price_rmb }}
       {% if object.is_paid %}
         (已支付)
       {% else %}

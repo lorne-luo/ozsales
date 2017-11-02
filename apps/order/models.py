@@ -1,5 +1,6 @@
 # coding=utf-8
 import datetime
+import logging
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -12,24 +13,32 @@ from django.utils import timezone
 from calendar import monthrange
 from utils.enum import enum
 from settings.settings import rate
+from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address
 from ..store.models import Store
 
-ORDER_STATUS = enum('CREATED', 'SHIPPING', 'DELIVERED', 'FINISHED')
+log = logging.getLogger(__name__)
+
+ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED', 'CLOSED')
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, u'创建'),
+    (ORDER_STATUS.CONFIRMED, u'确认'),
     (ORDER_STATUS.SHIPPING, u'在途'),
     (ORDER_STATUS.DELIVERED, u'寄达'),
     (ORDER_STATUS.FINISHED, u'完成'),
+    (ORDER_STATUS.CANCELED, u'取消'),
+    (ORDER_STATUS.CLOSED, u'关闭')
 )
 
 
 @python_2_unicode_compatible
 class Order(models.Model):
+    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
     is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'Paid Time'))
@@ -45,12 +54,16 @@ class Order(models.Model):
                                      verbose_name=_(u'Ship Time'))
     total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True,
-                                          null=True)
+    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
     profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
     create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
     finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
+    coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
+    app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
     def __str__(self):
         if self.id:
@@ -92,38 +105,53 @@ class Order(models.Model):
     def set_status(self, status_value):
         self.status = status_value
         if status_value == ORDER_STATUS.FINISHED:
+            self.products.update(is_purchased=True)
             if self.is_paid:
                 self.finish_time = datetime.datetime.now()
                 self.save(update_fields=['status', 'finish_time'])
-                customer = self.customer
+
+                customer = Customer.objects.get(id=self.customer_id)
                 customer.last_order_time = self.create_time
-                customer.order_count = customer.order_set.count()
-                customer.save()
+                customer.order_count = customer.order_set.filter(status=ORDER_STATUS.FINISHED).count()
+                customer.save(update_fields=['last_order_time', 'order_count'])
+        elif status_value == ORDER_STATUS.SHIPPING:
+            self.aud_rmb_rate = rate.aud_rmb_rate
+            self.save(update_fields=['status', 'aud_rmb_rate'])
+            self.products.update(is_purchased=True)
         else:
             self.save(update_fields=['status'])
 
-        self.update_monthly_report()
+        self.update_price()
 
     def update_monthly_report(self):
         if self.is_paid and not self.status == ORDER_STATUS.CREATED:
-            from ..report.models import MonthlyReport
-
             if not self.paid_time:
-                if timezone.now().month == self.ship_time.month:
-                    self.paid_time = timezone.now()
-                else:
-                    first = timezone.now().replace(day=1, month=self.ship_time.month)
-                    lastMonth = first - datetime.timedelta(days=1)
-                    self.paid_time = lastMonth
+                self.paid_time = timezone.now()
                 self.save(update_fields=['paid_time'])
 
-            MonthlyReport.stat(self.paid_time.year, self.paid_time.month)
+            from ..report.models import MonthlyReport
+            MonthlyReport.stat(self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
 
-        return super(Order, self).save()
+        if self.address:
+            self.address_text = self.address.get_text()
+
+        if not self.pk:
+            self.aud_rmb_rate = rate.aud_rmb_rate
+
+        super(Order, self).save()
+
+        if self.id and not self.code:
+            code = str(self.id % 10000).zfill(5)
+            self.code = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, code)
+            self.save(update_fields=['code'])
+
+    def get_total_fee(self):
+        # 微信支付金额单位:分
+        return int(self.payment_price * 100)
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
@@ -139,6 +167,9 @@ class Order(models.Model):
     get_id_link.allow_tags = True
     get_id_link.short_description = 'ID'
 
+    def get_aud_rmb_rate(self):
+        return self.aud_rmb_rate or rate.aud_rmb_rate
+
     def update_price(self):
         self.total_amount = 0
         self.product_cost_aud = 0
@@ -152,7 +183,7 @@ class Order(models.Model):
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
-        self.product_cost_rmb = self.product_cost_aud * rate.aud_rmb_rate
+        self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -161,7 +192,7 @@ class Order(models.Model):
                 self.shipping_fee += ex_order.fee
 
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * rate.aud_rmb_rate
+        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
 
         if not self.sell_price_rmb:
             self.sell_price_rmb = self.origin_sell_rmb
@@ -240,6 +271,55 @@ class Order(models.Model):
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
 
+    @property
+    def app(self):
+        from ..weixin.models import WxApp
+        app = WxApp.objects.get(app_id=self.app_id)
+        return app
+
+    def get_wxorder(self, user_ip, trade_type="JSAPI"):
+        from ..weixin.models import WxOrder
+
+        wx_order = self.wxorder if self.wxorder else WxOrder(order=self)
+        if wx_order.is_success:
+            if self.get_total_fee() == wx_order.total_fee:
+                return wx_order
+            else:
+                # order price changed, delete old create new
+                wx_order.delete()
+                wx_order = WxOrder(order=self)
+
+        # request weixin unified order api
+        try:
+            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.code,
+                                             out_trade_no=self.code,
+                                             total_fee=self.get_total_fee(), spbill_create_ip=user_ip)
+        except WeixinError as e:
+            log.info(e.message)
+            return None
+
+        wx_order.return_code = raw.return_code
+        wx_order.return_msg = raw.return_msg
+        wx_order.result_code = raw.result_code
+        wx_order.appid = raw.app_id
+        wx_order.mch_id = raw.mch_id
+        wx_order.device_info = raw.device_info
+        wx_order.nonce_str = raw.nonce_str
+        wx_order.sign = raw.sign
+        wx_order.err_code = raw.err_code
+        wx_order.err_code_des = raw.err_code_des
+        wx_order.trade_type = raw.trade_type
+        wx_order.prepay_id = raw.prepay_id
+        wx_order.total_fee = self.get_total_fee()
+
+        wx_order.save()
+        return wx_order
+
+    def get_jsapi(self, ip):
+        # create wx order and get jsapi
+        wx_order = self.get_wxorder(ip)
+        return wx_order.get_jsapi()
+
 
 @python_2_unicode_compatible
 class OrderProduct(models.Model):
@@ -252,6 +332,7 @@ class OrderProduct(models.Model):
     cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
+    is_purchased = models.BooleanField(default=False)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     def __str__(self):
@@ -283,15 +364,7 @@ class OrderProduct(models.Model):
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        if self.product:
-            if self.product.brand:
-                brand_name = self.product.brand.short_name if self.product.brand.short_name else self.product.brand.name_en
-            else:
-                brand_name = ''
-            product_name = '%s %s' % (brand_name, self.product.name_cn)
-        else:
-            product_name = self.name
-        return '%s x %s' % (product_name, self.amount)
+        return u'%s = ¥%d x %d' % (self.name, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:
@@ -321,3 +394,24 @@ def update_price_from_orderproduct(sender, instance=None, created=False, update_
 def order_product_deleted(sender, **kwargs):
     order_product = kwargs['instance']
     order_product.order.update_price()
+
+
+def confirm_order_from_cart(cart):
+    order = Order(customer=cart.customer, coupon=cart.coupon, payment_price=0, origin_sell_rmb=0)
+    order.save()
+
+    for cart_product in cart.products.all():
+        product = OrderProduct(product=cart_product.product, order=order, amount=cart_product.amount,
+                               name=cart_product.product.get_name_cn(),
+                               sell_price_rmb=cart_product.product.safe_sell_price,
+                               total_price_rmb=cart_product.amount * cart_product.product.safe_sell_price)
+        product.save()
+        order.origin_sell_rmb += product.total_price_rmb
+        cart_product.delete()
+
+    cart.coupon = None
+    cart.save(update_fields=['coupon'])
+
+    # todo coupon
+    order.payment_price = order.origin_sell_rmb
+    order.save(update_fields=['origin_sell_rmb', 'payment_price'])

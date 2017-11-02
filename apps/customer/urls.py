@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
 import views
+import views_api
 
 urlpatterns = []
 router = PostHackedRouter()
@@ -39,6 +40,10 @@ urlpatterns += patterns('',
     url(r'^customer/customer/list/$', login_required(views.CustomerListView.as_view()), name='customer-list'),
     url(r'^customer/customer/(?P<pk>\d+)/$', login_required(views.CustomerDetailView.as_view()), name='customer-detail'),
     url(r'^customer/customer/(?P<pk>\d+)/edit/$', login_required(views.CustomerUpdateView.as_view()), name='customer-update'),
+)
+
+urlpatterns += patterns('',
+    url(r'^customer/add_cart', views_api.AddCart.as_view(), name='api-add-cart'),
 )
 
 # reverse('customer:api-customer-list'), reverse('customer:api-customer-detail', kwargs={'pk': 1})

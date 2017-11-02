@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
-import urllib2
-import redis
-import pytz
-import logging
 import datetime
-from dateutil import parser
+import logging
+import urllib2
+import pytz
+import redis
+from decimal import Decimal
+from yahoo_finance import Currency
 from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
-from utils.telstra_api import MessageSender
+from dateutil import parser
+from core.sms.telstra_api import MessageSender
+from settings.settings import rate
+from ..express.models import ExpressOrder
+from .models import DealSubscribe
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -31,15 +36,15 @@ def utf8sub(s, length):
     return s[:length]
 
 
-@periodic_task(run_every=crontab(minute='*/15', hour='8-23'))
+@periodic_task(run_every=crontab(minute='*/15', hour='7-0'))
 def ozbargin_task():
-    url = 'https://www.ozbargain.com.au/feed'
-    all_deals_url = 'https://www.ozbargain.com.au/deals/feed'
+    url = 'https://www.ozbargain.com.au/deals/feed'
 
-    if not ozbargin_keywords:
+    subscribe_list = DealSubscribe.objects.filter(is_active=True)
+    if not subscribe_list.count():
         return
 
-    data = urllib2.urlopen(urllib2.Request(all_deals_url))
+    data = urllib2.urlopen(urllib2.Request(url))
     soup = BeautifulSoup(data, "html.parser")
     items = soup.find_all("item")
     last_date_str = r.get(ozbargin_last_date)
@@ -69,32 +74,38 @@ def ozbargin_task():
         # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+            new_last_date = new_last_date.replace(tzinfo=pytz.UTC)
         elif not item_date.tzinfo and last_date.tzinfo:
             last_date = last_date.replace(tzinfo=None)
+            new_last_date = new_last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
         elif item_date > new_last_date:
             new_last_date = item_date
 
-        # check keywords
-        flag = False
-        for key in ozbargin_keywords:
-            if key.lower() in title.lower() or votes_pos > 30:
-                if votes_pos > 30:
-                    title = '* %s' % title
-                flag = True
-                break
+        sender = MessageSender()
+        for subscribe in subscribe_list:
+            includes = subscribe.get_keyword_list()
+            excludes = subscribe.get_exclude_list()
 
-        if flag:
-            text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
-            description = ' '.join(x.strip() for x in text_list)
-            summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
-            content = summary + description
-            sender = MessageSender()
-            result, detail = sender.send_to_self(content)
-            # print 'sending', content
-            log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
+            # check keywords
+            if any([x.lower() in title.lower() for x in excludes if x]):
+                continue
+
+            flag = any([key.lower() in title.lower() for key in includes if key])
+            if votes_pos > 30:
+                title = '* %s' % title
+                flag = True
+
+            if flag:
+                text_list = BeautifulSoup(description, "html.parser").findAll(text=True)
+                description = ' '.join(x.strip() for x in text_list)
+                summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
+                content = summary + description
+                result, detail = sender.send_to_self(content)
+                # print 'sending', content
+                log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(ozbargin_last_date, new_last_date)
 
@@ -103,7 +114,7 @@ smzdm_last_date = 'schedule.smzdm.last_date'
 smzdm_keywords = []
 
 
-@periodic_task(run_every=crontab(minute='*/20', hour='8-23'))
+@periodic_task(run_every=crontab(minute='*/20', hour='7-0'))
 def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
@@ -136,8 +147,10 @@ def smzdm_task():
         # convert aware and naive time
         if item_date.tzinfo and not last_date.tzinfo:
             last_date = last_date.replace(tzinfo=pytz.UTC)
+            new_last_date = new_last_date.replace(tzinfo=pytz.UTC)
         elif not item_date.tzinfo and last_date.tzinfo:
             last_date = last_date.replace(tzinfo=None)
+            new_last_date = new_last_date.replace(tzinfo=None)
 
         if item_date < last_date:
             continue
@@ -162,3 +175,24 @@ def smzdm_task():
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(smzdm_last_date, new_last_date)
+
+
+@periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
+def get_aud_rmb():
+    # url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
+    audcny = Currency('AUDCNY')
+    value = audcny.get_rate()
+    rate.aud_rmb_rate = Decimal(value)
+    sender = MessageSender()
+    sender.send_to_self(value)
+
+    return rate.aud_rmb_rate
+
+
+@periodic_task(run_every=crontab(hour=10, minute=30))
+def express_id_upload_task():
+    unupload_order = ExpressOrder.objects.filter(id_upload=False)
+    if unupload_order.exists():
+        ids = ','.join([o.track_id for o in unupload_order])
+        sender = MessageSender()
+        sender.send_to_self('Upload ID for %s' % ids)

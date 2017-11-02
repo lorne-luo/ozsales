@@ -1,4 +1,10 @@
 var OrderEditPageVue = CommonFormPageVue.extend({
+    ready: function () {
+        $("#address-text").text($("#id_address option:selected").text());
+        $("#id_address").change(function () {
+            $("#address-text").text($("option:selected", this).text());
+        });
+    },
     data: function () {
         return {
             list_api_tag: 'order:api-order-list',
@@ -14,12 +20,12 @@ var OrderEditPageVue = CommonFormPageVue.extend({
     methods: {
         add_product: function (event) {
             var form_name = "products";
-            var fields = ["order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
+            var fields = ["id", "order", "product", "name", "amount", "sell_price_rmb", "sum_price", "cost_price_aud", "store"];
             this.add_item(form_name, fields);
         },
         add_express: function (event) {
             var form_name = "express_orders";
-            var fields = ["order", "carrier", "track_id", "fee", "weight", "id_upload"];
+            var fields = ["id", "order", "carrier", "track_id", "fee", "weight", "id_upload"];
             this.add_item(form_name, fields);
         },
         delete_product: function (event) {

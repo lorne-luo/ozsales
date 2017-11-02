@@ -1,16 +1,20 @@
 {% load activelink %}
 
 {% url 'report:monthlyreport-list' as menu_url %}
-<li {% if request.path_info == menu_url %}class="active"{% endif %}>
+<li class="active">
   <a href="{{ menu_url }}">
     <i class="fa fa-dashboard"></i>
-    <span>MonthlyReport</span>
+    <b>MonthlyReport</b>
   </a>
 </li>
 
-<li {% if request.path_info == '/admin/order/order/?status__in=CREATED,SHIPPING,DELIVERED' %}class="active"{% endif %}>
+<li class="active">
+  <a href="/report/total_report/">
+    <i class="fa fa-dashboard"></i>
+    <b>Total Report</b>
+  </a>
   <a href="/admin/order/order/?status__in=CREATED,SHIPPING,DELIVERED">
     <i class="fa fa-dashboard"></i>
-    <span>Admin</span>
+    <b>Admin</b>
   </a>
 </li>

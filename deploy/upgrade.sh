@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-PROJECT_ROOT=/data/django/ozsales
+PROJECT_ROOT=/opt/django/ozsales
 PILOT_PYTHON=$PROJECT_ROOT/env/bin/python
 
 git --git-dir=$PROJECT_ROOT/.git/ pull

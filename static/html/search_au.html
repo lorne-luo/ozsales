@@ -1,0 +1,55 @@
+<!DOCTYPE html><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+<meta http-equiv="X-UA-Compatible" content="IE=10">
+<title>search @ Luotao.net</title>
+
+<style>
+body {text-align:center;font-size: 26px}
+.bodycontainer {margin:0 auto;text-align:left;width:400px}
+</style>
+    <script src="string.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+
+<script type="text/javascript">
+
+    sites={
+        'chemistwarehouse':'http://www.chemistwarehouse.com.au/searchresult.asp?SearchSection=products&terms={0}',
+        'woolworths': 'https://www.woolworths.com.au/Shop/Search/Products?searchTerm={0}',
+        'coles': 'https://shop.coles.com.au/a/a-national/everything/search/{0}',
+        'priceline':'https://www.priceline.com.au/search/?q={0}',
+        'amcal': 'http://www.amcal.com.au/SearchDisplay?searchTerm={0}',
+        'porteroo': 'http://www.porteroo.net/search?type=product&q={0}'
+    };
+
+    function openBrowser()
+    {
+        keyword=document.getElementById('keyword').value.trim();
+        for(var s in sites){
+            var url=sites[s].format(keyword);
+            window.open(url);
+        }
+    }
+
+    $(document).ready(function() {
+        $("#keyword").focus();
+
+        $('#keyword').keypress(function(e){
+          if(e.keyCode==13) openBrowser();
+        });
+    });
+
+</script>
+
+</head>
+<body>
+
+<div class="bodycontainer">
+
+<input type="text" id="keyword" >
+<input type="submit" text="submit" onclick="openBrowser()">
+
+</div>
+
+</body>
+</html>

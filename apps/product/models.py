@@ -1,9 +1,10 @@
 import os
-
+import uuid
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
+from taggit.managers import TaggableManager
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
@@ -69,13 +70,26 @@ def get_product_pic_path(instance, filename):
         filename = '%s_%s' % (filename, instance.spec2)
     if instance.spec3:
         filename = '%s_%s' % (filename, instance.spec3)
-    filename = filename.replace(' ', '-').replace('', '')
-    filename = '%s%s%s.%s' % (PRODUCT_PHOTO_FOLDER, os.sep, filename, ext)
-    return filename
+    filename = filename.replace(' ', '-')
+    filename = '%s.%s' % (filename, ext)
+    return os.path.join(instance.get_pic_path(), filename)
+
+
+class ProductState(object):
+    ON_SELL = 'ON_SELL'
+    NOT_SELL = 'NOT_SELL'
+    NO_STOCK = 'NO_STOCK'
+
+    CHOICES = (
+            (ON_SELL, ON_SELL),
+            (NOT_SELL, NOT_SELL),
+            (NO_STOCK, NO_STOCK)
+        )
 
 
 @python_2_unicode_compatible
 class Product(models.Model):
+    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
     pic = models.ImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'))
@@ -84,6 +98,11 @@ class Product(models.Model):
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
     spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
+    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)  # unit: KG
+    sold_count = models.IntegerField(_(u'Sold Count'), default=0, null=False, blank=False)
+    full_price = models.DecimalField(_(u'full price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price = models.DecimalField(_(u'sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+
     normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
     bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -91,6 +110,14 @@ class Product(models.Model):
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
     wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
+    uuid = models.CharField(max_length=36, unique=True, null=True, blank=True)
+
+    summary = models.TextField(_(u'summary'), null=True, blank=True)
+    description = models.TextField(_(u'description'), null=True, blank=True)
+    state = models.CharField(_(u'state'), max_length=32, null=True, blank=True, default=ProductState.ON_SELL,
+                             choices=ProductState.CHOICES)
+
+    tags = TaggableManager()
 
     class Meta:
         verbose_name_plural = _('Product')
@@ -123,6 +150,23 @@ class Product(models.Model):
             return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
+
+    def __init__(self, *args, **kwargs):
+        super(Product, self).__init__(*args, **kwargs)
+        self.set_uuid()
+
+    def set_uuid(self):
+        if not self.uuid:
+            uuid_str = uuid.uuid4().hex
+            while (Product.objects.filter(uuid=uuid_str).exists()):
+                uuid_str = uuid.uuid4().hex
+
+            self.uuid = uuid_str
+
+    def get_pic_path(self):
+        if not self.uuid:
+            self.set_uuid()
+        return os.path.join(PRODUCT_PHOTO_FOLDER, self.uuid)
 
     def get_edit_link(self):
         url = reverse('product:product-update-view', args=[self.id])
@@ -158,7 +202,7 @@ class Product(models.Model):
         if self.spec3:
             spec += ' ' + self.spec3
         if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+            return '%s %s%s' % (self.brand.name_cn, self.name_cn, spec)
         else:
             return '%s%s' % (self.name_cn, spec)
 

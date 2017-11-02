@@ -3,11 +3,14 @@
 # Simple deploy script
 ##################
 
-WORKDIR=/data/django/ozsales/
-cd $WORKDIR
+WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )" &&
+cd $WORKDIR &&
+git stash &&
+PULL_INFO=$(git pull 2>/dev/null) &&
+git pop &&
+wait
 
-updated=$(git pull 2>/dev/null)
-if [ "$updated" == 'Already up-to-date.' ]; then
+if [ "$PULL_INFO" == "Already up-to-date." ]; then
     # Nothing to do, exit cleanly
     #exit 0
     COMMIT_INFO=No\ updates,\ restart.

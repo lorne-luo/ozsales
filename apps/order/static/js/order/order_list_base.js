@@ -15,10 +15,10 @@ var OrderListPageVue = CommonListPageVue.extend({
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
             if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
-                url = url + '?status=FINISHED';
+                var api_url = url + '?status=FINISHED';
 
                 $.AdminLTE.apiGet(
-                    url,
+                    api_url,
                     data,
                     function (resp) {
                         self.finished_items = resp.results;
@@ -28,11 +28,27 @@ var OrderListPageVue = CommonListPageVue.extend({
                         self.finished_currentPage = resp.current_page;
                     }
                 );
-            } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                url = url + '?status__in=CREATED,SHIPPING,DELIVERED';
+            }
+            if ($('.tab-content #pane-CREATED').hasClass('active') && !_init) {
+                var api_url = url + 'new/';
 
                 $.AdminLTE.apiGet(
-                    url,
+                    api_url,
+                    data,
+                    function (resp) {
+                        self.created_items = resp.results;
+                        self.created_count = resp.count;
+                        self.created_perPage = resp.per_page;
+                        self.created_totalPage = resp.total_page;
+                        self.created_currentPage = resp.current_page;
+                    }
+                );
+            }
+            if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
+                var api_url = url + '?status__in=SHIPPING,DELIVERED';
+
+                $.AdminLTE.apiGet(
+                    api_url,
                     data,
                     function (resp) {
                         self.ongoing_items = resp.results;
@@ -48,15 +64,34 @@ var OrderListPageVue = CommonListPageVue.extend({
             var page;
             if ($('.tab-content #pane-FINISHED').hasClass('active')) {
                 page = this.finished_currentPage;
+            } else if ($('.tab-content #pane-CREATED').hasClass('active')) {
+                page = this.created_currentPage;
             } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
                 page = this.ongoing_currentPage;
             }
             this.currentPage = page;
             this.loadData(this.get_param());
         },
+        makr_as_purchased: function (event) {
+            var productID = $(event.target).val();
+            var value = $(event.target).prop("checked")
+            var url = Urls[this.product_detail_api_tag](productID);
+            $.AdminLTE.apiPost(
+                url,
+                $.param({'is_purchased': value}),
+                function (resp) {
+                }
+            );
+        },
         page_ongoing: function (event) {
             var num = $(event.target).attr('page');
             this.ongoing_currentPage = num;
+            this.currentPage = num;
+            this.loadData(this.get_param());
+        },
+        page_created: function (event) {
+            var num = $(event.target).attr('page');
+            this.created_currentPage = num;
             this.currentPage = num;
             this.loadData(this.get_param());
         },
@@ -68,9 +103,10 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         show_detail: function (pk, event) {
             if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {
+                var table = $(event.target).closest('table');
                 var tr = $(event.target).closest('tr');
                 var td = $('td.show_detail', tr);
-                if ($('#detail_' + pk).toggleClass('hide').hasClass('hide')) {
+                if ($('#detail_' + pk, table).toggleClass('hide').hasClass('hide')) {
                     td.html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
                 } else {
                     td.html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');

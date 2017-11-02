@@ -3,6 +3,7 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.db.models import F, Sum, Count
 
 from apps.order.models import Order, ORDER_STATUS
 
@@ -50,16 +51,31 @@ class MonthlyReport(models.Model):
 
         report.reset()
 
-        all_orders = Order.objects.filter(is_paid=True, paid_time__year=year, paid_time__month=month). \
-            exclude(status=ORDER_STATUS.CREATED)
-        for order in all_orders:
-            if order.customer.name == u'罗韬':
-                continue
-            report.cost_aud += order.total_cost_aud
-            report.cost_rmb += order.total_cost_rmb
-            report.shipping_fee += order.shipping_fee
-            report.sell_price_rmb += order.sell_price_rmb
-            report.profit_rmb += order.profit_rmb
-            report.order_count += 1
-            report.parcel_count += order.express_orders.count()
+        all_orders = Order.objects.filter(is_paid=True, create_time__year=year, create_time__month=month).exclude(
+            status=ORDER_STATUS.CREATED).annotate(express_orders_count=Count('express_orders'))
+
+        sum_object = all_orders.aggregate(total_cost_aud=Sum(F('total_cost_aud')),
+                                          total_cost_rmb=Sum(F('total_cost_rmb')),
+                                          shipping_fee=Sum(F('shipping_fee')),
+                                          sell_price_rmb=Sum(F('sell_price_rmb')),
+                                          parcel_count=Sum(F('express_orders_count')),
+                                          profit_rmb=Sum(F('profit_rmb')))
+
+        # for order in all_orders:
+        #     if order.customer.name == u'罗韬':
+        #         continue
+        #     report.cost_aud += order.total_cost_aud
+        #     report.cost_rmb += order.total_cost_rmb
+        #     report.shipping_fee += order.shipping_fee
+        #     report.sell_price_rmb += order.sell_price_rmb
+        #     report.profit_rmb += order.profit_rmb
+        #     report.parcel_count += order.express_orders.count()
+
+        report.order_count = all_orders.count()
+        report.cost_aud = sum_object['total_cost_aud']
+        report.cost_rmb = sum_object['total_cost_rmb']
+        report.shipping_fee = sum_object['shipping_fee']
+        report.sell_price_rmb = sum_object['sell_price_rmb']
+        report.profit_rmb = sum_object['profit_rmb']
+        report.parcel_count = sum_object['parcel_count']
         report.save()

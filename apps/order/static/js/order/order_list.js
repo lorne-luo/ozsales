@@ -4,6 +4,7 @@ var orderListPageVue = new OrderListPageVue({
             // API
             list_api_tag:   'order:api-order-list',
             detail_api_tag: 'order:api-order-detail',
+            product_detail_api_tag: 'order:api-orderproduct-detail',
             delete_api_tag: 'order:api-order-delete',
             // page
             create_url_tag: 'order:order-add',
@@ -14,14 +15,19 @@ var orderListPageVue = new OrderListPageVue({
 
             finished_items: [],
             ongoing_items: [],
+            created_items: [],
             finished_currentPage: 1,
             finished_totalPage: 1,
-            finished_perPage: 10,
+            finished_perPage: 15,
             finished_count: 0,
             ongoing_currentPage: 1,
             ongoing_totalPage: 1,
-            ongoing_perPage: 10,
+            ongoing_perPage: 15,
             ongoing_count: 0,
+            created_currentPage: 1,
+            created_totalPage: 1,
+            created_perPage: 20,
+            created_count: 0,
             ordering: '-id'
         }
     }

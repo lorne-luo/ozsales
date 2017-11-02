@@ -54,6 +54,12 @@ class ExpressOrder(models.Model):
 
         if not self.address and self.order and self.order.address:
             self.address = self.order.address
+
+        if not self.pk:
+            self.track_id = self.track_id.upper()
+            self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
+                                                         address=self.address,
+                                                         id_upload=True).exists()
         return super(ExpressOrder, self).save()
 
     def get_track_url(self):

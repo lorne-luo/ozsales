@@ -3,4 +3,7 @@ from models import Seller
 
 # Register your models here.
 
-admin.site.register(Seller)
+class SellerAdmin(admin.ModelAdmin):
+    list_display = ('username', 'name', 'email', 'mobile', 'customer', 'is_staff', 'is_active', 'date_joined')
+
+admin.site.register(Seller, SellerAdmin)

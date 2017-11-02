@@ -27,7 +27,7 @@ class <% MODEL_NAME %>AddView(MultiplePermissionsRequiredMixin, CommonContextMix
     form_class = forms.<% MODEL_NAME %>AddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("<% model_name %>.add_<% model_name %>",)
+        "all": ("<% app_name %>.add_<% model_name %>",)
     }
 
 
@@ -37,7 +37,7 @@ class <% MODEL_NAME %>UpdateView(MultiplePermissionsRequiredMixin, CommonContext
     form_class = forms.<% MODEL_NAME %>UpdateForm
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("<% model_name %>.change_<% model_name %>",)
+        "all": ("<% app_name %>.change_<% model_name %>",)
     }
 
 
@@ -47,7 +47,7 @@ class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContext
     form_class = forms.<% MODEL_NAME %>DetailForm
     template_name = 'adminlte/common_detail_new.html'
     permissions = {
-        "all": ("<% model_name %>.view_<% model_name %>",)
+        "all": ("<% app_name %>.view_<% model_name %>",)
     }
 
 

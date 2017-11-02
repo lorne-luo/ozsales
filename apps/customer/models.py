@@ -1,3 +1,4 @@
+# coding:utf-8
 import os
 
 from django.db import models
@@ -6,9 +7,8 @@ from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
 from django.db.models import Q
-from django.db.models.signals import post_save, pre_save, m2m_changed
+from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
 from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
 from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
@@ -17,6 +17,7 @@ from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from apps.member.models import Seller
+from apps.product.models import Product
 
 
 @python_2_unicode_compatible
@@ -34,9 +35,47 @@ class InterestTag(models.Model):
         return '%s' % self.name
 
 
+class CustomerCart(models.Model):
+    customer = models.OneToOneField('Customer', blank=False, null=False, verbose_name=_('Customer'))
+    coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
+    origin_price = models.DecimalField(_(u'Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_(u'Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+
+    def __str__(self):
+        return '%s' % self.customer.name
+
+    def update_price(self):
+        self.origin_price = 0
+        self.payment_price = 0
+        for p in self.products:
+            self.origin_price += p.product.safe_sell_price * p.amount
+
+        # todo coupon
+        self.payment_price = self.origin_price
+        self.save(update_fields=['payment_price', 'origin_price'])
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.update_price()
+        super(CustomerCart, self).save()
+
+
+class CartProduct(models.Model):
+    cart = models.ForeignKey('CustomerCart', blank=True, null=True, verbose_name=_('Cart'), related_name='products')
+    product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
+    amount = models.IntegerField(_('Amount'), blank=True, null=True, )
+
+    class Meta:
+        verbose_name_plural = _('CartProducts')
+        verbose_name = _('CartProduct')
+        unique_together = ('cart', 'product')
+
+    def __str__(self):
+        return '[%s]%s x %s' % (self.cart.customer.name, self.product.get_name_cn(), self.amount)
+
+
 @python_2_unicode_compatible
-class Customer(AbstractBaseUser):
-    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('Member'))
+class Customer(models.Model):
+    seller = models.OneToOneField(Seller, blank=True, null=True, verbose_name=_('Member'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
@@ -47,18 +86,26 @@ class Customer(AbstractBaseUser):
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
                                         related_name=_('primary_address'))
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
-    remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
-    groups = models.ManyToManyField(Group, verbose_name=_('groups'),
-                                    blank=True, related_name="customer_set", related_query_name="customer")
-    user_permissions = models.ManyToManyField(Permission,
-                                              verbose_name=_('customer permissions'), blank=True,
-                                              help_text=_('Specific permissions for this customer.'),
-                                              related_name="customer_set", related_query_name="customer")
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True, null=True)
+    weixin_id = models.CharField(max_length=32, blank=True, null=True)  # 微信号
 
-    objects = UserManager()
-    USERNAME_FIELD = 'name'
-    REQUIRED_FIELDS = ['email']
+    # weixin user info
+    # https://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
+    # https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
+    is_subscribe = models.BooleanField(default=False, blank=False, null=False)  # 用户是否关注公众账号
+    nickname = models.CharField(max_length=32, blank=True, null=True)
+    openid = models.CharField(max_length=64, blank=True, null=True)
+    sex = models.CharField(max_length=5, blank=True, null=True)
+    province = models.CharField(max_length=32, blank=True, null=True)
+    city = models.CharField(max_length=32, blank=True, null=True)
+    country = models.CharField(max_length=32, blank=True, null=True)
+    language = models.CharField(max_length=64, null=True, blank=True)
+    # 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像）
+    headimg_url = models.URLField(max_length=256, blank=True, null=True)
+    privilege = models.CharField(max_length=256, blank=True, null=True)
+    unionid = models.CharField(max_length=64, blank=True, null=True)
+    subscribe_time = models.DateField(blank=True, null=True)
+    remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
+    groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
 
     class Meta:
         verbose_name_plural = _('Customer')
@@ -96,52 +143,6 @@ class Customer(AbstractBaseUser):
 
     get_detail_link.short_description = 'Name'
 
-    def get_full_name(self):
-        return self.name.strip()
-
-    def get_short_name(self):
-        return self.name.strip()
-
-    def clean(self):
-        if not is_password_usable(self.password):
-            self.password = make_password(self.password)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # Note: this is not called on bulk operations
-        self.clean()
-        super(Customer, self).save(force_insert, force_update, using, update_fields)
-
-    def get_token(self):
-        '''
-         Get user's token for authentification via rest-api. Creates new if
-         does not exist yet.
-        '''
-        token, _created = Token.objects.get_or_create(user=self)
-        return token
-
-    def renew_token(self):
-        ''' Delete token and create a new one (since token is PK) '''
-        token, created = Token.objects.get_or_create(user=self)
-
-        if not created:
-            token.delete()
-            token, _created = Token.objects.get_or_create(user=self)
-
-        return token
-
-    def get_absolute_url(self):
-        return "/customer/%s" % urlquote(self.email)
-
-    def email_user(self, subject, message, from_email=None):
-        if self.email:
-            send_mail(subject, message, from_email, [self.email])
-
-    def generate_password(self):
-        '''
-        Regenerate a password
-        '''
-        self.password = get_random_string(8, 'abcdefghjklmnpqrstuvwxyz0123456789')
-
     def add_order_link(self):
         # order_root = reverse('admin:app_list', kwargs={'app_label': 'order'})
         url = reverse('admin:%s_%s_add' % ('order', 'order'))
@@ -163,12 +164,6 @@ class Customer(AbstractBaseUser):
 
     get_primary_address.allow_tags = False
     get_primary_address.short_description = 'Primary Addr'
-
-
-@receiver(pre_save, sender=Customer)
-def create_password(sender, instance=None, created=False, **kwargs):
-    if not instance.id:
-        instance.generate_password()
 
 
 @receiver(post_save, sender=Customer)
@@ -213,7 +208,10 @@ class Address(models.Model):
         verbose_name = _('Address')
 
     def __str__(self):
-        return '%s,%s,%s' % (self.name, self.mobile, self.address)
+        return self.get_text()
+
+    def get_text(self):
+        return u'%s,%s,%s' % (self.name, self.mobile, self.address)
 
     def get_customer_link(self):
         url = reverse('admin:customer_customer_change', args=[self.customer.id])
@@ -256,3 +254,15 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
+
+
+@receiver(post_delete, sender=CartProduct)
+def cart_product_deleted(sender, **kwargs):
+    cart_product = kwargs['instance']
+    cart_product.cart.update_price()
+
+
+@receiver(post_save, sender=CartProduct)
+def cart_product_post_save(sender, instance=None, created=False, update_fields=None, **kwargs):
+    if instance.cart:
+        instance.cart.update_price()
