@@ -62,7 +62,7 @@ class OrderForm2(forms.ModelForm):
 class OrderAddForm(ModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
-        widget=autocomplete.ModelSelect2(url='customer-autocomplete',
+        widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
                                          attrs={'data-placeholder': 'Select a Cusomter...'})
     )
 
@@ -77,7 +77,7 @@ class OrderAddForm(ModelForm):
 class OrderUpdateForm(ModelForm):
     address = forms.ModelChoiceField(
         queryset=Address.objects.all(),
-        widget=autocomplete.ModelSelect2(url='address-autocomplete',
+        widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
                                          forward=['customer'],
                                          attrs={'data-placeholder': 'Select a address...',})
     )
