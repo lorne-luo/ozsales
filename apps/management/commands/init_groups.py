@@ -2,30 +2,38 @@
  Create initial groups + their default permissions
  Run 'manage.py validate_permissions' prior to this one if you just added new permissions.
 '''
+from django.contrib.auth.models import Permission, Group
 from django.core import management
 from django.core.management.base import BaseCommand
-from django.contrib.auth.models import Permission, Group
-import copy
+
+from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP, CUSTOMER_GROUP
+
 
 class Command(BaseCommand):
-
     help = '''Create initial groups + their default permissions '''
 
     permissions = {
         # Group name
-        'Admin': [
+        ADMIN_GROUP: [
+            # Permission codename, app name, model name
             ('add_address', 'customer', 'address'),
             ('change_address', 'customer', 'address')
         ],
-        'Member': [
-            # Permission codename, app name, model name
+        MEMBER_GROUP: [
             ('change_seller', 'member', 'seller'),
             ('view_seller', 'member', 'seller'),
             ('add_address', 'customer', 'address'),
             ('change_address', 'customer', 'address'),
             ('view_address', 'customer', 'address')
         ],
-        'Customer': [
+        FREE_MEMBER_GROUP: [
+            ('change_seller', 'member', 'seller'),
+            ('view_seller', 'member', 'seller'),
+            ('add_address', 'customer', 'address'),
+            ('change_address', 'customer', 'address'),
+            ('view_address', 'customer', 'address')
+        ],
+        CUSTOMER_GROUP: [
             ('add_address', 'customer', 'address'),
             ('change_address', 'customer', 'address')
         ],
@@ -50,13 +58,10 @@ class Command(BaseCommand):
                     not_found.append(codename)
 
             print "\nGroup '%s', adding permissions: \n%s\n" \
-                % (group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))
+                  % (group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))
 
             group.permissions.clear()
             group.permissions.add(*permissions)
 
         if not_found:
             print "Warning: Unable to find these permissions: %s" % ', '.join(not_found)
-
-
-     
