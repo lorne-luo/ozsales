@@ -1,4 +1,5 @@
 # coding=utf-8
+from dal import autocomplete
 from django.contrib import admin
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
@@ -79,6 +80,12 @@ class ExpressOrderInlineAddForm(ModelForm):
 
 
 class ExpressOrderInlineEditForm(ModelForm):
+    carrier = forms.ModelChoiceField(
+        queryset=ExpressCarrier.objects.all(),
+        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
+                                         attrs={'data-placeholder': u'选择快递', })
+    )
+
     class Meta:
         model = ExpressOrder
         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload']

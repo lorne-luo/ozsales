@@ -3,7 +3,7 @@ from django.conf.urls import patterns, url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
-import views
+import views, views_api
 
 
 urlpatterns = []
@@ -17,6 +17,7 @@ urlpatterns += patterns('',
     url(r'^express/expresscarrier/(?P<pk>\d+)/$', login_required(views.ExpressCarrierDetailView.as_view()), name='expresscarrier-detail'),
     url(r'^express/expresscarrier/(?P<pk>\d+)/edit/$', login_required(views.ExpressCarrierUpdateView.as_view()), name='expresscarrier-update'),
     url(r'^express/changjiang/$', login_required(views.changjiang_view), name='changjiang-view'),
+    url(r'^express/expresscarrier/autocomplete/$', views_api.ExpressCarrierAutocomplete.as_view(), name='expresscarrier-autocomplete'),
 )
 
 
