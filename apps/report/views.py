@@ -6,6 +6,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
 from django.utils import timezone
 from django.db.models import Sum
+
+from core.auth_user.views import OwnerViewSetMixin
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import MonthlyReport
 from apps.customer.models import Customer
@@ -54,7 +56,7 @@ class MonthlyReportDetailView(MultiplePermissionsRequiredMixin, CommonContextMix
     }
 
 
-class MonthlyReportViewSet(CommonViewSet):
+class MonthlyReportViewSet(OwnerViewSetMixin, CommonViewSet):
     """ API views for MonthlyReport """
     queryset = MonthlyReport.objects.all()
     serializer_class = serializers.MonthlyReportSerializer
