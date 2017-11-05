@@ -77,20 +77,6 @@
       ¥{{ object.sell_price_rmb }} - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
     </td>
   </tr>
-
-  <tr>
-    <th>物流</th>
-    <td>
-      {% for ex in object.express_orders.all %}
-        [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
-        {% if ex.get_track_url %}
-          <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
-        {% else %}
-          {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
-        {% endif %}
-      {% endfor %}
-    </td>
-  </tr>
   <tr>
     <th>状态</th>
     <td>
@@ -119,5 +105,21 @@
       </a>
     </td>
   </tr>
+  <tr>
+    <th>物流</th>
+    <td>
+        <span>寄出日期: {{ object.ship_time|date }}</span>
+        <br/>
+      {% for ex in object.express_orders.all %}
+        [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
+        {% if ex.get_track_url %}
+          <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
+        {% else %}
+          {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
+        {% endif %}
+      {% endfor %}
+    </td>
+  </tr>
+
 {% endblock %}
 
