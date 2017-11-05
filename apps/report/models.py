@@ -7,12 +7,14 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import F, Sum, Count
 from django.utils import timezone
 
+from apps.member.models import Seller
 from apps.order.models import Order, ORDER_STATUS
 
 
 # Create your models here.
 @python_2_unicode_compatible
 class MonthlyReport(models.Model):
+    seller = models.ForeignKey(Seller, blank=True, null=True)
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
                              verbose_name=_(u'Month'))
     order_count = models.PositiveIntegerField(blank=True, null=True)
@@ -36,13 +38,18 @@ class MonthlyReport(models.Model):
         self.parcel_count = 0
 
     @staticmethod
-    def stat_current_month():
-        year = datetime.datetime.now().year
-        month = datetime.datetime.now().month
-        MonthlyReport.stat(year, month)
+    def stat_current_month(user):
+        seller = user.profile
+        if isinstance(seller, Seller):
+            year = datetime.datetime.now().year
+            month = datetime.datetime.now().month
+            MonthlyReport.stat(seller, year, month)
 
     @staticmethod
-    def stat(year, month):
+    def stat(user, year, month):
+        seller = user.profile
+        if not isinstance(seller, Seller):
+            return
         stat_date = datetime.date(year=year, month=month, day=1)
         next_month_future = timezone.now() + relativedelta(months=1)
         next_month_future = datetime.date(year=next_month_future.year, month=next_month_future.month, day=1)
@@ -50,15 +57,16 @@ class MonthlyReport(models.Model):
             # input month still not coming
             return
 
-        report = MonthlyReport.objects.filter(month=stat_date).first()
+        report = MonthlyReport.objects.filter(seller=seller, month=stat_date).first()
         if not report:
-            report = MonthlyReport()
+            report = MonthlyReport(seller=seller)
             report.month = stat_date
 
         report.reset()
 
-        all_orders = Order.objects.filter(is_paid=True, create_time__year=year, create_time__month=month).exclude(
-            status=ORDER_STATUS.CREATED).annotate(express_orders_count=Count('express_orders'))
+        all_orders = Order.objects.filter(seller=seller, is_paid=True, create_time__year=year,
+                                          create_time__month=month).exclude(status=ORDER_STATUS.CREATED).annotate(
+            express_orders_count=Count('express_orders'))
 
         if all_orders.count():
             sum_object = all_orders.aggregate(total_cost_aud=Sum(F('total_cost_aud')),

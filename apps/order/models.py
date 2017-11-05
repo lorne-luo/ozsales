@@ -37,7 +37,7 @@ ORDER_STATUS_CHOICES = (
 
 @python_2_unicode_compatible
 class Order(models.Model):
-    seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
+    seller = models.ForeignKey(Seller, blank=True, null=True)
     order_id = models.CharField(_(u'order id'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
@@ -144,7 +144,7 @@ class Order(models.Model):
                 self.save(update_fields=['paid_time'])
 
             from ..report.models import MonthlyReport
-            MonthlyReport.stat(self.create_time.year, self.create_time.month)
+            MonthlyReport.stat(self.seller, self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
