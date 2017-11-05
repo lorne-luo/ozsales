@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
+from core.auth_user.constant import ADMIN_GROUP
+
 
 class AuthUserManager(UserManager):
     def _create_user(self, password, is_staff, is_superuser, mobile=None, email=None, **extra_fields):
@@ -70,3 +72,28 @@ class AuthUser(AbstractUser):
 
     def get_username(self):
         return self.mobile or self.email
+
+
+class UserProfileMixin(object):
+    @property
+    def profile(self):
+        return self
+
+    @property
+    def username(self):
+        return self.auth_user.get_username()
+
+    @property
+    def date_joined(self):
+        return self.auth_user.date_joined
+
+    @property
+    def is_admin(self):
+        return self.auth_user.is_superuser or self.in_group(ADMIN_GROUP)
+
+    @property
+    def is_active(self):
+        return self.auth_user.is_active
+
+    def in_group(self, group_name):
+        return self.auth_user.groups.filter(name__in=[group_name]).exists()

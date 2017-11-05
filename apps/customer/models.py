@@ -16,7 +16,7 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
 
-from core.auth_user.models import AuthUser
+from core.auth_user.models import AuthUser, UserProfileMixin
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
@@ -96,7 +96,7 @@ class CustomerManager(Manager):
 
 
 @python_2_unicode_compatible
-class Customer(models.Model):
+class Customer(UserProfileMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
@@ -150,6 +150,10 @@ class Customer(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
+    @property
+    def profile(self):
+        return self
 
     @property
     def total_spend(self):
