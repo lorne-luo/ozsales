@@ -10,13 +10,8 @@ class ExpressCarrierAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated():
             raise PermissionDenied
 
-        seller_id = self.request.user.profile.id
         # order by carrier usage
-        qs = ExpressCarrier.objects.all().annotate(use_counter=Count(Case(
-            When(expressorder__order__seller=seller_id, then=1),
-            default=0,
-            output_field=IntegerField()
-        ))).order_by('-use_counter')
+        qs = ExpressCarrier.objects.order_by_usage(self.request.user)
 
         if self.q:
             qs = qs.filter(Q(name_cn__icontains=self.q))

@@ -81,7 +81,7 @@ class ExpressOrderInlineAddForm(ModelForm):
 
 class ExpressOrderInlineEditForm(ModelForm):
     carrier = forms.ModelChoiceField(
-        queryset=ExpressCarrier.objects.all(),
+        queryset=ExpressCarrier.objects.all().order_by('-is_default'),
         widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
                                          attrs={'data-placeholder': u'选择快递', })
     )
@@ -94,6 +94,7 @@ class ExpressOrderInlineEditForm(ModelForm):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
+        self.fields['carrier'].queryset = ExpressCarrier.objects.all().order_by('-is_default')
 
 
 ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm,

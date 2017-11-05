@@ -1,5 +1,6 @@
 import logging
 
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
@@ -7,10 +8,43 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
 import apps.express.tracker as tracker
+from apps.member.models import Seller
+from core.auth_user.models import AuthUser
 from ..order.models import Order
-from ..customer.models import Address
+from ..customer.models import Address, Customer
 
 log = logging.getLogger(__name__)
+
+
+class ExpressCarrierManager(models.Manager):
+    def order_by_usage(self, obj):
+
+        seller_id = None
+        customer_id = None
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+        else:
+            raise PermissionDenied
+
+        qs = super(ExpressCarrierManager, self).get_queryset()
+        if seller_id:
+            return qs.annotate(use_counter=models.Count(models.Case(
+                models.When(expressorder__order__seller_id=seller_id, then=1),
+                default=0,
+                output_field=models.IntegerField()
+            ))).order_by('-use_counter')
+        else:
+            return qs.annotate(use_counter=models.Count(models.Case(
+                models.When(expressorder__order__customer_id=seller_id, then=1),
+                default=0,
+                output_field=models.IntegerField()
+            ))).order_by('-use_counter')
 
 
 @python_2_unicode_compatible
@@ -21,6 +55,8 @@ class ExpressCarrier(models.Model):
     search_url = models.URLField(_('Search url'), blank=True, null=True)
     rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
     is_default = models.BooleanField('Default', default=False)
+
+    objects = ExpressCarrierManager()
 
     class Meta:
         verbose_name_plural = _('Express Carrier')
