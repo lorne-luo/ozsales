@@ -299,6 +299,7 @@ class Order(models.Model):
                 all_finished = False
 
         if all_finished:
+            # todo notify seller
             self.set_status(ORDER_STATUS.DELIVERED)
 
     @property

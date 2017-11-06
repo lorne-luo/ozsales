@@ -41,7 +41,7 @@ class ExpressCarrierManager(models.Manager):
             ))).order_by('-use_counter')
         else:
             return qs.annotate(use_counter=models.Count(models.Case(
-                models.When(expressorder__order__customer_id=seller_id, then=1),
+                models.When(expressorder__order__customer_id=customer_id, then=1),
                 default=0,
                 output_field=models.IntegerField()
             ))).order_by('-use_counter')
