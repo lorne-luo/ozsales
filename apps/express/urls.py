@@ -16,7 +16,6 @@ urlpatterns += patterns('',
     url(r'^express/expresscarrier/list/$', login_required(views.ExpressCarrierListView.as_view()), name='expresscarrier-list'),
     url(r'^express/expresscarrier/(?P<pk>\d+)/$', login_required(views.ExpressCarrierDetailView.as_view()), name='expresscarrier-detail'),
     url(r'^express/expresscarrier/(?P<pk>\d+)/edit/$', login_required(views.ExpressCarrierUpdateView.as_view()), name='expresscarrier-update'),
-    url(r'^express/changjiang/$', login_required(views.changjiang_view), name='changjiang-view'),
     url(r'^express/expresscarrier/autocomplete/$', views_api.ExpressCarrierAutocomplete.as_view(), name='expresscarrier-autocomplete'),
 )
 

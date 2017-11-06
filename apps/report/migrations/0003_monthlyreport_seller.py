@@ -7,7 +7,7 @@ from django.db import migrations, models
 def forward(apps, schema_editor):
     MonthlyReport = apps.get_model('report', 'MonthlyReport')
     Seller = apps.get_model('member', 'Seller')
-    luotao = Seller.objects.get(name='luotao')
+    luotao = Seller.objects.get(id=1)
     MonthlyReport.objects.update(seller=luotao)
 
 
