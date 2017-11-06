@@ -147,7 +147,8 @@ class ExpressOrder(models.Model):
         if self.id_upload:
             return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
         else:
-            return '<a target="_blank" href="%s"><i><b>%s</b></i></a>' % (self.get_track_url(), self.track_id)
+            return '<a target="_blank" href="%s"><i><b>%s</b></i></a>' % (
+                self.carrier.id_upload_url or self.get_track_url(), self.track_id)
 
     get_tracking_link.allow_tags = True
     get_tracking_link.short_description = 'Express Track'
