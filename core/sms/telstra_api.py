@@ -90,6 +90,9 @@ class MessageSender(object):
         return self.send_sms(self.my_number, content, app_name)
 
 
+# singleton pattern
+# telstra_sender = MessageSender()
+
 if __name__ == '__main__':
     m = MessageSender()
     m.send_to_self('hello boy')

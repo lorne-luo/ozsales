@@ -1,10 +1,10 @@
 import logging
+import re
 
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
 import apps.express.tracker as tracker
@@ -55,6 +55,7 @@ class ExpressCarrier(models.Model):
     search_url = models.URLField(_('Search url'), blank=True, null=True)
     rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
     is_default = models.BooleanField('Default', default=False)
+    track_id_regex = models.CharField(_('number regex'), max_length=512, blank=True)
 
     objects = ExpressCarrierManager()
 
@@ -109,9 +110,21 @@ class ExpressOrder(models.Model):
     def __str__(self):
         return '[%s]%s' % (self.carrier.name_cn, self.track_id)
 
+    def identify_track_id(self):
+        if self.carrier:
+            m = re.match(self.carrier.track_id_regex, self.track_id, re.IGNORECASE)
+            if not m:
+                msg = '%s not match %s regex=%s' % (self.track_id, self.carrier.name_cn, self.carrier.track_id_regex)
+                log.info('[AUTO_TRACK_ID] %s' % msg)
+        elif not self.carrier and self.track_id:
+            for carrier in ExpressCarrier.objects.all():
+                if carrier.track_id_regex:
+                    m = re.match(carrier.track_id_regex, self.track_id, re.IGNORECASE)
+                    if m and m.group():
+                        self.carrier = carrier
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.carrier:
-            self.carrier = ExpressCarrier.objects.filter(is_default=True).first()
+        self.identify_track_id()
 
         if not self.address and self.order and self.order.address:
             self.address = self.order.address
