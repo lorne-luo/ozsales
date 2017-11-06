@@ -1,5 +1,4 @@
 import logging
-
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.sessions.models import Session
@@ -62,6 +61,15 @@ class Seller(UserProfileMixin, models.Model):
         if self.mobile:
             sender = MessageSender()
             sender.send_sms(self.mobile, content, app_name='SMS Seller')
+
+    def add_membership(self, charge, months=1):
+        membership = MembershipOrder(seller=self)
+        membership.start_at = timezone.now().date() if timezone.now().date() > self.expire_at else self.expire_at
+        membership.end_at = membership.start_at + relativedelta(months=months)
+        # membership.amount=charge.amount
+        self.expire_at = membership.end_at
+        membership.save()
+        self.save(update_fields=['expire_at'])
 
 
 class MembershipOrder(models.Model):
