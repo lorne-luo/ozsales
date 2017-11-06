@@ -10,19 +10,22 @@ from models import ExpressCarrier, ExpressOrder
 class ExpressCarrierAddForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'track_id_regex', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 class ExpressCarrierDetailForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'track_id_regex', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 class ExpressCarrierUpdateForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'track_id_regex', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 # class ExpressOrderAddForm(ModelForm):

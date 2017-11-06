@@ -49,13 +49,14 @@ class ExpressCarrierManager(models.Manager):
 
 @python_2_unicode_compatible
 class ExpressCarrier(models.Model):
-    name_cn = models.CharField(_('name_cn'), max_length=50, null=False, blank=False)
-    name_en = models.CharField(_('name_en'), max_length=50, null=True, blank=True)
-    website = models.URLField(_('Website'), blank=True, null=True)
-    search_url = models.URLField(_('Search url'), blank=True, null=True)
+    name_cn = models.CharField(_('name_cn'), max_length=50, blank=False)
+    name_en = models.CharField(_('name_en'), max_length=50, blank=True)
+    website = models.URLField(_('Website'), blank=True)
+    search_url = models.URLField(_('Search url'), blank=True)
+    id_upload_url = models.URLField(_('upload url'), blank=True)
     rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
     is_default = models.BooleanField('Default', default=False)
-    track_id_regex = models.CharField(_('number regex'), max_length=512, blank=True)
+    track_id_regex = models.CharField(_('ID regex'), max_length=512, blank=True)
 
     objects = ExpressCarrierManager()
 
@@ -94,10 +95,8 @@ class ExpressOrder(models.Model):
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
-    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2,
-                              blank=True, null=True)
-    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True,
-                                 null=True)
+    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True)
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
