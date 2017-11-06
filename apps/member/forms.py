@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
 from django import forms
 from django.forms import ModelForm
+from material import Layout, Row, Fieldset
+
 from .models import Seller
 
 
@@ -90,3 +93,16 @@ class UserResetPasswordForm(PasswordChangeForm, PasswordLengthValidator):
         model = Seller
         fields = ['password1', 'password2']
 
+
+class RegisterForm(forms.Form):
+    mobile = forms.CharField(label=u"澳洲或国内手机")
+    email = forms.EmailField(label=u"电子邮件 (可选)", required=False)
+    # name = forms.CharField(label=u"姓名", required=False)
+    password = forms.CharField(widget=forms.PasswordInput, label=u"密 码")
+    password_confirm = forms.CharField(widget=forms.PasswordInput, label=u"确认密码")
+
+    layout = Layout('mobile', 'email',
+                    Row('password', 'password_confirm'))
+
+    def clean(self):
+        pass

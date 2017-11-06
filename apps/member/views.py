@@ -10,13 +10,13 @@ from django.views.decorators.cache import never_cache
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from braces.views import PermissionRequiredMixin
 from smtplib import SMTPException, SMTPConnectError
 import socket
 
 from .models import Seller
-from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm
+from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm, RegisterForm
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ def member_login(request):
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
         return render_to_response('adminlte/login.html', RequestContext(request, c))
-
+#/Users/taoluo/Workspace/ozsales/env/lib/python2.7/site-packages/material/frontend/templates/registration/login.html
     elif request.method == 'POST':
         old_user = request.user or None
 
@@ -179,3 +179,19 @@ class AgentView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class RegisterView(FormView):
+    template_name = 'member/register.html'
+    form_class = RegisterForm
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)

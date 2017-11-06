@@ -5,6 +5,7 @@ import serializers
 urlpatterns = patterns('apps.member.views',
     url(r'^login/', 'member_login', name='member-login'),
     url(r'^logout/', 'member_logout', name='member-logout'),
+    url(r'^register/', views.RegisterView.as_view(), name='member-register'),
     url(r'^home/$', 'member_home', name="member-home"),
     url(r'^agent/$', views.AgentView.as_view(), name="member-agent"),
     url(r'^profile/$', views.Profile.as_view(), name="member-profile"),
