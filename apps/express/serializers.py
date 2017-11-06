@@ -9,7 +9,7 @@ class ExpressCarrierSerializer(BaseSerializer):
     class Meta:
         model = ExpressCarrier
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+                 ['name_cn', 'name_en', 'website', 'search_url', 'track_id_regex', 'is_default']
         read_only_fields = ['id']
 
 

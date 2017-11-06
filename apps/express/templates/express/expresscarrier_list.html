@@ -8,7 +8,7 @@
   <th>名称</th>
   <th class="hidden-sm hidden-xs">Name</th>
   <th class="hidden-sm hidden-xs">Website</th>
-  <th>Rate</th>
+  <th>单号正则</th>
   <th>Default</th>
 
   <th class="hidden-sm hidden-xs"></th>
@@ -25,8 +25,8 @@
       <a href="{!! item.edit_url !!}">{!! item.name_cn !!}</a>
     </td>
     <td class="hidden-sm hidden-xs">{!! item.name_en !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.website !!}</td>
-    <td>{!! item.rate !!}</td>
+    <td class="hidden-sm hidden-xs"><a href="{!! item.website !!}">{!! item.website !!}</a></td>
+    <td>{!! item.track_id_regex !!}</td>
     <td>
       <template v-if="item.is_default">
         <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
