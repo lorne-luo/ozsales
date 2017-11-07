@@ -13,10 +13,7 @@
             <img src="/static/img/avatar-mini.png"
                  class="img-circle hidden-phone" alt="User Image">
             <p>
-                您好： {{ request.user.profile.name|default:request.user.username }}
-                {% if request.user.profile.name %}
-                    ({{ request.user.username }})
-                {% endif %}
+                您好： {{ request.user.profile.get_name }}
                 <small>最近一次登录:{{ request.user.last_login }}</small>
             </p>
         </li>
