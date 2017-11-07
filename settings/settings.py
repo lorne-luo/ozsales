@@ -50,12 +50,12 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     # common app
+    'core', # for command management
     'core.auth_user',
     'core.adminlte',
     'core.messageset',
     'core.autocode',
 
-    'apps',
     'apps.member',
     'apps.express',
     'apps.customer',

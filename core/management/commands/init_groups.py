@@ -35,22 +35,6 @@ class Command(BaseCommand):
             ('change_address', 'customer', 'address'),
             ('delete_address', 'customer', 'address'),
         ],
-        FREE_MEMBER_GROUP: [
-            ('view_seller', 'member', 'seller'),
-            ('change_seller', 'member', 'seller'),
-            ('view_order', 'order', 'order'),
-            ('add_order', 'order', 'order'),
-            ('change_order', 'order', 'order'),
-            ('delete_order', 'order', 'order'),
-            ('view_customer', 'customer', 'customer'),
-            ('add_customer', 'customer', 'customer'),
-            ('change_customer', 'customer', 'customer'),
-            ('delete_customer', 'customer', 'customer'),
-            ('view_address', 'customer', 'address'),
-            ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address'),
-            ('delete_address', 'customer', 'address'),
-        ],
         CUSTOMER_GROUP: [
             ('add_address', 'customer', 'address'),
             ('change_address', 'customer', 'address')
@@ -58,14 +42,16 @@ class Command(BaseCommand):
 
     }
 
+    permissions.update({FREE_MEMBER_GROUP: permissions[MEMBER_GROUP]})
+
     def handle(self, *args, **options):
         management.call_command('validate_permissions')
+        not_found = []
 
         for group_name, permission_set in self.permissions.items():
             group, _created = Group.objects.get_or_create(name=group_name)
 
             permissions = []
-            not_found = []
             for codename, app_label, model_name in permission_set:
                 try:
                     p = Permission.objects.get(
