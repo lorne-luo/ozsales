@@ -26,7 +26,7 @@ class SellerProfileForm(ModelForm):
 
     class Meta:
         model = Seller
-        fields = ['name', 'email', 'mobile']
+        fields = ['name']
 
 
 class PasswordLengthValidator(object):

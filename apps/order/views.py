@@ -12,7 +12,9 @@ from django_filters import FilterSet
 from django.db.models import Q
 from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
+
+from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, ADMIN_GROUP
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
@@ -59,7 +61,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.OrderForm2(),}
+        context = {'form': forms.OrderForm2(), }
         if pk:
             order = get_object_or_404(Order, id=pk)
             context['order'] = order
@@ -67,12 +69,10 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class OrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class OrderListView(GroupRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
-    permissions = {
-        "all": ("order.is_superuser",)
-    }
+    group_required = [MEMBER_GROUP, FREE_MEMBER_GROUP]
 
 
 class OrderMemberListView(CommonContextMixin, ListView):
@@ -323,22 +323,16 @@ class NewOrderFilter(FilterSet):
         return qs
 
 
-class OrderViewSet(CommonViewSet):
+class OrderViewSet(GroupRequiredMixin, CommonViewSet):
     """ api views for Order """
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     filter_fields = ['id']
     search_fields = ['customer__name', 'address__name', 'address__address']
+    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            queryset = Order.objects.all()
-        elif self.request.user.is_authenticated():
-            queryset = Order.objects.filter(customer__seller=self.request.user)
-        else:
-            queryset = Order.objects.none()
-
-        return queryset.select_related('address', 'customer')
+        return Order.objects.filter(seller=self.request.user.profile).select_related('address', 'customer')
 
     @list_route(methods=['post', 'get'])
     def new(self, request, *args, **kwargs):
