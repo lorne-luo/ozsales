@@ -2,6 +2,8 @@
 from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.forms import ModelForm
 from material import Layout, Row, Fieldset
@@ -95,14 +97,30 @@ class UserResetPasswordForm(PasswordChangeForm, PasswordLengthValidator):
 
 
 class RegisterForm(forms.Form):
-    mobile = forms.CharField(label=u"澳洲或国内手机")
+    mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
+        RegexValidator(regex='^\d*$', message=u'请输入合法的澳洲或国内手机号，无需国际区号', code='Invalid number')])
     email = forms.EmailField(label=u"电子邮件 (可选)", required=False)
     # name = forms.CharField(label=u"姓名", required=False)
-    password = forms.CharField(widget=forms.PasswordInput, label=u"密 码")
+    password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
+        'min_length': _(u'密码最小长度6位'),
+    })
     password_confirm = forms.CharField(widget=forms.PasswordInput, label=u"确认密码")
 
     layout = Layout('mobile', 'email',
                     Row('password', 'password_confirm'))
 
     def clean(self):
-        pass
+        password1 = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password_confirm')
+
+        if password1 and password1 != password2:
+            self.add_error('password_confirm', u'确认密码不匹配，请重新输入')
+
+        return self.cleaned_data
+
+
+class SellerProfileForm2(RegisterForm):
+    name = forms.CharField(label=u"姓名", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(SellerProfileForm2, self).__init__(*args, **kwargs)
