@@ -128,7 +128,7 @@ class SellerProfileForm2(RegisterForm):
 
 class LoginForm(forms.Form):
     mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
-        RegexValidator(regex='^\d*$', message=u'请输入合法的澳洲或国内手机号，无需国际区号', code='Invalid number')],error_messages={
+        RegexValidator(regex='^\d*$', message=u'请输入澳洲或国内手机号，无需区号', code='Invalid number')],error_messages={
         'required': _(u'请填写手机号'),
     })
     password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={

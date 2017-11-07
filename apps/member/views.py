@@ -32,13 +32,13 @@ def member_login(request):
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
         c.update({'form': LoginForm()})
-        return render_to_response('member/login.html', RequestContext(request, c))
+        return render_to_response('adminlte/login.html', RequestContext(request, c))
     elif request.method == 'POST':
         old_user = request.user or None
         form = LoginForm(request.POST)
         if not form.is_valid():
             form.data = {'mobile': form.data.get('mobile')}
-            return render_to_response('member/login.html', {'form': form})
+            return render_to_response('adminlte/login.html', {'form': form})
 
         mobile = form.cleaned_data.get('mobile')
         password = form.cleaned_data.get('password')
@@ -55,9 +55,9 @@ def member_login(request):
 
             return HttpResponseRedirect(next_page)
         else:
-            form.add_error(None, u'密码错误，请重新登陆.')
+            form.add_error(None, u'密码错误，请重试')
             form.data = {'mobile': mobile}
-            return render_to_response('member/login.html', {'form': form})
+            return render_to_response('adminlte/login.html', {'form': form})
 
 
 def member_home(request):
