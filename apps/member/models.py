@@ -1,6 +1,6 @@
 import logging
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.db import models
@@ -18,19 +18,32 @@ log = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class Seller(UserProfileMixin, models.Model):
-    auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller',
-                                     null=True, blank=True)
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), blank=True)
-    mobile = models.CharField(max_length=18, blank=True)
+    auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
+    name = models.CharField(_('name'), max_length=30, null=True, blank=True)
     expire_at = models.DateField(_('member expire at'), auto_now_add=False, editable=True, null=True, blank=True)
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
 
     def __str__(self):
-        return '%s#%s' % (self.auth_user, self.name)
+        return '%s#%s' % (self.name, self.auth_user.get_username())
 
-    def get_full_name(self):
-        return self.name
+    @property
+    def email(self):
+        return self.auth_user.email
+
+    @property
+    def mobile(self):
+        return self.auth_user.mobile
+
+    def set_email(self, email):
+        self.auth_user.email = email
+        self.auth_user.save(update_fields=['email'])
+
+    def set_mobile(self, mobile):
+        self.auth_user.mobile = mobile
+        self.auth_user.save(update_fields=['mobile'])
+
+    def get_name(self):
+        return self.name or self.auth_user.get_username()
 
     def check_expired(self):
         if self.in_group(FREE_MEMBER_GROUP) or self.auth_user.is_staff:
@@ -53,14 +66,20 @@ class Seller(UserProfileMixin, models.Model):
         self.auth_user.is_active = False
         self.auth_user.save(update_fields=['is_active'])
 
-    def email_user(self, subject, message, from_email=None, **kwargs):
+    def send_email(self, subject, message, **kwargs):
+        from_email = 'service@luotao.net'
         if self.email:
             send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    def sms_user(self, content):
+    def send_sms(self, content):
         if self.mobile:
-            sender = MessageSender()
-            sender.send_sms(self.mobile, content, app_name='SMS Seller')
+            if self.mobile.startswith('0'):
+                # australia mobile
+                sender = MessageSender()
+                sender.send_sms(self.mobile, content, app_name='SMS Seller')
+            elif self.mobile.startswith('1'):
+                # china mobile
+                pass
 
     def add_membership(self, charge, months=1):
         membership = MembershipOrder(seller=self)
@@ -70,6 +89,14 @@ class Seller(UserProfileMixin, models.Model):
         self.expire_at = membership.end_at
         membership.save()
         self.save(update_fields=['expire_at'])
+
+    @staticmethod
+    def create_seller(mobile, email, password, free_account=False):
+        user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
+        group = Group.objects.get(name=FREE_MEMBER_GROUP) if free_account else Group.objects.get(name=MEMBER_GROUP)
+        user.groups.add(group)
+        seller = Seller(auth_user=user)
+        seller.save()
 
 
 class MembershipOrder(models.Model):
