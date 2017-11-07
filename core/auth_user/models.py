@@ -35,29 +35,23 @@ class AuthUserManager(UserManager):
 
 
 class AuthUser(AbstractUser):
-    mobile = models.CharField(_('mobile'), max_length=30, blank=True)
+    mobile = models.CharField(_('mobile'), max_length=30, unique=True, blank=True)
 
     objects = AuthUserManager()
     REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'mobile'
 
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
+        unique_together = ('email',)
 
     @property
     def profile(self):
-        if self.is_seller:
-            return self.seller
-        elif self.is_customer:
-            return self.customer
+        if getattr(self, 'seller', None):
+            return getattr(self, 'seller')
+        elif getattr(self, 'customer', None):
+            return getattr(self, 'customer')
         return None
-
-    @property
-    def seller(self):
-        return getattr(self, 'seller', None)
-
-    @property
-    def customer(self):
-        return getattr(self, 'customer', None)
 
     @property
     def is_seller(self):
@@ -72,6 +66,16 @@ class AuthUser(AbstractUser):
 
     def get_username(self):
         return self.mobile or self.email
+
+    def in_group(self, group_names):
+        if not isinstance(group_names, (list, tuple)):
+            group_names = (group_names,)
+
+        if self.is_superuser:
+            return True
+        user_groups = self.groups.values_list("name", flat=True)
+        intersection = set(group_names).intersection(set(user_groups))
+        return bool(intersection)
 
 
 class UserProfileMixin(object):
@@ -95,5 +99,5 @@ class UserProfileMixin(object):
     def is_active(self):
         return self.auth_user.is_active
 
-    def in_group(self, group_name):
-        return self.auth_user.groups.filter(name__in=[group_name]).exists()
+    def in_group(self, group_names):
+        return self.auth_user.in_group(group_names)
