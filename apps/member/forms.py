@@ -8,6 +8,7 @@ from django import forms
 from django.forms import ModelForm
 from material import Layout, Row, Fieldset
 
+from core.auth_user.models import AuthUser
 from .models import Seller
 
 
@@ -98,8 +99,8 @@ class UserResetPasswordForm(PasswordChangeForm, PasswordLengthValidator):
 
 class RegisterForm(forms.Form):
     mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
-        RegexValidator(regex='^\d*$', message=u'请输入合法的澳洲或国内手机号，无需国际区号', code='Invalid number')])
-    email = forms.EmailField(label=u"电子邮件 (可选)", required=False)
+        RegexValidator(regex='^\d*$', message=u'澳洲或国内手机号，无需区号', code='Invalid number')])
+    email = forms.EmailField(label=u"电子邮件")
     # name = forms.CharField(label=u"姓名", required=False)
     password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
         'min_length': _(u'密码最小长度6位'),
@@ -111,11 +112,17 @@ class RegisterForm(forms.Form):
                     Row('password', 'password_confirm'))
 
     def clean(self):
+        mobile = self.cleaned_data.get('mobile')
+        email = self.cleaned_data.get('email')
         password1 = self.cleaned_data.get('password')
         password2 = self.cleaned_data.get('password_confirm')
 
         if password1 and password1 != password2:
             self.add_error('password_confirm', u'确认密码不匹配，请重新输入')
+        if AuthUser.objects.filter(email=email).exists():
+            self.add_error('email', u'该电子邮件已存在')
+        if AuthUser.objects.filter(mobile=mobile).exists():
+            self.add_error('mobile', u'该手机号码已存在')
 
         return self.cleaned_data
 
@@ -128,7 +135,7 @@ class SellerProfileForm2(RegisterForm):
 
 class LoginForm(forms.Form):
     mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
-        RegexValidator(regex='^\d*$', message=u'请输入澳洲或国内手机号，无需区号', code='Invalid number')],error_messages={
+        RegexValidator(regex='^\d*$', message=u'澳洲或国内手机号，无需区号', code='Invalid number')],error_messages={
         'required': _(u'请填写手机号'),
     })
     password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
