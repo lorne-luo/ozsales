@@ -43,7 +43,6 @@ class AuthUser(AbstractUser):
 
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
-        unique_together = ('email',)
 
     @property
     def profile(self):

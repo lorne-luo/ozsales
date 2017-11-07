@@ -16,8 +16,4 @@ class Migration(migrations.Migration):
             name='mobile',
             field=models.CharField(unique=True, max_length=30, verbose_name='mobile', blank=True),
         ),
-        migrations.AlterUniqueTogether(
-            name='authuser',
-            unique_together=set([('email',)]),
-        ),
     ]
