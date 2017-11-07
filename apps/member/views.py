@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import permission_required
@@ -16,7 +17,7 @@ from smtplib import SMTPException, SMTPConnectError
 import socket
 
 from .models import Seller
-from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm, RegisterForm
+from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm, RegisterForm, LoginForm
 
 log = logging.getLogger(__name__)
 
@@ -30,17 +31,21 @@ def member_login(request):
         c = csrf(request)
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
-        return render_to_response('adminlte/login.html', RequestContext(request, c))
+        c.update({'form': LoginForm()})
+        return render_to_response('member/login.html', RequestContext(request, c))
     elif request.method == 'POST':
         old_user = request.user or None
+        form = LoginForm(request.POST)
+        if not form.is_valid():
+            form.data = {'mobile': form.data.get('mobile')}
+            return render_to_response('member/login.html', {'form': form})
 
-        user = authenticate(username=request.POST.get('username'),
-                            password=request.POST.get('password'))
+        mobile = form.cleaned_data.get('mobile')
+        password = form.cleaned_data.get('password')
+        user = authenticate(username=mobile, password=password)
         if user:
             login(request, user)
-
             next_page = request.POST.get('next', None)
-
             # If the user was already logged-in before we ignore the ?next
             # parameter, this avoids a loop of login prompts when the user does
             # not have the permission to see the page in ?next
@@ -49,10 +54,10 @@ def member_login(request):
                 next_page = reverse('order:order-list-short')
 
             return HttpResponseRedirect(next_page)
-
         else:
-            messages.error(request, 'Login failed. Please try again.')
-            return redirect('member-login')
+            form.add_error(None, u'密码错误，请重新登陆.')
+            form.data = {'mobile': mobile}
+            return render_to_response('member/login.html', {'form': form})
 
 
 def member_home(request):
