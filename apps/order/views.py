@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.core.exceptions import ValidationError, SuspiciousOperation
 from django.forms.models import inlineformset_factory, modelformset_factory
+from django.views.generic.edit import BaseUpdateView, ProcessFormView
 from rest_framework.decorators import list_route
 from django_filters import FilterSet
 from django.db.models import Q
@@ -195,7 +196,8 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         # express orders
         self.save_express_formset(request)
 
-        return super(OrderUpdateView, self).post(request, *args, **kwargs)
+        return ProcessFormView.post(self, request, *args, **kwargs)
+        # return super(OrderUpdateView, self).post(request, *args, **kwargs)
 
 
 class OrderAddDetailView(OrderUpdateView):
@@ -209,6 +211,7 @@ class OrderAddDetailView(OrderUpdateView):
         except:
             object = Order(customer_id=self.kwargs['customer_id'])
             object.address_id = self.request.POST['address']
+            object.seller = self.request.user.profile
             object.save()
         return object
 

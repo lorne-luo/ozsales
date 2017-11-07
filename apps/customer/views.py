@@ -74,6 +74,11 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
         "all": ("customer.add_customer",)
     }
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.seller = self.request.user.profile
+        return super(CustomerAddView, self).form_valid(form)
+
 
 class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
