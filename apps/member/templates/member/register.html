@@ -1,0 +1,51 @@
+{% extends "material/frontend/base.html" %}
+{% load static i18n material_form %}
+
+{% block base_head_title %}Registration{% endblock %}
+{% block base_head_title_system_name %}OZSALES{% endblock %}
+
+
+
+{% block base_body_class %}hold-transition login-page{% endblock %}
+
+{% block header_base_style %}
+    {% include 'material/includes/material_css.html' %}
+    <script src="{% static 'material/js/jquery.js' %}"></script>
+    {% include 'material/includes/material_js.html' %}
+{% endblock %}
+
+{#http://forms.viewflow.io/demo/registration/#}
+{% block body %}
+    <div class="container expand-on-small-only">
+        <div class="row valign change-form">
+            <div class="col s12 m8 offset-m2 l8 offset-l2">
+                <div class="card" style="height:194px">
+                    <img width="100%" src="http://www.laassociate.com/images/register-banner.jpg"/>
+                </div>
+
+                <div class="card">
+                    <form method="POST" class="viewform" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="card-content">
+                            <span class="card-title grey-text text-darken-2">Registration form</span>
+                            {% form %}
+                                {% part form.mobile prefix %}<i class="material-icons prefix">call</i>{% endpart %}
+{#                                {% part form.name %}<div style="text-align: center;color:rgba(0,0,0,.4);margin-bottom: -25px">二选一</div>{% endpart %}#}
+                                {% part form.email prefix %}<i class="material-icons prefix">email</i>{% endpart %}
+                                {% part form.password prefix %}<i class="material-icons prefix">lock</i>{% endpart %}
+                            {% endform %}
+                        </div>
+                        <div class="card-action">
+                            <div class="left">
+                                <a class="btn btn-flat" href="{% url 'member-login' %}">{% trans '已经有账号?' %}</a>
+                            </div>
+                            <div class="right-align">
+                                <button class="waves-effect waves-light btn" type="submit">提 交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

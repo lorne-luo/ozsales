@@ -1,139 +1,107 @@
-import re
-from django.db import models
-from django.core.mail import send_mail
-from django.core import validators
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
-from django.contrib.auth.hashers import is_password_usable, make_password
+import logging
+from dateutil.relativedelta import relativedelta
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.contrib.sessions.models import Session
-from django.db.models import Q
-from django.db.models.signals import post_save, pre_save, m2m_changed
-from django.dispatch import receiver
-from rest_framework.authtoken.models import Token
-from django.utils.http import urlquote
+from django.core.mail import send_mail
+from django.db import models
+from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django.contrib.auth.signals import user_logged_in, user_logged_out
+from django.utils.translation import ugettext_lazy as _
+from rest_framework.authtoken.models import Token
+
+from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
+from core.auth_user.models import AuthUser, UserProfileMixin
+from core.sms.telstra_api import MessageSender
+
+log = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Seller(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(_('username'), max_length=30, unique=True, db_index=True, null=False, blank=False,
-                                help_text=_('Required. 30 characters or fewer. Letters, numbers and '
-                                            '@/./+/-/_ characters'),
-                                validators=[
-                                    validators.RegexValidator(re.compile(r'^[\w.@+-]+$'), _('Only letters, numbers and '
-                                                                                            '@/./+/-/_ characters are allowed'),
-                                                              'invalid')
-                                ])
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('email address'), max_length=254, null=True, blank=True)
-    mobile = models.CharField(max_length=18, null=True, blank=True)
-    is_staff = models.BooleanField(_('staff status'), default=False,
-                                   help_text=_('Designates whether the user can log into this admin '
-                                               'site.'))
-    is_active = models.BooleanField(_('active'), default=True,
-                                    help_text=_('Designates whether this user should be treated as '
-                                                'active. Unselect this instead of deleting accounts.'))
-    date_joined = models.DateTimeField(_('date joined'), auto_now_add=True, null=True)
-
-    objects = UserManager()
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
-
-    class Meta:
-        verbose_name = _('seller')
-        verbose_name_plural = _('sellers')
-
-    class Config:
-        # list_template_name = 'customer/customer_list.html'
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ['username', 'name', 'email', 'mobile', 'is_active', 'date_joined']
-        list_form_fields = ('username', 'name', 'email', 'mobile')
-        filter_fields = ('username', 'name', 'email', 'mobile')
-        search_fields = ('username', 'name', 'email', 'mobile')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Seller.objects.all()
-            return queryset
+class Seller(UserProfileMixin, models.Model):
+    auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
+    name = models.CharField(_('name'), max_length=30, null=True, blank=True)
+    expire_at = models.DateField(_('member expire at'), auto_now_add=False, editable=True, null=True, blank=True)
+    start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
 
     def __str__(self):
-        return '[S]%s' % self.name
-
-    def get_full_name(self):
-        return self.name.strip()
-
-    def get_short_name(self):
-        return self.name.strip()
-
-    def clean(self):
-        if not is_password_usable(self.password):
-            self.password = make_password(self.password)
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # Note: this is not called on bulk operations
-        self.clean()
-        super(Seller, self).save(force_insert, force_update, using, update_fields)
-
-    def get_token(self):
-        '''
-         Get user's token for authentification via rest-api. Creates new if
-         does not exist yet.
-        '''
-        token, _created = Token.objects.get_or_create(user=self)
-        return token
-
-    def renew_token(self):
-        ''' Delete token and create a new one (since token is PK) '''
-        token, created = Token.objects.get_or_create(user=self)
-
-        if not created:
-            token.delete()
-            token, _created = Token.objects.get_or_create(user=self)
-
-        return token
+        return '%s#%s' % (self.name, self.auth_user.get_username())
 
     @property
-    def is_admin(self):
-        return self.is_superuser or self.is_group('Admin')
+    def email(self):
+        return self.auth_user.email
 
-    def is_group(self, group_name):
-        return self.groups.filter(name=group_name).exists()
+    @property
+    def mobile(self):
+        return self.auth_user.mobile
 
-    def get_absolute_url(self):
-        return "/profile/%s/" % urlquote(self.username)
+    def set_email(self, email):
+        self.auth_user.email = email
+        self.auth_user.save(update_fields=['email'])
 
-    def email_user(self, subject, message, from_email=None):
+    def set_mobile(self, mobile):
+        self.auth_user.mobile = mobile
+        self.auth_user.save(update_fields=['mobile'])
+
+    def get_name(self):
+        return self.name or self.auth_user.get_username()
+
+    def check_expired(self):
+        if self.in_group(FREE_MEMBER_GROUP) or self.auth_user.is_staff:
+            # never expire
+            return False
+        elif self.in_group(MEMBER_GROUP):
+            return timezone.now().date() > self.expire_at if self.expire_at else True
+        else:
+            log.info('seller[%s] have no group.' % self.auth_user.get_username())
+            return True
+
+    def enable(self, month):
+        self.auth_user.is_active = True
+        self.start_at = timezone.now().date()
+        self.expire_at = self.start_at + relativedelta(months=month)
+        self.auth_user.save(update_fields=['is_active'])
+        self.save(update_fields=['start_at', 'expire_at'])
+
+    def disable(self):
+        self.auth_user.is_active = False
+        self.auth_user.save(update_fields=['is_active'])
+
+    def send_email(self, subject, message, **kwargs):
+        from_email = 'service@luotao.net'
         if self.email:
-            send_mail(subject, message, from_email, [self.email])
+            send_mail(subject, message, from_email, [self.email], **kwargs)
 
-    def logout_all(self):
-        user_sessions = UserSession.objects.filter(user=self)
+    def send_sms(self, content):
+        if self.mobile:
+            if self.mobile.startswith('0'):
+                # australia mobile
+                sender = MessageSender()
+                sender.send_sms(self.mobile, content, app_name='SMS Seller')
+            elif self.mobile.startswith('1'):
+                # china mobile
+                pass
 
-        for s in user_sessions:
-            s.session.delete()
+    def add_membership(self, charge, months=1):
+        membership = MembershipOrder(seller=self)
+        membership.start_at = timezone.now().date() if timezone.now().date() > self.expire_at else self.expire_at
+        membership.end_at = membership.start_at + relativedelta(months=months)
+        # membership.amount=charge.amount
+        self.expire_at = membership.end_at
+        membership.save()
+        self.save(update_fields=['expire_at'])
 
-        user_sessions.delete()
-
-
-class UserSession(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    session = models.OneToOneField(Session, on_delete=models.CASCADE)
-
-
-@receiver(user_logged_in)
-def session_post_login(sender, request, user, **kwargs):
-    request.session.save()
-    UserSession.objects.get_or_create(
-        session_id=request.session.session_key,
-        defaults={
-            'user': user
-        }
-    )
+    @staticmethod
+    def create_seller(mobile, email, password, free_account=False):
+        user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
+        group = Group.objects.get(name=FREE_MEMBER_GROUP) if free_account else Group.objects.get(name=MEMBER_GROUP)
+        user.groups.add(group)
+        seller = Seller(auth_user=user)
+        seller.save()
 
 
-@receiver(user_logged_out)
-def session_post_logout(sender, request, user, **kwargs):
-    UserSession.objects.filter(session_id=request.session.session_key).delete()
+class MembershipOrder(models.Model):
+    seller = models.ForeignKey(Seller, blank=True, null=True)
+    start_at = models.DateField(_('membership start at'), auto_now_add=False, editable=True, null=True, blank=True)
+    end_at = models.DateField(_('membership expire at'), auto_now_add=False, editable=True, null=True, blank=True)
+    amount = models.DecimalField(_('membership payment'), max_digits=5, decimal_places=2, null=True)
+    create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)

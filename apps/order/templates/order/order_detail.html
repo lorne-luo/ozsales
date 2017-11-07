@@ -67,8 +67,25 @@
   </tr>
 
   <tr>
+    <th>状态</th>
+    <td>
+      {% if object.status == 'CREATED' %}
+        <span class="label label-info">新建</span>
+      {% elif object.status == 'SHIPPING' %}
+        <span class="label label-success">在途</span>
+      {% elif object.status == 'DELIVERED' %}
+        <span class="label label-warning">寄达</span>
+      {% elif object.status == 'FINISHED' %}
+        <span class="label label-danger">完成</span>
+      {% endif %}
+    </td>
+  </tr>
+
+  <tr>
     <th>物流</th>
     <td>
+      <span>寄出日期: {{ object.ship_time|date }}</span>
+      <br/>
       {% for ex in object.express_orders.all %}
         [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
         {% if ex.get_track_url %}
@@ -79,20 +96,7 @@
       {% endfor %}
     </td>
   </tr>
-  <tr>
-    <th>状态</th>
-    <td>
-      {% if object.status == 'CREATED' %}
-        <span class="label label-info">{{ object.status }}</span>
-      {% elif object.status == 'SHIPPING' %}
-        <span class="label label-success">{{ object.status }}</span>
-      {% elif object.status == 'DELIVERED' %}
-        <span class="label label-warning">{{ object.status }}</span>
-      {% elif object.status == 'FINISHED' %}
-        <span class="label label-danger">{{ object.status }}</span>
-      {% endif %}
-    </td>
-  </tr>
+
 {% endblock %}
 
 

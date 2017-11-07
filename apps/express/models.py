@@ -1,22 +1,64 @@
+import logging
+import re
+
+from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
-
+import apps.express.tracker as tracker
+from apps.member.models import Seller
+from core.auth_user.models import AuthUser
 from ..order.models import Order
-from ..customer.models import Address
+from ..customer.models import Address, Customer
+
+log = logging.getLogger(__name__)
+
+
+class ExpressCarrierManager(models.Manager):
+    def order_by_usage(self, obj):
+
+        seller_id = None
+        customer_id = None
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+        else:
+            raise PermissionDenied
+
+        qs = super(ExpressCarrierManager, self).get_queryset()
+        if seller_id:
+            return qs.annotate(use_counter=models.Count(models.Case(
+                models.When(expressorder__order__seller_id=seller_id, then=1),
+                default=0,
+                output_field=models.IntegerField()
+            ))).order_by('-use_counter')
+        else:
+            return qs.annotate(use_counter=models.Count(models.Case(
+                models.When(expressorder__order__customer_id=customer_id, then=1),
+                default=0,
+                output_field=models.IntegerField()
+            ))).order_by('-use_counter')
 
 
 @python_2_unicode_compatible
 class ExpressCarrier(models.Model):
-    name_cn = models.CharField(_('name_cn'), max_length=50, null=False, blank=False)
-    name_en = models.CharField(_('name_en'), max_length=50, null=True, blank=True)
-    website = models.URLField(_('Website'), blank=True, null=True)
-    search_url = models.URLField(_('Search url'), blank=True, null=True)
+    name_cn = models.CharField(_('name_cn'), max_length=50, blank=False)
+    name_en = models.CharField(_('name_en'), max_length=50, blank=True)
+    website = models.URLField(_('Website'), blank=True)
+    search_url = models.URLField(_('Search url'), blank=True)
+    id_upload_url = models.URLField(_('upload url'), blank=True)
     rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
     is_default = models.BooleanField('Default', default=False)
+    track_id_regex = models.CharField(_('ID regex'), max_length=512, blank=True)
+
+    objects = ExpressCarrierManager()
 
     class Meta:
         verbose_name_plural = _('Express Carrier')
@@ -25,6 +67,25 @@ class ExpressCarrier(models.Model):
     def __str__(self):
         return '%s' % self.name_cn
 
+    def update_track(self, url):
+        try:
+            if 'aupost' in self.website.lower():
+                return None, None
+            elif 'emms' in self.website.lower():
+                return tracker.sfx_track(url)
+            elif 'changjiang' in self.website.lower():
+                return tracker.changjiang_track(url)
+            # todo more tracker
+            else:
+                return tracker.table_last_tr(url)
+        except Exception as ex:
+            log.info('%s track failed: %s' % (self.name_en, ex))
+            return None, str(ex)
+
+    def test_tracker(self):
+        last_order = self.express_orders.filter(is_delivered=True).order_by('-create_time').first()
+        last_order.test_tracker()
+
 
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
@@ -32,10 +93,10 @@ class ExpressOrder(models.Model):
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False)
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2,
-                              blank=True, null=True)
-    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True,
-                                 null=True)
+    is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
+    last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
+    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True)
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
@@ -48,9 +109,21 @@ class ExpressOrder(models.Model):
     def __str__(self):
         return '[%s]%s' % (self.carrier.name_cn, self.track_id)
 
+    def identify_track_id(self):
+        if self.carrier:
+            m = re.match(self.carrier.track_id_regex, self.track_id, re.IGNORECASE)
+            if not m:
+                msg = '%s not match %s regex=%s' % (self.track_id, self.carrier.name_cn, self.carrier.track_id_regex)
+                log.info('[AUTO_TRACK_ID] %s' % msg)
+        elif not self.carrier and self.track_id:
+            for carrier in ExpressCarrier.objects.all():
+                if carrier.track_id_regex:
+                    m = re.match(carrier.track_id_regex, self.track_id, re.IGNORECASE)
+                    if m and m.group():
+                        self.carrier = carrier
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        if not self.carrier:
-            self.carrier = ExpressCarrier.objects.filter(is_default=True).first()
+        self.identify_track_id()
 
         if not self.address and self.order and self.order.address:
             self.address = self.order.address
@@ -74,7 +147,8 @@ class ExpressOrder(models.Model):
         if self.id_upload:
             return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
         else:
-            return '<a target="_blank" href="%s"><i><b>%s</b></i></a>' % (self.get_track_url(), self.track_id)
+            return '<a target="_blank" href="%s"><i><b>%s</b></i></a>' % (
+                self.carrier.id_upload_url or self.get_track_url(), self.track_id)
 
     get_tracking_link.allow_tags = True
     get_tracking_link.short_description = 'Express Track'
@@ -87,6 +161,20 @@ class ExpressOrder(models.Model):
 
     def get_address(self):
         return self.order.address
+
+    def update_track(self):
+        if not self.is_delivered:
+            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            if delivered is not None:
+                self.is_delivered = delivered
+                self.last_track = last_info[:512]
+                self.save(update_fields=['last_track', 'last_track'])
+
+    def test_tracker(self):
+        if self.is_delivered:
+            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            if not delivered:
+                log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
 
 
 @receiver(post_save, sender=ExpressOrder)

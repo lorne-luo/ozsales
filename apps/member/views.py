@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import logging
 from django.core.context_processors import csrf
 from django.contrib.auth.decorators import permission_required
@@ -7,16 +8,16 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from braces.views import PermissionRequiredMixin
 from smtplib import SMTPException, SMTPConnectError
 import socket
 
 from .models import Seller
-from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm
+from .forms import SellerProfileForm, UserResetPasswordForm, ResetPasswordEmailForm, RegisterForm, LoginForm
 
 log = logging.getLogger(__name__)
 
@@ -30,18 +31,21 @@ def member_login(request):
         c = csrf(request)
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
+        c.update({'form': LoginForm()})
         return render_to_response('adminlte/login.html', RequestContext(request, c))
-
     elif request.method == 'POST':
         old_user = request.user or None
+        form = LoginForm(request.POST)
+        if not form.is_valid():
+            form.data = {'mobile': form.data.get('mobile')}
+            return render_to_response('adminlte/login.html', {'form': form})
 
-        user = authenticate(username=request.POST.get('username'),
-                            password=request.POST.get('password'))
+        mobile = form.cleaned_data.get('mobile')
+        password = form.cleaned_data.get('password')
+        user = authenticate(username=mobile, password=password)
         if user:
             login(request, user)
-
             next_page = request.POST.get('next', None)
-
             # If the user was already logged-in before we ignore the ?next
             # parameter, this avoids a loop of login prompts when the user does
             # not have the permission to see the page in ?next
@@ -50,10 +54,10 @@ def member_login(request):
                 next_page = reverse('order:order-list-short')
 
             return HttpResponseRedirect(next_page)
-
         else:
-            messages.error(request, 'Login failed. Please try again.')
-            return redirect('member-login')
+            form.add_error(None, u'密码错误，请重试')
+            form.data = {'mobile': mobile}
+            return render_to_response('adminlte/login.html', {'form': form})
 
 
 def member_home(request):
@@ -179,3 +183,21 @@ class AgentView(TemplateView):
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class RegisterView(FormView):
+    template_name = 'member/register.html'
+    form_class = RegisterForm
+    success_url = reverse_lazy('member-login')
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def form_valid(self, form):
+        mobile = form.cleaned_data.get('mobile')
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password')
+        Seller.create_seller(mobile, email, password)
+
+        return super(RegisterView, self).form_valid(form)

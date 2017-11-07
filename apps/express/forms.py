@@ -1,4 +1,5 @@
 # coding=utf-8
+from dal import autocomplete
 from django.contrib import admin
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
@@ -9,19 +10,22 @@ from models import ExpressCarrier, ExpressOrder
 class ExpressCarrierAddForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 class ExpressCarrierDetailForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 class ExpressCarrierUpdateForm(ModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+                  'is_default']
 
 
 # class ExpressOrderAddForm(ModelForm):
@@ -79,6 +83,12 @@ class ExpressOrderInlineAddForm(ModelForm):
 
 
 class ExpressOrderInlineEditForm(ModelForm):
+    carrier = forms.ModelChoiceField(
+        queryset=ExpressCarrier.objects.all().order_by('-is_default'), required=False,
+        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
+                                         attrs={'data-placeholder': u'选择快递', })
+    )
+
     class Meta:
         model = ExpressOrder
         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload']
@@ -87,6 +97,7 @@ class ExpressOrderInlineEditForm(ModelForm):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
+        self.fields['carrier'].queryset = ExpressCarrier.objects.all().order_by('-is_default')
 
 
 ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm,

@@ -1,8 +1,14 @@
+# -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.forms import ModelForm
+from material import Layout, Row, Fieldset
+
+from core.auth_user.models import AuthUser
 from .models import Seller
 
 
@@ -23,8 +29,7 @@ class SellerProfileForm(ModelForm):
 
     class Meta:
         model = Seller
-        fields = ['username', 'name', 'email',
-                  'is_active', 'groups', 'mobile', 'password']
+        fields = ['name']
 
 
 class PasswordLengthValidator(object):
@@ -91,3 +96,49 @@ class UserResetPasswordForm(PasswordChangeForm, PasswordLengthValidator):
         model = Seller
         fields = ['password1', 'password2']
 
+
+class RegisterForm(forms.Form):
+    mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
+        RegexValidator(regex='^\d*$', message=u'澳洲或国内手机号，无需区号', code='Invalid number')])
+    email = forms.EmailField(label=u"电子邮件")
+    # name = forms.CharField(label=u"姓名", required=False)
+    password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
+        'min_length': _(u'密码最小长度6位'),
+        'required': _(u'必填项'),
+    })
+    password_confirm = forms.CharField(widget=forms.PasswordInput, label=u"确认密码")
+
+    layout = Layout('mobile', 'email',
+                    Row('password', 'password_confirm'))
+
+    def clean(self):
+        mobile = self.cleaned_data.get('mobile')
+        email = self.cleaned_data.get('email')
+        password1 = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password_confirm')
+
+        if password1 and password1 != password2:
+            self.add_error('password_confirm', u'确认密码不匹配，请重新输入')
+        if AuthUser.objects.filter(email=email).exists():
+            self.add_error('email', u'该电子邮件已存在')
+        if AuthUser.objects.filter(mobile=mobile).exists():
+            self.add_error('mobile', u'该手机号码已存在')
+
+        return self.cleaned_data
+
+
+class SellerProfileForm2(RegisterForm):
+    name = forms.CharField(label=u"姓名", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(SellerProfileForm2, self).__init__(*args, **kwargs)
+
+class LoginForm(forms.Form):
+    mobile = forms.CharField(label=u"澳洲或国内手机", validators=[
+        RegexValidator(regex='^\d*$', message=u'澳洲或国内手机号，无需区号', code='Invalid number')],error_messages={
+        'required': _(u'请填写手机号'),
+    })
+    password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
+        'min_length': _(u'密码最小长度6位'),
+        'required': _(u'请填写密码'),
+    })

@@ -3,7 +3,9 @@ from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.db import transaction
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
+
+from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import Address, Customer, InterestTag
 import serializers
@@ -74,6 +76,11 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
         "all": ("customer.add_customer",)
     }
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.seller = self.request.user.profile
+        return super(CustomerAddView, self).form_valid(form)
+
 
 class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
@@ -127,9 +134,12 @@ class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
 
 
 # api views for Customer
-class CustomerViewSet(CommonViewSet):
-    queryset = Customer.objects.all()
+class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
     serializer_class = serializers.CustomerSerializer
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'mobile', 'primary_address__name']
+    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
+
+    def get_queryset(self):
+        return Customer.objects.filter(seller=self.request.user.profile)

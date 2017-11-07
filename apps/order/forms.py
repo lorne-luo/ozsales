@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory, BaseInlineFormSet, modelformset_factory
+from dal import autocomplete
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from ..customer.models import Customer, Address
 from ..product.models import Product
@@ -59,6 +60,12 @@ class OrderForm2(forms.ModelForm):
 
 
 class OrderAddForm(ModelForm):
+    customer = forms.ModelChoiceField(
+        queryset=Customer.objects.all(),
+        widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
+                                         attrs={'data-placeholder': 'Select a Cusomter...'})
+    )
+
     class Meta:
         model = Order
         fields = ['customer']
@@ -68,6 +75,13 @@ class OrderAddForm(ModelForm):
 
 
 class OrderUpdateForm(ModelForm):
+    address = forms.ModelChoiceField(
+        queryset=Address.objects.all(),
+        widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
+                                         forward=['customer'],
+                                         attrs={'data-placeholder': 'Select a address...',})
+    )
+
     cost_aud = forms.CharField(label='Cost AUD', required=False)
     sell_rmb = forms.CharField(label='Sell RMB', required=False)
 

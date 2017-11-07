@@ -192,7 +192,7 @@ class WxOrder(models.Model):
 
     @property
     def out_trade_no(self):
-        return self.order.code
+        return self.order.order_id
 
     def close(self):
         result = self.app.pay.order_close(self.out_trade_no)

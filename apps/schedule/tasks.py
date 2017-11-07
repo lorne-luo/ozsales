@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from dateutil import parser
+
+from apps.order.models import Order, ORDER_STATUS
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
 from ..express.models import ExpressOrder

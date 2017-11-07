@@ -1,1 +1,1 @@
-mysqldump -uroot -proot ozsales > /home/luotao/backup/ozsales/`date +%F`.sql
+mysqldump -uroot -plt1116 ozsales > /home/luotao/backup/ozsales/`date +%F`.sql
