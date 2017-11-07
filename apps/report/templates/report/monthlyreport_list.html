@@ -4,9 +4,6 @@
 {% block common_list_buttons %}{% endblock %}
 
 {% block table_head %}
-  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
-  </th>
   <th>Month</th>
   <th class="hidden-sm hidden-xs">Order Count</th>
   <th class="hidden-sm hidden-xs">Parcel Count</th>
@@ -19,16 +16,11 @@
   <th class="visible-sm visible-xs">Count</th>
   <th class="visible-sm visible-xs">Cost</th>
   <th class="visible-sm visible-xs">Profit</th>
-
 {% endblock %}
 
 {% block table_row %}
   <tbody v-for="item in items">
   <tr>
-    <td class="text-center hidden-sm hidden-xs">
-      ##[$index+1]
-      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-    </td>
     <td>{!! item.month !!}</td>
     <td class="hidden-sm hidden-xs">{!! item.order_count !!}</td>
     <td class="hidden-sm hidden-xs">{!! item.parcel_count !!}</td>

@@ -4,17 +4,13 @@
 <li class="active">
   <a href="{{ menu_url }}">
     <i class="fa fa-dashboard"></i>
-    <b>MonthlyReport</b>
+    <b>Report</b>
   </a>
 </li>
 
 <li class="active">
-  <a href="/report/total_report/">
+  <a href="{% url 'report:total-report' %}">
     <i class="fa fa-dashboard"></i>
     <b>Total Report</b>
-  </a>
-  <a href="/admin/order/order/?status__in=CREATED,SHIPPING,DELIVERED">
-    <i class="fa fa-dashboard"></i>
-    <b>Admin</b>
   </a>
 </li>
