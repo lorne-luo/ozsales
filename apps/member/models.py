@@ -95,7 +95,7 @@ class Seller(UserProfileMixin, models.Model):
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
         group = Group.objects.get(name=FREE_MEMBER_GROUP) if free_account else Group.objects.get(name=MEMBER_GROUP)
         user.groups.add(group)
-        seller = Seller(auth_user=user)
+        seller = Seller(auth_user=user, name=mobile or email)
         seller.save()
 
 

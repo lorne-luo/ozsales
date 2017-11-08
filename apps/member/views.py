@@ -186,7 +186,7 @@ class AgentView(TemplateView):
 
 
 class RegisterView(FormView):
-    template_name = 'member/register.html'
+    template_name = 'adminlte/register.html'
     form_class = RegisterForm
     success_url = reverse_lazy('member-login')
 
