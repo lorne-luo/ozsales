@@ -174,6 +174,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # Auth
 AUTH_USER_MODEL = 'auth_user.AuthUser'
 AUTH_PROFILE_MODULE = 'member.seller'
+AUTHENTICATION_BACKENDS = ['core.auth_user.backend.AuthUserAuthenticateBackend']
 LOGIN_URL = '/member/login/'
 
 LOGOUT_URL = '/member/login/'

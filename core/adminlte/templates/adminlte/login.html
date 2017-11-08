@@ -20,7 +20,7 @@
 
     <form action="{% url "member-login" %}" method="post">
       <div class="form-group has-feedback{% if form.mobile.errors %} has-error{% endif %}">
-        <input id="id_username" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码" }}"{% if form.mobile.value %} value="{{ form.mobile.value }}"{% endif %}
+        <input id="id_mobile" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码或电子邮件" }}"{% if form.mobile.value and not form.mobile.errors%} value="{{ form.mobile.value }}"{% endif %}
         {% if not form.mobile.value %} autofocus{% endif %}>
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
