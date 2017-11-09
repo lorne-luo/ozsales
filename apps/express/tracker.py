@@ -14,7 +14,7 @@ def check_delivery(text):
                 u'未妥投' not in text,
                 u'未投到' not in text]):
         return True, text
-    return False, text
+    return False, text.strip()
 
 
 def get_table(url, tag='table', id_=None, cls=None):
