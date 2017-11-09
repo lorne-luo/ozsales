@@ -5,6 +5,7 @@
 {% block content_title %}数据统计{% endblock %}
 
 {% block content %}
+    {% if total_day %}
     <h4>系统已运行{{ total_year }}年{{ total_day }}天,共计:</h4>
     <ul>
         <li>客户总数: {{ total_customer }} 位</li>
@@ -17,4 +18,7 @@
         <li>总成本: {{ total_cost_aud }} 刀</li>
         <li>总利润: {{ total_profit_rmb }} 元</li>
     </ul>
+    {% else %}
+        对不起，你还没有任何订单.
+    {% endif %}
 {% endblock %}
