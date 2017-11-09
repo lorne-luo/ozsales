@@ -18,6 +18,17 @@
   <div class="login-box-body">
     <p class="login-box-msg">登陆系统</p>
 
+    {% if messages %}
+      <div class="row">
+          <div class="col-xs-12">
+            {% for message in messages %}
+              <span class="alert-{{ message.tags }}">{{ message }}</span>
+              <br/><br/>
+            {% endfor %}
+          </div>
+      </div>
+    {% endif %}
+
     <form action="{% url "member-login" %}" method="post">
       <div class="form-group has-feedback{% if form.mobile.errors %} has-error{% endif %}">
         <input id="id_mobile" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码或电子邮件" }}"{% if form.mobile.value and not form.mobile.errors%} value="{{ form.mobile.value }}"{% endif %}
@@ -60,12 +71,6 @@
         <a class="btn-block" href="{% url 'password_reset' %}">忘记密码?</a>
         <a class="btn-block" href="{% url 'member-register' %}">注册新用户</a>
     </div>
-
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-      {{ message }}
-    </div>
-    {% endfor %}
 
   </div>
   <!-- /.login-box-body -->
