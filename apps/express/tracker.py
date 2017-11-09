@@ -37,6 +37,11 @@ def get_last_record(table, tag='tr', index=-1):
 
 
 # =======================================================
+def table_last_tr(url):
+    table = get_table(url)
+    last_record = get_last_record(table)
+    return check_delivery(last_record)
+
 def sfx_track(url):
     table = get_table(url, id_='oTHtable')
     last_record = get_last_record(table)

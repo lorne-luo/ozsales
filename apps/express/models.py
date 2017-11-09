@@ -75,6 +75,8 @@ class ExpressCarrier(models.Model):
                 return tracker.sfx_track(url)
             elif 'changjiang' in self.website.lower():
                 return tracker.changjiang_track(url)
+            elif 'au.transrush.com' in self.website.lower():
+                return tracker.transrush_au_track(url)
             # todo more tracker
             else:
                 return tracker.table_last_tr(url)
