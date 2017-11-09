@@ -15,29 +15,21 @@ class Command(BaseCommand):
     permissions = {
         # Group name
         ADMIN_GROUP: [
-            # Permission codename, app name, model name
-            ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address')
+            # view add chg del    app        model
+            ('y', 'y', 'y', 'y', 'customer', 'address'),
         ],
         MEMBER_GROUP: [
-            ('view_seller', 'member', 'seller'),
-            ('change_seller', 'member', 'seller'),
-            ('view_order', 'order', 'order'),
-            ('add_order', 'order', 'order'),
-            ('change_order', 'order', 'order'),
-            ('delete_order', 'order', 'order'),
-            ('view_customer', 'customer', 'customer'),
-            ('add_customer', 'customer', 'customer'),
-            ('change_customer', 'customer', 'customer'),
-            ('delete_customer', 'customer', 'customer'),
-            ('view_address', 'customer', 'address'),
-            ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address'),
-            ('delete_address', 'customer', 'address'),
+            ('y', 'y', 'y', 'n', 'member', 'seller'),
+            ('y', 'y', 'y', 'y','order', 'order'),
+            ('y', 'y', 'y', 'y', 'customer', 'customer'),
+            ('y', 'y', 'y', 'y', 'customer', 'address'),
+            ('y', 'n', 'n', 'n', 'report', 'monthlyreport'),
+            ('y', 'y', 'y', 'y', 'store', 'store'),
+            ('y', 'y', 'y', 'y', 'express', 'expresscarrier'),
         ],
         CUSTOMER_GROUP: [
-            ('add_address', 'customer', 'address'),
-            ('change_address', 'customer', 'address')
+            ('y', 'y', 'y', 'n', 'customer', 'customer'),
+            ('y', 'y', 'y', 'y', 'customer', 'address'),
         ],
 
     }
@@ -52,20 +44,34 @@ class Command(BaseCommand):
             group, _created = Group.objects.get_or_create(name=group_name)
 
             permissions = []
-            for codename, app_label, model_name in permission_set:
-                try:
-                    p = Permission.objects.get(
-                        codename=codename, content_type__app_label=app_label,
-                        content_type__model=model_name)
-                    permissions.append(p)
-                except Permission.DoesNotExist:
-                    not_found.append(codename)
+            for view, add, change, delete, app_label, model_name in permission_set:
+                perm_list = self.get_perm_list(view, add, change, delete, app_label, model_name)
+                for perm_code in perm_list:
+                    try:
+                        p = Permission.objects.get(
+                            codename=perm_code, content_type__app_label=app_label,
+                            content_type__model=model_name)
+                        permissions.append(p)
+                    except Permission.DoesNotExist:
+                        not_found.append(perm_code)
 
-            print "\nGroup '%s', adding permissions: \n%s\n" \
-                  % (group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))
+            print("\nGroup '%s', adding permissions: \n%s\n" % (
+            group_name, '\t' + '\n\t'.join([p.codename for p in permissions])))
 
             group.permissions.clear()
             group.permissions.add(*permissions)
 
         if not_found:
-            print "Warning: Unable to find these permissions: %s" % ', '.join(not_found)
+            print("Warning: Unable to find these permissions: %s" % ', '.join(not_found))
+
+    def get_perm_list(self, view, add, change, delete, app_label, model_name):
+        perm_list = []
+        if view.lower() == 'y':
+            perm_list.append('view_%s' % model_name)
+        if add.lower() == 'y':
+            perm_list.append('add_%s' % model_name)
+        if change.lower() == 'y':
+            perm_list.append('change_%s' % model_name)
+        if delete.lower() == 'y':
+            perm_list.append('delete_%s' % model_name)
+        return perm_list
