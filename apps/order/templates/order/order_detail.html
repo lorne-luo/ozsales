@@ -82,13 +82,13 @@
   </tr>
 
   <tr>
-    <th>物流</th>
-    <td>
-      寄出日期: {{ object.ship_time|date }}
-    </td>
+      <th colspan="2">物流</th>
   </tr>
   <tr>
     <td colspan="2">
+      {% if object.ship_time %}
+        寄出日期: {{ object.ship_time|date }}<br/>
+      {% endif %}
       <table>
         {% for ex in object.express_orders.all %}
         <tr><td>
@@ -101,7 +101,7 @@
         </td></tr>
         {% if ex.last_track %}
         <tr><td>
-            <li>{{ ex.last_track }}</li>
+            <ul><li>{{ ex.last_track }}</li></ul>
         </td></tr>
         {% endif %}
         {% endfor %}
