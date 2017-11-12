@@ -1,8 +1,5 @@
-{% load activelink %}
-
-{% url 'report:monthlyreport-list' as menu_url %}
 <li class="active">
-  <a href="{{ menu_url }}">
+  <a href="{% url 'report:monthlyreport-list' %}">
     <i class="fa fa-dashboard"></i>
     <b>Report</b>
   </a>
