@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from django.core.context_processors import csrf
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
@@ -78,32 +79,49 @@ class CreateUser(PermissionRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class Profile(PermissionRequiredMixin, TemplateView):
+class ProfileView(PermissionRequiredMixin, FormView):
+    form_class = SellerProfileForm
     template_name = 'member/profile.html'
-    permission_required = 'member.view_seller'
+    permission_required = 'member.change_seller'
+    success_url = reverse_lazy('member-profile')
 
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', '')
-        if pk:  # Admin editing other user's profile
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk', '')
+        if pk and self.request.user.is_superuser:  # Admin editing other user's profile
             try:
-                user = Seller.objects.get(pk=pk)
+                return Seller.objects.get(auth_user_id=pk)
             except Seller.DoesNotExist:
-                log.error("No user pk %s." % pk)
                 raise Http404()
-        else:  # Editing own profile
-            user = request.user
-        if request.user.has_perm('member.add_seller'):
-            form = SellerProfileForm(username_readonly=False, instance=user)
+        elif self.request.user.is_seller:  # Editing own profile
+            return self.request.user.profile
         else:
-            form = SellerProfileForm(username_readonly=True, instance=user)
+            raise Http404()
 
-        context = {
-            'edit_user': user,
-            'form': form,
-            'resetpasswordform': _reset_password_form(user, request),
-        }
+    def get_initial(self):
+        return {'email': self.request.user.email, 'mobile': self.request.user.mobile}
 
-        return self.render_to_response(context)
+    def get_form_kwargs(self):
+        kwargs = super(ProfileView, self).get_form_kwargs()
+        self.object = self.get_object()
+        kwargs.update({'instance': self.object})
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        context.update({'object': self.object})
+        return context
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.request.user.email = form.cleaned_data.get('email')
+        self.request.user.mobile = form.cleaned_data.get('mobile')
+
+        password = form.cleaned_data.get('password')
+        if password:
+            self.request.user.set_password(password)
+        self.request.user.save()
+        messages.success(self.request, u'个人资料已更新')
+        return super(ProfileView, self).form_valid(form)
 
 
 @permission_required('member.add_seller', raise_exception=True)
@@ -145,22 +163,22 @@ def user_password_reset(request, pk):
             if request.user == user:
                 return redirect('member-profile')
             else:
-                return redirect('admin-user-edit', pk=user.pk)
+                return redirect('admin-seller-edit', pk=user.pk)
     return render_to_response('member/user-reset-password.html', {
         'form': form,
         'edit_user': user
     }, RequestContext(request))
 
 
-def _reset_password_form(user, request, POST=False):
-    if user == request.user:
-        form = UserResetPasswordForm(user)
+def _reset_password_form(seller, request, POST=False):
+    if seller == request.user.profile:
+        form = UserResetPasswordForm(seller)
         if POST:
-            form = UserResetPasswordForm(user, POST)
-    elif request.user.has_perm('member.change_seller'):
-        form = ResetPasswordEmailForm(user)
+            form = UserResetPasswordForm(seller, POST)
+    elif request.user.is_superuser:
+        form = ResetPasswordEmailForm(seller)
         if POST:
-            form = ResetPasswordEmailForm(user, POST)
+            form = ResetPasswordEmailForm(seller, POST)
     else:
         log.error('Lacking permission to change user.')
         raise Http404
