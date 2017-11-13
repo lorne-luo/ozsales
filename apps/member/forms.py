@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
-from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
+from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm, PasswordResetForm
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
@@ -159,4 +159,27 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
         'min_length': _(u'密码最小长度6位'),
         'required': _(u'请填写密码'),
+    })
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(label=_("Email"), max_length=254, error_messages={'required': _(u'请填写电子邮件')})
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if not AuthUser.objects.filter(email=email).exists():
+            raise forms.ValidationError("该电子邮件不存在，请重新输入")
+        return email
+
+class CustomSetPasswordForm(SetPasswordForm):
+    error_messages = {
+        'password_mismatch': _(u"确认密码不匹配，请重新输入"),
+    }
+    new_password1 = forms.CharField(widget=forms.PasswordInput, label=u"密 码", min_length=6, error_messages={
+        'min_length': _(u'密码最小长度6位'),
+        'required': _(u'密码, 必填项'),
+    })
+    new_password2 = forms.CharField(widget=forms.PasswordInput, label=u"确认密码", min_length=6, error_messages={
+        'min_length': _(u'密码最小长度6位'),
+        'required': _(u'重复密码, 必填项'),
     })

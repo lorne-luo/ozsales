@@ -47,7 +47,7 @@ urlpatterns = patterns('',
 
 
     # registration
-    url(r'^auth/', include("apps.registration.urls", namespace="registration")),
+    # url(r'^auth/', include("apps.registration.urls", namespace="registration")),
 
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
