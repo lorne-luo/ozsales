@@ -49,6 +49,7 @@ class ExpressCarrierManager(models.Manager):
 
 @python_2_unicode_compatible
 class ExpressCarrier(models.Model):
+    seller = models.ForeignKey(Seller, blank=True, null=True)
     name_cn = models.CharField(_('name_cn'), max_length=50, blank=False)
     name_en = models.CharField(_('name_en'), max_length=50, blank=True)
     website = models.URLField(_('Website'), blank=True)

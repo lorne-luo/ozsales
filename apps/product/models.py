@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from taggit.managers import TaggableManager
+
+from apps.member.models import Seller
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
@@ -89,6 +91,7 @@ class ProductState(object):
 
 @python_2_unicode_compatible
 class Product(models.Model):
+    seller = models.ForeignKey(Seller, blank=True, null=True)
     code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
