@@ -30,12 +30,13 @@ INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 
 # Application definition
 INSTALLED_APPS = (
-    'material',
-    'material.frontend',
+    'django.contrib.sites',
+    'django.contrib.admin',
+    # 'material',
+    # 'material.frontend',
     # 'material.admin',
     'dal',
     'dal_select2',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -110,6 +111,7 @@ DATABASES = {
     }
 }
 
+SITE_ID = 1
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -151,9 +153,23 @@ MEDIA_URL = '/media/'
 
 # Templates
 # List of callables that know how to import templates from various sources.
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
@@ -282,7 +298,6 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': [
-        'rest_framework.filters.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
         # 'rest_framework.filters.DjangoObjectPermissionsFilter', #Will exclusively use guardian tables for access
@@ -303,6 +318,13 @@ REST_FRAMEWORK = {
 
 # ----------------------------------------- CONSTANTS -----------------------------------------------
 SITE_NAME = 'OZ SALE'
+
+# ----------------------------------------- Stripe payment -----------------------------------------------
+STRIPE_LIVE_PUBLIC_KEY = ''
+STRIPE_LIVE_SECRET_KEY = ''
+STRIPE_TEST_PUBLIC_KEY = 'pk_test_vEaCFE2a2NpcE6vDvRrvcf1T'
+STRIPE_TEST_SECRET_KEY = 'sk_test_AZbVO3pCQDtSozlrTUL9BhO0'
+STRIPE_LIVE_MODE = False
 
 # ----------------------------------------- DBSETTINGS -----------------------------------------------
 

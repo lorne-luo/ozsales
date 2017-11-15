@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
@@ -33,7 +33,7 @@ def member_login(request):
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
         c.update({'form': LoginForm()})
-        return render_to_response('adminlte/login.html', RequestContext(request, c))
+        return render_to_response('adminlte/login.html', c)
     elif request.method == 'POST':
         old_user = request.user or None
         form = LoginForm(request.POST)

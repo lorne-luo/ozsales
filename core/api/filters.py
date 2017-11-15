@@ -1,7 +1,7 @@
 from rest_framework import filters, pagination
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.filters import BaseInFilter
-
+from django_filters import FilterSet
 
 class AjaxDatatableOrderingFilter(OrderingFilter):
     """ for ajax datatable """
@@ -37,7 +37,7 @@ class AjaxDatatableSearchFilter(SearchFilter):
     search_param = 'search[value]'
 
 
-class AbstractPKInFilter(filters.FilterSet):
+class AbstractPKInFilter(FilterSet):
     """ for ajax datatable """
     id = BaseInFilter()
 

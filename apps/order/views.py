@@ -316,6 +316,7 @@ class OrderFilter(FilterSet):
 class NewOrderFilter(FilterSet):
     class Meta:
         model = Order
+        exclude = []
 
     @property
     def qs(self):

@@ -84,7 +84,6 @@ class ContentTypeObjectView(GenericAPIView):
 
 class CommonListCreateAPIView(ListCreateAPIView, ContentTypeObjectView):
     filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
                        filters.OrderingFilter)
 
     def get(self, request, *args, **kwargs):

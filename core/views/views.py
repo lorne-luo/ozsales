@@ -9,7 +9,6 @@ from django.http import JsonResponse
 from django.conf import settings
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
@@ -17,11 +16,9 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
 from core.libs import constants
 
-
 # from core.adminlte.models import Menu, SystemConfig, Permission
 # from core.messageset.models import Notification, Task
 # from core.organization.models import Staff
-
 
 class CommonContextMixin(object):
     @property
@@ -276,7 +273,6 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
     """ provide list/retrive/patch/delete restful api for model """
     max_paginate_by = 200
     filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
                        filters.OrderingFilter)
     permission_classes = [permissions.DjangoModelPermissions]
 
@@ -352,7 +348,6 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
 #     """ provide list/retrive/patch/delete restful api for model """
 #     max_paginate_by = 200
 #     filter_backends = (filters.SearchFilter,
-#                        filters.DjangoFilterBackend,
 #                        filters.OrderingFilter)
 #     permission_classes = [permissions.DjangoModelPermissions]
 #
