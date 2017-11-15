@@ -41,7 +41,7 @@ class StBaseObject(object):
 #         return number.zfill(6)
 
 
-class StripeSubscriberMixin(object):
+class UserProfileStripeMixin(object):
     """mixin for stripe customer subscriber model"""
 
     def sync_stripe(self):

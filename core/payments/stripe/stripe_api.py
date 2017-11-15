@@ -2,7 +2,6 @@ import stripe as base_stripe
 from django.conf import settings
 from stripe import InvalidRequestError
 
-from core.payments.stripe.models import StCustomer
 
 STRIPE_LIVE_MODE = getattr(settings, "STRIPE_LIVE_MODE", False)
 

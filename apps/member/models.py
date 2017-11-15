@@ -11,20 +11,23 @@ from rest_framework.authtoken.models import Token
 
 from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
+from core.payments.stripe.models import UserProfileStripeMixin
 from core.sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Seller(UserProfileMixin, models.Model):
+class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('name'), max_length=30, null=True, blank=True)
     expire_at = models.DateField(_('member expire at'), auto_now_add=False, editable=True, null=True, blank=True)
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
 
     def __str__(self):
-        return '%s#%s' % (self.name, self.auth_user.get_username())
+        if self.auth_user:
+            return '%s#%s' % (self.name, self.auth_user.get_username())
+        return '%s#%s' % (self.name, None)
 
     @property
     def email(self):

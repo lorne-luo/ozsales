@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'core.adminlte',
     'core.messageset',
     'core.autocode',
+    'core.payments.stripe',
 
     'apps.member',
     'apps.express',
@@ -78,6 +79,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',  # must come after accounts for migrations to work
     'taggit',
     'easy_thumbnails',
+    'djstripe',
 )
 
 MIDDLEWARE_CLASSES = (

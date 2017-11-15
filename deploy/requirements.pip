@@ -41,3 +41,5 @@ weixin-python
 jsonfield==1.0.3
 #django-material==1.1.1
 xhtml2pdf==0.0.6
+dj-stripe==1.0.0.post1
+pyopenssl

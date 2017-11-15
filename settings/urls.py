@@ -27,6 +27,7 @@ apps_urlpatterns = [
     url(r'^', include('apps.weixin.urls', namespace='weixin')),
     url(r'^', include('apps.schedule.urls', namespace='schedule')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
+    url(r'^', include('core.payments.stripe.views', namespace='payments')),
 ]
 # Member frontend
 
@@ -57,8 +58,9 @@ urlpatterns = [
     url(r'^', include('apps.weixin.urls', namespace='weixin')),
     url(r'^', include('apps.schedule.urls', namespace='schedule')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
+    url(r'^', include('core.payments.stripe.urls', namespace='payments')),
 
-# REST API
+    # REST API
 #     url(r'^api/', include(api_urlpatterns, namespace='api')),
 
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
