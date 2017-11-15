@@ -1,0 +1,245 @@
+{% extends 'members/dashboard_base.html' %}
+{% load  static %}
+
+{% block body_class %}page-dashboard page-dashboard-credit-card{% endblock %}
+
+{% block title %}
+    Update Credit Card | FreightQuotes
+{% endblock %}
+
+{% block cls_billing_active %}nav-item--active{% endblock %}
+
+{% block sticky-menu %}
+    <div class="sticky-menu">
+        <a href="{% url 'members:dashboard' %}">Return to dashboard</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="main-content">
+        <div class="heading-block heading-block--style1">
+            <h2>Update Credit Card</h2>
+            <div class="desc-block">
+                <p>FreightQuotes will only charge for leads that are accepted. Accepted leads will be charged to you monthly and will be visible on your statement.</p>
+            </div>
+        </div>
+
+        <div class="tabs-container">
+            <div class="tabs" data-tabs="true">
+                <div class="tabs-container-header">
+                    <ul class="tabs__tab-list" role="tablist">
+                        <li class="tabs__tab" role="tab" id="tabs-0" aria-selected="false"
+                            aria-disabled="false"
+                            aria-controls="tabs-1"><a href="{% url 'members:invoices' %}">Invoices</a>
+                        </li>
+                        <li class="tabs__tab tabs__tab--selected" role="tab" id="tabs-2"
+                            aria-selected="true"
+                            aria-disabled="false" aria-controls="tabs-3" tabindex="0">Update Credit Card
+                        </li>
+                    </ul>
+                </div>
+                <div class="tabs__tab-panel--bordered">
+                    <form action="" method="post" id="payment-form">
+                        {% csrf_token %}
+                        <div class="credit-card-form-wrapper">
+                            <div class="credit-card-form-field">
+                                <label for="card-number">
+                                    CARD NUMBER
+                                </label>
+                                <div class="field-input">
+                                    <div id="card-number">
+                                        <!-- a Stripe Element will be inserted here. -->
+                                    </div>
+                                    <div class="error-message">
+                                        <div id="card-number-errors" role="alert"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="credit-card-form-field">
+                                <label>CARD HOLDERS NAME</label>
+                                <div class="field-input">
+                                    <div>
+                                        <input id="card-name" type="text" class="name" placeholder="Card holder name">
+                                    </div>
+                                    <div class="error-message">
+                                        <div id="card-name-errors" role="alert"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex-container flex-container--space-between">
+                                <div class="credit-card-form-field credit-card-form-field--expiry">
+                                    <label for="card-expiry">
+                                        EXPIRY DATE
+                                    </label>
+                                    <div class="field-input">
+                                        <div id="card-expiry">
+                                            <!-- a Stripe Element will be inserted here. -->
+                                        </div>
+                                        <div class="error-message">
+                                            <div id="card-expiry-errors" role="alert"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="credit-card-form-field credit-card-form-field--cvc">
+
+                                    <label for="card-cvc">
+                                        CW/CVC
+                                    </label>
+                                    <div class="field-input">
+                                        <div id="card-cvc">
+                                            <!-- a Stripe Element will be inserted here. -->
+                                        </div>
+                                        <div class="error-message">
+                                            <div id="card-cvc-errors" role="alert"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if error %}
+                            <div class="alert alert--error">{{ error|safe }}</div>
+                            {% endif %}
+                            <input class="btn btn--large" id="submit-button" type="submit" value="Update Credit Card"/>
+                            <div class="term-condition">
+                                By submitting your credit card details,</br> you accept our <a href="#">Terms &
+                                Conditions.</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    {{ form.media.js }}
+{#    refer https://stripe.com/docs/stripe-js #}
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <style>
+        .StripeElement {
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 2px solid #e9eaea;
+        }
+
+        .StripeElement--focus {
+            border-color: #0172de;
+        }
+
+        .StripeElement--invalid {
+            border-color: #ed1c24;
+            background-color: #ffd8dd;
+        }
+
+        .StripeElement--webkit-autofill {
+            background-color: #fefde5 !important;
+        }
+    </style>
+
+
+    <script>
+        // Create a Stripe client
+        var stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+
+        // Create an instance of Elements
+        var elements = stripe.elements();
+
+        // Custom styling can be passed to options when creating an Element.
+        // (Note that this demo uses a wider set of styles than the guide below.)
+        var style = {
+            base: {
+                color: '#32325d',
+                lineHeight: '24px',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '16px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a',
+                ':focus': {
+                    color: '#303238',
+                },
+            }
+        };
+
+        // Create an instance of the card Element
+        var cardNumber = elements.create('cardNumber', {style: style});
+        var cardExpiry = elements.create('cardExpiry', {style: style});
+        var cardCvc = elements.create('cardCvc', {style: style});
+
+        // Add an instance of the card Element into the `card-element` <div>
+        cardNumber.mount('#card-number');
+        cardExpiry.mount('#card-expiry');
+        cardCvc.mount('#card-cvc');
+
+        // Handle real-time validation errors from the card number.
+        cardNumber.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-number-errors');
+            if (event.error) {
+                console.log(event.error);
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle real-time validation errors from the card expire date .
+        cardExpiry.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-expiry-errors');
+            if (event.error) {
+                console.log(event.error);
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle real-time validation errors from the card cvc.
+        cardCvc.addEventListener('change', function (event) {
+            var displayError = document.getElementById('card-cvc-errors');
+            if (event.error) {
+                console.log(event.error);
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission
+        var form = document.getElementById('payment-form');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            stripe.createToken(cardExpiry).then(function (result) {
+                if (result.error) {
+                    // Inform the user if there was an error
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                    return false;
+                } else {
+                    // Send the token to your server
+                    console.log(result.token.id);
+                    var input = $("<input>")
+                        .attr("type", "hidden")
+                        .attr("name", "cardToken").val(result.token.id);
+                    $('#payment-form').append($(input)).submit();
+                }
+            });
+        });
+    </script>
+{% endblock %}
+
+
+

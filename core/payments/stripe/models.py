@@ -64,9 +64,9 @@ class StripeSubscriberMixin(object):
         charge = self.stripe_customer.charge(amount, currency, **kwargs)
         return charge
 
-    def update_unique_card(self, source, set_default=True):
+    def update_unique_card(self, source):
         """add new default card and remove other"""
-        card = self.stripe_customer.add_card(source, set_default=set_default)
+        card = self.add_card(source)
         # only keep one card, remove all existed when update new
         for source in self.stripe_customer.sources.exclude(stripe_id=card.stripe_id):
             try:
@@ -75,6 +75,9 @@ class StripeSubscriberMixin(object):
                 continue
         return card
 
+    def add_card(self, source, set_default=True):
+        return self.stripe_customer.add_card(source, set_default=set_default)
+
     def remove_all_card(self):
         """remove credit card"""
         for source in self.stripe_customer.sources.all():
@@ -82,6 +85,9 @@ class StripeSubscriberMixin(object):
                 source.remove()
             except Exception as ex:
                 continue
+
+    def remove_card(self, stripe_id):
+        self.stripe_customer.sources.filter(stripe_id=stripe_id).first().remove()
 
     def get_default_card(self):
         """all credit card"""

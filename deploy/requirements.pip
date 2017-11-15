@@ -39,4 +39,5 @@ django-tinymce4-lite==1.6.0
 pyenchant
 weixin-python
 jsonfield==1.0.3
-django-material==1.1.1
+#django-material==1.1.1
+xhtml2pdf==0.0.6
