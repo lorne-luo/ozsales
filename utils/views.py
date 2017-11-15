@@ -1,6 +1,6 @@
 from io import BytesIO
 from django.template.loader import get_template
-from django.http import HttpResponse,
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from xhtml2pdf import pisa
 
