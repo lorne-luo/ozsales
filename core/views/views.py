@@ -10,6 +10,7 @@ from django.conf import settings
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
@@ -272,7 +273,8 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
 class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
     """ provide list/retrive/patch/delete restful api for model """
     max_paginate_by = 200
-    filter_backends = (filters.SearchFilter,
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
                        filters.OrderingFilter)
     permission_classes = [permissions.DjangoModelPermissions]
 

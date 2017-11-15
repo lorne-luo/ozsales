@@ -4,6 +4,7 @@ from django.http import Http404
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
@@ -83,7 +84,8 @@ class ContentTypeObjectView(GenericAPIView):
 
 
 class CommonListCreateAPIView(ListCreateAPIView, ContentTypeObjectView):
-    filter_backends = (filters.SearchFilter,
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
                        filters.OrderingFilter)
 
     def get(self, request, *args, **kwargs):
