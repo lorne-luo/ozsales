@@ -2,6 +2,7 @@ import stripe
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import RedirectView, TemplateView
 
 from core.auth_user.models import AuthUser
@@ -21,7 +22,7 @@ class PaymentsContextMixin(object):
         return context
 
 
-class UpdateCreditCardView(PaymentsContextMixin, TemplateView):
+class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateView):
     """A view to render the add card template."""
     template_name = "payments/add_card.html"
 
