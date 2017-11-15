@@ -1,9 +1,8 @@
 from decimal import Decimal
 
-from django.db import models
-from djstripe.models import Customer, Charge, Invoice
-from djstripe.models import Card as StCard
-from djstripe.stripe_objects import StripeCustomer
+from django.core.exceptions import SuspiciousOperation
+from djstripe.models import Customer, Charge
+from djstripe.sync import sync_subscriber
 
 
 class StBaseObject(object):
@@ -19,57 +18,74 @@ class StBaseObject(object):
         return self
 
 
-class StCustomer(Customer, StBaseObject):
-    class Meta:
-        proxy = True
+# class StCharge(Charge, StBaseObject):
+#     INVOICE_NUMBER_KEY = 'invoice_number'
+#
+#     class Meta:
+#         proxy = True
+#
+#     def _attach_objects_hook(self, cls, data):
+#         super(StCharge, self)._attach_objects_hook(cls, data)
+#         invoice = Invoice.objects.filter(stripe_id=data['invoice']).first()
+#         if invoice:
+#             self.invoice = invoice
+#
+#
+# class ChargeLog(models.Model):
+#     """just to get unique id for invoice number"""
+#
+#     def get_invoice_number(self):
+#         if not self.id:
+#             self.save()
+#         number = hex(self.id).split('x')[-1].upper()
+#         return number.zfill(6)
 
-    def _sync_cards(self, **kwargs):
-        for stripe_card in StCard.api_list(customer=self, **kwargs):
-            StCard.sync_from_stripe_data(stripe_card)
 
-    def _sync_charges(self, **kwargs):
-        for stripe_charge in Charge.api_list(customer=self.stripe_id, **kwargs):
-            StCharge.sync_from_stripe_data(stripe_charge)
+class StripeSubscriberMixin(object):
+    """mixin for stripe customer subscriber model"""
 
-    def charge(self, amount, currency="aud", **kwargs):
-        if not isinstance(amount, Decimal):
-            amount = Decimal(amount).quantize(Decimal('0.01'))
-
-        stripe_charge = StripeCustomer.charge(self, amount=amount, currency=currency, **kwargs)
-        charge = StCharge.sync_from_stripe_data(stripe_charge)
-        return charge
-
-
-class StCharge(Charge, StBaseObject):
-    INVOICE_NUMBER_KEY = 'invoice_number'
-
-    class Meta:
-        proxy = True
-
-    def _attach_objects_hook(self, cls, data):
-        super(StCharge, self)._attach_objects_hook(cls, data)
-        invoice = Invoice.objects.filter(stripe_id=data['invoice']).first()
-        if invoice:
-            self.invoice = invoice
-
-    def refund(self, amount=None, reason=None):
-        refunded_charge = super(StCharge, self).refund(amount, reason)
-        return StCharge.sync_from_stripe_data(refunded_charge)
-
-    def capture(self):
-        captured_charge = super(StCharge, self).capture()
-        return StCharge.sync_from_stripe_data(captured_charge)
+    def sync_stripe(self):
+        """sync all payment data (customer,card,charge,invoice) from stripe"""
+        sync_subscriber(self.auth_user)
 
     @property
-    def invoice_number(self):
-        return self.metadata.get(self.INVOICE_NUMBER_KEY, None)
+    def stripe_customer(self):
+        if not getattr(self, 'auth_user'):
+            raise SuspiciousOperation('%s do not related with Stripe customer.' % self)
+        customer, _created = Customer.get_or_create(subscriber=self.auth_user)
+        return Customer.objects.get(pk=customer.id)
 
+    def can_charge(self):
+        return self.stripe_customer.can_charge()
 
-class ChargeLog(models.Model):
-    """just to get unique id for invoice number"""
+    def charge(self, amount, currency="aud", **kwargs):
+        """refer djstripe.stripe_objects.charge"""
+        amount = Decimal(amount).quantize(Decimal('0.01'))
+        charge = self.stripe_customer.charge(amount, currency, **kwargs)
+        return charge
 
-    def get_invoice_number(self):
-        if not self.id:
-            self.save()
-        number = hex(self.id).split('x')[-1].upper()
-        return number.zfill(6)
+    def update_unique_card(self, source, set_default=True):
+        """add new default card and remove other"""
+        card = self.stripe_customer.add_card(source, set_default=set_default)
+        # only keep one card, remove all existed when update new
+        for source in self.stripe_customer.sources.exclude(stripe_id=card.stripe_id):
+            try:
+                source.remove()
+            except Exception as ex:
+                continue
+        return card
+
+    def remove_all_card(self):
+        """remove credit card"""
+        for source in self.stripe_customer.sources.all():
+            try:
+                source.remove()
+            except Exception as ex:
+                continue
+
+    def get_default_card(self):
+        """all credit card"""
+        return self.stripe_customer.default_source
+
+    def get_all_charges(self):
+        return Charge.objects.filter(customer_id=self.stripe_customer)

@@ -23,16 +23,16 @@ base_stripe.api_key = STRIPE_SECRET_KEY
 stripe = base_stripe
 
 
-def sync_subscriber(subscriber):
-    """Sync a Customer with Stripe api data."""
-    customer, _created = StCustomer.get_or_create(subscriber=subscriber)
-    customer = StCustomer.objects.get(id=customer.id)
-    try:
-        customer.sync_from_stripe_data(customer.api_retrieve())
-        customer._sync_subscriptions()
-        customer._sync_invoices()
-        customer._sync_cards()
-        customer._sync_charges()
-    except InvalidRequestError as e:
-        print("ERROR: " + str(e))
-    return customer
+# def sync_subscriber(subscriber):
+#     """Sync a Customer with Stripe api data."""
+#     customer, _created = StCustomer.get_or_create(subscriber=subscriber)
+#     customer = StCustomer.objects.get(id=customer.id)
+#     try:
+#         customer.sync_from_stripe_data(customer.api_retrieve())
+#         customer._sync_subscriptions()
+#         customer._sync_invoices()
+#         customer._sync_cards()
+#         customer._sync_charges()
+#     except InvalidRequestError as e:
+#         print("ERROR: " + str(e))
+#     return customer
