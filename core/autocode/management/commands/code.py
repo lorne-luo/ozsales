@@ -37,15 +37,14 @@ class Command(BaseCommand):
 
     '''
 
-    option_list = BaseCommand.option_list + (
-        make_option("--overwrite", "-o", action="store_true", dest="is_overwrite", default=False,
-                    help="Overwrite all files."),
-    )
-
     args = "app folder path or models.py path"
     module = None
     model_list = []
     is_overwrite = False
+
+    def add_arguments(self, parser):
+        parser.add_argument("--overwrite", "-o", action="store_true", dest="is_overwrite", default=False,
+                    help="Overwrite all files.")
 
     def handle(self, *args, **options):
         if len(args) < 1:

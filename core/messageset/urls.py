@@ -31,45 +31,44 @@ urlpatterns = [
     # url(r'/task.html$', TaskListView.as_view(),
     #     name='task'),
 ]
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
 import views
 
 
-urlpatterns = []
 router = PostHackedRouter()
 router.include_root_view = False
 
 # urls for notification
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/notification/list/$', login_required(views.NotificationListView.as_view()), name='notification-list'),
     url(r'^messageset/notification/(?P<pk>\d+)/$', login_required(views.NotificationDetailView.as_view()), name='notification-detail'),
     url(r'^messageset/notification/(?P<pk>\d+)/edit/$', login_required(views.NotificationUpdateView.as_view()), name='notification-update'),
-)
+]
 
 # reverse('messageset:api-notification-list'),reverse('messageset:api-notification-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/notification', views.NotificationViewSet, base_name='api-notification')
 
 
 # urls for notificationcontent
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/notificationcontent/add/$', login_required(views.NotificationContentAddView.as_view()), name='notificationcontent-add'),
     url(r'^messageset/notificationcontent/(?P<pk>\d+)/$', login_required(views.NotificationContentDetailView.as_view()), name='notificationcontent-detail'),
     url(r'^messageset/notificationcontent/(?P<pk>\d+)/edit/$', login_required(views.NotificationContentUpdateView.as_view()), name='notificationcontent-update'),
-)
+]
 
 # reverse('messageset:api-notificationcontent-list'),reverse('messageset:api-notificationcontent-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/notificationcontent', views.NotificationContentViewSet, base_name='api-notificationcontent')
 
 
 # urls for sitemailcontent
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/sitemail/add/$', login_required(views.SiteMailContentAddView.as_view()), name='sitemail-add'),
     url(r'^messageset/sitemailcontent/(?P<pk>\d+)/$', login_required(views.SiteMailContentDetailView.as_view()), name='sitemailcontent-detail'),
     url(r'^messageset/sitemailcontent/(?P<pk>\d+)/edit/$', login_required(views.SiteMailContentUpdateView.as_view()), name='sitemailcontent-update'),
-)
+]
 
 
 # reverse('messageset:api-sitemailcontent-list'),reverse('messageset:api-sitemailcontent-detail', kwargs={'pk': 1})
@@ -77,31 +76,31 @@ router.register(r'api/messageset/sitemailcontent', views.SiteMailContentViewSet,
 
 
 # urls for sitemailreceive
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/sitemail/list/$', login_required(views.SiteMailReceiveListView.as_view()), name='sitemail-list'),
     url(r'^messageset/sitemail/receive/(?P<pk>\d+)/$', login_required(views.SiteMailReceiveDetailView.as_view()), name='sitemailreceive-detail'),
     url(r'api/messageset/sitemail/receive/markall', views.sitemail_markall, name='api-sitemail_markall'),
-)
+]
 
 # reverse('messageset:api-sitemailreceive-list'),reverse('messageset:api-sitemailreceive-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/sitemailreceive', views.SiteMailReceiveViewSet, base_name='api-sitemailreceive')
 
 
 # urls for sitemailsend
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/sitemailsend/(?P<pk>\d+)/$', login_required(views.SiteMailSendDetailView.as_view()), name='sitemailsend-detail'),
-)
+]
 
 # reverse('messageset:api-sitemailsend-list'),reverse('messageset:api-sitemailsend-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/sitemailsend', views.SiteMailSendViewSet, base_name='api-sitemailsend')
 
 
 # urls for task
-urlpatterns += patterns('',
+urlpatterns += [
     url(r'^messageset/task/list/$', login_required(views.TaskListView.as_view()), name='task-list'),
     url(r'^messageset/task/(?P<pk>\d+)/$', login_required(views.TaskDetailView.as_view()), name='task-detail'),
     # url(r'^messageset/task/(?P<pk>\d+)/edit/$', login_required(views.TaskUpdateView.as_view()), name='task-update'),
-)
+]
 
 # reverse('messageset:api-task-list'),reverse('messageset:api-task-detail', kwargs={'pk': 1})
 router.register(r'api/messageset/task', views.TaskViewSet, base_name='api-task')

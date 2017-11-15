@@ -1,5 +1,5 @@
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
@@ -8,7 +8,7 @@ import views
 router = PostHackedRouter()
 router.include_root_view = False
 
-urlpatterns = patterns('apps.order.views',
+urlpatterns = [
     url(r'^order/(?P<order_id>\d+)/status/(?P<status_value>\w+)/$', views.change_order_status, name='change-order-status'),
     url(r'^order/paid/(?P<order_id>\d+)/$', views.change_order_paid, name="change-order-paid"),
 
@@ -26,20 +26,19 @@ urlpatterns = patterns('apps.order.views',
 
     # payment
     url(r'^order/(?P<pk>\d+)/pay/$', login_required(views.OrderPayView.as_view()), name='order-pay'),
-
-)
+]
 
 
 # reverse('order:api-order-list'), reverse('order:api-order-detail', kwargs={'pk': 1})
 router.register(r'api/order/order', views.OrderViewSet, base_name='api-order')
 
 # urls for orderproduct
-urlpatterns += patterns('',
+urlpatterns += [
     # url(r'^order/orderproduct/add/$', login_required(views.OrderProductAddView.as_view()), name='orderproduct-add'),
     url(r'^order/orderproduct/list/$', login_required(views.OrderProductListView.as_view()), name='orderproduct-list'),
     url(r'^order/orderproduct/(?P<pk>\d+)/$', login_required(views.OrderProductDetailView.as_view()), name='orderproduct-detail'),
     # url(r'^order/orderproduct/(?P<pk>\d+)/edit/$', login_required(views.OrderProductUpdateView.as_view()), name='orderproduct-update'),
-)
+]
 
 router.register(r'api/order/orderproduct', views.OrderProductViewSet, base_name='api-orderproduct')
 
