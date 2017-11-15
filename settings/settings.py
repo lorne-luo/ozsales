@@ -187,6 +187,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'dealer.contrib.django.context_processor',
 )
 
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = 'dev@luotao.net'
+
 # Auth
 AUTH_USER_MODEL = 'auth_user.AuthUser'
 AUTH_PROFILE_MODULE = 'member.seller'
