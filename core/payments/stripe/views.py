@@ -24,7 +24,7 @@ class PaymentsContextMixin(object):
 
 class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateView):
     """A view to render the add card template."""
-    template_name = "payments/add_card.html"
+    template_name = "djstripe/add_card.html"
 
     def post(self, request, *args, **kwargs):
         token = request.POST.get("cardToken", None)

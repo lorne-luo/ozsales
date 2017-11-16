@@ -43,6 +43,8 @@ api_urlpatterns = [
 urlpatterns = apps_urlpatterns + [
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^payments/', include('djstripe.urls', namespace="djstripe")),
+
     # REST API
 #     url(r'^api/', include(api_urlpatterns, namespace='api')),
 
