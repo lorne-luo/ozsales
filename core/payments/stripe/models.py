@@ -1,8 +1,13 @@
 from decimal import Decimal
 
+import logging
+from stripe.error import (CardError, StripeError, APIConnectionError, AuthenticationError, InvalidRequestError,
+                          RateLimitError)
 from django.core.exceptions import SuspiciousOperation
 from djstripe.models import Customer, Charge
 from djstripe.sync import sync_subscriber
+
+log = logging.getLogger(__name__)
 
 
 class StBaseObject(object):
@@ -61,8 +66,34 @@ class UserProfileStripeMixin(object):
     def charge(self, amount, currency="aud", **kwargs):
         """refer djstripe.stripe_objects.charge"""
         amount = Decimal(amount).quantize(Decimal('0.01'))
-        charge = self.stripe_customer.charge(amount, currency, **kwargs)
-        return charge
+
+        try:
+            charge = self.stripe_customer.charge(amount, currency, **kwargs)
+            return charge.paid, charge
+        except CardError as e:
+            # charge declined
+            body = e.json_body
+            err = body.get('error', {})
+            msg = 'status=%s, type=%s, code=%s, param=%s, msg=%s' % (e.http_status, err.get('type'), err.get('code'),
+                                                                     err.get('param'), err.get('message'))
+            log.error('[Payment CardError] %s' % msg)
+            return False, err.get('message')
+        except (RateLimitError, APIConnectionError) as e:
+            # Too many requests made to the API too quickly / Network communication with Stripe failed
+            log.error('[Payment Unavailable] %s' % e)
+            return False, 'Payment gateway have temporal problem, please re-try later.'
+        except (InvalidRequestError, AuthenticationError) as e:
+            # Invalid parameters were supplied to Stripe's API / Authentication with Stripe's API failed (maybe you changed API keys recently)
+            log.error('[Payment AuthError] %s' % e)
+            return False, 'Payment gateway have critical problem, please contact administrator.'
+        except StripeError as e:
+            # Display a very generic error to the user, and maybe send yourself an email
+            log.error('[Payment StripeError] %s' % e)
+            return False, str(e)
+        except Exception as e:
+            # Something else happened, completely unrelated to Stripe
+            log.error('[Payment OtherError] %s' % e)
+            raise e
 
     def update_unique_card(self, source):
         """add new default card and remove other"""
