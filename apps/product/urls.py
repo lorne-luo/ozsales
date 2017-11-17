@@ -16,6 +16,9 @@ urlpatterns += [
     # old
     url(r'^product/edit/(?P<pk>\d+)/$', views.ProductAddEdit.as_view(), name="product-edit-old"),
     url(r'^product/add/$', views.ProductAddEdit.as_view(), name="product-add-old"),
+    # autocomplete
+    url(r'^product/product/autocomplete/$', views.ProductAutocomplete.as_view(), name='product-autocomplete'),
+
 ]
 
 # reverse('product:api-product-list'), reverse('product:api-product-detail', kwargs={'pk': 1})

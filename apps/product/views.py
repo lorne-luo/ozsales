@@ -1,8 +1,10 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
-from django.http import Http404
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 from django.views.generic import ListView, CreateView, UpdateView
+from dal import autocomplete
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
@@ -34,7 +36,7 @@ class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         pk = kwargs.get('pk', '')
-        context = {'form': forms.ProductForm(),}
+        context = {'form': forms.ProductForm()}
         if pk:
             product = get_object_or_404(Product, id=pk)
             context['product'] = product
@@ -153,3 +155,13 @@ class BrandViewSet(CommonViewSet):
     serializer_class = serializers.BrandSerializer
     filter_fields = ['name_en', 'name_cn']
     search_fields = ['name_en', 'name_cn']
+
+
+class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
+
+        if self.q:
+            qs = qs.filter(Q(name_cn__icontains=self.q) | Q(name_en__icontains=self.q) |
+                           Q(brand__name_en__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
+        return qs

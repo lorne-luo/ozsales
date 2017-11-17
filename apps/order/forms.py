@@ -79,7 +79,7 @@ class OrderUpdateForm(ModelForm):
         queryset=Address.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
                                          forward=['customer'],
-                                         attrs={'data-placeholder': u'选择地址...',})
+                                         attrs={'data-placeholder': u'选择地址...'})
     )
 
     cost_aud = forms.CharField(label='Cost AUD', required=False)
@@ -183,7 +183,7 @@ class OrderProductDetailForm(ModelForm):
 
 
 class OrderProductInlineAddForm(ModelForm):
-    sum_price = forms.DecimalField(required=False)
+    sum_price = forms.DecimalField(required=False, help_text=u'小计')
 
     class Meta:
         model = OrderProduct
@@ -191,7 +191,7 @@ class OrderProductInlineAddForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        # self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['class'] = 'form-control'
         self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['name'].widget.attrs['class'] = 'form-control'
@@ -210,7 +210,12 @@ class OrderProductInlineAddForm(ModelForm):
 
 
 class OrderProductInlineForm(ModelForm):
-    sum_price = forms.DecimalField(required=False)
+    sum_price = forms.DecimalField(required=False, help_text=u'小计')
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(), required=False,
+        widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
+                                         attrs={'data-placeholder': u'产品名称...'})
+    )
 
     class Meta:
         model = OrderProduct
@@ -218,7 +223,7 @@ class OrderProductInlineForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        # self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
         self.fields['store'].widget.attrs['autocomplete'] = 'off'
