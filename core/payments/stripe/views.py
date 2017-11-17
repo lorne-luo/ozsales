@@ -4,8 +4,10 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import RedirectView, TemplateView
+from django.views.generic.base import TemplateResponseMixin, ContextMixin
+from django.views.generic.edit import ProcessFormView
+from djstripe.models import Card
 
-from core.auth_user.models import AuthUser
 from core.payments.stripe.stripe_api import STRIPE_PUBLIC_KEY
 
 
@@ -46,10 +48,26 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
 
 
 class RemoveCardView(RedirectView):
+
+class RemoveAllCardView(LoginRequiredMixin, RedirectView):
     http_method_names = ['post']
-    pattern_name = 'members:update_credit_card'
+    pattern_name = 'payments:add_card'
 
     def post(self, request, *args, **kwargs):
         profile = self.request.user.profile
-        profile.remove_card()
-        return super(RemoveCardView, self).post(request, *args, **kwargs)
+        profile.remove_all_card()
+        return super(RemoveAllCardView, self).post(request, *args, **kwargs)
+
+
+class RemoveSingleCardView(LoginRequiredMixin, RedirectView):
+    http_method_names = ['post']
+    pattern_name = 'payments:add_card'
+
+    def post(self, request, *args, **kwargs):
+        card_id = kwargs.get("pk")
+        card = Card.objects.filter(id=card_id).first()
+        if card:
+            profile = self.request.user.profile
+            profile.remove_card(card.stripe_id)
+        return super(RemoveSingleCardView, self).post(request, *args, **kwargs)
+
