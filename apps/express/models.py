@@ -1,3 +1,4 @@
+# coding=utf-8
 import logging
 import re
 
@@ -93,13 +94,13 @@ class ExpressCarrier(models.Model):
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
-    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False)
+    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text=u'单号')
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
-    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
-    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True)
+    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'运费')
+    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'重量')
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
