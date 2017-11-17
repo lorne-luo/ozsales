@@ -47,7 +47,6 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
         return HttpResponseRedirect(reverse_lazy('payments:add_card'))
 
 
-class RemoveCardView(RedirectView):
 
 class RemoveAllCardView(LoginRequiredMixin, RedirectView):
     http_method_names = ['post']
