@@ -1,0 +1,13 @@
+{% extends 'adminlte/base.html' %}
+{% load  static %}
+
+{% block base_head_title %}Add credit card{% endblock %}
+{% block base_head_title_system_name %}OZSALES{% endblock %}
+
+{% block content %}
+    <div class="tabs__tab-panel--bordered">
+        {% for card in object_list %}
+          {{ card }}<br/>
+        {% endfor %}
+    </div>
+{% endblock %}

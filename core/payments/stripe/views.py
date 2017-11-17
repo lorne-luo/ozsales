@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import RedirectView, TemplateView
+from django.views.generic import RedirectView, TemplateView, ListView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import ProcessFormView
 from djstripe.models import Card
@@ -37,7 +37,7 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
 
         try:
             profile = self.request.user.profile
-            card = profile.add_card(source=token)  # input card token or detail dict
+            card = profile.add_card(source=token, remove_old=True)  # input card token or detail dict
         except stripe.error.CardError as ex:
             context = self.get_context_data(**kwargs)
             context.update({'error': ex._message})
@@ -45,7 +45,6 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
 
         messages.success(self.request, 'Your credit card updated.')
         return HttpResponseRedirect(reverse_lazy('payments:add_card'))
-
 
 
 class RemoveAllCardView(LoginRequiredMixin, RedirectView):
@@ -69,4 +68,12 @@ class RemoveSingleCardView(LoginRequiredMixin, RedirectView):
             profile = self.request.user.profile
             profile.remove_card(card.stripe_id)
         return super(RemoveSingleCardView, self).post(request, *args, **kwargs)
+
+
+class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, ListView):
+    template_name = "djstripe/view_card.html"
+
+    def get_queryset(self):
+        # todo template not finished
+        return self.request.user.profile.get_all_card()
 
