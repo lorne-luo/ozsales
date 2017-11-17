@@ -106,8 +106,16 @@ class UserProfileStripeMixin(object):
                 continue
         return card
 
-    def add_card(self, source, set_default=True):
-        return self.stripe_customer.add_card(source, set_default=set_default)
+    def add_card(self, source, remove_old=False, set_default=True):
+        set_default = remove_old or set_default
+        card = self.stripe_customer.add_card(source, set_default=set_default)
+        if remove_old:
+            for source in self.stripe_customer.sources.exclude(stripe_id=card.stripe_id):
+                try:
+                    source.remove()
+                except Exception as ex:
+                    continue
+        return card
 
     def remove_all_card(self):
         """remove credit card"""
@@ -123,6 +131,9 @@ class UserProfileStripeMixin(object):
     def get_default_card(self):
         """all credit card"""
         return self.stripe_customer.default_source
+
+    def get_all_card(self):
+        return self.stripe_customer.sources.all()
 
     def get_all_charges(self):
         return Charge.objects.filter(customer_id=self.stripe_customer)
