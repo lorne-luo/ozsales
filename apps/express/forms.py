@@ -86,7 +86,7 @@ class ExpressOrderInlineEditForm(ModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all().order_by('-is_default'), required=False,
         widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'选择快递', })
+                                         attrs={'data-placeholder': u'选择快递...', })
     )
 
     class Meta:

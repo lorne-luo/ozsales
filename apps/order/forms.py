@@ -63,7 +63,7 @@ class OrderAddForm(ModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
-                                         attrs={'data-placeholder': 'Select a Cusomter...'})
+                                         attrs={'data-placeholder': u'选择客户...'})
     )
 
     class Meta:
@@ -79,7 +79,7 @@ class OrderUpdateForm(ModelForm):
         queryset=Address.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
                                          forward=['customer'],
-                                         attrs={'data-placeholder': 'Select a address...',})
+                                         attrs={'data-placeholder': u'选择地址...',})
     )
 
     cost_aud = forms.CharField(label='Cost AUD', required=False)

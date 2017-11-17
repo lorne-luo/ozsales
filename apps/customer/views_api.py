@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Q
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
@@ -38,12 +39,8 @@ class AddCart(GenericAPIView):
         return Response({'success': True}, status=200)
 
 
-class CustomerAutocomplete(autocomplete.Select2QuerySetView):
+class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated() or not self.request.user.is_seller:
-            raise PermissionDenied
-
         qs = Customer.objects.belong_to(self.request.user).annotate(
             order_count_num=Count('order')).order_by('-order_count_num')
 
@@ -52,12 +49,8 @@ class CustomerAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
-class AddressAutocomplete(autocomplete.Select2QuerySetView):
+class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        if not self.request.user.is_authenticated():
-            raise PermissionDenied
-
         qs = Address.objects.belong_to(self.request.user)
         cid = self.forwarded.get('customer')
 
