@@ -1,5 +1,5 @@
 # coding=utf-8
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import Http404
 from django.core.exceptions import PermissionDenied
 from dal import autocomplete
@@ -64,5 +64,5 @@ class AddressAutocomplete(autocomplete.Select2QuerySetView):
         if cid:
             qs = qs.filter(customer_id=cid)
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(Q(name__icontains=self.q) | Q(address__icontains=self.q))
         return qs
