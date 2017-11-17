@@ -1,0 +1,21 @@
+{% extends "djstripe/base.html" %}
+{% load static %}
+
+{% block title %}Choose a Subscription{% endblock title %}
+
+{% block content %}
+{{ block.super }}
+<h2></h2>
+
+{% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+{% endif %}
+{% if view.error %}
+    <div class="alert alert-error">{{ view.error }}</div>
+{% endif %}
+
+<div class="row">
+    confirm
+</div>
+
+{% endblock content %}

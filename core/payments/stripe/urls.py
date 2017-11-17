@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^payments/add_card/$', views.UpdateCreditCardView.as_view(), name='add_card'),
     url(r'^payments/remove_card/all/$', views.RemoveAllCardView.as_view(), name='remove_all_card'),
     url(r'^payments/remove_card/(?P<pk>\d+)/$', views.RemoveSingleCardView.as_view(), name='remove_card'),
+
+    # url(r'^payments/plan/confirm/(?P<plan_id>\d+)/$', views.PlanConfirmView.as_view(), name='plan_confirm'),
 ]

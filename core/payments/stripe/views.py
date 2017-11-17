@@ -77,3 +77,10 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, ListView):
         # todo template not finished
         return self.request.user.profile.get_all_card()
 
+
+class PlanConfirmView(LoginRequiredMixin, PaymentsContextMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
+    template_name = 'djstripe/plan_confirm.html'
+
+    def get_context_data(self, **kwargs):
+        # todo template not finished
+        return super(PlanConfirmView, self).get_context_data()
