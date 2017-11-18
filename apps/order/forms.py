@@ -184,6 +184,11 @@ class OrderProductDetailForm(ModelForm):
 
 class OrderProductInlineAddForm(ModelForm):
     sum_price = forms.DecimalField(required=False, help_text=u'小计')
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.all(), required=False,
+        widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
+                                         attrs={'data-placeholder': u'产品名称...', 'class': 'form-control __prefix__'})
+    )
 
     class Meta:
         model = OrderProduct
@@ -192,7 +197,7 @@ class OrderProductInlineAddForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
         # self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
-        self.fields['product'].widget.attrs['class'] = 'form-control'
+        # self.fields['product'].widget.attrs['class'] = 'form-control'
         self.fields['product'].widget.attrs['autocomplete'] = 'off'
         self.fields['name'].widget.attrs['class'] = 'form-control'
         self.fields['amount'].widget.attrs['class'] = 'form-control'

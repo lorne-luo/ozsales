@@ -64,6 +64,12 @@ class ExpressOrderChangeInline(admin.TabularInline):
 
 
 class ExpressOrderInlineAddForm(ModelForm):
+    carrier = forms.ModelChoiceField(
+        queryset=ExpressCarrier.objects.all(), required=False,
+        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
+                                         attrs={'data-placeholder': u'选择快递...', 'class':'form-control __prefix__'})
+    )
+
     class Meta:
         model = ExpressOrder
         fields = '__all__'
@@ -72,7 +78,7 @@ class ExpressOrderInlineAddForm(ModelForm):
         super(ExpressOrderInlineAddForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['order'].widget.attrs['class'] = 'form-control'
-        self.fields['carrier'].widget.attrs['class'] = 'form-control'
+        # self.fields['carrier'].widget.attrs['class'] = 'form-control'
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
         self.fields['track_id'].widget.attrs['class'] = 'form-control'
         self.fields['address'].widget.attrs['class'] = 'form-control'
