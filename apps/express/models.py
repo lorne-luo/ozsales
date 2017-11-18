@@ -94,7 +94,7 @@ class ExpressCarrier(models.Model):
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
-    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text=u'单号')
+    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text=u'运单号')
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
