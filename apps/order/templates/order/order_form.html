@@ -102,9 +102,9 @@
             <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
               <b>成本</b>
             </div>
-            <div class="col-xs-2 hidden-sm hidden-xs">
-              <b>来源</b>
-            </div>
+{#            <div class="col-xs-2 hidden-sm hidden-xs">#}
+{#              <b>来源</b>#}
+{#            </div>#}
           </div>
 
           <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_forms|length }}">
@@ -136,17 +136,15 @@
               <div class="col-lg-1 col-md-2 col-xs-3">
                 {{ product.cost_price_aud }}
               </div>
-              <div class="col-lg-2 col-md-4 col-xs-1">
-                <div class="inline hidden-xs hidden-sm">
-                  {{ product.store }}
-                </div>
-                <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
-                  <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
-                </a>
-                <input class="hide" style="visibility: hidden"
-                       id="id_{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE"
-                       name="{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">
-              </div>
+{#              <div class="col-lg-2 col-md-4 col-xs-1 hidden-xs hidden-sm inline">#}
+{#                  {{ product.store }}#}
+{#                <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">#}
+{#                  <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
+{#                </a>#}
+{#                <input class="hide" style="visibility: hidden"#}
+{#                       id="id_{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE"#}
+{#                       name="{{ product_forms.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">#}
+{#              </div>#}
             </div>
           {% endfor %}
         </div><!-- //express_table -->
@@ -177,9 +175,9 @@
             <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
               <b>费用</b>
             </div>
-            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
-              <b>重量</b>
-            </div>
+{#            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">#}
+{#              <b>重量</b>#}
+{#            </div>#}
             <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">
               <b>证件</b>
             </div>
@@ -207,11 +205,10 @@
               <div class="col-lg-1 col-md-1 col-xs-3">
                 {{ express.fee }}
               </div>
-              <div class="col-lg-1 col-md-1 col-xs-3">
-                {{ express.weight }}
-              </div>
-              <div class="col-lg-1 col-md-1 col-xs-3">
-                <div class="inline ln34">
+{#              <div class="col-lg-1 col-md-1 col-xs-3">#}
+{#                {{ express.weight }}#}
+{#              </div>#}
+              <div class="col-lg-1 col-md-1 col-xs-1 inline ln34">
                   {{ express.id_upload }}
                 </div>
                 <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"
@@ -263,7 +260,7 @@
             </div>
             <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"
                v-on:click="delete_express">
-              <i style="color:#dd4b39" class="fa fa-lg fa-times-circle"></i>
+              <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>
             </a>
           </div>
         </div><!-- //express_template -->
@@ -300,7 +297,7 @@
               {{ new_product_form.store }}
             </div>
             <a href="javascript:void(0)" class="ln34 delete_product" v-on:click="delete_product">
-              <i style="color:#dd4b39;" class="fa fa-lg fa-times-circle"></i>
+              <i style="color:#dd4b39;" class="fa fa-lg fa-trash"></i>
             </a>
           </div>
         </div>
