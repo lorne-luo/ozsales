@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 
 
 # Create your views here.
+from django.urls import reverse_lazy
+
 
 class OwnerViewSetMixin(object):
     def get_queryset(self):
@@ -12,3 +15,10 @@ class OwnerViewSetMixin(object):
             return qs.filter(customer=self.request.user.profile)
         else:
             return qs.none()
+
+
+def index(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse_lazy('order:order-list-short'))
+    else:
+        return HttpResponseRedirect(reverse_lazy('member-login'))
