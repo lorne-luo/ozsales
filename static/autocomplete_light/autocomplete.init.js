@@ -1,7 +1,6 @@
 /*
-This script garantees that this will be called once in django admin.
-However, its the callback's responsability to clean up if the
-element was cloned with data - which should be the case.
+Overwrite default site-packages/dal/static/autocomplete_light/autocomplete.init.js
+In order to integrate autocomplete and jquery.formset
 */
 
 ;(function ($) {
@@ -50,12 +49,15 @@ element was cloned with data - which should be the case.
     window.__dal__initialize = initialize;
 
     $(document).ready(function() {
-        $('[data-autocomplete-light-function]:not([id*="__prefix__"])').each(initialize);
+        //!! change here
+     // $('[data-autocomplete-light-function]:not([id*="__prefix__"])').each(initialize);
+        $('[data-autocomplete-light-function]:not([id*="__prefix__"],[class*="__prefix__"])').each(initialize);
     });
 
-    $(document).bind('DOMNodeInserted', function(e) {
-        $(e.target).find('[data-autocomplete-light-function]').each(initialize);
-    });
+    //!! change here
+    // $(document).bind('DOMNodeInserted', function(e) {
+    //     $(e.target).find('[data-autocomplete-light-function]').each(initialize);
+    // });
 
     // using jQuery
     function getCookie(name) {
