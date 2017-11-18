@@ -40,6 +40,8 @@ class AddCart(GenericAPIView):
 
 
 class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    paginate_by = 20
+
     def get_queryset(self):
         qs = Customer.objects.belong_to(self.request.user).annotate(
             order_count_num=Count('order')).order_by('-order_count_num')
@@ -50,6 +52,8 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
 
 
 class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    paginate_by = 20
+
     def get_queryset(self):
         qs = Address.objects.belong_to(self.request.user)
         cid = self.forwarded.get('customer')

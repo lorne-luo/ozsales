@@ -6,6 +6,8 @@ from apps.express.models import ExpressCarrier, ExpressOrder
 
 
 class ExpressCarrierAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    paginate_by = 50
+
     def get_queryset(self):
         # order by carrier usage
         qs = ExpressCarrier.objects.order_by_usage(self.request.user)

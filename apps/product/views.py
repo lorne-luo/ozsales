@@ -158,6 +158,8 @@ class BrandViewSet(CommonViewSet):
 
 
 class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    paginate_by = 20
+
     def get_queryset(self):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
 
