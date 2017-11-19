@@ -191,11 +191,13 @@ class OrderProductInlineForm(ModelForm):
         widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
                                          attrs={'data-placeholder': u'输入任意中英文名称检索...', 'class': 'form-control'})
     )
-    name = forms.CharField(max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    amount = forms.IntegerField(min_value=1, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    sell_price_rmb = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
+    name = forms.CharField(max_length=128, required=False, help_text=u'产品名称(可选)',
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+    amount = forms.IntegerField(min_value=1, required=False, help_text=u'数量',
+                                widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    sell_price_rmb = forms.DecimalField(max_digits=8, decimal_places=2, required=False, help_text=u'单价',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cost_price_aud = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
+    cost_price_aud = forms.DecimalField(max_digits=8, decimal_places=2, required=False, help_text=u'成本',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     class Meta:

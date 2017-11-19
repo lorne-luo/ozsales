@@ -26,4 +26,4 @@ class ModelForm(forms.ModelForm):
                 elif field.required:
                     field.widget.attrs['placeholder'] = u'必填'
                 else:
-                    field.widget.attrs['placeholder'] = u'选填'
+                    field.widget.attrs['placeholder'] = u'可选'
