@@ -85,6 +85,9 @@ class ExpressOrderInlineEditForm(ModelForm):
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
 
+    def clean_fee(self):
+        return self.cleaned_data.get('fee') or 0
+
 
 # ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)
 ExpressOrderFormSet = inlineformset_factory(Order, ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)

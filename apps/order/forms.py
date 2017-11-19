@@ -213,6 +213,9 @@ class OrderProductInlineForm(ModelForm):
         if instance and instance.pk:
             self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
 
+    def clean_amount(self):
+        return self.cleaned_data.get('amount') or 1
+
 
 # OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm, extra=1)
 OrderProductFormSet = inlineformset_factory(Order, OrderProduct, form=OrderProductInlineForm, extra=1)

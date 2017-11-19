@@ -99,7 +99,8 @@ class ExpressOrder(models.Model):
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
-    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'运费')
+    fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, default=0, blank=False, null=False,
+                              help_text=u'运费')
     weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'重量')
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)

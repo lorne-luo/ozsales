@@ -210,7 +210,7 @@ class Order(models.Model):
         self.total_cost_aud = self.product_cost_aud + self.shipping_fee
         self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
 
-        if not self.sell_price_rmb:
+        if self.sell_price_rmb is None:
             self.sell_price_rmb = self.origin_sell_rmb
 
         if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
@@ -359,10 +359,12 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text=u'产品名称')
-    amount = models.IntegerField(_('Amount'), blank=True, null=True, help_text=u'数量')
-    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'单价')
+    amount = models.IntegerField(_('Amount'), default=1, blank=False, null=False, help_text=u'数量')
+    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, default=0, blank=False,
+                                         null=False, help_text=u'单价')
     total_price_rmb = models.DecimalField(_('Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'成本')
+    cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, default=0, blank=False,
+                                         null=False, help_text=u'成本')
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
     is_purchased = models.BooleanField(default=False)

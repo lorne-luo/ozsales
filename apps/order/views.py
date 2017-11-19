@@ -154,46 +154,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
         return context
 
-    def save_product_formset(self, request):
-        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix=self.products_prefix,
-                                                     instance=self.object)
-        for form in products_formset:
-            form.is_valid()
-            if form.instance.product_id or form.instance.name:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
-                form.instance.order = self.object
-            else:
-                form._changed_data = []
-            if form._errors and 'order' in form._errors:
-                del form._errors['order']
-
-        if not products_formset.is_valid():
-            raise SuspiciousOperation(str(products_formset.errors))
-        products_formset.save()
-
-    def save_express_formset(self, request):
-        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix=self.express_orders_prefix,
-                                              instance=self.object)
-        for form in express_formset:
-            form.is_valid()
-            if form.instance.track_id:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
-                form.instance.order = self.object
-            else:
-                form._changed_data = []
-            if form._errors and 'order' in form._errors:
-                del form._errors['order']
-
-        if not express_formset.is_valid():
-            raise SuspiciousOperation(str(express_formset.errors))
-        express_formset.save()
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
