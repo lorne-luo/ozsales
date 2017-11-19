@@ -49,15 +49,14 @@ In order to integrate autocomplete and jquery.formset
     window.__dal__initialize = initialize;
 
     $(document).ready(function() {
-        //!! change here
+        //!! hack at here
      // $('[data-autocomplete-light-function]:not([id*="__prefix__"])').each(initialize);
         $('[data-autocomplete-light-function]').not($('[id*="_template"] [data-autocomplete-light-function]')).each(initialize);
     });
 
-    //!! change here
-    // $(document).bind('DOMNodeInserted', function(e) {
-    //     $(e.target).find('[data-autocomplete-light-function]').each(initialize);
-    // });
+    $(document).bind('DOMNodeInserted', function(e) {
+        $(e.target).find('[data-autocomplete-light-function]').each(initialize);
+    });
 
     // using jQuery
     function getCookie(name) {
