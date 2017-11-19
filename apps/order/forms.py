@@ -63,7 +63,7 @@ class OrderAddForm(ModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
-                                         attrs={'data-placeholder': u'输入任意姓名、手机号检索...'})
+                                         attrs={'data-placeholder': u'任意姓名、手机号...'})
     )
 
     class Meta:
@@ -79,7 +79,7 @@ class OrderUpdateForm(ModelForm):
         queryset=Address.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
                                          forward=['customer'],
-                                         attrs={'data-placeholder': u'输入任意姓名、地址、手机号检索...'})
+                                         attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
     )
     status = forms.ChoiceField(label='Status', choices=ORDER_STATUS_CHOICES, required=False)
     cost_aud = forms.CharField(label='Cost AUD', required=False)
@@ -189,7 +189,7 @@ class OrderProductInlineForm(ModelForm):
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'输入任意中英文名称检索...', 'class': 'form-control'})
+                                         attrs={'data-placeholder': u'任意中英文名称...', 'class': 'form-control'})
     )
     name = forms.CharField(max_length=128, required=False, help_text=u'产品名称(可选)',
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
