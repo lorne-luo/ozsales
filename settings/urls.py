@@ -5,6 +5,7 @@ from django.contrib.staticfiles.views import serve
 from dbsettings.views import site_settings, app_settings
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from core.auth_user.views import  ChangePasswordView, ChangePasswordDoneView
+from core.views.views import IndexView
 from core import auth_user
 
 def if_installed(appname, *args, **kwargs):
@@ -43,7 +44,7 @@ api_urlpatterns = [
 
 urlpatterns = apps_urlpatterns + [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', auth_user.views.index, name='index'),
+    url(r'^$', IndexView.as_view(), name='index'),
 
     url(r'^payments/', include('djstripe.urls', namespace="djstripe")),
 
@@ -58,8 +59,8 @@ urlpatterns = apps_urlpatterns + [
     # url(r'^auth/', include("apps.registration.urls", namespace="registration")),
 
     # auth
-    # url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
-    # url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
+    url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
+    url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
 
     # for common views
     # url(r'^', include('core.views.urls', namespace='adminlte')),
