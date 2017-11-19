@@ -3,6 +3,7 @@ from dal import autocomplete
 from django.contrib import admin
 
 from apps.order.models import Order
+from core.forms.widgets import FormsetModelSelect2
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
 from django.forms.models import modelformset_factory, inlineformset_factory
@@ -68,7 +69,7 @@ class ExpressOrderChangeInline(admin.TabularInline):
 class ExpressOrderInlineEditForm(ModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
+        widget=FormsetModelSelect2(url='express:expresscarrier-autocomplete',
                                          attrs={'data-placeholder': u'快递中英文名称...', 'class': 'form-control'})
     )
     track_id = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))

@@ -3,6 +3,8 @@ from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory, modelformset_factory
 from dal import autocomplete
+
+from core.forms.widgets import FormsetModelSelect2
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from ..customer.models import Customer, Address
 from ..product.models import Product
@@ -77,7 +79,7 @@ class OrderAddForm(ModelForm):
 class OrderUpdateForm(ModelForm):
     address = forms.ModelChoiceField(
         queryset=Address.objects.all(),
-        widget=autocomplete.ModelSelect2(url='customer:address-autocomplete',
+        widget=FormsetModelSelect2(url='customer:address-autocomplete',
                                          forward=['customer'],
                                          attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
     )
@@ -188,7 +190,7 @@ class OrderProductInlineForm(ModelForm):
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
+        widget=FormsetModelSelect2(url='product:product-autocomplete',
                                          attrs={'data-placeholder': u'任意中英文名称...', 'class': 'form-control'})
     )
     name = forms.CharField(max_length=128, required=False, help_text=u'产品名称(可选)',
