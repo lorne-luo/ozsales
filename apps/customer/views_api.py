@@ -47,7 +47,7 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
             order_count_num=Count('order')).order_by('-order_count_num')
 
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            qs = qs.filter(Q(name__icontains=self.q) | Q(mobile__icontains=self.q))
         return qs
 
 
@@ -61,5 +61,5 @@ class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
         if cid:
             qs = qs.filter(customer_id=cid)
         if self.q:
-            qs = qs.filter(Q(name__icontains=self.q) | Q(address__icontains=self.q))
+            qs = qs.filter(Q(name__icontains=self.q) | Q(address__icontains=self.q) | Q(mobile__icontains=self.q))
         return qs
