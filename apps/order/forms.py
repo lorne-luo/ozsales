@@ -6,7 +6,7 @@ from dal import autocomplete
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from ..customer.models import Customer, Address
 from ..product.models import Product
-from models import Order, OrderProduct, ORDER_STATUS
+from models import Order, OrderProduct, ORDER_STATUS, ORDER_STATUS_CHOICES
 
 
 class OrderForm(forms.ModelForm):
@@ -81,7 +81,7 @@ class OrderUpdateForm(ModelForm):
                                          forward=['customer'],
                                          attrs={'data-placeholder': u'输入任意姓名、地址、手机号检索...'})
     )
-
+    status = forms.ChoiceField(label='Status', choices=ORDER_STATUS_CHOICES, required=False)
     cost_aud = forms.CharField(label='Cost AUD', required=False)
     sell_rmb = forms.CharField(label='Sell RMB', required=False)
 
@@ -182,45 +182,21 @@ class OrderProductDetailForm(ModelForm):
 #                   'total_price_aud', 'store']
 
 
-class OrderProductInlineAddForm(ModelForm):
-    sum_price = forms.DecimalField(required=False, help_text=u'小计')
-    product = forms.ModelChoiceField(
-        queryset=Product.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'产品中英文名称...', 'class': 'form-control __prefix__'})
-    )
-
-    class Meta:
-        model = OrderProduct
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(OrderProductInlineAddForm, self).__init__(*args, **kwargs)
-        # self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
-        # self.fields['product'].widget.attrs['class'] = 'form-control'
-        self.fields['product'].widget.attrs['autocomplete'] = 'off'
-        self.fields['name'].widget.attrs['class'] = 'form-control'
-        self.fields['amount'].widget.attrs['class'] = 'form-control'
-        self.fields['sell_price_rmb'].widget.attrs['class'] = 'form-control'
-        self.fields['sum_price'].widget.attrs['class'] = 'form-control'
-        self.fields['cost_price_aud'].widget.attrs['class'] = 'form-control'
-        self.fields['store'].widget.attrs['class'] = 'form-control'
-        self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
-        self.fields['store'].widget.attrs['autocomplete'] = 'off'
-        self.fields['order'].widget = forms.HiddenInput()
-
-        instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
-            self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
-
 
 class OrderProductInlineForm(ModelForm):
-    sum_price = forms.DecimalField(required=False, help_text=u'小计')
+    sum_price = forms.DecimalField(required=False, help_text=u'小计',
+                                   widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'产品中英文名称...'})
+                                         attrs={'data-placeholder': u'输入任意中英文名称检索...', 'class': 'form-control'})
     )
+    name = forms.CharField(max_length=128, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    amount = forms.IntegerField(min_value=1, required=False, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    sell_price_rmb = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
+                                        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    cost_price_aud = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
+                                        widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = OrderProduct

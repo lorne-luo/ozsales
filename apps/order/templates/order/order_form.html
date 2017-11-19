@@ -277,11 +277,14 @@
         </div><!-- //express_template -->
       </div>
 
-      <div class="hide" id="{{ new_product_template.prefix }}">
+      <div class="hide" id="{{ product_formset.prefix }}_template">
         <div class="form-group">
-          <input id="id_{{ product_formset.prefix }}-id" name="{{ product_formset.prefix }}-id" type="hidden">
-          <input id="id_{{ product_formset.prefix }}-order" name="{{ product_formset.prefix }}-order" type="hidden"
-                 value="{{ object.id }}">
+          {% with product_formset.extra_forms|first as new_product_template %}
+{#          <input id="id_{{ product_formset.prefix }}-id" name="{{ product_formset.prefix }}-id" type="hidden">#}
+{#          <input id="id_{{ product_formset.prefix }}-order" name="{{ product_formset.prefix }}-order" type="hidden"#}
+{#                 value="{{ object.id }}">#}
+          {{ new_product_template.id }}
+          {{ new_product_template.order }}
           <div class="visible-xs visible-sm ln34 col-xs-1">产 品</div>
           <div class="col-lg-3 col-md-6 col-xs-11">
             {{ new_product_template.product }}
@@ -313,6 +316,7 @@
 {#            </a>#}
 {#          </div>#}
         </div>
+        {% endwith %}
       </div><!-- //product_template -->
     </div>
   </div>
@@ -342,7 +346,7 @@
 {#    var orderEditPageVue = new OrderEditPageVue();#}
     $(function() {
         $('#orderproduct .product-form').formset({
-            formTemplate: '#{{ new_product_template.prefix }} .form-group',
+            formTemplate: '#{{ product_formset.prefix }}_template .form-group',
             prefix: '{{ product_formset.prefix }}',
             deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
             deleteCssClass: 'delete-row inline ln34',

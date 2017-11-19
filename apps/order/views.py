@@ -140,9 +140,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
         instance = getattr(self, 'object')
 
-        context['new_product_template'] = forms.OrderProductInlineAddForm(prefix='%s_template' % self.products_prefix,
-                                                                          initial={'order': instance})
-
         if self.request.POST:
             context['product_formset'] = forms.OrderProductFormSet(self.request.POST, self.request.FILES,
                                                                    prefix=self.products_prefix,
