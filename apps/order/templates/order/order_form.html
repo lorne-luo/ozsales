@@ -239,14 +239,17 @@
         </div>
 
       </div><!-- //expressorders -->
-
       </form>
 
-      <div class="hide" id="{{ new_express_template.prefix }}">
+
+      <div class="hide" id="{{ express_formset.prefix }}_template">
         <div class="form-group">
-          <input id="id_{{ express_formset.prefix }}-id" name="{{ express_formset.prefix }}-id" type="hidden">
-          <input id="id_{{ express_formset.prefix }}-order" name="{{ express_formset.prefix }}-order" type="hidden"
-                 value="{{ object.id }}">
+        {% with express_formset.extra_forms|first as new_express_template %}
+{#          <input id="id_{{ express_formset.prefix }}-id" name="{{ express_formset.prefix }}-id" type="hidden">#}
+{#          <input id="id_{{ express_formset.prefix }}-order" name="{{ express_formset.prefix }}-order" type="hidden"#}
+{#                 value="{{ object.id }}">#}
+          {{ new_express_template.id }}
+          {{ new_express_template.order }}
           <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
           <div class="col-lg-2 col-md-2 col-xs-10">
             {{ new_express_template.carrier }}
@@ -270,6 +273,7 @@
 {#              <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
 {#            </a>#}
           </div>
+        {% endwith %}
         </div><!-- //express_template -->
       </div>
 
@@ -348,7 +352,7 @@
             }
         });
         $('#expressorders .express-form').formset({
-            formTemplate: '#{{ new_express_template.prefix }} .form-group',
+            formTemplate: '#{{ express_formset.prefix }}_template .form-group',
             prefix: '{{ express_formset.prefix }}',
             deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
             deleteCssClass: 'delete-row inline ln34',

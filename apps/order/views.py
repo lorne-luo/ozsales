@@ -20,7 +20,7 @@ from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
 from ..customer.models import Customer
-from ..express.forms import ExpressOrderInlineAddForm, ExpressOrderFormSet
+from ..express.forms import ExpressOrderFormSet
 import serializers
 import forms
 
@@ -142,8 +142,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
         context['new_product_template'] = forms.OrderProductInlineAddForm(prefix='%s_template' % self.products_prefix,
                                                                           initial={'order': instance})
-        context['new_express_template'] = ExpressOrderInlineAddForm(prefix='%s_template' % self.express_orders_prefix,
-                                                                    initial={'order': instance})
 
         if self.request.POST:
             context['product_formset'] = forms.OrderProductFormSet(self.request.POST, self.request.FILES,
@@ -199,7 +197,6 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
             raise SuspiciousOperation(str(express_formset.errors))
         express_formset.save()
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
@@ -252,39 +249,32 @@ class OrderAddDetailView(OrderUpdateView):
         form = self.get_form()
         return self.render_to_response(self.get_context_data(form=form))
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        form = self.get_form()
+        context = self.get_context_data(form=form)
+        product_formset = context['product_formset']
+        express_formset = context['express_formset']
 
-        # fill express_orders-%s-order field
-        products_formset_count = int(request.POST['products-TOTAL_FORMS'])
-        express_formset_count = int(request.POST['express_orders-TOTAL_FORMS'])
-        request.POST._mutable = True
-        for i in range(products_formset_count):
-            key = 'products-%s-order' % i
-            product_key = 'products-%s-product' % i
-            name_key = 'products-%s-name' % i
-            if request.POST[product_key] or request.POST[name_key]:
-                request.POST[key] = self.object.id
-
-        for i in range(express_formset_count):
-            key = 'express_orders-%s-order' % i
-            track_key = 'express_orders-%s-track_id' % i
-            if request.POST[track_key]:
-                request.POST[key] = self.object.id
-        request.POST._mutable = False
-
-        # order products
-        self.save_product_formset(request)
-
-        # express orders
-        self.save_express_formset(request)
-
-        next = request.POST.get('next')
-        if next:
-            url = reverse('order:order-update', args=[self.object.id])
-            return HttpResponseRedirect(url)
-        return HttpResponseRedirect(self.get_success_url())
+        product_formset_valid = product_formset.is_valid()
+        express_formset_valid = express_formset.is_valid()
+        if form.is_valid() and product_formset_valid and express_formset_valid:
+            try:
+                with transaction.atomic():
+                    result = self.form_valid(form)
+                    product_formset.instance = self.object
+                    product_formset.save()
+                    express_formset.instance = self.object
+                    express_formset.save()
+                    return result
+            except Exception as ex:
+                # from invalid
+                form.add_error(None, str(ex))
+                messages.error(self.request, str(ex))
+                return self.render_to_response(context)
+        else:
+            # from invalid
+            return self.render_to_response(context)
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):

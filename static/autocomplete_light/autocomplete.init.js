@@ -51,7 +51,7 @@ In order to integrate autocomplete and jquery.formset
     $(document).ready(function() {
         //!! change here
      // $('[data-autocomplete-light-function]:not([id*="__prefix__"])').each(initialize);
-        $('[data-autocomplete-light-function]:not([id*="__prefix__"],[class*="__prefix__"])').each(initialize);
+        $('[data-autocomplete-light-function]').not($('[id*="_template"] [data-autocomplete-light-function]')).each(initialize);
     });
 
     //!! change here

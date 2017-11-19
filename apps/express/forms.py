@@ -65,41 +65,20 @@ class ExpressOrderChangeInline(admin.TabularInline):
     verbose_name_plural = 'ExpressOrder'
 
 
-class ExpressOrderInlineAddForm(ModelForm):
-    carrier = forms.ModelChoiceField(
-        queryset=ExpressCarrier.objects.all(), required=False,
-        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'快递中英文名称...', 'class': 'form-control __prefix__'})
-    )
-
-    class Meta:
-        model = ExpressOrder
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(ExpressOrderInlineAddForm, self).__init__(*args, **kwargs)
-        self.fields['order'].widget = forms.HiddenInput()
-        self.fields['order'].widget.attrs['class'] = 'form-control'
-        # self.fields['carrier'].widget.attrs['class'] = 'form-control'
-        self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
-        self.fields['track_id'].widget.attrs['class'] = 'form-control'
-        self.fields['address'].widget.attrs['class'] = 'form-control'
-        self.fields['fee'].widget.attrs['class'] = 'form-control'
-        self.fields['weight'].widget.attrs['class'] = 'form-control'
-        self.fields['remarks'].widget = forms.HiddenInput()
-        self.fields['remarks'].widget.attrs['class'] = 'form-control'
-
-
 class ExpressOrderInlineEditForm(ModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'快递中英文名称...', })
+                                         attrs={'data-placeholder': u'快递中英文名称...', 'class': 'form-control'})
     )
+    track_id = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    fee = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
+                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    id_upload = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = ExpressOrder
-        fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload']
+        fields = ['carrier', 'track_id', 'order', 'fee', 'weight', 'id_upload']
 
     def __init__(self, *args, **kwargs):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)
