@@ -1,9 +1,11 @@
 # coding=utf-8
 from dal import autocomplete
 from django.contrib import admin
+
+from apps.order.models import Order
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
-from django.forms.models import modelformset_factory
+from django.forms.models import modelformset_factory, inlineformset_factory
 from models import ExpressCarrier, ExpressOrder
 
 
@@ -67,7 +69,7 @@ class ExpressOrderInlineAddForm(ModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'选择快递...', 'class':'form-control __prefix__'})
+                                         attrs={'data-placeholder': u'快递中英文名称...', 'class': 'form-control __prefix__'})
     )
 
     class Meta:
@@ -92,7 +94,7 @@ class ExpressOrderInlineEditForm(ModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'选择快递...', })
+                                         attrs={'data-placeholder': u'快递中英文名称...', })
     )
 
     class Meta:
@@ -105,5 +107,5 @@ class ExpressOrderInlineEditForm(ModelForm):
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
 
 
-ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm,
-                                           can_order=False, can_delete=False, extra=1)
+# ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)
+ExpressOrderFormSet = inlineformset_factory(Order, ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)

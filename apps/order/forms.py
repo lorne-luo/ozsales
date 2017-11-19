@@ -1,7 +1,7 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
-from django.forms.models import inlineformset_factory, BaseInlineFormSet, modelformset_factory
+from django.forms.models import inlineformset_factory, modelformset_factory
 from dal import autocomplete
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from ..customer.models import Customer, Address
@@ -187,7 +187,7 @@ class OrderProductInlineAddForm(ModelForm):
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'产品名称...', 'class': 'form-control __prefix__'})
+                                         attrs={'data-placeholder': u'产品中英文名称...', 'class': 'form-control __prefix__'})
     )
 
     class Meta:
@@ -219,7 +219,7 @@ class OrderProductInlineForm(ModelForm):
     product = forms.ModelChoiceField(
         queryset=Product.objects.all(), required=False,
         widget=autocomplete.ModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'产品名称...'})
+                                         attrs={'data-placeholder': u'产品中英文名称...'})
     )
 
     class Meta:
@@ -238,5 +238,5 @@ class OrderProductInlineForm(ModelForm):
             self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
 
 
-OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm,
-                                           can_order=False, can_delete=False, extra=1)
+# OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm, extra=1)
+OrderProductFormSet = inlineformset_factory(Order, OrderProduct, form=OrderProductInlineForm, extra=1)

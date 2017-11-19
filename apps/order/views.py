@@ -1,4 +1,5 @@
 # coding=utf-8
+from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext as _
@@ -125,9 +126,9 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     model = Order
     form_class = forms.OrderUpdateForm
     template_name = 'order/order_form.html'
-    permissions = {
-        "all": ("order.change_order",)
-    }
+    permissions = {"all": ["order.change_order"]}
+    products_prefix = 'products'
+    express_orders_prefix = 'express_orders'
 
     def get_success_url(self):
         if '_continue' in self.request.POST and self.object:
@@ -137,19 +138,30 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
+        instance = getattr(self, 'object')
 
-        context['new_product_form'] = forms.OrderProductInlineAddForm(prefix='products')
-        product_forms = forms.OrderProductFormSet(queryset=self.object.products.all(), prefix='products')
-        context['product_forms'] = product_forms
+        context['new_product_template'] = forms.OrderProductInlineAddForm(prefix='%s_template' % self.products_prefix,
+                                                                          initial={'order': instance})
+        context['new_express_template'] = ExpressOrderInlineAddForm(prefix='%s_template' % self.express_orders_prefix,
+                                                                    initial={'order': instance})
 
-        context['new_express_form'] = ExpressOrderInlineAddForm(prefix='express_orders')
-        express_forms = ExpressOrderFormSet(queryset=self.object.express_orders.all(), prefix='express_orders')
-        context['express_forms'] = express_forms
+        if self.request.POST:
+            context['product_formset'] = forms.OrderProductFormSet(self.request.POST, self.request.FILES,
+                                                                   prefix=self.products_prefix,
+                                                                   instance=instance)
+            context['express_formset'] = ExpressOrderFormSet(self.request.POST, self.request.FILES,
+                                                             prefix=self.express_orders_prefix,
+                                                             instance=instance)
+        else:
+            context['product_formset'] = forms.OrderProductFormSet(prefix=self.products_prefix, instance=instance)
+
+            context['express_formset'] = ExpressOrderFormSet(prefix=self.express_orders_prefix, instance=instance)
 
         return context
 
     def save_product_formset(self, request):
-        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
+        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix=self.products_prefix,
+                                                     instance=self.object)
         for form in products_formset:
             form.is_valid()
             if form.instance.product_id or form.instance.name:
@@ -168,7 +180,8 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
         products_formset.save()
 
     def save_express_formset(self, request):
-        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
+        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix=self.express_orders_prefix,
+                                              instance=self.object)
         for form in express_formset:
             form.is_valid()
             if form.instance.track_id:
@@ -189,15 +202,30 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        form = self.get_form()
+        context = self.get_context_data(form=form)
+        product_formset = context['product_formset']
+        express_formset = context['express_formset']
 
-        # order products
-        self.save_product_formset(request)
-
-        # express orders
-        self.save_express_formset(request)
-
-        return ProcessFormView.post(self, request, *args, **kwargs)
-        # return super(OrderUpdateView, self).post(request, *args, **kwargs)
+        product_formset_valid = product_formset.is_valid()
+        express_formset_valid = express_formset.is_valid()
+        if form.is_valid() and product_formset_valid and express_formset_valid:
+            try:
+                with transaction.atomic():
+                    result = self.form_valid(form)
+                    product_formset.instance = self.object
+                    product_formset.save()
+                    express_formset.instance = self.object
+                    express_formset.save()
+                    return result
+            except Exception as ex:
+                # from invalid
+                form.add_error(None, str(ex))
+                messages.error(self.request, str(ex))
+                return self.render_to_response(context)
+        else:
+            # from invalid
+            return self.render_to_response(context)
 
 
 class OrderAddDetailView(OrderUpdateView):
