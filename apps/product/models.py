@@ -2,6 +2,7 @@ import os
 import uuid
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.db.models import Sum, F
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from taggit.managers import TaggableManager
@@ -83,10 +84,10 @@ class ProductState(object):
     NO_STOCK = 'NO_STOCK'
 
     CHOICES = (
-            (ON_SELL, ON_SELL),
-            (NOT_SELL, NOT_SELL),
-            (NO_STOCK, NO_STOCK)
-        )
+        (ON_SELL, ON_SELL),
+        (NOT_SELL, NOT_SELL),
+        (NO_STOCK, NO_STOCK)
+    )
 
 
 @python_2_unicode_compatible
@@ -214,3 +215,9 @@ class Product(models.Model):
 
     def sell_price_text(self):
         return '%srmb' % self.safe_sell_price
+
+    def stat_sold_count(self):
+        from apps.order.models import OrderProduct
+        data = OrderProduct.objects.filter(product_id=self.id).aggregate(sold_count=Sum(F('amount')))
+        self.sold_count = data.get('sold_count') or 0
+        self.save()

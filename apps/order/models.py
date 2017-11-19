@@ -197,6 +197,8 @@ class Order(models.Model):
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
+            if p.product:
+                p.product.stat_sold_count()
         self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
 
         express_orders = self.express_orders.all()
