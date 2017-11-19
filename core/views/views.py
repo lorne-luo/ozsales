@@ -379,22 +379,3 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
 #             obj.delete()
 #         return JsonResponse({'success': True}, status=200)
 
-
-class ChangePasswordView(CommonPageViewMixin, TemplateView):
-    def post(self, request, **kwargs):
-        self.request = request
-        context = super(ChangePasswordView, self).get_context_data(**kwargs)
-        return self.render_to_response(context)
-
-    def render_to_response(self, context, **response_kwargs):
-        context['page_title'] = u'修改密码'
-        template_response = password_change(
-            self.request,
-            template_name='adminlte/change-password.html',
-            extra_context=context
-        )
-        return template_response
-
-
-class ChangePasswordDoneView(CommonPageViewMixin, TemplateView):
-    template_name = 'adminlte/change-password-done.html'
