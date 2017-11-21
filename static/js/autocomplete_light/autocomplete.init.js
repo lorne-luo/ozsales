@@ -22,7 +22,7 @@ In order to integrate autocomplete and jquery.formset
             if (! testPrefix.length) continue;
             testPrefix += '-';
 
-            var result = $(':input[name^=' + testPrefix + ']')
+            var result = $(':input[name^=' + testPrefix + ']');
 
             if (result.length) {
                 return testPrefix;
