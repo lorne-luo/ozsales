@@ -75,7 +75,7 @@ class ExpressOrderInlineEditForm(ModelForm):
     track_id = forms.CharField(max_length=30, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     fee = forms.DecimalField(max_digits=8, decimal_places=2, required=False,
                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    id_upload = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-control'}))
+    id_upload = forms.BooleanField(required=False)
 
     class Meta:
         model = ExpressOrder

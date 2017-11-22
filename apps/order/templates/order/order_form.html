@@ -1,6 +1,10 @@
 {% extends "adminlte/common_form.html" %}
 {% load i18n admin_static admin_modify static adminlte_tags %}
 
+{% block header_base_style %}
+  <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
+{% endblock %}
+
 {% block breadcrumb %}
   <ol class="breadcrumb">
     <li>
@@ -342,6 +346,8 @@
 {% endblock %}
 
 {% block footer_page_script %}
+  <!-- iCheck -->
+  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
   <script type="text/javascript">
 {#    var orderEditPageVue = new OrderEditPageVue();#}
     $(function() {
@@ -367,6 +373,14 @@
                 $('[data-autocomplete-light-function]',row).each(window.__dal__initialize);
             }
         });
-    })
+    });
+
+    $(function () {
+      $('input').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue',
+        increaseArea: '20%' // optional
+      });
+    });
   </script>
 {% endblock %}
