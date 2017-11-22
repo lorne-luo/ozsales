@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import RedirectView, TemplateView, ListView
+from django.views.generic import RedirectView, TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import ProcessFormView
 from djstripe.models import Card
@@ -70,12 +70,14 @@ class RemoveSingleCardView(LoginRequiredMixin, RedirectView):
         return super(RemoveSingleCardView, self).post(request, *args, **kwargs)
 
 
-class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, ListView):
+class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     template_name = "djstripe/view_card.html"
 
-    def get_queryset(self):
-        # todo template not finished
-        return self.request.user.profile.get_all_card()
+    def get_object(self, queryset=None):
+        return self.request.user.profile.get_default_card
+
+    def get(self, request, *args, **kwargs):
+        return super(ViewCreditCardView, self).get(request, *args, **kwargs)
 
 
 class PlanConfirmView(LoginRequiredMixin, PaymentsContextMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
