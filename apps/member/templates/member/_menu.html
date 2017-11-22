@@ -1,6 +1,25 @@
-<li class="active">
-  <a href="{% url 'member-profile' %}">
-    <i class="fa fa-user"></i>
+
+<li class="treeview">
+  <a href="javascript:void(0)">
+    <i class="fa fa-angle-left pull-right"></i>
+    <i class='fa fa-user'></i>
     <b>Profile</b>
   </a>
+
+  <ul class="treeview-menu menu-open" style="display: block;">
+    <li>
+      <a href="{% url 'member-profile' %}" class="main">
+        <i class="fa fa-circle-o"></i>
+        Profile
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'payments:view_card' %}" class="main">
+        <i class="fa fa-circle-o"></i>
+        Payment
+      </a>
+    </li>
+
+  </ul>
+
 </li>
