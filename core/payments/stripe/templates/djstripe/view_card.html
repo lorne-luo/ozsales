@@ -1,7 +1,7 @@
 {% extends 'adminlte/base.html' %}
 {% load  static %}
 
-{% block base_head_title %}Add credit card{% endblock %}
+{% block base_head_title %}View credit card{% endblock %}
 {% block base_head_title_system_name %}OZSALES{% endblock %}
 
 {% block content %}
@@ -12,7 +12,43 @@
                 <h3 class="box-title">Credit Card</h3>
             </div>
             <div class="box-body">
-                {{ object }}
+                <div class="credit-card-form-wrapper col-xs-12 col-md-6">
+                    <br/>
+                    <div class="credit-card-form-field col-xs-12">
+                        <label class="control-label" for="card-number">CARD NUMBER</label>
+                        <div class="field-input">
+                            <div id="card-number">
+                                **** **** **** <span>{{ object.last4 }}</span> <i class="fa fa-cc-visa fa-lg"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="credit-card-form-field col-xs-12">
+                        <label for="card-name">CARD HOLDERS NAME</label>
+                        <div class="field-input">
+                            <div class="">
+                                <span>{{ object.name|default:"" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-6">
+                        <label for="card-expiry">
+                            EXPIRY DATE
+                        </label>
+                        <div class="field-input">
+                            <div id="card-expiry">
+                                <span>{{ object.exp_month|default:"" }}/{{ object.exp_year|default:"" }}</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="box-footer">
+                <div class="col-xs-12">
+                    <a style="width:108px" class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
+                </div>
             </div>
         </div>
     </div>
