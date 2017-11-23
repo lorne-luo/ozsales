@@ -30,7 +30,7 @@
 
 {% block content %}
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-12 full-width">
       <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
       {% csrf_token %}
 
@@ -326,7 +326,7 @@
   </div>
 
   <div class="row" style="min-height: 140px">
-    <div class="col-xs-12">
+    <div class="col-xs-12 full-width">
       {{ object.address.name }} {{ object.address.id_number }} {{ object.address.mobile }}<br/>
       {{ object.address }}<br/>
       <br/>

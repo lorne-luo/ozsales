@@ -49,7 +49,7 @@ input[type='checkbox'] {
         margin-top: 3px;
     }
 
-    body:not(.login-page) .col-xs-12,body:not(.login-page) .col-sm-12 {
+    .full-width {
         padding-right: 0;
         padding-left: 0;
     }
