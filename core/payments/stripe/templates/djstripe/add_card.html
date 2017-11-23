@@ -29,10 +29,10 @@
 
                 </div>
                 <div class="credit-card-form-field">
-                    <label>CARD HOLDERS NAME</label>
+                    <label for="card-name">CARD HOLDERS NAME</label>
                     <div class="field-input">
                         <div>
-                            <input id="card-name" type="text" class="name" placeholder="Card holder name">
+                            <input id="card-name" type="text" class="name StripeElement form-control" placeholder="Card holder name">
                         </div>
                         <div class="error-message">
                             <div id="card-name-errors" role="alert"></div>
@@ -86,6 +86,7 @@
 
 {% block footer_page_script %}
 {#    refer https://stripe.com/docs/stripe-js #}
+{#    https://github.com/stripe/elements-examples/#}
     <script src="https://js.stripe.com/v3/"></script>
 
     <style>
@@ -135,8 +136,8 @@
                 color: '#fa755a',
                 iconColor: '#fa755a',
                 ':focus': {
-                    color: '#303238',
-                },
+                    color: '#303238'
+                }
             }
         };
 
@@ -188,8 +189,11 @@
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();
+            var options = {
+                name: document.getElementById('card-name').value
+            };
 
-            stripe.createToken(cardExpiry).then(function (result) {
+            stripe.createToken(cardExpiry, options).then(function (result) {
                 if (result.error) {
                     // Inform the user if there was an error
                     var errorElement = document.getElementById('card-errors');
