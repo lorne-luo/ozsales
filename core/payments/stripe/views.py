@@ -44,7 +44,7 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
             return self.render_to_response(context)
 
         messages.success(self.request, 'Your credit card updated.')
-        return HttpResponseRedirect(reverse_lazy('payments:add_card'))
+        return HttpResponseRedirect(reverse_lazy('payments:view_card'))
 
 
 class RemoveAllCardView(LoginRequiredMixin, RedirectView):

@@ -11,74 +11,76 @@
             <div class="box-header with-border">
                 <h3 class="box-title">Credit Card</h3>
             </div>
-            <div class="box-body">
-
         <form action="" method="post" id="payment-form">
-            {% csrf_token %}
-            <div class="credit-card-form-wrapper">
-                <div class="credit-card-form-field">
-                    <label for="card-number">CARD NUMBER</label>
-                    <div class="field-input">
-                        <div id="card-number">
-                            <!-- a Stripe Element will be inserted here. -->
-                        </div>
-                        <div class="error-message">
-                            <div id="card-number-errors" role="alert"></div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="credit-card-form-field">
-                    <label for="card-name">CARD HOLDERS NAME</label>
-                    <div class="field-input">
-                        <div>
-                            <input id="card-name" type="text" class="name StripeElement form-control" placeholder="Card holder name">
-                        </div>
-                        <div class="error-message">
-                            <div id="card-name-errors" role="alert"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-container flex-container--space-between">
-                    <div class="credit-card-form-field credit-card-form-field--expiry">
-                        <label for="card-expiry">
-                            EXPIRY DATE
-                        </label>
+            <div class="box-body">
+                {% csrf_token %}
+                <div class="credit-card-form-wrapper col-xs-12 col-md-6">
+                    <div class="credit-card-form-field col-xs-12">
+                        <label for="card-number">CARD NUMBER</label>
                         <div class="field-input">
-                            <div id="card-expiry">
+                            <div id="card-number">
                                 <!-- a Stripe Element will be inserted here. -->
                             </div>
                             <div class="error-message">
-                                <div id="card-expiry-errors" role="alert"></div>
+                                <div id="card-number-errors" role="alert"></div>
                             </div>
                         </div>
 
                     </div>
-                    <div class="credit-card-form-field credit-card-form-field--cvc">
-
-                        <label for="card-cvc">
-                            CW/CVC
-                        </label>
+                    <div class="credit-card-form-field col-xs-12">
+                        <label for="card-name">CARD HOLDERS NAME</label>
                         <div class="field-input">
-                            <div id="card-cvc">
-                                <!-- a Stripe Element will be inserted here. -->
+                            <div class="">
+                                <input id="card-name" type="text" class="card-name form-control StripeElement" placeholder="Card holder name">
                             </div>
                             <div class="error-message">
-                                <div id="card-cvc-errors" role="alert"></div>
+                                <div id="card-name-errors" role="alert"></div>
                             </div>
                         </div>
                     </div>
-                </div>
+                        <div class="credit-card-form-field credit-card-form-field--expiry col-xs-6">
+                            <label for="card-expiry">
+                                EXPIRY DATE
+                            </label>
+                            <div class="field-input">
+                                <div id="card-expiry">
+                                    <!-- a Stripe Element will be inserted here. -->
+                                </div>
+                                <div class="error-message">
+                                    <div id="card-expiry-errors" role="alert"></div>
+                                </div>
+                            </div>
 
-                {% if error %}
-                <div class="alert alert--error">{{ error|safe }}</div>
-                {% endif %}
-                <input class="btn btn--large" id="submit-button" type="submit" value="Update Credit Card"/>
+                        </div>
+                        <div class="credit-card-form-field credit-card-form-field--cvc col-xs-6">
+
+                            <label for="card-cvc">
+                                CW/CVC
+                            </label>
+                            <div class="field-input">
+                                <div id="card-cvc">
+                                    <!-- a Stripe Element will be inserted here. -->
+                                </div>
+                                <div class="error-message">
+                                    <div id="card-cvc-errors" role="alert"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {% if error %}
+                        <div class="alert alert--error">{{ error|safe }}</div>
+                    {% endif %}
+                </div>
             </div>
 
+            <div class="box-footer">
+                <div class="col-xs-12 col-md-6">
+                    <div class="col-xs-12">
+                    <input class="btn btn-lg btn-success col-xs-12 " id="submit-button" type="submit" value="Submit"/>
+                    </div>
+                </div>
+            </div>
         </form>
-
-            </div>
         </div>
     </div>
   </div>
@@ -90,6 +92,18 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <style>
+        .credit-card-form-wrapper{
+            display: block;
+        }
+
+        .credit-card-form-wrapper label{
+            margin:20px 0 10px 0;
+        }
+
+        #submit-button{
+            margin-bottom: 20px;
+        }
+
         .StripeElement {
             background-color: white;
             padding: 8px 12px;
@@ -97,7 +111,34 @@
             border: 2px solid #e9eaea;
         }
 
-        .StripeElement--focus {
+        #card-name {
+            color: #32325d;
+            padding: 8px 12px;
+            line-height: 24px;
+            font-family: "Helvetica Neue", Helvetica, sans-serif;
+            font-size: 16px;
+            height: 44px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #card-name::-webkit-input-placeholder {
+            color: #aab7c4 !important;
+        }
+
+        #card-name:-moz-placeholder { /* Firefox 18- */
+            color: #aab7c4 !important;
+        }
+
+        #card-name::-moz-placeholder { /* Firefox 19+ */
+            color: #aab7c4 !important;
+        }
+
+        #card-name:-ms-input-placeholder {
+            color: #aab7c4 !important;
+        }
+
+        .StripeElement--focus, #card-name:focus{
             border-color: #0172de;
         }
 
