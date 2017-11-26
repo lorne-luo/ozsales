@@ -68,6 +68,13 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
         context.update({'subscriptions': customer.subscriptions.all()})
         return context
 
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object:
+            return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
     template_name = 'djstripe/plan_purchase.html'
