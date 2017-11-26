@@ -156,6 +156,15 @@ class Order(models.Model):
         if not self.pk:
             self.aud_rmb_rate = rate.aud_rmb_rate
 
+        self.total_cost_aud = self.product_cost_aud or 0
+        self.product_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
+
+        self.total_cost_aud += self.shipping_fee or 0
+        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
+
+        if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
+
         super(Order, self).save()
 
         if self.id and not self.order_id:
@@ -184,7 +193,10 @@ class Order(models.Model):
     def get_aud_rmb_rate(self):
         return self.aud_rmb_rate or rate.aud_rmb_rate
 
-    def update_price(self):
+    def update_price(self, update_sell_price=False):
+        if not self.products.count() and not self.express_orders.count():
+            return
+
         self.total_amount = 0
         self.product_cost_aud = 0
         self.product_cost_rmb = 0
@@ -199,7 +211,6 @@ class Order(models.Model):
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
             if p.product:
                 p.product.stat_sold_count()
-        self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -207,17 +218,14 @@ class Order(models.Model):
             if ex_order.fee:
                 self.shipping_fee += ex_order.fee
 
-        self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
-
-        if self.sell_price_rmb is None:
+        if self.sell_price_rmb is None and self.products.count() or update_sell_price:
+            # init assignment or force update from product.post_save and expressorder.post_save
             self.sell_price_rmb = self.origin_sell_rmb
 
-        if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
-
+        post_save.disconnect(update_price_from_order, sender=Order)
         self.save()
         self.update_monthly_report()
+        post_save.connect(update_price_from_order, sender=Order)
 
     def get_paid_button(self):
         if not self.is_paid:
@@ -414,21 +422,20 @@ def update_price_from_order(sender, instance=None, created=False, update_fields=
         if 'status' in update_fields or 'is_paid' in update_fields or 'paid_time' in update_fields:
             instance.update_monthly_report()
     elif instance.id:
-        post_save.disconnect(update_price_from_order, sender=Order)
-        instance.update_price()
-        post_save.connect(update_price_from_order, sender=Order)
+        if instance.products.count() or instance.express_orders.count():
+            instance.update_price()
 
 
 @receiver(post_save, sender=OrderProduct)
 def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
     if instance.order and instance.order.id:
-        instance.order.update_price()
+        instance.order.update_price(update_sell_price=True)
 
 
 @receiver(post_delete, sender=OrderProduct)
 def order_product_deleted(sender, **kwargs):
-    order_product = kwargs['instance']
-    order_product.order.update_price()
+    instance = kwargs['instance']
+    instance.order.update_price(update_sell_price=True)
 
 
 def confirm_order_from_cart(cart):

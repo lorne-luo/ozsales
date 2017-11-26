@@ -183,10 +183,15 @@ class ExpressOrder(models.Model):
 
 
 @receiver(post_save, sender=ExpressOrder)
-def update_order_price(sender, instance=None, created=False, **kwargs):
-    if instance.order and instance.order.id:
-        instance.order.update_price()
+def express_order_saved(sender, instance=None, created=False, **kwargs):
+    if instance.order_id:
+        instance.order.update_price(update_sell_price=True)
 
+@receiver(post_delete, sender=ExpressOrder)
+def express_order_deleted(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.order_id:
+        instance.order.update_price(update_sell_price=True)
 
 @receiver(pre_save, sender=ExpressCarrier)
 def update_default_carrier(sender, instance=None, created=False, **kwargs):
