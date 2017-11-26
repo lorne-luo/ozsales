@@ -343,13 +343,11 @@
   <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
   <script type="text/javascript" src="{% static "js/order/order_edit.js" %}"></script>
   <script type="text/javascript" src="{% static "js/jquery.formset.js" %}"></script>
+  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
 {% endblock %}
 
 {% block footer_page_script %}
-  <!-- iCheck -->
-  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
   <script type="text/javascript">
-{#    var orderEditPageVue = new OrderEditPageVue();#}
     $(function() {
         $('#orderproduct .product-form').formset({
             formTemplate: '#{{ product_formset.prefix }}_template .form-group',
@@ -373,14 +371,6 @@
                 $('[data-autocomplete-light-function]',row).each(window.__dal__initialize);
             }
         });
-    });
-
-    $(function () {
-      $('input').iCheck({
-        checkboxClass: 'icheckbox_square-blue',
-        radioClass: 'iradio_square-blue',
-        increaseArea: '20%' // optional
-      });
     });
   </script>
 {% endblock %}
