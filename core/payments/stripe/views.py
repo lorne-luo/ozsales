@@ -6,8 +6,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import RedirectView, TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import ProcessFormView
-from djstripe.models import Card
-from djstripe.mixins import PaymentsContextMixin,SubscriptionMixin
+from djstripe.models import Card, Plan
+from djstripe.mixins import PaymentsContextMixin, SubscriptionMixin
 
 
 class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateView):
@@ -74,19 +74,12 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
         return super(PlanPurchaseView, self).get_context_data()
 
     def post(self, request, *args, **kwargs):
-        token = request.POST.get("cardToken", None)
-
-        if token is None:
-            messages.error(self.request, 'Some errors happened, please retry.')
-            raise Http404
-
-        try:
-            profile = self.request.user.profile
-            card = profile.add_card(source=token, remove_old=True)  # input card token or detail dict
-        except stripe.error.CardError as ex:
-            context = self.get_context_data(**kwargs)
-            context.update({'error': ex._message})
-            return self.render_to_response(context)
-
-        messages.success(self.request, 'Your credit card updated.')
+        plan_id = request.POST.get('selected_plan')
+        plan = Plan.objects.filter(stripe_id=plan_id).first()
+        if plan:
+            customer = self.request.user.profile.stripe_customer
+            subscription = customer.subscribe(plan)
+        else:
+            messages.success(self.request, 'Your credit card updated.')
+            return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
         return HttpResponseRedirect(reverse_lazy('payments:view_card'))

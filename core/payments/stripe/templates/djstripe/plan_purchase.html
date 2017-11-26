@@ -29,7 +29,7 @@
                             <h4>{{ plan.name }}</h4>
                             <p>
                                 {{ plan.description|default:"1" }}
-                                <input type="radio" name="gender" value="{{ plan.stripe_id }}"
+                                <input type="radio" name="selected_plan" value="{{ plan.stripe_id }}"
                                    {% if customer.subscription.plan == plan and customer.subscription.is_valid %}checked{% endif %}
                                     {% if forloop.first %}{% if not customer.subscription.is_valid %}checked{% endif %}{% endif %}>
                             </p>
@@ -67,4 +67,15 @@
         </div>
     </div>
   </div>
+{% endblock %}
+
+{% block footer_page_script %}
+    <script>
+        $( document ).ready(function() {
+            $( "#payment-form" ).submit(function( event ) {
+                var plan_id = $(".plan_item.active").attr("id");
+                $("input[value="+plan_id+"]").prop( "checked", true );
+            });
+        });
+    </script>
 {% endblock %}
