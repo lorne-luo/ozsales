@@ -57,10 +57,33 @@
             </div>
             <div class="box-footer">
                 <div class="col-xs-12">
-                    <a style="width:108px" class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
+                    <a class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
+                    <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-card">Remove Card</button>
                 </div>
             </div>
         </div>
     </div>
   </div>
+
+<div class="modal fade" id="remove-card" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">确认移除尾号{{ object.last4 }}的信用卡？</h4>
+      </div>
+      <div class="modal-body">
+        <p>#todo 你有plan</p>
+        <p>若只是更换信用卡请点击更新信用卡<a href="{% url 'payments:add_card' %}">更新信用卡</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+        <a href="{% url 'payments:remove_card' %}" class="btn btn-primary">确 定</a>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 {% endblock %}

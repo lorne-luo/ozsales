@@ -60,7 +60,7 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     template_name = "djstripe/view_card.html"
 
     def get_object(self, queryset=None):
-        return self.request.user.profile.get_default_card
+        return self.request.user.profile.get_default_card()
 
     def get_context_data(self, **kwargs):
         context = super(ViewCreditCardView, self).get_context_data(**kwargs)
@@ -74,6 +74,12 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
             return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
+
+class RemoveCreditCardView(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        profile = self.request.user.profile
+        profile.remove_all_card()
+        return reverse_lazy('payments:add_card')
 
 
 class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
