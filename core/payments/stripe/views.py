@@ -7,21 +7,7 @@ from django.views.generic import RedirectView, TemplateView, ListView, DetailVie
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import ProcessFormView
 from djstripe.models import Card
-
-from core.payments.stripe.stripe_api import STRIPE_PUBLIC_KEY
-
-
-class PaymentsContextMixin(object):
-    """Adds checkout context to a view."""
-
-    def get_context_data(self, **kwargs):
-        """Inject STRIPE_PUBLIC_KEY and plans into context_data."""
-        context = super(PaymentsContextMixin, self).get_context_data(**kwargs)
-        context.update({
-            "STRIPE_PUBLIC_KEY": STRIPE_PUBLIC_KEY,
-        })
-
-        return context
+from djstripe.mixins import PaymentsContextMixin,SubscriptionMixin
 
 
 class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateView):
@@ -80,9 +66,27 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
         return super(ViewCreditCardView, self).get(request, *args, **kwargs)
 
 
-class PlanConfirmView(LoginRequiredMixin, PaymentsContextMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
-    template_name = 'djstripe/plan_confirm.html'
+class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
+    template_name = 'djstripe/plan_purchase.html'
 
     def get_context_data(self, **kwargs):
         # todo template not finished
-        return super(PlanConfirmView, self).get_context_data()
+        return super(PlanPurchaseView, self).get_context_data()
+
+    def post(self, request, *args, **kwargs):
+        token = request.POST.get("cardToken", None)
+
+        if token is None:
+            messages.error(self.request, 'Some errors happened, please retry.')
+            raise Http404
+
+        try:
+            profile = self.request.user.profile
+            card = profile.add_card(source=token, remove_old=True)  # input card token or detail dict
+        except stripe.error.CardError as ex:
+            context = self.get_context_data(**kwargs)
+            context.update({'error': ex._message})
+            return self.render_to_response(context)
+
+        messages.success(self.request, 'Your credit card updated.')
+        return HttpResponseRedirect(reverse_lazy('payments:view_card'))
