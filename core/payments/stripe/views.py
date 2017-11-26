@@ -62,16 +62,15 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user.profile.get_default_card
 
-    def get(self, request, *args, **kwargs):
-        return super(ViewCreditCardView, self).get(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(ViewCreditCardView, self).get_context_data(**kwargs)
+        customer = self.request.user.profile.stripe_customer
+        context.update({'subscriptions': customer.subscriptions.all()})
+        return context
 
 
 class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
     template_name = 'djstripe/plan_purchase.html'
-
-    def get_context_data(self, **kwargs):
-        # todo template not finished
-        return super(PlanPurchaseView, self).get_context_data()
 
     def post(self, request, *args, **kwargs):
         plan_id = request.POST.get('selected_plan')
@@ -79,6 +78,7 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
         if plan:
             customer = self.request.user.profile.stripe_customer
             subscription = customer.subscribe(plan)
+            # todo update seller expiration, wrap subscribe method
         else:
             messages.success(self.request, 'Your credit card updated.')
             return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))

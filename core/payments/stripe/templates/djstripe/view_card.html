@@ -31,7 +31,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-6">
+                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
                         <label for="card-expiry">
                             EXPIRY DATE
                         </label>
@@ -40,8 +40,18 @@
                                 <span>{{ object.exp_month|default:"" }}/{{ object.exp_year|default:"" }}</span>
                             </div>
                         </div>
-
                     </div>
+
+                    {% for sub in subscriptions %}
+                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
+                        <label for="card-expiry">
+                            Current Plan
+                        </label>
+                        <div class="field-input">
+                                <span>{{ sub.plan.name }}</span>
+                        </div>
+                    </div>
+                    {% endfor %}
 
                 </div>
             </div>
