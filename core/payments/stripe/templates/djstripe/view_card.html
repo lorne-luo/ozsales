@@ -3,17 +3,45 @@
 
 {% block base_head_title %}View credit card{% endblock %}
 {% block base_head_title_system_name %}OZSALES{% endblock %}
+{% block base_content_header %}{% endblock %}
 
 {% block content %}
-  <div class="row">
-    <div class="col-xs-12">
-        <div class="box box-info">
-            <div class="box-header with-border">
-                <h3 class="box-title">Credit Card</h3>
-            </div>
-            <div class="box-body">
-                <div class="credit-card-form-wrapper col-xs-12 col-md-6">
-                    <br/>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#tab_plan" data-toggle="tab" aria-expanded="true">会员&支付</a></li>
+              <li class=""><a href="#tab_history" data-toggle="tab" aria-expanded="false">支付历史</a></li>
+              <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="tab_plan">
+                <div class="col-xs-12">
+                    <div class="box-body">
+                        <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
+                            <label for="card-expiry">
+                                Current Plan
+                            </label>
+                            <div class="field-input">
+                                    <span>{{ subscription.plan.name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% if subscription.cancel_at_period_end %}
+                         <div class="alert alert-warning alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+                            会员资格已取消，将在{{ subscription.current_period_end }}到期后结束.
+                          </div>
+                    {% else %}
+                    <div class="col-xs-12">
+                        <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-plan">Remove Plan</button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="credit-card-form-wrapper col-xs-12">
+                    <div class="box-body">
                     <div class="credit-card-form-field col-xs-12">
                         <label class="control-label" for="card-number">CARD NUMBER</label>
                         <div class="field-input">
@@ -41,35 +69,36 @@
                             </div>
                         </div>
                     </div>
-
-                    {% for sub in subscriptions %}
-                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
-                        <label for="card-expiry">
-                            Current Plan
-                        </label>
-                        <div class="field-input">
-                                <span>{{ sub.plan.name }}</span>
-                        </div>
+                </div>
+                    <div class="col-xs-12">
+                        <a class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
+                        <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-card">Remove Card</button>
                     </div>
-                    {% endfor %}
+            </div>
+                  <p style="clear:both"></p><br/>
+              </div>
+              <!-- /.tab-pane -->
+                <div class="tab-pane" id="tab_history">
+
+                <div class="box-body">
 
                 </div>
-            </div>
-            <div class="box-footer">
-                <div class="col-xs-12">
-                    <a class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
-                    <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-card">Remove Card</button>
+                <div class="box-footer">
+
                 </div>
+              </div>
+              <!-- /.tab-pane -->
             </div>
-        </div>
-    </div>
+            <!-- /.tab-content -->
+          </div>
+      </div>
   </div>
 
 <div class="modal fade" id="remove-card" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="X">
           <span aria-hidden="true">×</span></button>
         <h4 class="modal-title">确认移除尾号{{ object.last4 }}的信用卡？</h4>
       </div>
@@ -80,6 +109,28 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
         <a href="{% url 'payments:remove_card' %}" class="btn btn-primary">确 定</a>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+
+<div class="modal fade" id="remove-plan" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="X">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">确认取消会员？</h4>
+      </div>
+      <div class="modal-body">
+        <p>#todo 取消subscription</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+        <a href="{% url 'payments:cancel_subscription' stripe_id=subscription.stripe_id %}" class="btn btn-primary">确 定</a>
       </div>
     </div>
     <!-- /.modal-content -->

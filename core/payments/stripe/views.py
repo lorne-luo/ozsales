@@ -1,3 +1,4 @@
+# coding=utf-8
 import stripe
 from django.contrib import messages
 from django.http import Http404, HttpResponseRedirect
@@ -6,7 +7,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import RedirectView, TemplateView, ListView, DetailView
 from django.views.generic.base import TemplateResponseMixin, ContextMixin
 from django.views.generic.edit import ProcessFormView
-from djstripe.models import Card, Plan
+from djstripe.enums import SubscriptionStatus
+from djstripe.models import Card, Plan, Subscription
 from djstripe.mixins import PaymentsContextMixin, SubscriptionMixin
 
 
@@ -65,7 +67,7 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ViewCreditCardView, self).get_context_data(**kwargs)
         customer = self.request.user.profile.stripe_customer
-        context.update({'subscriptions': customer.subscriptions.all()})
+        context.update({'subscription': customer.subscription})
         return context
 
     def get(self, request, *args, **kwargs):
@@ -74,6 +76,7 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
             return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
+
 
 class RemoveCreditCardView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
@@ -96,3 +99,21 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
             messages.success(self.request, 'Your credit card updated.')
             return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
         return HttpResponseRedirect(reverse_lazy('payments:view_card'))
+
+
+class CancelSubscriptionView(LoginRequiredMixin, RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        sub_stripe_id = kwargs.get("stripe_id")
+        sub = Subscription.objects.filter(stripe_id=sub_stripe_id).first()
+
+        if not sub:
+            return reverse_lazy('payments:view_card')
+
+        subscription = sub.cancel()
+        if subscription.status == SubscriptionStatus.canceled:
+            messages.info(self.request, u'会员资格已取消.')
+            return reverse_lazy('payments:view_card')
+        elif subscription.cancel_at_period_end:
+            # If pro-rate, they get some time to stay.
+            messages.info(self.request, u'会员资格将在%s到期后取消.' % subscription.current_period_end)
+        return reverse_lazy('payments:view_card')
