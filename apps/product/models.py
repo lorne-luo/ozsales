@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Sum, F
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
+from stdimage import StdImageField
 from taggit.managers import TaggableManager
 
 from apps.member.models import Seller
@@ -96,7 +97,11 @@ class Product(models.Model):
     code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
-    pic = models.ImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'))
+    pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
+                        variations={
+                            'medium': {"width": 800, "height": 800},
+                            'thumbnail': {"width": 400, "height": 400}
+                        })
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
     spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
     spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)

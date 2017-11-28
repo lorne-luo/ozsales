@@ -15,6 +15,7 @@ from django.utils.http import urlquote
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
+from stdimage import StdImageField
 
 from core.auth_user.models import AuthUser, UserProfileMixin
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
@@ -257,8 +258,16 @@ class Address(models.Model):
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
-    id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
-    id_photo_back = models.ImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True)
+    id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
+                                   variations={
+                                       'medium': {'width': 720},
+                                       'thumbnail': {'width': 150}
+                                   })
+    id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
+                                  variations={
+                                      'medium': {'width': 720},
+                                      'thumbnail': {'width': 150}
+                                  })
 
     objects = AddressManager()
 

@@ -5,7 +5,7 @@ wechat-sdk
 mysql-python
 beautifulsoup4==4.6.0
 html5lib==0.999999999
-Pillow==2.4.0
+Pillow==2.5.0
 django-celery==3.2.2
 django-activelink==1.0
 django-braces==1.8.1
@@ -46,3 +46,4 @@ pathlib==1.0.1
 jsonfield==2.0.2
 requests==2.18.4
 urlfetch==1.0.2
+django-stdimage==2.4.2
