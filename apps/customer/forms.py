@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
-from django.forms.models import modelformset_factory
+from django.forms.models import modelformset_factory, inlineformset_factory
 from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from models import Address, Customer, InterestTag
 
@@ -128,6 +128,5 @@ class AddressInlineForm(ModelForm):
 
         self.fields['customer'].widget = forms.HiddenInput()
 
-
-AddressFormSet = modelformset_factory(Address, form=AddressInlineForm,
-                                           can_order=False, can_delete=False, extra=1)
+AddressFormSet = modelformset_factory(Address, form=AddressInlineForm, can_order=False, can_delete=False, extra=1)
+AddressFormSet2 = inlineformset_factory(Customer, Address, form=AddressInlineForm, extra=1)
