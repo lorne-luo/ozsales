@@ -1,11 +1,14 @@
 from decimal import Decimal
 
 import logging
+
+from django.utils.functional import cached_property
 from stripe.error import (CardError, StripeError, APIConnectionError, AuthenticationError, InvalidRequestError,
                           RateLimitError)
 from django.core.exceptions import SuspiciousOperation
 from djstripe.models import Customer, Charge
 from djstripe.sync import sync_subscriber
+from djstripe.utils import subscriber_has_active_subscription
 
 log = logging.getLogger(__name__)
 
@@ -137,3 +140,8 @@ class UserProfileStripeMixin(object):
 
     def get_all_charges(self):
         return Charge.objects.filter(customer_id=self.stripe_customer)
+
+    @cached_property
+    def has_active_subscription(self):
+        """Checks if a user has an active subscription."""
+        return subscriber_has_active_subscription(self.stripe_customer)
