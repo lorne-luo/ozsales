@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',  # must come after accounts for migrations to work
     'taggit',
     'djstripe',
+    'stdimage',
 )
 
 MIDDLEWARE_CLASSES = (
