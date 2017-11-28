@@ -90,5 +90,4 @@ class ExpressOrderInlineEditForm(ModelForm):
         return self.cleaned_data.get('fee') or 0
 
 
-# ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)
 ExpressOrderFormSet = inlineformset_factory(Order, ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)
