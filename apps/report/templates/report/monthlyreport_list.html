@@ -1,8 +1,23 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 
-{% block common_list_buttons %}{% endblock %}
+{% block content_title %}Report{% endblock %}
+{% block common_list_buttons %}<h3 class="box-title">Monthly Recap Report</h3>{% endblock %}
+{% block search_box %}{% endblock %}
 
+{% block content %}
+<div class="row" id="commonDataTableRow">
+<div class="col-xs-12">
+<div class="nav-tabs-custom">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#tab_monthly" data-toggle="tab" aria-expanded="false">月度统计</a></li>
+      <li class=""><a href="#tab_total" data-toggle="tab" aria-expanded="true">总计</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="tab_monthly">
+        <table class="table table-hover" id="commonTable">
+              <thead>
+              <tr>
 {% block table_head %}
   <th>Month</th>
   <th class="hidden-sm hidden-xs">Order Count</th>
@@ -17,7 +32,8 @@
   <th class="visible-sm visible-xs">Cost</th>
   <th class="visible-sm visible-xs">Profit</th>
 {% endblock %}
-
+              </tr>
+              </thead>
 {% block table_row %}
   <tbody v-for="item in items">
   <tr>
@@ -38,6 +54,35 @@
     <td class="visible-sm visible-xs">{!! item.sell_price_rmb !!}/{!! item.profit_rmb !!}</td>
   </tr>
   </tbody>
+{% endblock %}
+            </table>
+      </div>
+      <!-- /.tab-pane 1-->
+      <div class="tab-pane" id="tab_total">
+        {% if total_day %}
+        <h4>系统已运行{{ total_year }}年{{ total_day }}天,共计:</h4>
+        <ul>
+            <li>客户总数: {{ total_customer }} 位</li>
+            <li>地址总数: {{ total_address }} 个</li>
+            <li>订单总数: {{ total_order }} 个</li>
+            <li>包裹总数: {{ total_expressorder }} 箱</li>
+            <li>货物总数: {{ total_amount }} 件</li>
+            <li>总邮费: {{ total_express_fee }} 刀</li>
+            <li>总金额: {{ total_sell_price }} 元</li>
+            <li>总成本: {{ total_cost_aud }} 刀</li>
+            <li>总利润: {{ total_profit_rmb }} 元</li>
+            <li>未付总额: {{ total_unpaid_amount }} 元</li>
+        </ul>
+        {% else %}
+            对不起，你还没有任何订单.
+        {% endif %}
+      </div>
+      <!-- /.tab-pane 2-->
+    </div>
+    <!-- /.tab-content -->
+  </div>
+</div>
+</div>
 {% endblock %}
 
 {% block common_list_footer_page_script %}

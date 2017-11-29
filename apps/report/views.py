@@ -26,6 +26,12 @@ class MonthlyReportListView(MultiplePermissionsRequiredMixin, CommonContextMixin
         "all": ("report.view_monthlyreport",)
     }
 
+    def get_context_data(self, **kwargs):
+        context = super(MonthlyReportListView, self).get_context_data(**kwargs)
+        data = MonthlyReport.stat_user_total(self.request.user)
+        context.update(data)
+        return context
+
 
 class MonthlyReportAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     """ Add views for MonthlyReport """

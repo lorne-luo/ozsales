@@ -2,11 +2,14 @@
 import datetime
 from django.db import models
 from dateutil.relativedelta import relativedelta
+from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import F, Sum, Count
 from django.utils import timezone
 
+from apps.customer.models import Customer, Address
+from apps.express.models import ExpressOrder
 from apps.member.models import Seller
 from apps.order.models import Order, ORDER_STATUS
 
@@ -84,3 +87,30 @@ class MonthlyReport(models.Model):
             report.profit_rmb = sum_object.get('profit_rmb', 0)
             report.parcel_count = sum_object.get('parcel_count', 0)
             report.save()
+
+    @staticmethod
+    def stat_user_total(user):
+        if not user.is_seller:
+            return Http404
+        seller = user.profile
+
+        if not Order.objects.filter(seller=seller).count():
+            return {}
+
+        first_day = Order.objects.filter(seller=seller).order_by('create_time').first().create_time
+        distance = timezone.now() - first_day
+
+        own_orders = Order.objects.filter(seller=seller)
+        data = own_orders.aggregate(total_amount=Sum('total_amount'), total_sell_price=Sum('sell_price_rmb'),
+                                    total_cost_aud=Sum('product_cost_aud'), total_profit_rmb=Sum('profit_rmb'),
+                                    total_express_fee=Sum('shipping_fee'))
+
+        data.update({'total_year': distance.days / 365,
+                        'total_day': distance.days % 365,
+                        'total_customer': Customer.objects.filter(seller=seller).count(),
+                        'total_order': own_orders.count(),
+                        'total_address': Address.objects.filter(customer__seller=seller).count(),
+                        'total_expressorder': ExpressOrder.objects.filter(order__seller=seller).count(),
+                        })
+        data.update(own_orders.filter(is_paid=False).aggregate(total_unpaid_amount=Sum('sell_price_rmb')))
+        return data
