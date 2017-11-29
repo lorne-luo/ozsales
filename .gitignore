@@ -30,6 +30,7 @@ collectstatic/
 .installed.cfg
 *.egg
 local.py
+static/django_js_reverse/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
