@@ -144,7 +144,7 @@ class Order(models.Model):
                 self.save(update_fields=['paid_time'])
 
             from ..report.models import MonthlyReport
-            MonthlyReport.stat(self.seller, self.create_time.year, self.create_time.month)
+            MonthlyReport.stat_month(self.seller, self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:

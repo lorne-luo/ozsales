@@ -43,10 +43,10 @@ class MonthlyReport(models.Model):
         if isinstance(seller, Seller):
             year = datetime.datetime.now().year
             month = datetime.datetime.now().month
-            MonthlyReport.stat(seller, year, month)
+            MonthlyReport.stat_month(seller, year, month)
 
     @staticmethod
-    def stat(user, year, month):
+    def stat_month(user, year, month):
         seller = user.profile
         if not isinstance(seller, Seller):
             return
