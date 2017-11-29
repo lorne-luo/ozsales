@@ -9,9 +9,8 @@
     <div class="col-xs-12">
       <div class="box box-info">
         <div class="box-header with-border">
-          <div class="row">
+          {% block common_list_buttons %}
             <div class="col-xs-5 col-sm-6">
-              {% block common_list_buttons %}
                 {% if page_model_perms.add %}
                   <a class="btn btn-primary" id="create">
                     <i class="fa fa-plus"></i>新增
@@ -23,9 +22,11 @@
                     删除
                   </a>
                 {% endif %}
-              {% endblock %}
             </div>
-            <div class="col-xs-7 col-sm-6">
+            {% endblock %}
+
+            {% block search_box %}
+            <div class="col-xs-7 col-sm-6 pull-right">
               <div class="input-group">
                 <input type="text" name="search" id="tableSearch" placeholder="关键字" v-on:keypress.13="search"
                        class="form-control input-sm pull-right">
@@ -40,11 +41,11 @@
                 </div>
               </div>
             </div>
-          </div>
+            {% endblock %}
         </div>
+        <!-- /.box-header -->
 
         {% block tab_content %}
-          <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover" id="commonTable">
               <thead>
