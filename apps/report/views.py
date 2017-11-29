@@ -70,34 +70,3 @@ class MonthlyReportViewSet(OwnerViewSetMixin, CommonViewSet):
     filter_fields = ['id']
     search_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb',
                      'profit_rmb']
-
-
-class TotalReport(TemplateView):
-    template_name = 'report/total_report.html'
-
-    def get_context_data(self, **kwargs):
-        if not self.request.user.is_seller:
-            return Http404
-        seller = self.request.user.profile
-        context = super(TotalReport, self).get_context_data(**kwargs)
-
-        if not Order.objects.filter(seller=seller).count():
-            return context
-
-        first_day = Order.objects.filter(seller=seller).order_by('create_time').first().create_time
-        distance = timezone.now() - first_day
-
-        own_orders = Order.objects.filter(seller=seller)
-        data = own_orders.aggregate(total_amount=Sum('total_amount'), total_sell_price=Sum('sell_price_rmb'),
-                                    total_cost_aud=Sum('product_cost_aud'), total_profit_rmb=Sum('profit_rmb'),
-                                    total_express_fee=Sum('shipping_fee'))
-
-        context.update(data)
-        context.update({'total_year': distance.days / 365,
-                        'total_day': distance.days % 365,
-                        'total_customer': Customer.objects.filter(seller=seller).count(),
-                        'total_order': own_orders.count(),
-                        'total_address': Address.objects.filter(customer__seller=seller).count(),
-                        'total_expressorder': ExpressOrder.objects.filter(order__seller=seller).count(),
-                        })
-        return context
