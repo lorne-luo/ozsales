@@ -4,6 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
 from core.auth_user.constant import ADMIN_GROUP
+from core.payments.stripe.models import UserProfileStripeMixin
 
 
 class AuthUserManager(UserManager):
@@ -34,7 +35,7 @@ class AuthUserManager(UserManager):
             return super(AuthUserManager, self).get(mobile=mobile_or_email)
 
 
-class AuthUser(AbstractUser):
+class AuthUser(AbstractUser, UserProfileStripeMixin):
     mobile = models.CharField(_('mobile'), max_length=30, unique=True, blank=True)
 
     objects = AuthUserManager()
@@ -75,6 +76,11 @@ class AuthUser(AbstractUser):
         user_groups = self.groups.values_list("name", flat=True)
         intersection = set(group_names).intersection(set(user_groups))
         return bool(intersection)
+
+    @property
+    def subscriber(self):
+        # for UserProfileStripeMixin, return correct djstripe subscriber
+        return self
 
 
 class UserProfileMixin(object):

@@ -2,13 +2,12 @@ from decimal import Decimal
 
 import logging
 
-from django.utils.functional import cached_property
+from django.contrib.auth import get_user_model
 from stripe.error import (CardError, StripeError, APIConnectionError, AuthenticationError, InvalidRequestError,
                           RateLimitError)
 from django.core.exceptions import SuspiciousOperation
 from djstripe.models import Customer, Charge
 from djstripe.sync import sync_subscriber
-from djstripe.utils import subscriber_has_active_subscription
 
 log = logging.getLogger(__name__)
 
@@ -26,42 +25,24 @@ class StBaseObject(object):
         return self
 
 
-# class StCharge(Charge, StBaseObject):
-#     INVOICE_NUMBER_KEY = 'invoice_number'
-#
-#     class Meta:
-#         proxy = True
-#
-#     def _attach_objects_hook(self, cls, data):
-#         super(StCharge, self)._attach_objects_hook(cls, data)
-#         invoice = Invoice.objects.filter(stripe_id=data['invoice']).first()
-#         if invoice:
-#             self.invoice = invoice
-#
-#
-# class ChargeLog(models.Model):
-#     """just to get unique id for invoice number"""
-#
-#     def get_invoice_number(self):
-#         if not self.id:
-#             self.save()
-#         number = hex(self.id).split('x')[-1].upper()
-#         return number.zfill(6)
-
-
 class UserProfileStripeMixin(object):
     """mixin for stripe customer subscriber model"""
 
-    def sync_stripe(self):
-        """sync all payment data (customer,card,charge,invoice) from stripe"""
-        sync_subscriber(self.auth_user)
+    @property
+    def subscriber(self):
+        # return django auth user
+        return self.auth_user
 
     @property
     def stripe_customer(self):
-        if not getattr(self, 'auth_user'):
-            raise SuspiciousOperation('%s do not related with Stripe customer.' % self)
-        customer, _created = Customer.get_or_create(subscriber=self.auth_user)
-        return Customer.objects.get(pk=customer.id)
+        if (isinstance(self.subscriber, get_user_model())):
+            customer, _created = Customer.get_or_create(subscriber=self.subscriber)
+            return customer
+        raise SuspiciousOperation('%s is not a valid subscriber' % self.subscriber)
+
+    def sync_stripe(self):
+        """sync all payment data (customer,card,charge,invoice) from stripe"""
+        sync_subscriber(self.subscriber)
 
     def can_charge(self):
         return self.stripe_customer.can_charge()
@@ -141,7 +122,7 @@ class UserProfileStripeMixin(object):
     def get_all_charges(self):
         return Charge.objects.filter(customer_id=self.stripe_customer)
 
-    @cached_property
-    def has_active_subscription(self):
-        """Checks if a user has an active subscription."""
-        return subscriber_has_active_subscription(self.stripe_customer)
+    def remove_all_subscriptions(self):
+        subscriptions = self.stripe_customer.valid_subscriptions
+        for sub in subscriptions:
+            sub.cancel(at_period_end=True)

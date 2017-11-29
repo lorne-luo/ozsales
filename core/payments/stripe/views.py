@@ -67,7 +67,7 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ViewCreditCardView, self).get_context_data(**kwargs)
         customer = self.request.user.profile.stripe_customer
-        context.update({'subscription': customer.subscription})
+        context.update({'subscription': customer.valid_subscriptions.first()})
         return context
 
     def get(self, request, *args, **kwargs):
@@ -109,7 +109,7 @@ class CancelSubscriptionView(LoginRequiredMixin, RedirectView):
         if not sub:
             return reverse_lazy('payments:view_card')
 
-        subscription = sub.cancel()
+        subscription = sub.cancel(at_period_end=True)
         if subscription.status == SubscriptionStatus.canceled:
             messages.info(self.request, u'会员资格已取消.')
             return reverse_lazy('payments:view_card')
