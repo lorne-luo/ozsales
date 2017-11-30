@@ -101,9 +101,7 @@ class Customer(UserProfileMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
-    mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
-                                                                    'invalid')])
+    mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True)
     order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
     last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
@@ -252,9 +250,7 @@ class AddressManager(Manager):
 @python_2_unicode_compatible
 class Address(models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
-                                                                    'invalid')])
+    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
