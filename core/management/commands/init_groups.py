@@ -23,8 +23,9 @@ class Command(BaseCommand):
             ('y', 'y', 'y', 'y','order', 'order'),
             ('y', 'y', 'y', 'y', 'customer', 'customer'),
             ('y', 'y', 'y', 'y', 'customer', 'address'),
+            ('y', 'y', 'y', 'y', 'product', 'product'),
             ('y', 'n', 'n', 'n', 'report', 'monthlyreport'),
-            ('y', 'y', 'y', 'y', 'store', 'store'),
+            ('n', 'n', 'n', 'n', 'store', 'store'),
             ('y', 'y', 'y', 'y', 'express', 'expresscarrier'),
         ],
         CUSTOMER_GROUP: [

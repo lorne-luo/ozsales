@@ -11,7 +11,8 @@
 from operator import __or__
 
 from django.core.management.base import BaseCommand
-from django.db.models import Q, get_models
+from django.db.models import Q
+from django.apps import apps
 from django.contrib.auth import management
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -25,12 +26,11 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Don't exclude models without permissions here, as it would not delete
         # stale ones if all get removed at once:
-        for model in get_models():
+        for model in apps.get_models():
             content_type = ContentType.objects.get_for_model(model)
             # This will raise an exception if 2 permissions have same codename:
             try:
-                _all_permissions = management._get_all_permissions(model._meta,
-                                                                   content_type)
+                _all_permissions = management._get_all_permissions(model._meta)
             except ValueError as e:
                 if str(e) == 'too many values to unpack':
                     print "Error: Check permissions tuple of '%s', missing a comma? " % model.__name__, \
