@@ -164,6 +164,8 @@ class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
 
         if self.q:
-            qs = qs.filter(Q(name_cn__icontains=self.q) | Q(name_en__icontains=self.q) |
-                           Q(brand__name_en__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
+            qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
+        if self.q.isalpha():
+            qs = qs.filter(
+                Q(pinyin__contains=self.q.lower()) | Q(name_en__icontains=self.q) | Q(brand__name_en__icontains=self.q))
         return qs

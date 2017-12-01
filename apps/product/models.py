@@ -134,6 +134,8 @@ class Product(PinYinFieldModelMixin, models.Model):
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
         ('name_cn', Style.FIRST_LETTER, False),
+        ('brand.name_cn', Style.NORMAL, False),
+        ('brand.name_cn', Style.FIRST_LETTER, False),
     ]
 
     class Meta:
