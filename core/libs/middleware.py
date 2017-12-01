@@ -9,4 +9,5 @@ __author__ = 'lorne'
 class ProfileAuthenticationMiddleware(AuthenticationMiddleware):
     def process_request(self, request):
         super(ProfileAuthenticationMiddleware, self).process_request(request)
-        setattr(request, 'profile', request.user.profile)
+        profile = getattr(request.user, 'profile', None)
+        setattr(request, 'profile', profile)
