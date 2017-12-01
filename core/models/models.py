@@ -14,7 +14,8 @@ class PinYinFieldModelMixin(object):
         super(PinYinFieldModelMixin, self).__init__(*args, **kwargs)
         field_names = [field_name for field_name, style, heteronym in self.pinyin_fields_conf]
         for field_name in set(field_names):
-            self._original_fields_value.update({field_name: getattr(self, field_name)})
+            current_value = self.get_attr_by_str(field_name)
+            self._original_fields_value.update({field_name: current_value})
 
     def save(self, *args, **kwargs):
         self.update_pinyin_fields()
@@ -24,7 +25,7 @@ class PinYinFieldModelMixin(object):
         if not getattr(self, self.pinyin_field):
             return True
         for field_name, style, heteronym in self.pinyin_fields_conf:
-            current_value = getattr(self, field_name)
+            current_value = self.get_attr_by_str(field_name)
             if current_value != self._original_fields_value.get(field_name) != None:
                 return True
 
@@ -32,7 +33,7 @@ class PinYinFieldModelMixin(object):
         if self.check_update():
             setattr(self, self.pinyin_field, '')
             for field_name, style, heteronym in self.pinyin_fields_conf:
-                current_value = getattr(self, field_name)
+                current_value = self.get_attr_by_str(field_name)
                 new_pinyin = getattr(self, self.pinyin_field) + self.get_pinyin(current_value, style, heteronym)
                 setattr(self, self.pinyin_field, new_pinyin)
 
@@ -59,3 +60,12 @@ class PinYinFieldModelMixin(object):
             for combin in rest_combinations:
                 result.append('%s%s' % (ch, combin))
         return result
+
+    def get_attr_by_str(self, attr_name):
+        obj = self
+        attr_names = attr_name.split('.')
+        for name in attr_names:
+            obj = getattr(obj, name)
+            if obj is None:
+                return None
+        return obj
