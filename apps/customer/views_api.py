@@ -49,10 +49,12 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
 
         if include_non_asc(self.q):
             qs = qs.filter(name__icontains=self.q)
-        if self.q.isdigit():
-            qs = qs.filter(mobile__icontains=self.q)
-        if self.q.isalpha():
-            qs = qs.filter(pinyin__contains=self.q.lower())
+        else:
+            # all ascii, number and letter
+            if self.q.isdigit():
+                qs = qs.filter(mobile__icontains=self.q)
+            else:
+                qs = qs.filter(pinyin__contains=self.q.lower())
         return qs
 
 
@@ -65,10 +67,13 @@ class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
 
         if cid:
             qs = qs.filter(customer_id=cid)
+
         if include_non_asc(self.q):
             qs = qs.filter(Q(name__icontains=self.q) | Q(address__icontains=self.q))
-        if self.q.isdigit():
-            qs = qs.filter(mobile__icontains=self.q)
-        if self.q.isalpha():
-            qs = qs.filter(pinyin__contains=self.q.lower())
+        else:
+            # all ascii, number and letter
+            if self.q.isdigit():
+                qs = qs.filter(mobile__icontains=self.q)
+            else:
+                qs = qs.filter(pinyin__contains=self.q.lower())
         return qs

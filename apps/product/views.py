@@ -167,7 +167,9 @@ class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
 
         if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
-        if self.q.isalpha():
+        else:
+            # all ascii, number and letter
+            key = self.q.lower()
             qs = qs.filter(
-                Q(pinyin__contains=self.q.lower()) | Q(name_en__icontains=self.q) | Q(brand__name_en__icontains=self.q))
+                Q(pinyin__contains=key) | Q(name_en__icontains=key) | Q(brand__name_en__icontains=key))
         return qs

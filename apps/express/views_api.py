@@ -15,6 +15,7 @@ class ExpressCarrierAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySe
 
         if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q))
-        if self.q.isalpha():
+        else:
+            # all ascii, number and letter
             qs = qs.filter(pinyin__contains=self.q.lower())
         return qs
