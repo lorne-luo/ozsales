@@ -1,10 +1,10 @@
 FORMS_HEADER = '''# coding=utf-8
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from django import forms
 from models import <% ALL_MODELS %>
 
 '''
 FORMS_MODEL_TEMPLATE = '''
-class <% MODEL_NAME %>AddForm(ModelForm):
+class <% MODEL_NAME %>AddForm(forms.ModelForm):
     """ Add form for <% MODEL_NAME %> """
 
     class Meta:
@@ -12,7 +12,7 @@ class <% MODEL_NAME %>AddForm(ModelForm):
         fields = <% fields %>
 
 
-class <% MODEL_NAME %>DetailForm(ModelForm):
+class <% MODEL_NAME %>DetailForm(forms.ModelForm):
     """ Detail form for <% MODEL_NAME %> """
 
     class Meta:
@@ -20,7 +20,7 @@ class <% MODEL_NAME %>DetailForm(ModelForm):
         fields = <% fields %>
 
 
-class <% MODEL_NAME %>UpdateForm(ModelForm):
+class <% MODEL_NAME %>UpdateForm(forms.ModelForm):
     """ Update form for <% MODEL_NAME %> """
 
     class Meta:

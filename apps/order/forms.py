@@ -5,7 +5,7 @@ from django.forms.models import inlineformset_factory, modelformset_factory
 from dal import autocomplete
 
 from core.forms.widgets import FormsetModelSelect2
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from core.forms.forms import NoManytoManyHintModelForm
 from ..customer.models import Customer, Address
 from ..product.models import Product
 from models import Order, OrderProduct, ORDER_STATUS, ORDER_STATUS_CHOICES
@@ -61,7 +61,7 @@ class OrderForm2(forms.ModelForm):
         # exclude = ['epg_events_updated_at']
 
 
-class OrderAddForm(ModelForm):
+class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
@@ -76,7 +76,7 @@ class OrderAddForm(ModelForm):
         super(OrderAddForm, self).__init__(*args, **kwargs)
 
 
-class OrderUpdateForm(ModelForm):
+class OrderUpdateForm(NoManytoManyHintModelForm):
     address = forms.ModelChoiceField(
         queryset=Address.objects.all(),
         widget=FormsetModelSelect2(url='customer:address-autocomplete',
@@ -149,7 +149,7 @@ class OrderUpdateForm(ModelForm):
             self.fields['address'].initial = default_address
 
 
-class OrderDetailForm(ModelForm):
+class OrderDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Order
         fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb',
@@ -157,7 +157,7 @@ class OrderDetailForm(ModelForm):
                   'profit_rmb', 'finish_time']
 
 
-# class OrderProductAddForm(ModelForm):
+# class OrderProductAddForm(NoManytoManyHintModelForm):
 #     """ Add form for OrderProduct """
 #
 #     class Meta:
@@ -166,7 +166,7 @@ class OrderDetailForm(ModelForm):
 #                   'total_price_aud', 'store']
 
 
-class OrderProductDetailForm(ModelForm):
+class OrderProductDetailForm(NoManytoManyHintModelForm):
     """ Detail form for OrderProduct """
 
     class Meta:
@@ -175,7 +175,7 @@ class OrderProductDetailForm(ModelForm):
                   'total_price_aud', 'store']
 
 
-# class OrderProductUpdateForm(ModelForm):
+# class OrderProductUpdateForm(NoManytoManyHintModelForm):
 #     """ Update form for OrderProduct """
 #
 #     class Meta:
@@ -185,7 +185,7 @@ class OrderProductDetailForm(ModelForm):
 
 
 
-class OrderProductInlineForm(ModelForm):
+class OrderProductInlineForm(NoManytoManyHintModelForm):
     sum_price = forms.DecimalField(required=False, help_text=u'小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(

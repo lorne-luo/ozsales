@@ -1,14 +1,14 @@
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from core.forms.forms import NoManytoManyHintModelForm
 from models import Product, Brand
 
 
-class ProductForm(ModelForm):
+class ProductForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
         fields = '__all__'
 
 
-class ProductAddForm(ModelForm):
+class ProductAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
         fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'spec2', 'spec3', 'normal_price', 'bargain_price',
@@ -19,26 +19,26 @@ class ProductAddForm(ModelForm):
         self.fields['brand'].queryset = Brand.objects.all().order_by('name_en')
 
 
-class ProductDetailForm(ModelForm):
+class ProductDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
         fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'spec2', 'spec3', 'normal_price', 'bargain_price',
                   'safe_sell_price', 'tb_url', 'wd_url', 'wx_url']
 
 
-class BrandAddForm(ModelForm):
+class BrandAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
         fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
 
 
-class BrandUpdateForm(ModelForm):
+class BrandUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
         fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
 
 
-class BrandDetailForm(ModelForm):
+class BrandDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
         fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']

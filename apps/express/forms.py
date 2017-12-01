@@ -4,46 +4,46 @@ from django.contrib import admin
 
 from apps.order.models import Order
 from core.forms.widgets import FormsetModelSelect2
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from core.forms.forms import NoManytoManyHintModelForm
 from django import forms
 from django.forms.models import modelformset_factory, inlineformset_factory
 from models import ExpressCarrier, ExpressOrder
 
 
-class ExpressCarrierAddForm(ModelForm):
+class ExpressCarrierAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
         fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
                   'is_default']
 
 
-class ExpressCarrierDetailForm(ModelForm):
+class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
         fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
                   'is_default']
 
 
-class ExpressCarrierUpdateForm(ModelForm):
+class ExpressCarrierUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
         fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
                   'is_default']
 
 
-# class ExpressOrderAddForm(ModelForm):
+# class ExpressOrderAddForm(NoManytoManyHintModelForm):
 #     class Meta:
 #         model = ExpressOrder
 #         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
 #
 #
-# class ExpressOrderDetailForm(ModelForm):
+# class ExpressOrderDetailForm(NoManytoManyHintModelForm):
 #     class Meta:
 #         model = ExpressOrder
 #         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
 #
 #
-# class ExpressOrderUpdateForm(ModelForm):
+# class ExpressOrderUpdateForm(NoManytoManyHintModelForm):
 #     class Meta:
 #         model = ExpressOrder
 #         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
@@ -66,7 +66,7 @@ class ExpressOrderChangeInline(admin.TabularInline):
     verbose_name_plural = 'ExpressOrder'
 
 
-class ExpressOrderInlineEditForm(ModelForm):
+class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     carrier = forms.ModelChoiceField(
         queryset=ExpressCarrier.objects.all(), required=False,
         widget=FormsetModelSelect2(url='express:expresscarrier-autocomplete',

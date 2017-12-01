@@ -1,9 +1,9 @@
 # coding=utf-8
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from core.forms.forms import NoManytoManyHintModelForm
 from models import DealSubscribe
 
 
-class DealSubscribeAddForm(ModelForm):
+class DealSubscribeAddForm(NoManytoManyHintModelForm):
     """ Add form for DealSubscribe """
 
     class Meta:
@@ -11,7 +11,7 @@ class DealSubscribeAddForm(ModelForm):
         fields = ['includes', 'excludes', 'is_active']
 
 
-class DealSubscribeDetailForm(ModelForm):
+class DealSubscribeDetailForm(NoManytoManyHintModelForm):
     """ Detail form for DealSubscribe """
 
     class Meta:
@@ -19,7 +19,7 @@ class DealSubscribeDetailForm(ModelForm):
         fields = ['includes', 'excludes', 'is_active']
 
 
-class DealSubscribeUpdateForm(ModelForm):
+class DealSubscribeUpdateForm(NoManytoManyHintModelForm):
     """ Update form for DealSubscribe """
 
     class Meta:

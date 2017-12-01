@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from django.forms.models import modelformset_factory, inlineformset_factory
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
+from core.forms.forms import NoManytoManyHintModelForm
 from models import Address, Customer, InterestTag
 
 
@@ -71,37 +71,37 @@ class CustomerEditForm(forms.ModelForm):
                 self.fields[field].help_text = _(self.fields[field].help_text.replace(remove_message, '').strip())
 
 
-class AddressAddForm(ModelForm):
+class AddressAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Address
         fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
 
 
-class AddressUpdateForm(ModelForm):
+class AddressUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Address
         fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
 
 
-class AddressDetailForm(ModelForm):
+class AddressDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Address
         fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
 
 
-class CustomerAddForm(ModelForm):
+class CustomerAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
         fields = ['name', 'email', 'mobile', 'remark', 'tags']
 
 
-class CustomerDetailForm(ModelForm):
+class CustomerDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
         fields = ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remark', 'tags']
 
 
-class CustomerUpdateForm(ModelForm):
+class CustomerUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
         fields = ['name', 'email', 'mobile', 'primary_address', 'order_count', 'remark', 'tags']
@@ -114,7 +114,7 @@ class CustomerUpdateForm(ModelForm):
             self.fields['order_count'].widget.attrs['readonly'] = True
 
 
-class AddressInlineForm(ModelForm):
+class AddressInlineForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = Address

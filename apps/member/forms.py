@@ -5,14 +5,12 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.utils.translation import ugettext_lazy as _
 from django import forms
-from django.forms import ModelForm
-from material import Layout, Row, Fieldset
 
 from core.auth_user.models import AuthUser
 from .models import Seller
 
 
-class SellerProfileForm(ModelForm):
+class SellerProfileForm(forms.ModelForm):
     name = forms.CharField(label=u'姓名', max_length=30, required=True,
                            widget=forms.TextInput(attrs={'placeholder': u'姓名'}))
     mobile = forms.CharField(label=u'手机号', max_length=30, required=True, validators=[
