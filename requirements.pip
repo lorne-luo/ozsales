@@ -47,3 +47,4 @@ jsonfield==2.0.2
 requests==2.18.4
 urlfetch==1.0.2
 django-stdimage==2.4.2
+pypinyin==0.27
