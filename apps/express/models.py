@@ -8,9 +8,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete, pre_save
+from pypinyin import Style
+
 import apps.express.tracker as tracker
 from apps.member.models import Seller
 from core.auth_user.models import AuthUser
+from core.models.models import PinYinFieldModelMixin
 from ..order.models import Order
 from ..customer.models import Address, Customer
 
@@ -49,10 +52,11 @@ class ExpressCarrierManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class ExpressCarrier(models.Model):
+class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     name_cn = models.CharField(_('name_cn'), max_length=50, blank=False)
     name_en = models.CharField(_('name_en'), max_length=50, blank=True)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     website = models.URLField(_('Website'), blank=True)
     search_url = models.URLField(_('Search url'), blank=True)
     id_upload_url = models.URLField(_('upload url'), blank=True)
@@ -61,6 +65,10 @@ class ExpressCarrier(models.Model):
     track_id_regex = models.CharField(_('ID regex'), max_length=512, blank=True)
 
     objects = ExpressCarrierManager()
+    pinyin_fields_conf = [
+        ('name_cn', Style.NORMAL, False),
+        ('name_cn', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Express Carrier')
@@ -187,11 +195,13 @@ def express_order_saved(sender, instance=None, created=False, **kwargs):
     if instance.order_id:
         instance.order.update_price(update_sell_price=True)
 
+
 @receiver(post_delete, sender=ExpressOrder)
 def express_order_deleted(sender, **kwargs):
     instance = kwargs['instance']
     if instance.order_id:
         instance.order.update_price(update_sell_price=True)
+
 
 @receiver(pre_save, sender=ExpressCarrier)
 def update_default_carrier(sender, instance=None, created=False, **kwargs):

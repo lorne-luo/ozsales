@@ -16,8 +16,10 @@ from django.utils.crypto import get_random_string
 from django.utils import timezone
 from django.contrib.auth.hashers import is_password_usable, make_password
 from stdimage import StdImageField
+from pypinyin import Style
 
 from core.auth_user.models import AuthUser, UserProfileMixin
+from core.models.models import PinYinFieldModelMixin
 from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
 from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
@@ -97,9 +99,10 @@ class CustomerManager(Manager):
 
 
 @python_2_unicode_compatible
-class Customer(UserProfileMixin, models.Model):
+class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
     mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True)
     order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
@@ -129,6 +132,10 @@ class Customer(UserProfileMixin, models.Model):
     groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
 
     objects = CustomerManager()
+    pinyin_fields_conf = [
+        ('name', Style.NORMAL, False),
+        ('name', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Customer')
@@ -248,8 +255,9 @@ class AddressManager(Manager):
 
 
 @python_2_unicode_compatible
-class Address(models.Model):
+class Address(PinYinFieldModelMixin, models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
@@ -266,6 +274,12 @@ class Address(models.Model):
                                   })
 
     objects = AddressManager()
+    pinyin_fields_conf = [
+        ('name', Style.NORMAL, False),
+        ('name', Style.FIRST_LETTER, False),
+        ('address', Style.NORMAL, False),
+        ('address', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Address')

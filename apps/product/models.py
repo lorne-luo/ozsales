@@ -5,12 +5,15 @@ from django.core.urlresolvers import reverse
 from django.db.models import Sum, F
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
+from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
 
 from apps.member.models import Seller
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
+
+from core.models.models import PinYinFieldModelMixin
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 
@@ -92,11 +95,12 @@ class ProductState(object):
 
 
 @python_2_unicode_compatible
-class Product(models.Model):
+class Product(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
     name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
                         variations={
                             'medium': {"width": 800, "height": 800},
@@ -127,6 +131,10 @@ class Product(models.Model):
                              choices=ProductState.CHOICES)
 
     tags = TaggableManager()
+    pinyin_fields_conf = [
+        ('name_cn', Style.NORMAL, False),
+        ('name_cn', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Product')
