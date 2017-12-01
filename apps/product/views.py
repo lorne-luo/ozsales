@@ -7,6 +7,8 @@ from django.views.generic import ListView, CreateView, UpdateView
 from dal import autocomplete
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+
+from core.libs.string import include_non_asc
 from core.views.views import CommonContextMixin, CommonViewSet
 from core.api.views import CommonListCreateAPIView
 from models import Product, Brand
@@ -163,7 +165,7 @@ class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
     def get_queryset(self):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
 
-        if self.q:
+        if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
         if self.q.isalpha():
             qs = qs.filter(

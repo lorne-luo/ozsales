@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from apps.customer.models import Customer, CustomerCart, CartProduct, Address
+from core.libs.string import include_non_asc
 from ..product.models import Product
 
 
@@ -46,7 +47,7 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
         qs = Customer.objects.belong_to(self.request.user).annotate(
             order_count_num=Count('order')).order_by('-order_count_num')
 
-        if self.q:
+        if include_non_asc(self.q):
             qs = qs.filter(name__icontains=self.q)
         if self.q.isdigit():
             qs = qs.filter(mobile__icontains=self.q)
@@ -64,7 +65,7 @@ class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
 
         if cid:
             qs = qs.filter(customer_id=cid)
-        if self.q:
+        if include_non_asc(self.q):
             qs = qs.filter(Q(name__icontains=self.q) | Q(address__icontains=self.q))
         if self.q.isdigit():
             qs = qs.filter(mobile__icontains=self.q)
