@@ -141,8 +141,8 @@
 
         $('#parcel-modal-confirm-continue').on('click', function (event) {
             submitParcel(function () {
-                $("#alert-success").show();
-                $("#alert-alert").hide();
+                $("#add-parcel #alert-success").show();
+                $("#add-parcel #alert-alert").hide();
                 resetParcelForm();
                 $('#add-parcel #id_track_id').focus();
             })

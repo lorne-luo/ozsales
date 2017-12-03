@@ -144,8 +144,8 @@
 
         $('#product-modal-confirm-continue').on('click', function (event) {
             submitProduct(function () {
-                $("#alert-success").show();
-                $("#alert-alert").hide();
+                $("#add-product #alert-success").show();
+                $("#add-product #alert-alert").hide();
                 resetProductForm();
                 $('#add-product #id_amount').focus();
             })
