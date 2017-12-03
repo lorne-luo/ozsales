@@ -2,32 +2,34 @@
 {% load activelink %}
 
 <aside class="main-sidebar">
-  <section class="sidebar">
-    <ul class="sidebar-menu">
-      <li class="header">HEADER</li>
-      <li class="active">
-        <a href="{% url 'member-home' %}">
-          <i class="fa fa-dashboard"></i>
-          <b>{{ default_dashboard_title|default:"首页" }}</b>
-        </a>
-      </li>
+    <section class="sidebar">
+        <ul class="sidebar-menu">
+            <li class="header">HEADER</li>
+            <li class="active">
+                <a href="{% url 'member-home' %}">
+                    <i class="fa fa-dashboard"></i>
+                    <b>{{ default_dashboard_title|default:"首页" }}</b>
+                </a>
+            </li>
 
-      {% include "member/_menu.html" %}
+            {% include "member/_menu.html" %}
 
-      {% include "customer/_menu.html" %}
+            {% include "customer/_menu.html" %}
 
-      {% include "order/_menu.html" %}
+            {% include "order/_menu.html" %}
 
-      {% include "product/_menu.html" %}
+            {% include "product/_menu.html" %}
 
-      {% include "express/_menu.html" %}
+            {% include "express/_menu.html" %}
 
-{#      {% include "store/_menu.html" %}#}
+            {#      {% include "store/_menu.html" %}#}
 
-      {% include "report/_menu.html" %}
+            {% include "report/_menu.html" %}
 
-      {% include "schedule/_menu.html" %}
+            {% if request.user.is_superuser %}
+                {% include "schedule/_menu.html" %}
+            {% endif %}
 
-    </ul>
-  </section>
+        </ul>
+    </section>
 </aside>
