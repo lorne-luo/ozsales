@@ -45,7 +45,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                 );
             }
             if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                var api_url = url + '?status__in=SHIPPING,DELIVERED';
+                var api_url = url + 'shipping/';
 
                 $.AdminLTE.apiGet(
                     api_url,

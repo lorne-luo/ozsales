@@ -299,6 +299,18 @@ class NewOrderFilter(FilterSet):
         return qs
 
 
+class ShippingOrderFilter(FilterSet):
+    class Meta:
+        model = Order
+        exclude = []
+
+    @property
+    def qs(self):
+        qs = super(ShippingOrderFilter, self).qs.filter(
+            Q(status=ORDER_STATUS.SHIPPING) | Q(status=ORDER_STATUS.DELIVERED)).filter(is_paid=True)
+        return qs
+
+
 class OrderViewSet(GroupRequiredMixin, CommonViewSet):
     """ api views for Order """
     serializer_class = serializers.OrderSerializer
@@ -312,7 +324,14 @@ class OrderViewSet(GroupRequiredMixin, CommonViewSet):
 
     @list_route(methods=['post', 'get'])
     def new(self, request, *args, **kwargs):
+        # status==CREATED or is_paid=False
         self.filter_class = NewOrderFilter
+        return super(OrderViewSet, self).list(self, request, *args, **kwargs)
+
+    @list_route(methods=['post', 'get'])
+    def shipping(self, request, *args, **kwargs):
+        # status==SHIPPING or DELIVERD and is_paid=True
+        self.filter_class = ShippingOrderFilter
         return super(OrderViewSet, self).list(self, request, *args, **kwargs)
 
 
