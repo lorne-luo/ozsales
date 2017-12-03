@@ -79,7 +79,7 @@ class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = ExpressOrder
-        fields = ['carrier', 'track_id', 'order', 'fee', 'weight', 'id_upload']
+        fields = ['carrier', 'track_id', 'order', 'fee', 'id_upload']
 
     def __init__(self, *args, **kwargs):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)

@@ -210,11 +210,12 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
         # self.fields['product'].queryset = Product.objects.all().order_by('brand__name_en', 'name_cn')
         self.fields['product'].widget.attrs['autocomplete'] = 'off'
-        self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
-        self.fields['store'].widget.attrs['autocomplete'] = 'off'
+        if 'store' in self.fields:
+            self.fields['store'].widget.attrs['style'] = 'float:left;width:auto'
+            self.fields['store'].widget.attrs['autocomplete'] = 'off'
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)
-        if instance and instance.pk:
+        if instance and instance.pk and 'sum_price' in self.fields:
             self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
 
     def clean_amount(self):
@@ -223,3 +224,12 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
 
 # OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm, extra=1)
 OrderProductFormSet = inlineformset_factory(Order, OrderProduct, form=OrderProductInlineForm, extra=1)
+
+class OrderProductFormForList(OrderProductInlineForm):
+    class Meta:
+        model = OrderProduct
+        fields = ['product', 'order', 'name', 'amount', 'sell_price_rmb', 'cost_price_aud']
+
+    def __init__(self, *args, **kwargs):
+        super(OrderProductFormForList, self).__init__(*args, **kwargs)
+        self.fields['sum_price'].widget = forms.HiddenInput()
