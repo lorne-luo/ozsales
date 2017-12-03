@@ -69,12 +69,12 @@ class ExpressOrderChangeInline(admin.TabularInline):
 class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     carrier = forms.ModelChoiceField(label=u'物流', queryset=ExpressCarrier.objects.all(), required=False,
                                      widget=FormsetModelSelect2(url='express:expresscarrier-autocomplete',
-                                                                attrs={'data-placeholder': u'快递中英文名称...',
+                                                                attrs={'data-placeholder': u'物流中英文名称...',
                                                                        'class': 'form-control'})
                                      )
-    track_id = forms.CharField(label=u'单号', max_length=30, required=False,
+    track_id = forms.CharField(label=u'单号', max_length=30, required=False, help_text=u'单 号',
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-    fee = forms.DecimalField(label=u'运费', max_digits=8, decimal_places=2, required=False,
+    fee = forms.DecimalField(label=u'运费', max_digits=8, decimal_places=2, required=False, help_text=u'运 费',
                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
     id_upload = forms.BooleanField(label=u'身份证', required=False)
 

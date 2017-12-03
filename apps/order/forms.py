@@ -195,11 +195,11 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
                                      )
     name = forms.CharField(label=u'名称', max_length=128, required=False, help_text=u'产品名称或备注(可选)',
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-    amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数量',
+    amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数 量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=8, decimal_places=2, required=False, help_text=u'单价',
+    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=8, decimal_places=2, required=False, help_text=u'单 价',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cost_price_aud = forms.DecimalField(label=u'成本', max_digits=8, decimal_places=2, required=False, help_text=u'成本',
+    cost_price_aud = forms.DecimalField(label=u'成本', max_digits=8, decimal_places=2, required=False, help_text=u'成 本',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     class Meta:

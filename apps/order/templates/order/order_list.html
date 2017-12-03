@@ -472,11 +472,11 @@
                 <div class="modal-body clearfix">
                     {% for field in orderproduct_form.visible_fields %}
                         <div class="form-group col-xs-12">
-                            <label for="id_{{ field.name }}" class="ln34 col-sm-3 col-xs-2 control-label">{{ field.label }}</label>
-                            <div class="col-sm-7 col-xs-10">
+                            <label for="id_{{ field.name }}" class="ln34 col-sm-2 hidden-xs control-label">{{ field.label }}</label>
+                            <div class="col-sm-7 col-xs-12">
                                 {{ field }}
                             </div>
-                            <div class="col-sm-2 hidden-xs">
+                            <div class="col-sm-3 hidden-xs">
                                 {{ field.errors }}
                             </div>
                         </div>
@@ -505,16 +505,30 @@
                 <div class="modal-body clearfix">
                     {{ expressorder_form.order }}
                     {% for field in expressorder_form.visible_fields %}
+                        {% ifnotequal field.name 'id_upload' %}
                         <div class="form-group col-xs-12">
-                            <label for="id_{{ field.name }}" class="ln34 col-sm-3 col-xs-2 control-label">{{ field.label }}</label>
-                            <div class="col-sm-7 col-xs-10">
+                            <label for="id_{{ field.name }}" class="ln34 col-sm-2 hidden-xs control-label">{{ field.label }}</label>
+                            <div class="col-sm-7 col-xs-12">
                                 {{ field }}
                             </div>
-                            <div class="col-sm-2 hidden-xs">
+                            <div class="col-sm-3 hidden-xs">
                                 {{ field.errors }}
                             </div>
                         </div>
+                        {% endifnotequal %}
                     {% endfor %}
+                    <div class="form-group col-xs-12">
+                        <label for="id_{{ expressorder_form.id_upload.name }}" class="ln34 col-sm-2 hidden-xs control-label">{{ expressorder_form.id_upload.label }}</label>
+                        <div class="ln34 col-sm-7 col-xs-1">
+                            {{ expressorder_form.id_upload }}
+                        </div>
+                        <div class="ln34 col-xs-10 visible-xs">
+                            <label for="id_{{ expressorder_form.id_upload.name }}" class="visible-xs control-label">身份证已上传</label>
+                        </div>
+                        <div class="col-sm-3 hidden-xs">
+                            {{ expressorder_form.id_upload.errors }}
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <p class="text-left">* 部分快递单号可自动识别物流公司</p>
