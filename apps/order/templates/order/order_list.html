@@ -251,6 +251,13 @@
                 <i class="fa fa-jpy" aria-hidden="true"></i>
               </a>
             </template>
+
+              <button type="button" data-toggle="modal" data-target="#add-product" class="label-as-badge label label-success pull-right">
+                <i class="fa fa-cart-plus fa-inverse"></i>
+              </button>
+              <button type="button" data-toggle="modal" data-target="#add-parcel" class="label-as-badge label label-info pull-right">
+                <i class="fa fa-truck fa-inverse"></i>
+              </button>
           </td>
           <td class="hidden-sm hidden-xs">
             {!! item.shipping_order !!}
@@ -282,14 +289,6 @@
           <td colspan="4" class="hidden-sm hidden-xs"></td>
           <td colspan="100%">
             <div>
-                {% if page_model_perms.change %}
-                  <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-xs">
-                    <i class="fa fa-cart-plus fa-inverse"></i>
-                  </button>
-                  <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-xs">
-                    <i class="fa fa-truck fa-inverse"></i>
-                  </button>
-                {% endif %}
                 {!! item.address_display !!}
             </div>
             <div class="pull-left">
