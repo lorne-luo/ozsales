@@ -1,0 +1,154 @@
+<div class="modal fade" id="add-product" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="X">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title">添加产品</h4>
+            </div>
+            <div class="modal-body clearfix">
+                {{ orderproduct_form.order }}
+                {% for field in orderproduct_form.visible_fields %}
+                    <div class="form-group col-xs-12 form-group-{{ field.name }}">
+                        <label for="id_{{ field.name }}"
+                               class="ln34 col-sm-2 hidden-xs control-label">{{ field.label }}</label>
+                        <div class="col-sm-7 col-xs-12">
+                            {{ field }}
+                        </div>
+                        <div class="col-sm-3 hidden-xs">
+                            {{ field.errors }}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="col-xs-12">
+                    <div class="col-xs-12">
+                        <div class="col-xs-12 alert alert-success" id="alert-success" style="display: none">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <i class="icon fa fa-check"></i> <span>操作成功</span>
+                        </div>
+                        <div class="form-group col-xs-12 alert alert-danger" id="alert-error" style="display: none">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <i class="icon fa fa-ban"></i> <span id="error-text">error</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button type="button" class="btn btn-primary pull-left" id="product-modal-confirm">确定 & 关闭</button>
+                <button type="button" class="btn btn-primary pull-left" id="product-modal-confirm-continue">确定 & 继续</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script>
+    function resetProductForm() {
+        $('#add-product .form-group-product').removeClass('has-error');
+        $('#add-product .form-group-name').removeClass('has-error');
+        $('#add-product .form-group-amount').removeClass('has-error');
+        $('#add-product .form-group-sell_price_rmb').removeClass('has-error');
+        $('#add-product .form-group-cost_price_aud').removeClass('has-error');
+
+        $("#add-product #id_product").val(null).trigger("change");
+        $('#add-product #id_name').val("");
+        $('#add-product #id_amount').val("");
+        $('#add-product #id_sell_price_rmb').val("");
+        $('#add-product #id_cost_price_aud').val("");
+    }
+
+    function showProductError(err) {
+        $("#add-product #alert-alert #error-text").text(err);
+        $("#add-product #alert-alert").show();
+    }
+
+    function submitProduct(success) {
+        var orderID = $('#add-product #id_order').val();
+        var productID = $('#add-product #id_product').val();
+        var name = $('#add-product #id_name').val();
+        var amount = $('#add-product #id_amount').val();
+        var price = $('#add-product #id_sell_price_rmb').val();
+        var cost = $('#add-product #id_cost_price_aud').val();
+
+        if (!productID && !name) {
+            $('#add-product .form-group-name').addClass('has-error');
+            $('#add-product #id_name').attr("placeholder", "* 请选择商品或直接输入名称");
+            $('#add-product #id_name').focus();
+            return;
+        } else if (!amount) {
+            $('#add-product .form-group-amount').addClass('has-error');
+            $('#add-product #id_amount').attr("placeholder", "* 请输入数量");
+            $('#add-product #id_amount').focus();
+            return;
+        } else if (!price) {
+            $('#add-product .form-group-sell_price_rmb').addClass('has-error');
+            $('#add-product #id_sell_price_rmb').attr("placeholder", "* 请输入单价");
+            $('#add-product #id_sell_price_rmb').focus();
+            return;
+        } else if (!cost) {
+            $('#add-product .form-group-cost_price_aud').addClass('has-error');
+            $('#add-product #id_cost_price_aud').attr("placeholder", "* 请输入成本");
+            $('#add-product #id_cost_price_aud').focus();
+            return;
+        }
+        var url = Urls['order:api-orderproduct-list']();
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            csrfmiddlewaretoken: $("#csrf-token").val(),
+            data: JSON.stringify({
+                "order": orderID,
+                "product": productID,
+                "sell_price_rmb": price,
+                "cost_price_aud": cost,
+                "name": name,
+                "amount": amount
+            }),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            success: function () {
+                success();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                showProductError(XMLHttpRequest.responseText);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#add-product').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var orderID = button.data('order-id');
+            var orderTitle = button.data('order-title');
+            var modal = $(this);
+            modal.find('.modal-title').text('添加商品到' + orderTitle);
+            modal.find('#id_order').val(orderID);
+            resetProductForm();
+        });
+
+        $('#add-product').on('shown.bs.modal', function () {
+            $('#add-product #id_amount').focus();
+        });
+
+        $('#product-modal-confirm').on('click', function (event) {
+            submitProduct(function () {
+                $('#add-product').modal('hide');
+            })
+        });
+
+        $('#product-modal-confirm-continue').on('click', function (event) {
+            submitProduct(function () {
+                $("#alert-success").show();
+                $("#alert-alert").hide();
+                resetProductForm();
+                $('#add-product #id_amount').focus();
+            })
+        });
+    });
+</script>

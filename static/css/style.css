@@ -118,6 +118,10 @@ input[type='checkbox'] {
 }
 
 /* Auto Complete */
+.select2-container {
+    width: 100% !important;
+}
+
 .form-horizontal .inline-related .select2-container {
     min-width: 0 !important;
 }
@@ -147,4 +151,10 @@ input[type='checkbox'] {
 
 #payment-form .btn-group .btn.active {
     background-color: #00a7d0;
+}
+
+/* order list modal */
+#add-parcel .alert, #add-product .alert {
+    padding: 6px;
+    margin-bottom: 0;
 }
