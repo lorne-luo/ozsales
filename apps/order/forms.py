@@ -80,8 +80,8 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
     address = forms.ModelChoiceField(
         queryset=Address.objects.all(),
         widget=FormsetModelSelect2(url='customer:address-autocomplete',
-                                         forward=['customer'],
-                                         attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
+                                   forward=['customer'],
+                                   attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
     )
     status = forms.ChoiceField(label='Status', choices=ORDER_STATUS_CHOICES, required=False)
     cost_aud = forms.CharField(label='Cost AUD', required=False)
@@ -186,20 +186,20 @@ class OrderProductDetailForm(NoManytoManyHintModelForm):
 
 
 class OrderProductInlineForm(NoManytoManyHintModelForm):
-    sum_price = forms.DecimalField(required=False, help_text=u'小计',
+    sum_price = forms.DecimalField(label=u'小计', required=False, help_text=u'小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    product = forms.ModelChoiceField(
-        queryset=Product.objects.all(), required=False,
-        widget=FormsetModelSelect2(url='product:product-autocomplete',
-                                         attrs={'data-placeholder': u'任意中英文名称...', 'class': 'form-control'})
-    )
-    name = forms.CharField(max_length=128, required=False, help_text=u'产品名称(可选)',
+    product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.all(), required=False,
+                                     widget=FormsetModelSelect2(url='product:product-autocomplete',
+                                                                attrs={'data-placeholder': u'任意中英文名称...',
+                                                                       'class': 'form-control'})
+                                     )
+    name = forms.CharField(label=u'名称', max_length=128, required=False, help_text=u'产品名称或备注(可选)',
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
-    amount = forms.IntegerField(min_value=1, required=False, help_text=u'数量',
+    amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    sell_price_rmb = forms.DecimalField(max_digits=8, decimal_places=2, required=False, help_text=u'单价',
+    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=8, decimal_places=2, required=False, help_text=u'单价',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cost_price_aud = forms.DecimalField(max_digits=8, decimal_places=2, required=False, help_text=u'成本',
+    cost_price_aud = forms.DecimalField(label=u'成本', max_digits=8, decimal_places=2, required=False, help_text=u'成本',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     class Meta:
@@ -224,6 +224,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
 
 # OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm, extra=1)
 OrderProductFormSet = inlineformset_factory(Order, OrderProduct, form=OrderProductInlineForm, extra=1)
+
 
 class OrderProductFormForList(OrderProductInlineForm):
     class Meta:
