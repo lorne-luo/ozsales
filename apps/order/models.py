@@ -270,7 +270,8 @@ class Order(models.Model):
     def get_shipping_orders(self):
         result = ''
         for ex in self.express_orders.all():
-            if ex.is_delivered:
+            if self.status not in [ORDER_STATUS.FINISHED, ORDER_STATUS.CANCELED,
+                                   ORDER_STATUS.CLOSED] and ex.is_delivered:
                 result += '<u>%s</u><br/>' % ex.get_tracking_link()
             else:
                 result += ex.get_tracking_link() + '<br/>'
