@@ -73,7 +73,8 @@
         $("#add-product #id_carrier").val(null).trigger("change");
         $('#add-parcel #id_track_id').val("");
         $('#add-parcel #id_fee').val("");
-        $('#add-parcel #error').hide();
+        $("#add-parcel #alert-success").hide();
+        $("#add-parcel #alert-error").hide();
     }
 
     function showParcelError(err) {
@@ -142,7 +143,7 @@
         $('#parcel-modal-confirm-continue').on('click', function (event) {
             submitParcel(function () {
                 $("#add-parcel #alert-success").show();
-                $("#add-parcel #alert-alert").hide();
+                $("#add-parcel #alert-error").hide();
                 resetParcelForm();
                 $('#add-parcel #id_track_id').focus();
             })

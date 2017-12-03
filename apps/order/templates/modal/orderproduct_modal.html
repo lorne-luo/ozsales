@@ -58,6 +58,8 @@
         $('#add-product #id_amount').val("");
         $('#add-product #id_sell_price_rmb').val("");
         $('#add-product #id_cost_price_aud').val("");
+        $("#add-product #alert-success").hide();
+        $("#add-product #alert-error").hide();
     }
 
     function showProductError(err) {
@@ -145,7 +147,7 @@
         $('#product-modal-confirm-continue').on('click', function (event) {
             submitProduct(function () {
                 $("#add-product #alert-success").show();
-                $("#add-product #alert-alert").hide();
+                $("#add-product #alert-error").hide();
                 resetProductForm();
                 $('#add-product #id_amount').focus();
             })
