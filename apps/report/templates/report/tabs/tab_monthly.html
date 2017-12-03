@@ -1,0 +1,63 @@
+<div class="tab-pane active" id="tab_monthly">
+    <table class="table table-hover" id="commonTable">
+        <thead>
+        <tr>
+            {% block table_head %}
+                <th>Month</th>
+                <th class="hidden-sm hidden-xs">Order Count</th>
+                <th class="hidden-sm hidden-xs">Parcel Count</th>
+                <th class="hidden-sm hidden-xs">Cost AUD</th>
+                <th class="hidden-sm hidden-xs">Shipping Fee</th>
+                <th class="hidden-sm hidden-xs">Sell Price RMB</th>
+                <th class="hidden-sm hidden-xs">Profit RMB</th>
+                <th class="hidden-sm hidden-xs"></th>
+
+                <th class="visible-sm visible-xs">Count</th>
+                <th class="visible-sm visible-xs">Cost</th>
+                <th class="visible-sm visible-xs">Profit</th>
+            {% endblock %}
+        </tr>
+        </thead>
+        {% block table_row %}
+            <tbody v-for="item in items">
+            <tr>
+                <td>{!! item.month !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.order_count !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.parcel_count !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.cost_aud !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.shipping_fee !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.sell_price_rmb !!}</td>
+                <td class="hidden-sm hidden-xs">{!! item.profit_rmb !!}</td>
+                <td class="visible-sm visible-xs">{!! item.order_count !!}/{!! item.parcel_count !!}</td>
+                <td class="visible-sm visible-xs">{!! item.cost_aud !!}/{!! item.shipping_fee !!}</td>
+                <td class="visible-sm visible-xs">{!! item.sell_price_rmb !!}/{!! item.profit_rmb !!}</td>
+
+                <td class="text-right hidden-sm hidden-xs">
+                    <template v-if="detail_url_tag">
+                        {% if page_model_perms.view %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
+                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
+                                <i class="fa fa-lg fa-bars fa-inverse"></i>
+                            </a>
+                        {% endif %}
+                    </template>
+
+                    <template v-if="update_url_tag">
+                        {% if page_model_perms.change %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
+                               href="#[item.edit_url]" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.id]">
+                                <i class="fa fa-lg fa-pencil fa-inverse"></i>
+                            </a>
+                        {% endif %}
+                    </template>
+                </td>
+            </tr>
+            </tbody>
+        {% endblock %}
+    </table>
+
+    <div class="box-footer clearfix">
+        {% include 'adminlte/common_list_pagination.html' %}
+    </div>
+</div>
+<!-- /.tab-pane tab_monthly-->

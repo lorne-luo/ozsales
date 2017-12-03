@@ -13,74 +13,8 @@
       <li class=""><a href="#tab_total" data-toggle="tab" aria-expanded="true">总计</a></li>
     </ul>
     <div class="tab-content">
-      <div class="tab-pane active" id="tab_monthly">
-        <table class="table table-hover" id="commonTable">
-              <thead>
-              <tr>
-{% block table_head %}
-  <th>Month</th>
-  <th class="hidden-sm hidden-xs">Order Count</th>
-  <th class="hidden-sm hidden-xs">Parcel Count</th>
-  <th class="hidden-sm hidden-xs">Cost AUD</th>
-  <th class="hidden-sm hidden-xs">Shipping Fee</th>
-  <th class="hidden-sm hidden-xs">Sell Price RMB</th>
-  <th class="hidden-sm hidden-xs">Profit RMB</th>
-  <th class="hidden-sm hidden-xs"></th>
-
-  <th class="visible-sm visible-xs">Count</th>
-  <th class="visible-sm visible-xs">Cost</th>
-  <th class="visible-sm visible-xs">Profit</th>
-{% endblock %}
-              </tr>
-              </thead>
-{% block table_row %}
-  <tbody v-for="item in items">
-  <tr>
-    <td>{!! item.month !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.order_count !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.parcel_count !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.cost_aud !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.shipping_fee !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.sell_price_rmb !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.profit_rmb !!}</td>
-
-    {% block item_buttons %}
-      {{ block.super }}
-    {% endblock %}
-
-    <td class="visible-sm visible-xs">{!! item.order_count !!}/{!! item.parcel_count !!}</td>
-    <td class="visible-sm visible-xs">{!! item.cost_aud !!}/{!! item.shipping_fee !!}</td>
-    <td class="visible-sm visible-xs">{!! item.sell_price_rmb !!}/{!! item.profit_rmb !!}</td>
-  </tr>
-  </tbody>
-{% endblock %}
-            </table>
-
-          <div class="box-footer clearfix">
-            {% include 'adminlte/common_list_pagination.html' %}
-          </div>
-      </div>
-      <!-- /.tab-pane 1-->
-      <div class="tab-pane" id="tab_total">
-        {% if total_day %}
-        <h4>系统已运行{{ total_year }}年{{ total_day }}天,共计:</h4>
-        <ul>
-            <li>客户总数: {{ total_customer }} 位</li>
-            <li>地址总数: {{ total_address }} 个</li>
-            <li>订单总数: {{ total_order }} 个</li>
-            <li>包裹总数: {{ total_expressorder }} 箱</li>
-            <li>货物总数: {{ total_amount }} 件</li>
-            <li>总邮费: {{ total_express_fee }} 刀</li>
-            <li>总金额: {{ total_sell_price }} 元</li>
-            <li>总成本: {{ total_cost_aud }} 刀</li>
-            <li>总利润: {{ total_profit_rmb }} 元</li>
-            <li>未付总额: {{ total_unpaid_amount }} 元</li>
-        </ul>
-        {% else %}
-            对不起，你还没有任何订单.
-        {% endif %}
-      </div>
-      <!-- /.tab-pane 2-->
+        {% include 'report/tabs/tab_monthly.html' %}
+        {% include 'report/tabs/tab_total.html' %}
     </div>
     <!-- /.tab-content -->
   </div>
