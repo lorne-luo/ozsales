@@ -20,7 +20,7 @@ from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
 from ..customer.models import Customer
-from ..express.forms import ExpressOrderFormSet
+from ..express.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
 import serializers
 import forms
 
@@ -74,6 +74,12 @@ class OrderListView(GroupRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
     group_required = [MEMBER_GROUP, FREE_MEMBER_GROUP]
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderListView, self).get_context_data(**kwargs)
+        context['expressorder_form'] = ExpressOrderInlineEditForm()
+        context['orderproduct_form'] = forms.OrderProductFormForList()
+        return context
 
 
 class OrderMemberListView(CommonContextMixin, ListView):

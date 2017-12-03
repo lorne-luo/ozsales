@@ -1,6 +1,10 @@
 {% extends "adminlte/common_tab_list.html" %}
 {% load static %}
 
+{% block header_base_style %}
+  <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
+{% endblock %}
+
 {% block common_list_buttons %}
   {% if page_model_perms.add %}
     <a class="btn btn-primary" id="create">
@@ -254,12 +258,10 @@
 
           <td class="text-right hidden-sm hidden-xs">
                 {% if page_model_perms.change %}
-                  <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加商品"
-                     class="btn btn-success btn-sm">
+                  <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm">
                     <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
                   </button>
-                  <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加物流"
-                     class="btn btn-info btn-sm">
+                  <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm">
                     <i class="fa fa-lg fa-truck fa-inverse"></i>
                   </button>
                 {% endif %}
@@ -279,7 +281,17 @@
         <tr class="hide" id="detail_{!! item.id !!}">
           <td colspan="4" class="hidden-sm hidden-xs"></td>
           <td colspan="100%">
-            <div>{!! item.address_display !!}</div>
+            <div>
+                {% if page_model_perms.change %}
+                  <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-xs">
+                    <i class="fa fa-cart-plus fa-inverse"></i>
+                  </button>
+                  <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-xs">
+                    <i class="fa fa-truck fa-inverse"></i>
+                  </button>
+                {% endif %}
+                {!! item.address_display !!}
+            </div>
             <div class="pull-left">
                 <template v-for="product in item.products">
                     <span>
@@ -381,17 +393,6 @@
           </td>
           <td class="text-right hidden-sm hidden-xs">
             {% if page_model_perms.change %}
-              <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加商品"
-                 class="btn btn-success btn-sm">
-                <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
-              </button>
-              <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加物流"
-                 class="btn btn-info btn-sm">
-                <i class="fa fa-lg fa-truck fa-inverse"></i>
-              </button>
-            {% endif %}
-
-            {% if page_model_perms.change %}
               <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
                  class="btn btn-primary btn-sm">
                 <i class="fa fa-lg fa-pencil fa-inverse"></i>
@@ -458,9 +459,89 @@
   </div>
 {% endblock %}
 
-{% block common_list_pagination %}{% endblock %}
+{% block common_list_pagination %}
+    <div class="modal fade" id="add-product" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="X">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">添加产品</h4>
+                </div>
+                <div class="modal-body clearfix">
+                    {% for field in orderproduct_form.visible_fields %}
+                        <div class="form-group col-xs-12">
+                            <label for="id_{{ field.name }}" class="ln34 col-sm-3 col-xs-3 control-label">{{ field.label }}</label>
+                            <div class="col-sm-7 col-xs-9">
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-2 hidden-xs">
+                                {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+                    <button type="button" class="btn btn-primary continue">确定 & 继续</button>
+                    <button type="button" class="btn btn-primary">确定 & 关闭</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="add-parcel" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="X">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                    <h4 class="modal-title">添加包裹</h4>
+                </div>
+                <div class="modal-body clearfix">
+                    {{ expressorder_form.order }}
+                    {% for field in expressorder_form.visible_fields %}
+                        <div class="form-group col-xs-12">
+                            <label for="id_{{ field.name }}" class="ln34 col-sm-3 col-xs-3 control-label">{{ field.label }}</label>
+                            <div class="col-sm-7 col-xs-9">
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-2 hidden-xs">
+                                {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <p class="text-left">* 部分快递单号可自动识别物流公司</p>
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+                    <button type="button" class="btn btn-primary continue">确定 & 继续</button>
+                    <button type="button" class="btn btn-primary">确定 & 关闭</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
 
 {% block common_list_footer_page_script %}
+  {{ expressorder_form.media }}
   <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
+  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+  <script>
+      $(document).ready(function () {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+  </script>
+
 {% endblock %}
