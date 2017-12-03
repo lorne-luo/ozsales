@@ -8,6 +8,8 @@
   <div class="row" id="commonDataTableRow">
     <div class="col-xs-12">
       <div class="box box-info">
+
+        {% block content_header %}
         <div class="box-header with-border">
           {% block common_list_buttons %}
             <div class="col-xs-5 col-sm-6">
@@ -44,6 +46,7 @@
             {% endblock %}
         </div>
         <!-- /.box-header -->
+        {% endblock %}
 
         {% block tab_content %}
           <div class="box-body table-responsive no-padding">
