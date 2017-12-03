@@ -124,7 +124,7 @@
             var orderID = button.data('order-id');
             var orderTitle = button.data('order-title');
             var modal = $(this);
-            modal.find('.modal-title').text('添加商品到' + orderTitle);
+            modal.find('.modal-title').text('添加物流到' + orderTitle);
             modal.find('#id_order').val(orderID);
             resetParcelForm();
         });
