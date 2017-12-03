@@ -463,8 +463,8 @@
 
 {% block common_list_footer_page_script %}
     <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
-    {% include 'modal/orderproduct_modal.html' %}
-    {% include 'modal/parcel_modal.html' %}
+    {% include 'order/modal/orderproduct_modal.html' %}
+    {% include 'order/modal/parcel_modal.html' %}
 
   {{ expressorder_form.media }}
   <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
