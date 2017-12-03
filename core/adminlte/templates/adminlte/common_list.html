@@ -81,7 +81,7 @@
                           {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
                                href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
-                              <i class="fa fa-bars fa-inverse"></i>
+                              <i class="fa fa-lg fa-bars fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>
@@ -90,7 +90,7 @@
                           {% if page_model_perms.change %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
                                href="#[item.edit_url]" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.id]">
-                              <i class="fa fa-pencil fa-inverse"></i>
+                              <i class="fa fa-lg fa-pencil fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>
@@ -100,7 +100,7 @@
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
                                data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);"
                                class="btn btn-danger btn-sm delete-btn">
-                              <i class="fa fa-trash-o fa-inverse"></i>
+                              <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>

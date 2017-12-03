@@ -253,19 +253,25 @@
           </td>
 
           <td class="text-right hidden-sm hidden-xs">
-                {% if page_model_perms.view %}
-                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
-                   <i class="fa fa-bars fa-inverse"></i>
-                </a>
-                {% endif %}
                 {% if page_model_perms.change %}
-                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
-                    <i class="fa fa-pencil fa-inverse"></i>
+                  <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加商品"
+                     class="btn btn-success btn-sm">
+                    <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
+                  </button>
+                  <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加物流"
+                     class="btn btn-info btn-sm">
+                    <i class="fa fa-lg fa-truck fa-inverse"></i>
+                  </button>
+                {% endif %}
+
+                {% if page_model_perms.change %}
+                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-primary btn-sm">
+                    <i class="fa fa-lg fa-pencil fa-inverse"></i>
                 </a>
                 {% endif %}
                 {% if page_model_perms.delete %}
                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                    <i class="fa fa-trash-o fa-inverse"></i>
+                    <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                 </a>
                 {% endif %}
             </td>
@@ -374,22 +380,27 @@
             {!! item.profit_rmb !!}
           </td>
           <td class="text-right hidden-sm hidden-xs">
-            {% if page_model_perms.view %}
-              <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]"
+            {% if page_model_perms.change %}
+              <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加商品"
+                 class="btn btn-success btn-sm">
+                <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
+              </button>
+              <button data-toggle="tooltip" data-placement="bottom" data-original-title="添加物流"
                  class="btn btn-info btn-sm">
-                <i class="fa fa-bars fa-inverse"></i>
-              </a>
+                <i class="fa fa-lg fa-truck fa-inverse"></i>
+              </button>
             {% endif %}
+
             {% if page_model_perms.change %}
               <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
-                 class="btn btn-warning btn-sm">
-                <i class="fa fa-pencil fa-inverse"></i>
+                 class="btn btn-primary btn-sm">
+                <i class="fa fa-lg fa-pencil fa-inverse"></i>
               </a>
             {% endif %}
             {% if page_model_perms.delete %}
               <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
                  v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                <i class="fa fa-trash-o fa-inverse"></i>
+                <i class="fa fa-lg fa-trash-o fa-inverse"></i>
               </a>
             {% endif %}
           </td>
