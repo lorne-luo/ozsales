@@ -23,12 +23,11 @@
                 {% endfor %}
                 <div class="col-xs-12">
                     <div class="col-xs-12">
-                        <div class="col-xs-12 alert alert-success" id="alert-success" style="display: none">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <div class="col-xs-12 alert alert-success" id="alert-success">
                             <i class="icon fa fa-check"></i> <span>操作成功</span>
                         </div>
-                        <div class="form-group col-xs-12 alert alert-danger" id="alert-error" style="display: none">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <div class="callout callout-danger col-xs-12" id="alert-error">
+                            <h5>提交失败</h5>
                             <i class="icon fa fa-ban"></i> <span id="error-text">error</span>
                         </div>
                     </div>
@@ -153,7 +152,9 @@
 
         $('#product-modal-confirm-continue').on('click', function (event) {
             submitProduct(function () {
-                $("#add-product #alert-success").show();
+                $("#add-product #alert-success").fadeTo(2000, 500).slideUp(500, function () {
+                    $("#add-parcel #alert-success").slideUp(500);
+                });
                 $("#add-product #alert-error").hide();
                 resetProductForm();
                 $('#add-product #id_amount').focus();
