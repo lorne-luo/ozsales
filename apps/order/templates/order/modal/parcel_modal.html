@@ -136,6 +136,11 @@
             $('#add-parcel #id_track_id').focus();
         });
 
+        $('#add-parcel').on('hidden.bs.modal', function () {
+            // todo check necessary
+            orderListPageVue.loadData(orderListPageVue.get_param());
+        });
+
         $('#parcel-modal-confirm').on('click', function (event) {
             submitParcel(function () {
                 $('#add-parcel').modal('hide');

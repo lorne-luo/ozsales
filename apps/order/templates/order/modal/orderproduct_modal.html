@@ -140,6 +140,11 @@
             $('#add-product #id_amount').focus();
         });
 
+        $('#add-product').on('hidden.bs.modal', function () {
+            // todo check necessary
+            orderListPageVue.loadData(orderListPageVue.get_param());
+        });
+
         $('#product-modal-confirm').on('click', function (event) {
             submitProduct(function () {
                 $('#add-product').modal('hide');
