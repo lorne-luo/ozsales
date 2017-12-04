@@ -94,10 +94,12 @@
 
             <td class="text-right hidden-sm hidden-xs">
                 {% if page_model_perms.change %}
-                    <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm">
+                    <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"
+                        data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
                         <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
                     </button>
-                    <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm">
+                    <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm"
+                        data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
                         <i class="fa fa-lg fa-truck fa-inverse"></i>
                     </button>
                 {% endif %}

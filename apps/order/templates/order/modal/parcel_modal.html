@@ -78,8 +78,8 @@
     }
 
     function showParcelError(err) {
-        $("#alert-alert #error-text").text(err);
-        $("#alert-alert").show();
+        $("#add-parcel #alert-error #error-text").text(err);
+        $("#add-parcel #alert-error").show();
     }
 
     function submitParcel(success) {
@@ -109,14 +109,16 @@
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            success: function () {
-                success();
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                showParcelError(XMLHttpRequest.responseText);
             }
-        });
+        })
+            .done(function (data) {
+                console.log(data);
+                success();
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest);
+                showParcelError(XMLHttpRequest.responseText);
+            });
     }
 
     $(document).ready(function () {

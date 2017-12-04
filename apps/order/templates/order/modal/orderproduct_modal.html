@@ -63,8 +63,8 @@
     }
 
     function showProductError(err) {
-        $("#add-product #alert-alert #error-text").text(err);
-        $("#add-product #alert-alert").show();
+        $("#add-product #alert-error #error-text").text(err);
+        $("#add-product #alert-error").show();
     }
 
     function submitProduct(success) {
@@ -113,14 +113,16 @@
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            },
-            success: function () {
-                success();
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                showProductError(XMLHttpRequest.responseText);
             }
-        });
+        })
+            .done(function (data) {
+                console.log(data);
+                success();
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log(XMLHttpRequest);
+                showProductError(XMLHttpRequest.responseText);
+            });
     }
 
     $(document).ready(function () {
