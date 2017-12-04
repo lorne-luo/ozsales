@@ -106,13 +106,11 @@
     </td>
   </tr>
   <tr>
-    <th colspan="2">物流</th>
+    <th>物流</th>
+    <td>{% if object.ship_time %}寄出日期: {{ object.ship_time|date }}{% endif %}</td>
   </tr>
   <tr>
     <td colspan="2">
-      {% if object.ship_time %}
-        寄出日期: {{ object.ship_time|date }}<br/>
-      {% endif %}
       <table>
       {% for ex in object.express_orders.all %}
         <tr><td>
