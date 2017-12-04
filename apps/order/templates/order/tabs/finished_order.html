@@ -1,0 +1,117 @@
+<div class="tab-pane" id="pane-FINISHED">
+    <table class="table table-hover" data-status="FINISHED">
+        <thead>
+        <tr>
+            <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+                <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+            </th>
+            <th class="visible-sm visible-xs" id="show_all_detail" style="width:50px;" v-on:click="show_all_detail">
+                <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
+            </th>
+            <th>Date</th>
+            <th>Name</th>
+            <th class="hidden-sm hidden-xs">Status</th>
+            <th class="hidden-sm hidden-xs">Ship</th>
+            <th>Sell</th>
+            <th>Cost</th>
+            <th>Profit</th>
+            <th class="hidden-sm hidden-xs"></th>
+        </tr>
+        </thead>
+        <tbody v-for="item in finished_items">
+        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+            <td class="text-center hidden-sm hidden-xs">
+                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+            </td>
+            <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}">
+                <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
+            </td>
+            <td>
+                <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
+            </td>
+            <td>
+                <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
+            </td>
+            <td class="hidden-sm hidden-xs">
+                <span class="label label-danger">{!! item.status !!}</span>
+            </td>
+            <td class="hidden-sm hidden-xs">
+                {!! item.shipping_order !!}
+            </td>
+            <td>
+                <a href="{!! item.edit_url !!}">{!! item.sell_price_rmb !!}</a>
+            </td>
+            <td>
+                {!! item.total_cost_rmb !!}
+            </td>
+            <td>
+                {!! item.profit_rmb !!}
+            </td>
+            <td class="text-right hidden-sm hidden-xs">
+                {% if page_model_perms.view %}
+                    <template v-if="item.detail_url">
+                        {% if page_model_perms.view %}
+                            <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
+                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
+                                <i class="fa fa-lg fa-bars fa-inverse"></i>
+                            </a>
+                        {% endif %}
+                    </template>
+                {% endif %}
+            </td>
+        </tr>
+        <tr class="hide" id="detail_{!! item.id !!}">
+            <td colspan="3" class="hidden-sm hidden-xs"></td>
+            <td colspan="100%">
+                <div>{!! item.address_display !!}</div>
+                <div class="pull-left">
+                    {!! item.product_summary !!}
+                </div>
+                <div class="pull-right visible-sm visible-xs">
+                    {!! item.shipping_order !!}
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="form-inline" align="center">
+        <ul class="pagination pagination-sm no-margin form-group">
+            <li v-if="finished_currentPage > 1">
+                <a v-if="finished_currentPage-2 > 1" href="javascript:void(0);" page="1" v-on:click="page_finished"
+                   title="第1页" class="text-bold">首页</a>
+            </li>
+            <li v-if="finished_currentPage > 1">
+                <template v-for="n in 2">
+                    <a v-if="finished_currentPage-2+n > 0" href="javascript:void(0);" page="#[finished_currentPage-2+n]"
+                       style="width: 45px"
+                       title="第#[finished_currentPage-2+n]页" v-on:click="page_finished" class="text-bold">#[finished_currentPage-2+n]</a>
+                </template>
+            </li>
+            <li v-on:click="reload" class="disabled">
+                <a style="width: 45px" href="javascript:void(0);" title="第#[finished_currentPage]页">#[finished_currentPage]</a>
+            </li>
+            <li v-if="finished_currentPage < finished_totalPage">
+                <template v-for="n in 2">
+                    <a v-if="finished_currentPage+n+1 <=finished_totalPage" href="javascript:void(0);"
+                       page="#[finished_currentPage+n+1]" style="width: 45px"
+                       title="第#[finished_currentPage+n+1]页" v-on:click="page_finished" class="text-bold">#[finished_currentPage+n+1]</a>
+                </template>
+            </li>
+            <li v-if="finished_currentPage+2 < finished_totalPage">
+                <a href="javascript:void(0);" page="#[finished_totalPage]" v-on:click="page_finished"
+                   title="第#[finished_totalPage]页"
+                   class="text-bold">末页</a>
+            </li>
+        </ul>
+        <div class="form-group">
+            &nbsp;&nbsp;&nbsp;共 #[finished_count] 条数据, 每页 #[finished_perPage] 条, 第
+            #[finished_currentPage]/#[finished_totalPage] 页
+        </div>
+    </div>
+    <br/>
+</div>
