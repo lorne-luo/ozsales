@@ -281,7 +281,7 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
     @list_route(methods=['post', 'delete'])
     def delete(self, request, pk=None):
         """ for batch delete """
-        pk = request.DATA.get('pk')
+        pk = request.POST.get('pk')
         pk = pk.split(',')
         self.get_queryset().filter(pk__in=pk).delete()
         return JsonResponse({'success': True}, status=200)
@@ -372,7 +372,7 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
 #     @list_route(methods=['post', 'delete'])
 #     def delete(self, request, pk=None):
 #         """ for batch delete """
-#         pk = request.DATA.get('pk')
+#         pk = request.POST.get('pk')
 #         pk = pk.split(',')
 #         objects = self.queryset.filter(pk__in=pk)
 #         for obj in objects:
