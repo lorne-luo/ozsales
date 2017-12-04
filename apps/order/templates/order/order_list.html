@@ -1,10 +1,6 @@
 {% extends "adminlte/common_tab_list.html" %}
 {% load static %}
 
-{% block header_base_style %}
-  <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
-{% endblock %}
-
 {% block common_list_buttons %}
   {% if page_model_perms.add %}
     <a class="btn btn-primary" id="create">
@@ -47,17 +43,7 @@
     {% include 'order/modal/parcel_modal.html' %}
 
   {{ expressorder_form.media }}
+  {{ orderproduct_form.media }}
   <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/order/order_list.js' %}"></script>
-  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
-  <script>
-      $(document).ready(function () {
-          $('input').iCheck({
-              checkboxClass: 'icheckbox_square-blue',
-              radioClass: 'iradio_square-blue',
-              increaseArea: '20%' // optional
-          });
-      });
-  </script>
-
 {% endblock %}
