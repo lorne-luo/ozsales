@@ -16,28 +16,38 @@
             <div class="tab-content">
               <div class="tab-pane active" id="tab_plan">
                 <div class="col-xs-12">
-                    <div class="box-body">
-                        <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
-                            <label for="card-expiry">
-                                Current Plan
-                            </label>
-                            <div class="field-input">
-                                    <span>{{ subscription.plan.name }}</span>
+                    {% if subscription %}
+                        <div class="box-body">
+                            <div class="credit-card-form-field col-xs-12">
+                                <label for="card-expiry">
+                                    Current Plan
+                                </label>
+                                <div class="field-input">
+                                        <span>{{ subscription.plan.name }}</span>
+                                </div>
+                            </div>
+
+                            {% if subscription.cancel_at_period_end %}
+                                 <div class="callout callout-warning">
+                                    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
+                                    <p>会员资格已取消，将在{{ subscription.current_period_end }}到期后结束.</p>
+                                  </div>
+                            {% else %}
+                                <div class="col-xs-12">
+                                    <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-plan">Remove Plan</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="box-body">
+                            <div class="col-xs-12">
+                                <p>You currently do not have a plan.</p>
+                                <button type="button" class="btn btn-info">加入会员</button>
                             </div>
                         </div>
-                    </div>
-                    {% if subscription.cancel_at_period_end %}
-                         <div class="alert alert-warning alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                            <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-                            会员资格已取消，将在{{ subscription.current_period_end }}到期后结束.
-                          </div>
-                    {% else %}
-                    <div class="col-xs-12">
-                        <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-plan">Remove Plan</button>
-                    </div>
                     {% endif %}
                 </div>
+
 
                 <div class="credit-card-form-wrapper col-xs-12">
                     <div class="box-body">
@@ -115,7 +125,7 @@
   <!-- /.modal-dialog -->
 </div>
 
-
+{% if subscription %}
 <div class="modal fade" id="remove-plan" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -136,4 +146,6 @@
   </div>
   <!-- /.modal-dialog -->
 </div>
+{% endif %}
+
 {% endblock %}
