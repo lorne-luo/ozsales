@@ -158,3 +158,11 @@ input[type='checkbox'] {
     padding: 6px;
     margin-bottom: 0;
 }
+
+#pane-CREATED td a.label-as-badge:not(:last-child) {
+    margin-left: 8px;
+}
+
+table td i.show_detail, table i#show_all_detail{
+    margin-right: 15px;
+}

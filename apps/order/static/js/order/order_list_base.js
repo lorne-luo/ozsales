@@ -102,14 +102,16 @@ var OrderListPageVue = CommonListPageVue.extend({
             this.loadData(this.get_param());
         },
         show_detail: function (pk, event) {
-            if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).closest('td').hasClass('show_detail')) {
+            if (event.target.tagName.toUpperCase() == 'TD' || $(event.target).hasClass('show_detail')) {
                 var table = $(event.target).closest('table');
                 var tr = $(event.target).closest('tr');
-                var td = $('td.show_detail', tr);
+                var icon = $('i.show_detail', tr);
                 if ($('#detail_' + pk, table).toggleClass('hide').hasClass('hide')) {
-                    td.html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
+                    icon.removeClass("fa-minus-square");
+                    icon.addClass("fa-plus-square");
                 } else {
-                    td.html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');
+                    icon.addClass("fa-minus-square");
+                    icon.removeClass("fa-plus-square");
                 }
             }
         },
@@ -120,15 +122,17 @@ var OrderListPageVue = CommonListPageVue.extend({
             else
                 th.html('<i class="fa fa-plus-square text-muted" aria-hidden="true"></i>');
 
-            var tds = $('td.show_detail');
-            tds.each(function (index) {
+            var icons = $('i.show_detail');
+            icons.each(function (index) {
                 var pk = $(this).attr('data-pk');
                 if (th.hasClass('extend')) {
                     $('#detail_' + pk).removeClass('hide');
-                    $(this).html('<i class="fa fa-minus-square text-primary" aria-hidden="true"></i>');
+                    $(this).addClass("fa-minus-square");
+                    $(this).removeClass("fa-plus-square");
                 } else {
                     $('#detail_' + pk).addClass('hide');
-                    $(this).html('<i class="fa fa-plus-square text-primary" aria-hidden="true"></i>');
+                    $(this).removeClass("fa-minus-square");
+                    $(this).addClass("fa-plus-square");
                 }
             });
         },

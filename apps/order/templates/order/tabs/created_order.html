@@ -5,10 +5,10 @@
             <th class="text-center hidden-sm hidden-xs" style="width:60px;">
                 <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
             </th>
-            <th class="visible-sm visible-xs" id="show_all_detail" style="width:50px;" v-on:click="show_all_detail">
-                <i class="fa fa-plus-square text-muted" aria-hidden="true"></i>
+            <th>
+                <i class="fa fa-plus-square text-muted " aria-hidden="true" id="show_all_detail" v-on:click="show_all_detail"></i>
+                Date
             </th>
-            <th>Date</th>
             <th>Name</th>
             <th>Status</th>
             <th>Price</th>
@@ -25,10 +25,8 @@
             <td class="text-center hidden-sm hidden-xs">
                 <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
             </td>
-            <td class="visible-sm visible-xs show_detail" data-pk="{!! item.id !!}">
-                <i class="fa fa-plus-square text-primary" aria-hidden="true"></i>
-            </td>
             <td>
+                <i class="fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.id !!}"></i>
                 <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
             </td>
             <td>
