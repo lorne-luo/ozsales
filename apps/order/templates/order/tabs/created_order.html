@@ -77,16 +77,18 @@
                     </a>
                 </template>
 
-                <a type="button" data-toggle="modal" data-target="#add-parcel"
-                   class="label-as-badge label label-info pull-right"
-                   data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                    <i class="fa fa-truck fa-inverse"></i>
-                </a>
-                <a type="button" data-toggle="modal" data-target="#add-product"
-                   class="label-as-badge label label-success pull-right"
-                   data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                    <i class="fa fa-cart-plus fa-inverse"></i>
-                </a>
+                <template v-if="item.status == 'CREATED'">
+                    <a type="button" data-toggle="modal" data-target="#add-parcel"
+                       class="label-as-badge label label-info pull-right"
+                       data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                        <i class="fa fa-truck fa-inverse"></i>
+                    </a>
+                    <a type="button" data-toggle="modal" data-target="#add-product"
+                       class="label-as-badge label label-success pull-right"
+                       data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                        <i class="fa fa-cart-plus fa-inverse"></i>
+                    </a>
+                </template>
             </td>
             <td class="hidden-sm hidden-xs">
                 {!! item.shipping_order !!}
@@ -94,17 +96,17 @@
 
             <td class="text-right hidden-sm hidden-xs">
                 {% if page_model_perms.change %}
-                    <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"
-                        data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                        <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
-                    </button>
-                    <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm"
-                        data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                        <i class="fa fa-lg fa-truck fa-inverse"></i>
-                    </button>
-                {% endif %}
+                    <template v-if="item.status == 'CREATED'">
+                        <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"
+                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
+                        </button>
+                        <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm"
+                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-lg fa-truck fa-inverse"></i>
+                        </button>
+                    </template>
 
-                {% if page_model_perms.change %}
                     <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
                        class="btn btn-primary btn-sm">
                         <i class="fa fa-lg fa-pencil fa-inverse"></i>
