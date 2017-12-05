@@ -67,26 +67,28 @@
             </td>
             <td class="visible-sm visible-xs">
                 <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
-                <template v-if="item.is_paid">
-                </template>
-                <template v-else>
-                    <a class="label-as-badge label label-danger pull-right pay" v-on:click="pay(item.id, $event)">
-                        <i class="fa fa-jpy" aria-hidden="true"></i>
-                    </a>
-                </template>
+                <div class="pull-right action-button">
+                    <template v-if="item.status == 'CREATED'">
+                        <a type="button" data-toggle="modal" data-target="#add-product"
+                           class="label label-success"
+                           data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-cart-plus fa-inverse"></i>
+                        </a>
+                        <a type="button" data-toggle="modal" data-target="#add-parcel"
+                           class="label label-info"
+                           data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-truck fa-inverse"></i>
+                        </a>
+                    </template>
 
-                <template v-if="item.status == 'CREATED'">
-                    <a type="button" data-toggle="modal" data-target="#add-parcel"
-                       class="label-as-badge label label-info pull-right"
-                       data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                        <i class="fa fa-truck fa-inverse"></i>
-                    </a>
-                    <a type="button" data-toggle="modal" data-target="#add-product"
-                       class="label-as-badge label label-success pull-right"
-                       data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                        <i class="fa fa-cart-plus fa-inverse"></i>
-                    </a>
-                </template>
+                    <template v-if="item.is_paid">
+                    </template>
+                    <template v-else>
+                        <a class="label label-danger pay" v-on:click="pay(item.id, $event)">
+                            <i class="fa fa-jpy" aria-hidden="true"></i>
+                        </a>
+                    </template>
+                </div>
             </td>
             <td class="hidden-sm hidden-xs">
                 {!! item.shipping_order !!}

@@ -159,8 +159,8 @@ input[type='checkbox'] {
     margin-bottom: 0;
 }
 
-#pane-CREATED td a.label-as-badge:not(:last-child) {
-    margin-left: 8px;
+.action-button a.label {
+    margin-left: 5px;
 }
 
 table td i.show_detail, table i#show_all_detail{
