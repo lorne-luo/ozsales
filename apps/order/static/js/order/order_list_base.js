@@ -116,16 +116,21 @@ var OrderListPageVue = CommonListPageVue.extend({
             }
         },
         show_all_detail: function (event) {
-            var th = $('th#show_all_detail');
-            if (th.toggleClass('extend').hasClass('extend'))
-                th.html('<i class="fa fa-minus-square text-muted" aria-hidden="true"></i>');
-            else
-                th.html('<i class="fa fa-plus-square text-muted" aria-hidden="true"></i>');
+            var table = $(event.target).closest('table');
+            var icon_all = $('i.show_all_detail', table);
+            if (icon_all.toggleClass('extend').hasClass('extend')) {
+                icon_all.addClass("fa-minus-square");
+                icon_all.removeClass("fa-plus-square");
+            }
+            else {
+                icon_all.removeClass("fa-minus-square");
+                icon_all.addClass("fa-plus-square");
+            }
 
-            var icons = $('i.show_detail');
+            var icons = $('i.show_detail', table);
             icons.each(function (index) {
                 var pk = $(this).attr('data-pk');
-                if (th.hasClass('extend')) {
+                if (icon_all.hasClass('extend')) {
                     $('#detail_' + pk).removeClass('hide');
                     $(this).addClass("fa-minus-square");
                     $(this).removeClass("fa-plus-square");

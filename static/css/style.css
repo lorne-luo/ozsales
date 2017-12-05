@@ -167,6 +167,6 @@ input[type='checkbox'] {
     margin-left: 8px;
 }
 
-table td i.show_detail, table i#show_all_detail{
+table td i.show_detail, table th i.show_all_detail{
     margin-right: 18px;
 }
