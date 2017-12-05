@@ -5,10 +5,7 @@
 
 WORKDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/.. && pwd )" &&
 cd $WORKDIR &&
-git stash &&
 PULL_INFO=$(git pull 2>/dev/null) &&
-git pop &&
-wait
 
 if [ "$PULL_INFO" == "Already up-to-date." ]; then
     # Nothing to do, exit cleanly
