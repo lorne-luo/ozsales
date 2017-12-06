@@ -1,10 +1,10 @@
 from dal import autocomplete
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q, Count, Case, IntegerField, When
 
 from apps.express.models import ExpressCarrier, ExpressOrder
 from core.api.permission import SellerPermissions
 from core.libs.string import include_non_asc
+from core.views.permission import ProfileRequiredMixin
 from core.views.views import CommonViewSet
 import serializers
 
@@ -44,11 +44,11 @@ class ExpressOrderViewSet(CommonViewSet):
         return queryset.filter(order__seller=self.request.profile)
 
 
-class ExpressCarrierAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+class ExpressCarrierAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
     model = ExpressCarrier
     paginate_by = 50
     create_field = 'name_cn'
-
+    profile_required = ('member.seller',)
 
     def get_queryset(self):
         # order by carrier usage

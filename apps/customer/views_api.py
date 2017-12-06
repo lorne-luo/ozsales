@@ -9,6 +9,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from apps.customer.models import Customer, CustomerCart, CartProduct, Address
 from core.libs.string import include_non_asc
+from core.views.permission import ProfileRequiredMixin
 from ..product.models import Product
 
 
@@ -40,10 +41,11 @@ class AddCart(GenericAPIView):
         return Response({'success': True}, status=200)
 
 
-class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+class CustomerAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
     model = Customer
     paginate_by = 20
     create_field = 'name'
+    profile_required = ('member.seller',)
 
     def get_queryset(self):
         qs = Customer.objects.belong_to(self.request.user).annotate(
@@ -60,10 +62,11 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
         return qs
 
 
-class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+class AddressAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
     model = Address
     paginate_by = 20
     create_field = 'name'
+    profile_required = ('member.seller',)
 
     def get_queryset(self):
         qs = Address.objects.belong_to(self.request.user)

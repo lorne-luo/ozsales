@@ -9,6 +9,7 @@ from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 
 from core.libs.string import include_non_asc
+from core.views.permission import ProfileRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
 from core.api.views import CommonListCreateAPIView
 from models import Product, Brand
@@ -164,10 +165,11 @@ class BrandViewSet(CommonViewSet):
     search_fields = ['name_en', 'name_cn']
 
 
-class ProductAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+class ProductAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
     model = Product
     paginate_by = 20
     create_field = 'name_cn'
+    profile_required = ('member.seller',)
 
     def get_queryset(self):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
