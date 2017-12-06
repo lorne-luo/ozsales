@@ -41,7 +41,9 @@ class AddCart(GenericAPIView):
 
 
 class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    model = Customer
     paginate_by = 20
+    create_field = 'name'
 
     def get_queryset(self):
         qs = Customer.objects.belong_to(self.request.user).annotate(
@@ -59,7 +61,9 @@ class CustomerAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView)
 
 
 class AddressAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    model = Address
     paginate_by = 20
+    create_field = 'name'
 
     def get_queryset(self):
         qs = Address.objects.belong_to(self.request.user)

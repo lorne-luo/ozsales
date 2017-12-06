@@ -45,7 +45,10 @@ class ExpressOrderViewSet(CommonViewSet):
 
 
 class ExpressCarrierAutocomplete(LoginRequiredMixin, autocomplete.Select2QuerySetView):
+    model = ExpressCarrier
     paginate_by = 50
+    create_field = 'name_cn'
+
 
     def get_queryset(self):
         # order by carrier usage
