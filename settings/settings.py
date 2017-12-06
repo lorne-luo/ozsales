@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import datetime
 from decimal import Decimal
+from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -83,8 +84,9 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -118,11 +120,11 @@ SITE_ID = 1
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-au'
+LANGUAGE_CODE = 'zh-hans'
 
 LANGUAGES = [
-    ('en', 'English'),
-    ('cn', 'Chinese'),
+    ('cn', _('Simplified Chinese')),
+    ('en', _('English')),
 ]
 
 TIME_ZONE = 'Australia/Melbourne'
@@ -166,7 +168,7 @@ TEMPLATES = [
                 # 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                # 'django.template.context_processors.i18n',
+                'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
