@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.db import transaction
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
 
+from core.api.permission import SellerPermissions
 from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import Address, Customer, InterestTag
@@ -135,11 +136,16 @@ class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
 
 # api views for Customer
 class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
+    queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'mobile', 'primary_address__name']
     group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
+    permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
-        return Customer.objects.filter(seller=self.request.user.profile)
+        queryset = super(CustomerViewSet, self).get_queryset()
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return queryset
+        return queryset.filter(seller=self.request.profile)

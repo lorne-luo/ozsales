@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
 
+from core.api.permission import SellerPermissions
 from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, ADMIN_GROUP
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
@@ -319,6 +320,7 @@ class ShippingOrderFilter(FilterSet):
 
 class OrderViewSet(GroupRequiredMixin, CommonViewSet):
     """ api views for Order """
+    queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     filter_fields = ['id']
@@ -326,7 +328,10 @@ class OrderViewSet(GroupRequiredMixin, CommonViewSet):
     group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
 
     def get_queryset(self):
-        return Order.objects.filter(seller=self.request.user.profile).select_related('address', 'customer')
+        queryset = super(OrderViewSet, self).get_queryset()
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return queryset
+        return queryset.filter(seller=self.request.profile).select_related('address', 'customer')
 
     @list_route(methods=['post', 'get'])
     def new(self, request, *args, **kwargs):
@@ -362,17 +367,15 @@ class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
 
 class OrderProductViewSet(CommonViewSet):
     """ api views for OrderProduct """
+    queryset = OrderProduct.objects.all()
     serializer_class = serializers.OrderProductSerializer
     filter_fields = ['id']
     search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_en', 'product__name_cn',
                      'product__brand__name_en', 'product__brand__name_cn']
+    permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
-        if self.request.user.is_superuser:
-            queryset = OrderProduct.objects.all()
-        elif self.request.user.is_authenticated():
-            queryset = OrderProduct.objects.filter(order__customer__seller=self.request.user)
-        else:
-            queryset = OrderProduct.objects.none()
-
-        return queryset.select_related('order', 'product')
+        queryset = super(OrderProductViewSet, self).get_queryset()
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return queryset
+        return queryset.filter(order__customer__seller=self.request.profile)
