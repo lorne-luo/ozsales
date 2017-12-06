@@ -279,14 +279,16 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        filters.SearchFilter,
                        filters.OrderingFilter)
-    permissions_map = {
-        'retrieve': [CommonAPIPermissions],
-        'create': [CommonAPIPermissions],
-        'list': [CommonAPIPermissions],
-        'update': [CommonAPIPermissions],
-        'delete': [CommonAPIPermissions],  # customized action below
-        'destroy': [CommonAPIPermissions],
-    }
+
+    # subclass implement below to specify permission for acitons
+    # permissions_map = {
+    #     'retrieve': [CommonAPIPermissions],
+    #     'create': [CommonAPIPermissions],
+    #     'list': [CommonAPIPermissions],
+    #     'update': [CommonAPIPermissions],
+    #     'delete': [CommonAPIPermissions],  # customized action below
+    #     'destroy': [CommonAPIPermissions],
+    # }
 
     def get_permissions(self):
         if hasattr(self, 'permissions_map'):

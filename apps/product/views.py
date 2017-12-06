@@ -84,6 +84,11 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
         return context
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.seller = self.request.profile
+        return super(ProductAddView, self).form_valid(form)
+
 
 class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = Product

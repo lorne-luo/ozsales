@@ -78,7 +78,7 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
     }
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
         self.object.seller = self.request.profile
         return super(CustomerAddView, self).form_valid(form)
 

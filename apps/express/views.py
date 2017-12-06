@@ -26,6 +26,11 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
         "all": ("express.add_expresscarrier",)
     }
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.seller = self.request.profile
+        return super(ExpressCarrierAddView, self).form_valid(form)
+
 
 class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = ExpressCarrier
@@ -43,4 +48,3 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
     permissions = {
         "all": ("express.view_expresscarrier",)
     }
-
