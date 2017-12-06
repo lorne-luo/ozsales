@@ -5,7 +5,6 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import ExpressCarrier, ExpressOrder
 from ..order.models import ORDER_STATUS
-import serializers
 import forms
 
 
@@ -45,57 +44,3 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
         "all": ("express.view_expresscarrier",)
     }
 
-
-class ExpressCarrierViewSet(CommonViewSet):
-    """ api views for ExpressCarrier """
-    queryset = ExpressCarrier.objects.all()
-    serializer_class = serializers.ExpressCarrierSerializer
-    filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-    search_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-
-
-# # views for ExpressOrder
-#
-# class ExpressOrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-#     model = ExpressOrder
-#     template_name_suffix = '_list'  # express/expressorder_list.html
-#     permissions = {
-#         "all": ("express.view_expressorder",)
-#     }
-#
-#
-# class ExpressOrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderAddForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("expressorder.add_expressorder",)
-#     }
-#
-#
-# class ExpressOrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderUpdateForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("expressorder.change_expressorder",)
-#     }
-#
-#
-# class ExpressOrderDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderDetailForm
-#     template_name = 'adminlte/common_detail_new.html'
-#     permissions = {
-#         "all": ("expressorder.view_expressorder",)
-#     }
-
-
-# api views for ExpressOrder
-class ExpressOrderViewSet(CommonViewSet):
-    """ api views for ExpressOrder """
-    queryset = ExpressOrder.objects.all()
-    serializer_class = serializers.ExpressOrderSerializer
-    # filter_class = OrderFilter
-    filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
-    search_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']

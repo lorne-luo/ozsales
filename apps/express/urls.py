@@ -21,7 +21,7 @@ urlpatterns += [
 
 
 # reverse('express:api-expresscarrier-list'), reverse('express:api-expresscarrier-detail', kwargs={'pk': 1})
-router.register(r'api/express/expresscarrier', views.ExpressCarrierViewSet, base_name='api-expresscarrier')
+router.register(r'api/express/expresscarrier', views_api.ExpressCarrierViewSet, base_name='api-expresscarrier')
 
 
 # # urls for expressorder
@@ -34,7 +34,7 @@ router.register(r'api/express/expresscarrier', views.ExpressCarrierViewSet, base
 
 
 # reverse('express:api-expressorder-list'), reverse('express:api-expressorder-detail', kwargs={'pk': 1})
-router.register(r'api/express/expressorder', views.ExpressOrderViewSet, base_name='api-expressorder')
+router.register(r'api/express/expressorder', views_api.ExpressOrderViewSet, base_name='api-expressorder')
 
 
 urlpatterns += router.urls
