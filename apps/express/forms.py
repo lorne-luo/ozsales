@@ -90,5 +90,13 @@ class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     def clean_fee(self):
         return self.cleaned_data.get('fee') or 0
 
+    def clean(self):
+        carrier = self.cleaned_data.get('carrier')
+        track_id = self.cleaned_data.get('track_id')
+        if not carrier and not ExpressCarrier.identify_carrier(track_id):
+            self.add_error('carrier', u'未能自动识别物流公司，请手动选择')
+
+        return self.cleaned_data
+
 
 ExpressOrderFormSet = inlineformset_factory(Order, ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)
