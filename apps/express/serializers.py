@@ -5,10 +5,11 @@ from models import ExpressCarrier, ExpressOrder
 
 
 # Serializer for expresscarrier
-class ExpressCarrierSerializer(serializers.ModelSerializer):
+class ExpressCarrierSerializer(BaseSerializer):
     class Meta:
         model = ExpressCarrier
-        fields = ['id', 'name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'is_default']
+        fields = ['id', 'edit_url', 'detail_url'] + \
+                 ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'is_default']
         read_only_fields = ['id']
 
 
