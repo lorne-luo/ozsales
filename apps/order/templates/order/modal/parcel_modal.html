@@ -30,8 +30,8 @@
                             <i class="icon fa fa-check"></i> <span>操作成功</span>
                         </div>
                         <div class="callout callout-danger col-xs-12" id="alert-error">
-                            <h5>提交失败</h5>
-                            <i class="icon fa fa-ban"></i> <span id="error-text">error</span>
+                            <i class="icon fa fa-ban"></i> <b>提交失败</b>
+                            <p id="error-text">error</p>
                         </div>
                     </div>
                 </div>
@@ -98,12 +98,18 @@
             }
         })
             .done(function (data) {
-                console.log(data);
                 success();
             })
             .fail(function (XMLHttpRequest, textStatus, errorThrown) {
-                console.log(XMLHttpRequest);
-                showParcelError(XMLHttpRequest.responseText);
+                try {
+                    var obj = JSON.parse(XMLHttpRequest.responseText);
+                    if (obj.detail)
+                        showParcelError(obj.detail);
+                    else
+                        showParcelError(XMLHttpRequest.responseText);
+                } catch (e) {
+                    showParcelError(XMLHttpRequest.responseText);
+                }
             });
     }
 
