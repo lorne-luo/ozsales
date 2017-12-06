@@ -140,20 +140,24 @@
         });
 
         $('#add-product').on('hidden.bs.modal', function () {
-            // todo check necessary
-            orderListPageVue.loadData(orderListPageVue.get_param());
+            if (window.need_reload) {
+                orderListPageVue.loadData(orderListPageVue.get_param());
+                window.need_reload = false;
+            }
         });
 
         $('#product-modal-confirm').on('click', function (event) {
             submitProduct(function () {
+                window.need_reload = true;
                 $('#add-product').modal('hide');
             })
         });
 
         $('#product-modal-confirm-continue').on('click', function (event) {
             submitProduct(function () {
+                window.need_reload = true;
                 $("#add-product #alert-success").fadeTo(2000, 500).slideUp(500, function () {
-                    $("#add-parcel #alert-success").slideUp(500);
+                    $("#add-product #alert-success").slideUp(500);
                 });
                 $("#add-product #alert-error").hide();
                 resetProductForm();

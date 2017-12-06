@@ -56,7 +56,7 @@
         $('#add-parcel .form-group-track_id').removeClass('has-error');
         $('#add-parcel .form-group-fee').removeClass('has-error');
 
-        $("#add-product #id_carrier").val(null).trigger("change");
+        $("#add-parcel #id_carrier").val(null).trigger("change");
         $('#add-parcel #id_track_id').val("");
         $('#add-parcel #id_fee').val("");
         $("#add-parcel #alert-success").hide();
@@ -123,18 +123,22 @@
         });
 
         $('#add-parcel').on('hidden.bs.modal', function () {
-            // todo check necessary
-            orderListPageVue.loadData(orderListPageVue.get_param());
+            if (window.need_reload) {
+                orderListPageVue.loadData(orderListPageVue.get_param());
+                window.need_reload = false;
+            }
         });
 
         $('#parcel-modal-confirm').on('click', function (event) {
             submitParcel(function () {
+                window.need_reload = true;
                 $('#add-parcel').modal('hide');
             })
         });
 
         $('#parcel-modal-confirm-continue').on('click', function (event) {
             submitParcel(function () {
+                window.need_reload = true;
                 $("#add-parcel #alert-success").fadeTo(2000, 500).slideUp(500, function () {
                     $("#add-parcel #alert-success").slideUp(500);
                 });

@@ -41,6 +41,9 @@
     <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
     {% include 'order/modal/orderproduct_modal.html' %}
     {% include 'order/modal/parcel_modal.html' %}
+    <script>
+        window.need_reload = false;  // reload table or not when modal closed, share for both orderproduct_modal and parcel_modal
+    </script>
 
   {{ expressorder_form.media }}
   {{ orderproduct_form.media }}
