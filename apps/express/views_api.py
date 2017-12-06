@@ -52,7 +52,7 @@ class ExpressCarrierAutocomplete(ProfileRequiredMixin, autocomplete.Select2Query
 
     def get_queryset(self):
         # order by carrier usage
-        qs = ExpressCarrier.objects.order_by_usage(self.request.user)
+        qs = ExpressCarrier.objects.all_for_seller(self.request.user)
 
         if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q))

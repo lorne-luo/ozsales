@@ -4,6 +4,7 @@ import re
 
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
@@ -21,34 +22,41 @@ log = logging.getLogger(__name__)
 
 
 class ExpressCarrierManager(models.Manager):
-    def order_by_usage(self, obj):
-
-        seller_id = None
-        customer_id = None
+    def all_for_seller(self, obj):
         if isinstance(obj, Seller):
             seller_id = obj.id
         elif isinstance(obj, AuthUser) and obj.is_seller:
             seller_id = obj.profile.id
-        elif isinstance(obj, Customer):
+        else:
+            return ExpressCarrier.objects.none()
+
+        qs = super(ExpressCarrierManager, self).get_queryset().filter(Q(seller__isnull=True) | Q(seller_id=seller_id))
+        return self.order_by_usage_for_seller(qs, seller_id)
+
+    def order_by_usage_for_seller(self, qs, seller_id):
+        return qs.annotate(use_counter=models.Count(models.Case(
+            models.When(expressorder__order__seller_id=seller_id, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        ))).order_by('-use_counter')
+
+    def all_for_customer(self, obj):
+        if isinstance(obj, Customer):
             customer_id = obj.id
         elif isinstance(obj, AuthUser) and obj.is_customer:
             customer_id = obj.profile.id
         else:
-            raise PermissionDenied
+            return ExpressCarrier.objects.none()
 
         qs = super(ExpressCarrierManager, self).get_queryset()
-        if seller_id:
-            return qs.annotate(use_counter=models.Count(models.Case(
-                models.When(expressorder__order__seller_id=seller_id, then=1),
-                default=0,
-                output_field=models.IntegerField()
-            ))).order_by('-use_counter')
-        else:
-            return qs.annotate(use_counter=models.Count(models.Case(
-                models.When(expressorder__order__customer_id=customer_id, then=1),
-                default=0,
-                output_field=models.IntegerField()
-            ))).order_by('-use_counter')
+        return self.usage_order_by_customer(qs, customer_id)
+
+    def usage_order_by_customer(self, qs, customer_id):
+        return qs.annotate(use_counter=models.Count(models.Case(
+            models.When(expressorder__order__customer_id=customer_id, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        ))).order_by('-use_counter')
 
 
 @python_2_unicode_compatible
@@ -225,3 +233,39 @@ def express_order_deleted(sender, **kwargs):
 def update_default_carrier(sender, instance=None, created=False, **kwargs):
     if instance.is_default:
         ExpressCarrier.objects.exclude(id=instance.id).update(is_default=False)
+
+
+# ========================= carrier sub model ==================================
+
+class DefaultCarrierManager(models.Manager):
+    def get_queryset(self):
+        return super(DefaultCarrierManager, self).get_queryset().filter(seller__isnull=True)
+
+
+class DefaultCarrier(ExpressCarrier):
+    objects = DefaultCarrierManager()
+
+    class Meta:
+        proxy = True
+
+
+class CustomCarrierManager(models.Manager):
+    def get_queryset(self):
+        return super(CustomCarrierManager, self).get_queryset().filter(seller__isnull=False)
+
+    def belong_to(self, obj):
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        else:
+            return CustomCarrier.objects.none()
+
+        return super(CustomCarrierManager, self).get_queryset().filter(seller_id=seller_id)
+
+
+class CustomCarrier(ExpressCarrier):
+    objects = CustomCarrierManager()
+
+    class Meta:
+        proxy = True
