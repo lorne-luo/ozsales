@@ -15,7 +15,10 @@ from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import detail_route, list_route
 from rest_framework import filters, permissions
+
+from core.api.permission import CommonAPIPermissions, AdminOnlyPermissions
 from core.libs import constants
+
 
 # from core.adminlte.models import Menu, SystemConfig, Permission
 # from core.messageset.models import Notification, Task
@@ -276,7 +279,20 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
     filter_backends = (DjangoFilterBackend,
                        filters.SearchFilter,
                        filters.OrderingFilter)
-    permission_classes = [permissions.DjangoModelPermissions]
+    permissions_map = {
+        'retrieve': [CommonAPIPermissions],
+        'create': [CommonAPIPermissions],
+        'list': [CommonAPIPermissions],
+        'update': [CommonAPIPermissions],
+        'destroy': [CommonAPIPermissions],
+    }
+
+    def get_permissions(self):
+        if hasattr(self, 'permissions_map'):
+            if self.action in self.permissions_map:
+                self.permission_classes = self.permissions_map[self.action]
+
+        return super(CommonViewSet, self).get_permissions()
 
     @list_route(methods=['post', 'delete'])
     def delete(self, request, pk=None):
@@ -344,7 +360,6 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         # }
         # return Response(result)
 
-
 #
 # class AbstractViewSet(PaginateByMaxMixin, ModelViewSet):
 #     """ provide list/retrive/patch/delete restful api for model """
@@ -378,4 +393,3 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
 #         for obj in objects:
 #             obj.delete()
 #         return JsonResponse({'success': True}, status=200)
-
