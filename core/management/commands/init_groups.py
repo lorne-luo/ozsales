@@ -21,12 +21,14 @@ class Command(BaseCommand):
         MEMBER_GROUP: [
             ('y', 'y', 'y', 'n', 'member', 'seller'),
             ('y', 'y', 'y', 'y','order', 'order'),
+            ('y', 'y', 'y', 'y','order', 'orderproduct'),
             ('y', 'y', 'y', 'y', 'customer', 'customer'),
             ('y', 'y', 'y', 'y', 'customer', 'address'),
             ('y', 'y', 'y', 'y', 'product', 'product'),
             ('y', 'n', 'n', 'n', 'report', 'monthlyreport'),
             ('n', 'n', 'n', 'n', 'store', 'store'),
             ('y', 'y', 'y', 'y', 'express', 'expresscarrier'),
+            ('y', 'y', 'y', 'y', 'express', 'expressorder'),
         ],
         CUSTOMER_GROUP: [
             ('y', 'y', 'y', 'n', 'customer', 'customer'),

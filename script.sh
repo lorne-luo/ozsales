@@ -55,6 +55,7 @@ static() {
 
 restart() {
     $PYTHON manage.py js_reverse
+    $PYTHON manage.py init_groups
     $PYTHON manage.py collectstatic --noinput
     sudo supervisorctl restart ozsales
     sudo supervisorctl restart ozsales_celery
