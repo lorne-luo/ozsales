@@ -98,6 +98,19 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
         last_order = self.express_orders.filter(is_delivered=True).order_by('-create_time').first()
         last_order.test_tracker()
 
+    @staticmethod
+    def identify_carrier(track_id):
+        for carrier in ExpressCarrier.objects.all():
+            if carrier.track_id_regex:
+                m = re.match(carrier.track_id_regex, track_id, re.IGNORECASE)
+                if m and m.group():
+                    return carrier
+        return None
+
+    @staticmethod
+    def get_default_carrier():
+        return ExpressCarrier.objects.filter(is_default=True).first()
+
 
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
@@ -120,20 +133,20 @@ class ExpressOrder(models.Model):
         unique_together = ('carrier', 'track_id')
 
     def __str__(self):
-        return '[%s]%s' % (self.carrier.name_cn, self.track_id)
+        if self.carrier:
+            return '[%s]%s' % (self.carrier.name_cn, self.track_id)
+        else:
+            return u'[未知物流]%s' % (self.track_id)
 
     def identify_track_id(self):
         if self.carrier:
+            # check track_id match current regex or not
             m = re.match(self.carrier.track_id_regex, self.track_id, re.IGNORECASE)
             if not m:
                 msg = '%s not match %s regex=%s' % (self.track_id, self.carrier.name_cn, self.carrier.track_id_regex)
-                log.info('[AUTO_TRACK_ID] %s' % msg)
+                log.info('[AUTO_TRACK_ID.NEW_FORMAT_FOUND] %s' % msg)
         elif not self.carrier and self.track_id:
-            for carrier in ExpressCarrier.objects.all():
-                if carrier.track_id_regex:
-                    m = re.match(carrier.track_id_regex, self.track_id, re.IGNORECASE)
-                    if m and m.group():
-                        self.carrier = carrier
+            self.carrier = ExpressCarrier.identify_carrier(self.track_id) or ExpressCarrier.get_default_carrier()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
@@ -143,12 +156,15 @@ class ExpressOrder(models.Model):
 
         if not self.pk:
             self.track_id = self.track_id.upper()
-            self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
-                                                         address=self.address,
-                                                         id_upload=True).exists()
+            if self.carrier and self.address:
+                self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
+                                                             address=self.address,
+                                                             id_upload=True).exists()
         return super(ExpressOrder, self).save()
 
     def get_track_url(self):
+        if not self.carrier:
+            return '#'
         if self.remarks and self.remarks.startswith('http'):
             return self.remarks
         elif '%s' in self.carrier.search_url:
@@ -159,9 +175,11 @@ class ExpressOrder(models.Model):
     def get_tracking_link(self):
         if self.id_upload:
             return '<a target="_blank" href="%s">%s</a>' % (self.get_track_url(), self.track_id)
-        else:
+        elif self.carrier:
             return '<a target="_blank" href="%s"><i><b>%s</b></i></a>' % (
                 self.carrier.id_upload_url or self.get_track_url(), self.track_id)
+        else:
+            return self.track_id
 
     get_tracking_link.allow_tags = True
     get_tracking_link.short_description = 'Express Track'
@@ -176,7 +194,7 @@ class ExpressOrder(models.Model):
         return self.order.address
 
     def update_track(self):
-        if not self.is_delivered:
+        if not self.is_delivered and self.carrier:
             delivered, last_info = self.carrier.update_track(self.get_track_url())
             if delivered is not None:
                 self.is_delivered = delivered
@@ -184,7 +202,7 @@ class ExpressOrder(models.Model):
                 self.save(update_fields=['last_track', 'last_track'])
 
     def test_tracker(self):
-        if self.is_delivered:
+        if self.is_delivered and self.carrier:
             delivered, last_info = self.carrier.update_track(self.get_track_url())
             if not delivered:
                 log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
@@ -203,7 +221,7 @@ def express_order_deleted(sender, **kwargs):
         instance.order.update_price(update_sell_price=True)
 
 
-@receiver(pre_save, sender=ExpressCarrier)
+@receiver(post_save, sender=ExpressCarrier)
 def update_default_carrier(sender, instance=None, created=False, **kwargs):
     if instance.is_default:
-        ExpressCarrier.objects.all().update(is_default=False)
+        ExpressCarrier.objects.exclude(id=instance.id).update(is_default=False)
