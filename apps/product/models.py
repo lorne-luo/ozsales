@@ -2,7 +2,7 @@ import os
 import uuid
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from pypinyin import Style
@@ -13,6 +13,7 @@ from apps.member.models import Seller
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
 
+from core.auth_user.models import AuthUser
 from core.models.models import PinYinFieldModelMixin
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
@@ -94,6 +95,45 @@ class ProductState(object):
     )
 
 
+class ProductManager(models.Manager):
+    def all_for_seller(self, obj):
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        else:
+            return Product.objects.none()
+
+        qs = super(ProductManager, self).get_queryset().filter(Q(seller__isnull=True) | Q(seller_id=seller_id))
+        return self.order_by_usage_for_seller(qs, seller_id)
+
+    def order_by_usage_for_seller(self, qs, seller_id):
+        return qs.annotate(use_counter=models.Count(models.Case(
+            models.When(orderproduct__order__seller_id=seller_id, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        ))).order_by('-use_counter')
+
+    def all_for_customer(self, obj):
+        from apps.customer.models import Customer
+        if isinstance(obj, Customer):
+            customer_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+        else:
+            return Product.objects.none()
+
+        qs = super(ProductManager, self).get_queryset()
+        return self.order_by_usage_for_customer(qs, customer_id)
+
+    def order_by_usage_for_customer(self, qs, customer_id):
+        return qs.annotate(use_counter=models.Count(models.Case(
+            models.When(orderproduct__order__customer_id=customer_id, then=1),
+            default=0,
+            output_field=models.IntegerField()
+        ))).order_by('-use_counter')
+
+
 @python_2_unicode_compatible
 class Product(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
@@ -137,6 +177,7 @@ class Product(PinYinFieldModelMixin, models.Model):
         ('brand.name_cn', Style.NORMAL, False),
         ('brand.name_cn', Style.FIRST_LETTER, False),
     ]
+    objects = ProductManager()
 
     class Meta:
         verbose_name_plural = _('Product')
@@ -236,3 +277,39 @@ class Product(PinYinFieldModelMixin, models.Model):
         data = OrderProduct.objects.filter(product_id=self.id).aggregate(sold_count=Sum(F('amount')))
         self.sold_count = data.get('sold_count') or 0
         self.save()
+
+
+# ========================= product sub model ==================================
+
+class DefaultProductManager(models.Manager):
+    def get_queryset(self):
+        return super(DefaultProductManager, self).get_queryset().filter(seller__isnull=True)
+
+
+class DefaultProduct(Product):
+    objects = DefaultProductManager()
+
+    class Meta:
+        proxy = True
+
+
+class CustomProductManager(models.Manager):
+    def get_queryset(self):
+        return super(CustomProductManager, self).get_queryset().filter(seller__isnull=False)
+
+    def belong_to(self, obj):
+        if isinstance(obj, Seller):
+            seller_id = obj.id
+        elif isinstance(obj, AuthUser) and obj.is_seller:
+            seller_id = obj.profile.id
+        else:
+            return Product.objects.none()
+
+        return super(CustomProductManager, self).get_queryset().filter(seller_id=seller_id)
+
+
+class CustomProduct(Product):
+    objects = CustomProductManager()
+
+    class Meta:
+        proxy = True
