@@ -38,6 +38,14 @@ input[type='checkbox'] {
     .control-sidebar {
         padding-top: 50px !important;
     }
+
+    .modal-header {
+        padding: 1px 5px 0 20px;
+    }
+
+    .modal-header h4{
+        font-size: 16px;
+    }
 }
 
 @media (min-width: 992px) {
