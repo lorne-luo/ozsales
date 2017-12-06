@@ -131,9 +131,13 @@ TIME_ZONE = 'Australia/Melbourne'
 
 USE_I18N = True
 
-USE_L10N = False
+USE_L10N = True
 
 USE_TZ = True
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 DATE_FORMAT = 'Y/m/j'
 DATETIME_FORMAT = 'Y/m/j H:i:s'
