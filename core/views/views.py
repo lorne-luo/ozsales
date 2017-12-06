@@ -284,12 +284,13 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         'create': [CommonAPIPermissions],
         'list': [CommonAPIPermissions],
         'update': [CommonAPIPermissions],
+        'delete': [CommonAPIPermissions],  # customized action below
         'destroy': [CommonAPIPermissions],
     }
 
     def get_permissions(self):
         if hasattr(self, 'permissions_map'):
-            if self.action in self.permissions_map:
+            if self.action.lower() in self.permissions_map:
                 self.permission_classes = self.permissions_map[self.action]
 
         return super(CommonViewSet, self).get_permissions()
@@ -299,7 +300,13 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         """ for batch delete """
         pk = request.POST.get('pk')
         pk = pk.split(',')
-        self.get_queryset().filter(pk__in=pk).delete()
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(pk__in=pk)
+        if queryset.count():
+            queryset.delete()
+        else:
+            data = {'detail': 'Object not found, or permission denied.'}
+            return Response(data, status=404)
         return JsonResponse({'success': True}, status=200)
 
     @list_route(methods=['post', 'get'])
