@@ -199,7 +199,7 @@ class OrderAddDetailView(OrderUpdateView):
         except:
             object = Order(customer_id=self.kwargs['customer_id'])
             object.address_id = self.request.POST['address']
-            object.seller = self.request.user.profile
+            object.seller = self.request.profile
             object.save()
         return object
 

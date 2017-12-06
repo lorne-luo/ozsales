@@ -15,9 +15,9 @@ class OwnerViewSetMixin(object):
     def get_queryset(self):
         qs = super(OwnerViewSetMixin, self).get_queryset()
         if self.request.user.is_seller:
-            return qs.filter(seller=self.request.user.profile)
+            return qs.filter(seller=self.request.profile)
         elif self.request.user.is_customer:
-            return qs.filter(customer=self.request.user.profile)
+            return qs.filter(customer=self.request.profile)
         else:
             return qs.none()
 

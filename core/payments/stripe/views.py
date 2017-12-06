@@ -24,7 +24,7 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
             raise Http404
 
         try:
-            profile = self.request.user.profile
+            profile = self.request.profile
             card = profile.add_card(source=token, remove_old=True)  # input card token or detail dict
         except stripe.error.CardError as ex:
             context = self.get_context_data(**kwargs)
@@ -40,7 +40,7 @@ class RemoveAllCardView(LoginRequiredMixin, RedirectView):
     pattern_name = 'payments:add_card'
 
     def post(self, request, *args, **kwargs):
-        profile = self.request.user.profile
+        profile = self.request.profile
         profile.remove_all_card()
         return super(RemoveAllCardView, self).post(request, *args, **kwargs)
 
@@ -53,7 +53,7 @@ class RemoveSingleCardView(LoginRequiredMixin, RedirectView):
         card_id = kwargs.get("pk")
         card = Card.objects.filter(id=card_id).first()
         if card:
-            profile = self.request.user.profile
+            profile = self.request.profile
             profile.remove_card(card.stripe_id)
         return super(RemoveSingleCardView, self).post(request, *args, **kwargs)
 
@@ -62,11 +62,11 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     template_name = "djstripe/view_card.html"
 
     def get_object(self, queryset=None):
-        return self.request.user.profile.get_default_card()
+        return self.request.profile.get_default_card()
 
     def get_context_data(self, **kwargs):
         context = super(ViewCreditCardView, self).get_context_data(**kwargs)
-        customer = self.request.user.profile.stripe_customer
+        customer = self.request.profile.stripe_customer
         context.update({'subscription': customer.valid_subscriptions.first()})
         return context
 
@@ -80,7 +80,7 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
 
 class RemoveCreditCardView(LoginRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        profile = self.request.user.profile
+        profile = self.request.profile
         profile.remove_all_card()
         return reverse_lazy('payments:add_card')
 
@@ -92,7 +92,7 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
         plan_id = request.POST.get('selected_plan')
         plan = Plan.objects.filter(stripe_id=plan_id).first()
         if plan:
-            customer = self.request.user.profile.stripe_customer
+            customer = self.request.profile.stripe_customer
             subscription = customer.subscribe(plan)
             # todo update seller expiration, wrap subscribe method
         else:

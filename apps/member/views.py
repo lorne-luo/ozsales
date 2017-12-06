@@ -93,7 +93,7 @@ class ProfileView(PermissionRequiredMixin, FormView):
             except Seller.DoesNotExist:
                 raise Http404()
         elif self.request.user.is_seller:  # Editing own profile
-            return self.request.user.profile
+            return self.request.profile
         else:
             raise Http404()
 
