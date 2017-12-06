@@ -1,7 +1,7 @@
 import stripe as base_stripe
 from django.conf import settings
+from django.db import transaction
 from stripe import InvalidRequestError
-
 
 STRIPE_LIVE_MODE = getattr(settings, "STRIPE_LIVE_MODE", False)
 
@@ -35,3 +35,11 @@ stripe = base_stripe
 #     except InvalidRequestError as e:
 #         print("ERROR: " + str(e))
 #     return customer
+
+def forgive_invoice(invoice):
+    stripe_invoice = invoice.api_retrieve()
+    stripe_invoice.closed = True
+    invoice.closed = True
+    with transaction.atomic():
+        stripe_invoice.save()
+        invoice.sync_from_stripe_data(stripe_invoice)
