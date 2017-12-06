@@ -139,7 +139,7 @@ class ExpressOrder(models.Model):
             return u'[未知物流]%s' % (self.track_id)
 
     def identify_track_id(self):
-        if self.carrier:
+        if self.carrier and self.carrier.track_id_regex:
             # check track_id match current regex or not
             m = re.match(self.carrier.track_id_regex, self.track_id, re.IGNORECASE)
             if not m:

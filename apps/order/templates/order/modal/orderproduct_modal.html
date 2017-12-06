@@ -23,12 +23,12 @@
                 {% endfor %}
                 <div class="col-xs-12">
                     <div class="col-xs-12">
-                        <div class="col-xs-12 alert alert-success" id="alert-success">
+                        <div class="col-xs-12 alert alert-success">
                             <i class="icon fa fa-check"></i> <span>操作成功</span>
                         </div>
-                        <div class="callout callout-danger col-xs-12" id="alert-error">
+                        <div class="callout callout-danger col-xs-12 alert-error">
                             <i class="icon fa fa-ban"></i> <b>提交失败</b>
-                            <p id="error-text">error</p>
+                            <p class="error-text">error</p>
                         </div>
                     </div>
                 </div>
@@ -57,13 +57,11 @@
         $('#add-product #id_amount').val("");
         $('#add-product #id_sell_price_rmb').val("");
         $('#add-product #id_cost_price_aud').val("");
-        $("#add-product #alert-success").hide();
-        $("#add-product #alert-error").hide();
     }
 
     function showProductError(err) {
-        $("#add-product #alert-error #error-text").text(err);
-        $("#add-product #alert-error").show();
+        $("#add-product .alert-error .error-text").text(err);
+        $("#add-product .alert-error").show();
     }
 
     function submitProduct(success) {
@@ -139,6 +137,8 @@
             modal.find('.modal-title').text('添加商品到' + orderTitle);
             modal.find('#id_order').val(orderID);
             resetProductForm();
+            $("#add-product .alert-success").hide();
+            $("#add-product .alert-error").hide();
         });
 
         $('#add-product').on('shown.bs.modal', function () {
@@ -162,10 +162,10 @@
         $('#product-modal-confirm-continue').on('click', function (event) {
             submitProduct(function () {
                 window.need_reload = true;
-                $("#add-product #alert-success").fadeTo(2000, 500).slideUp(500, function () {
-                    $("#add-product #alert-success").slideUp(500);
+                $("#add-product .alert-success").fadeTo(2000, 500).slideUp(500, function () {
+                    $("#add-product .alert-success").slideUp(500);
                 });
-                $("#add-product #alert-error").hide();
+                $("#add-product .alert-error").hide();
                 resetProductForm();
                 $('#add-product #id_amount').focus();
             })
