@@ -82,6 +82,10 @@ class AuthUser(AbstractUser, UserProfileStripeMixin):
         # for UserProfileStripeMixin, return correct djstripe subscriber
         return self
 
+    @property
+    def is_admin(self):
+        return self.is_superuser or self.in_group(ADMIN_GROUP)
+
 
 class UserProfileMixin(object):
     @property
