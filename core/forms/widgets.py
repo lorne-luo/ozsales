@@ -1,4 +1,4 @@
-from dal_select2.widgets import Select2WidgetMixin, ModelSelect2, Select2
+from dal_select2.widgets import Select2WidgetMixin
 from dal.widgets import QuerySetSelectMixin
 from django import forms
 
@@ -20,10 +20,16 @@ class FormsetSelect2WidgetMixin(Select2WidgetMixin):
             'js/autocomplete_light/autocomplete.init.js',  # hacked this
             'autocomplete_light/vendor/select2/dist/js/select2.full.js',
             'autocomplete_light/select2.js',
+            # Provide an additional i18 js.
+            'autocomplete_light/vendor/select2/dist/js/i18n/zh-CN.js',
         )
 
     autocomplete_function = 'select2'
 
+    def build_attrs(self, *args, **kwargs):
+        attrs = super(FormsetSelect2WidgetMixin, self).build_attrs(*args, **kwargs)
+        attrs.setdefault('data-language', 'zh-CN')
+        return attrs
 
 class FormsetModelSelect2(QuerySetSelectMixin,
                           FormsetSelect2WidgetMixin,

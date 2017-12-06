@@ -1,8 +1,7 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
-from django.forms.models import inlineformset_factory, modelformset_factory
-from dal import autocomplete
+from django.forms.models import inlineformset_factory
 
 from core.forms.widgets import FormsetModelSelect2
 from core.forms.forms import NoManytoManyHintModelForm
@@ -64,7 +63,7 @@ class OrderForm2(forms.ModelForm):
 class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
-        widget=autocomplete.ModelSelect2(url='customer:customer-autocomplete',
+        widget=FormsetModelSelect2(url='customer:customer-autocomplete',
                                          attrs={'data-placeholder': u'任意姓名、手机号...'})
     )
 
