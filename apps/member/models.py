@@ -1,4 +1,6 @@
 import logging
+
+import time
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.contrib.sessions.models import Session
@@ -7,6 +9,8 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+from djstripe.models import Plan
+from core.payments.stripe.stripe_api import stripe
 from rest_framework.authtoken.models import Token
 
 from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
@@ -15,6 +19,9 @@ from core.payments.stripe.models import UserProfileStripeMixin
 from core.sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)
+
+MONTHLY_FREE_ORDER = 10
+SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
 @python_2_unicode_compatible
@@ -48,15 +55,51 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
     def get_name(self):
         return self.name or self.auth_user.get_username()
 
-    def check_expired(self):
+    @property
+    def current_month_order_count(self):
+        from apps.order.models import Order
+        year = timezone.now().year
+        month = timezone.now().month
+        return Order.objects.filter(seller=self, create_time__year=year, create_time__month=month).count()
+
+    def subscribe_seller_member(self):
+        plan_id = SELLER_MEMBER_PLAN_ID
+        if not self.stripe_customer.has_active_subscription(plan_id):
+            plan = Plan.objects.filter(stripe_id=plan_id).first()
+            next_month = timezone.now() + relativedelta(months=1)
+            first_day = next_month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            timestamp = int(time.mktime(first_day.timetuple()))
+            self.stripe_customer.subscribe(plan, charge_immediately=False, trial_end=timestamp)
+            # add invoice item for current month
+            stripe.InvoiceItem.create(
+                customer=self.stripe_customer.stripe_id,
+                amount=int(plan.amount * 100),
+                currency="aud",
+                description="First month member plan fee",
+            )
+
+    def add_card(self, source, remove_old=False, set_default=True):
+        card = super(Seller, self).add_card(source, remove_old=False, set_default=True)
+        if card:
+            self.subscribe_seller_member()
+        return card
+
+    def check_membership(self):
         if self.in_group(FREE_MEMBER_GROUP) or self.auth_user.is_staff:
-            # never expire
-            return False
+            return True  # always True
         elif self.in_group(MEMBER_GROUP):
-            return timezone.now().date() > self.expire_at if self.expire_at else True
+            if self.current_month_order_count <= MONTHLY_FREE_ORDER:
+                return True  # in free range
+            else:
+                if self.can_charge():
+                    if not self.stripe_customer.has_active_subscription(SELLER_MEMBER_PLAN_ID):
+                        self.subscribe_seller_member()
+                    return True  # paid seller
+                else:
+                    return False
         else:
             log.info('seller[%s] have no group.' % self.auth_user.get_username())
-            return True
+            return False
 
     def enable(self, month):
         self.auth_user.is_active = True
