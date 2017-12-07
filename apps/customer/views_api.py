@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from apps.customer.models import Customer, CustomerCart, CartProduct, Address
+from apps.order.api.views import HansSelect2ViewMixin
 from core.libs.string import include_non_asc
 from core.views.permission import ProfileRequiredMixin
 from ..product.models import Product
@@ -41,11 +42,14 @@ class AddCart(GenericAPIView):
         return Response({'success': True}, status=200)
 
 
-class CustomerAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
+class CustomerAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Customer
     paginate_by = 20
     create_field = 'name'
     profile_required = ('member.seller',)
+
+    def create_object(self, text):
+        return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
 
     def get_queryset(self):
         qs = Customer.objects.belong_to(self.request.user).annotate(
@@ -62,11 +66,15 @@ class CustomerAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetVie
         return qs
 
 
-class AddressAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
+class AddressAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Address
     paginate_by = 20
-    create_field = 'name'
+    create_field = 'address'
     profile_required = ('member.seller',)
+
+    def create_object(self, text):
+        #todo extract name, phone number
+        return self.get_queryset().create(**{self.create_field: text, 'customer_id': self.forwarded.get('customer')})
 
     def get_queryset(self):
         qs = Address.objects.belong_to(self.request.user)

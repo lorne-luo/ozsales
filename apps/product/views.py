@@ -8,6 +8,7 @@ from dal import autocomplete
 from rest_framework import permissions
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
 
+from apps.order.api.views import HansSelect2ViewMixin
 from core.libs.string import include_non_asc
 from core.views.permission import ProfileRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
@@ -165,11 +166,14 @@ class BrandViewSet(CommonViewSet):
     search_fields = ['name_en', 'name_cn']
 
 
-class ProductAutocomplete(ProfileRequiredMixin, autocomplete.Select2QuerySetView):
+class ProductAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Product
     paginate_by = 20
     create_field = 'name_cn'
     profile_required = ('member.seller',)
+
+    def create_object(self, text):
+        return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
 
     def get_queryset(self):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')

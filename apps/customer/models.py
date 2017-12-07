@@ -295,7 +295,12 @@ class Address(PinYinFieldModelMixin, models.Model):
         return self.get_text()
 
     def get_text(self):
-        return u'%s,%s,%s' % (self.name, self.mobile, self.address)
+        text = self.address
+        if self.mobile:
+            text = '%s,%s' % (self.mobile, text)
+        if self.name:
+            text = '%s,%s' % (self.name, text)
+        return text
 
     def get_customer_link(self):
         url = reverse('admin:customer_customer_change', args=[self.customer.id])
