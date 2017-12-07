@@ -40,7 +40,7 @@ class Command(BaseCommand):
                     raise
 
             self._create_non_existing_permissions(model, content_type)
-            self._delete_stale_permissions(model, content_type)
+            # self._delete_stale_permissions(model, content_type) # not work with proxy models
             self._update_changed_names(model, content_type)
 
     def _add_view_permission(self, permissions, model_name):
