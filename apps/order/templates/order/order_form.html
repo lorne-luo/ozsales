@@ -54,8 +54,8 @@
         <div class="box-body">
           {% for field in form %}
             <div class="form-group">
-              <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
-              <div class="col-sm-6 col-xs-9">
+              <label for="id_{{ field.name }}" class="col-sm-2 col-xs-2 control-label">{{ field.label }}</label>
+              <div class="col-sm-6 col-xs-10">
                 {{ field }}
               </div>
               <div class="col-sm-4 hidden-xs">
@@ -86,9 +86,9 @@
 
       <div id="orderproduct" class="box box-info inline-related">
         <div class="box-header with-border">
-          <div class="col-xs-1"><h3 class="box-title">产 品</h3></div>
-          <div class="col-xs-2"></div>
-          <div class="col-xs-8"><span>收件地址：<span id="address-text"></span></span></div>
+          <div class="col-xs-1 hidden-xs hidden-sm"><h3 class="box-title">产 品</h3></div>
+          <div class="col-xs-2 hidden-xs hidden-sm"></div>
+          <div class="col-md-8 col-xs-12"><span>地址：<span id="address-text"></span></span></div>
 
         </div>
 

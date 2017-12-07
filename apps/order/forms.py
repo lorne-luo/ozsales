@@ -76,15 +76,15 @@ class OrderAddForm(NoManytoManyHintModelForm):
 
 
 class OrderUpdateForm(NoManytoManyHintModelForm):
-    address = forms.ModelChoiceField(
+    address = forms.ModelChoiceField(label=u'地址',
         queryset=Address.objects.all(),
         widget=FormsetModelSelect2(url='customer:address-autocomplete',
                                    forward=['customer'],
                                    attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
     )
-    status = forms.ChoiceField(label='Status', choices=ORDER_STATUS_CHOICES, required=False)
-    cost_aud = forms.CharField(label='Cost AUD', required=False)
-    sell_rmb = forms.CharField(label='Sell RMB', required=False)
+    status = forms.ChoiceField(label=u'状态', choices=ORDER_STATUS_CHOICES, required=False)
+    cost_aud = forms.CharField(label=u'成本', required=False)
+    sell_rmb = forms.CharField(label=u'售价', required=False)
 
     class Meta:
         model = Order

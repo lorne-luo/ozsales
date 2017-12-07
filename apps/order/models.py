@@ -38,33 +38,33 @@ ORDER_STATUS_CHOICES = (
 @python_2_unicode_compatible
 class Order(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    order_id = models.CharField(_(u'order id'), max_length=32, null=True, blank=True)
-    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
-    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
-    is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
+    order_id = models.CharField(_(u'编号'), max_length=32, null=True, blank=True)
+    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_(u'客户'))
+    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_(u'地址'))
+    address_text = models.CharField(_(u'地址'), max_length=255, null=True, blank=True)
+    is_paid = models.BooleanField(default=False, verbose_name=_(u'已支付'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'Paid Time'))
+                                     verbose_name=_(u'支付时间'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
-                              verbose_name=_('status'))
-    total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
-    product_cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, blank=True,
+                              verbose_name=_(u'状态'))
+    total_amount = models.IntegerField(_(u'数量'), default=0, blank=False, null=False)
+    product_cost_aud = models.DecimalField(_(u'货物成本'), max_digits=8, decimal_places=2, blank=True,
                                            null=True)
-    product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
+    product_cost_rmb = models.DecimalField(_(u'货物成本'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'Ship Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_(u'快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'Ship Time'))
-    total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+                                     verbose_name=_(u'寄出时间'))
+    total_cost_aud = models.DecimalField(_(u'总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_cost_rmb = models.DecimalField(_(u'总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
+    origin_sell_rmb = models.DecimalField(_(u'原价'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_(u'售价'), max_digits=8, decimal_places=2, blank=True, null=True)
     payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
     remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
-    profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
-    create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
-    finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
+    profit_rmb = models.DecimalField(_(u'利润'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_(u'下单汇率'), max_digits=8, decimal_places=4, blank=True, null=True)
+    create_time = models.DateTimeField(_(u'创建时间'), auto_now_add=True, editable=False)
+    finish_time = models.DateTimeField(_(u'完成时间'), editable=True, blank=True, null=True)
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
