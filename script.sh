@@ -54,6 +54,16 @@ static() {
 }
 
 restart() {
+    PULL_INFO=$(git pull 2>/dev/null)
+    if [ "$PULL_INFO" == "Already up-to-date." ]; then
+        COMMIT_INFO=No\ updates,\ restart.
+    else
+        PILOT_PYTHON=$VENV/bin/python
+        COMMIT_INFO=`git show -s --date=iso8601 --format='{"commit": "%h", "date": "%ad", "comment": "%s"}'`
+    fi
+    touch media/upgrade.txt
+    sed -i '1i ['"`date +%Y-%m-%d\ %H:%M:%S`"'] '"$COMMIT_INFO" media/upgrade.txt
+
     $PYTHON manage.py js_reverse
     $PYTHON manage.py init_groups
     $PYTHON manage.py collectstatic --noinput
