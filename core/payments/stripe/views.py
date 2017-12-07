@@ -64,16 +64,17 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.profile.get_default_card()
 
-    def get_context_data(self, **kwargs):
-        context = super(ViewCreditCardView, self).get_context_data(**kwargs)
-        customer = self.request.profile.stripe_customer
-        context.update({'subscription': customer.valid_subscriptions.first()})
-        return context
+    # uncomment if show subscription cancel
+    # def get_context_data(self, **kwargs):
+    #     context = super(ViewCreditCardView, self).get_context_data(**kwargs)
+    #     customer = self.request.profile.stripe_customer
+    #     context.update({'subscription': customer.valid_subscriptions.first()})
+    #     return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if not self.object:
-            return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
+            return HttpResponseRedirect(reverse_lazy('payments:add_card'))
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
@@ -96,7 +97,7 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
             subscription = customer.subscribe(plan)
             # todo update seller expiration, wrap subscribe method
         else:
-            messages.success(self.request, 'Your credit card updated.')
+            messages.success(self.request, 'Plan subcribe failed.')
             return HttpResponseRedirect(reverse_lazy('payments:plan_purchase'))
         return HttpResponseRedirect(reverse_lazy('payments:view_card'))
 
