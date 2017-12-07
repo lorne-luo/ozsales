@@ -2,7 +2,7 @@
     {% if show_title%}<h4>Add Credit Card:</h4>{% endif %}
     <div class="credit-card-form-wrapper col-xs-12 col-md-6">
         <div class="credit-card-form-field col-xs-12">
-            <label for="card-number">CARD NUMBER</label>
+            <label for="card-number">信用卡号</label>
             <div class="field-input">
                 <div id="card-number">
                     <!-- a Stripe Element will be inserted here. -->
@@ -14,11 +14,11 @@
 
         </div>
         <div class="credit-card-form-field col-xs-12">
-            <label for="card-name">CARD HOLDERS NAME</label>
+            <label for="card-name">持卡人姓名</label>
             <div class="field-input">
                 <div class="">
                     <input id="card-name" type="text" class="card-name form-control StripeElement"
-                           placeholder="Card holder name">
+                           placeholder="持卡人姓名">
                 </div>
                 <div class="error-message">
                     <div id="card-name-errors" role="alert"></div>
@@ -27,7 +27,7 @@
         </div>
         <div class="credit-card-form-field credit-card-form-field--expiry col-xs-6">
             <label for="card-expiry">
-                EXPIRY DATE
+                过期年月
             </label>
             <div class="field-input">
                 <div id="card-expiry">
@@ -42,7 +42,7 @@
         <div class="credit-card-form-field credit-card-form-field--cvc col-xs-6">
 
             <label for="card-cvc">
-                CW/CVC
+                CCV/CVC
             </label>
             <div class="field-input">
                 <div id="card-cvc">
@@ -70,6 +70,11 @@
 <script src="https://js.stripe.com/v3/"></script>
 
 <style>
+    @media (min-width: 1200px) {
+        .credit-card-form-wrapper {
+            max-width: 700px;
+        }
+    }
     .credit-card-form-wrapper label {
         margin-top: 10px;
     }

@@ -7,50 +7,12 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-xs-12">
-            <div class="nav-tabs-custom">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#tab_plan" data-toggle="tab" aria-expanded="true">会员&支付</a></li>
-              <li class=""><a href="#tab_history" data-toggle="tab" aria-expanded="false">支付历史</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="tab_plan">
-                <div class="col-xs-12">
-                    {% if subscription %}
-                        <div class="box-body">
-                            <div class="credit-card-form-field col-xs-12">
-                                <label for="card-expiry">
-                                    Current Plan
-                                </label>
-                                <div class="field-input">
-                                        <span>{{ subscription.plan.name }}</span>
-                                </div>
-                            </div>
-
-                            {% if subscription.cancel_at_period_end %}
-                                 <div class="callout callout-warning">
-                                    <h4><i class="icon fa fa-warning"></i> Alert!</h4>
-                                    <p>会员资格已取消，将在{{ subscription.current_period_end }}到期后结束.</p>
-                                  </div>
-                            {% else %}
-                                <div class="col-xs-12">
-                                    <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-plan">Remove Plan</button>
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% else %}
-{#                        <div class="box-body">#}
-{#                            <div class="col-xs-12">#}
-{#                                <p>You currently do not have a plan.</p>#}
-{#                                <button type="button" class="btn btn-info">加入会员</button>#}
-{#                            </div>#}
-{#                        </div>#}
-                    {% endif %}
+        <div class="col-xs-12 col-md-4">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h2 class="box-title">支付方式</h2>
                 </div>
-
-
-                <div class="credit-card-form-wrapper col-xs-12">
-                    <div class="box-body">
+                <div class="box-body">
                     <div class="credit-card-form-field col-xs-12">
                         <label class="control-label" for="card-number">CARD NUMBER</label>
                         <div class="field-input">
@@ -79,29 +41,87 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="box-footer">
                     <div class="col-xs-12">
-                        <a class="btn btn-success" href="{% url 'payments:add_card' %}">Update Card</a>
-                        <button type="button" class="btn bg-navy btn-default" data-toggle="modal" data-target="#remove-card">Remove Card</button>
+                        <a class="btn btn-success col-xs-5" href="{% url 'payments:add_card' %}">Update Card</a>
+                        <button type="button" class="btn bg-navy btn-default pull-right col-xs-5" data-toggle="modal"
+                                data-target="#remove-card">Remove Card
+                        </button>
                     </div>
+                </div>
             </div>
-                  <p style="clear:both"></p><br/>
-              </div>
-              <!-- /.tab-pane -->
-                <div class="tab-pane" id="tab_history">
+        </div>
 
-                <div class="box-body">
-
+        <div class="col-xs-12 col-md-8">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h2 class="box-title">支付历史</h2>
+                </div>
+                <div class="box-body no-padding">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Task</th>
+                            <th>Progress</th>
+                            <th style="width: 40px">Label</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Update software</td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-red">55%</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Clean database</td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-yellow">70%</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Cron job running</td>
+                            <td>
+                                <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-light-blue">30%</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fix and squish bugs</td>
+                            <td>
+                                <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-green">90%</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="box-footer">
-
+                    <ul class="pagination pagination-sm no-margin">
+                        <li><a href="#">«</a></li>
+                        <li><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">»</a></li>
+                    </ul>
                 </div>
-              </div>
-              <!-- /.tab-pane -->
             </div>
-            <!-- /.tab-content -->
-          </div>
-      </div>
-  </div>
+        </div>
+    </div>
 
 <div class="modal fade" id="remove-card" style="display: none;">
   <div class="modal-dialog">
