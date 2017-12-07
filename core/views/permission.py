@@ -1,21 +1,46 @@
+# coding=utf-8
 import inspect
+
+from django.contrib import messages
 from django.db import models
 
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 
 
 class ProfileRequiredMixin(LoginRequiredMixin):
     profile_required = []
 
-    def dispatch(self, request, *args, **kwargs):
+    def check_perm(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return self.handle_no_permission()
+            return False
 
         profile_class_name = '%s.%s' % (request.profile._meta.app_label, request.profile._meta.model_name)
         for profile in self.profile_required:
-            if issubclass(profile, models.Model) and isinstance(request.profile, profile):
-                return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
-            elif isinstance(profile, str) and profile.lower() == profile_class_name:
-                return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+            if isinstance(profile, str) and profile.lower() == profile_class_name:
+                return True
+            elif inspect.isclass(profile) and issubclass(profile, models.Model) and isinstance(request.profile,
+                                                                                               profile):
+                return True
+        return False
 
-        return self.handle_no_permission()
+    def dispatch(self, request, *args, **kwargs):
+        if self.check_perm(request, *args, **kwargs):
+            return super(ProfileRequiredMixin, self).dispatch(request, *args, **kwargs)
+        else:
+            return self.handle_no_permission()
+
+
+class ActiveSellerRequiredMixin(ProfileRequiredMixin):
+    profile_required = ('member.seller',)
+
+    def check_perm(self, request, *args, **kwargs):
+        if super(ActiveSellerRequiredMixin, self).check_perm(request, *args, **kwargs):
+            return request.profile.check_membership()
+        else:
+            return False
+
+    def handle_no_permission(self):
+        messages.warning(self.request, u'已达到免费订单上限，请加入会员')
+        return HttpResponseRedirect(reverse_lazy('payments:add_card'))

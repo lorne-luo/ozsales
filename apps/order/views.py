@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.db import transaction
 from django.core.exceptions import ValidationError, SuspiciousOperation
 from django.forms.models import inlineformset_factory, modelformset_factory
@@ -17,6 +17,7 @@ from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMix
 
 from core.api.permission import SellerPermissions
 from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, ADMIN_GROUP
+from core.views.permission import ProfileRequiredMixin, ActiveSellerRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
 from ..member.models import Seller
@@ -105,20 +106,11 @@ class OrderMemberListView(CommonContextMixin, ListView):
         return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
 
 
-class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class OrderAddView(ActiveSellerRequiredMixin, CommonContextMixin, CreateView):
     model = Order
     form_class = forms.OrderAddForm
     # template_name = 'adminlte/common_form.html'
     template_name = 'order/order_add.html'
-    permissions = {
-        "all": ("order.add_order",)
-    }
-
-    def get_success_url(self):
-        if '_continue' in self.request.POST and self.object:
-            return reverse('order:order-update', args=[self.object.id])
-        else:
-            return reverse('order:order-list-short')
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -189,9 +181,9 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
             return self.render_to_response(context)
 
 
-class OrderAddDetailView(OrderUpdateView):
+class OrderAddDetailView(ActiveSellerRequiredMixin, OrderUpdateView):
     permissions = {
-        "all": ("order.add_order",)
+        "any": ("order.add_order",)
     }
 
     def get_object(self, queryset=None):
