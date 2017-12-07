@@ -86,10 +86,16 @@ class CustomerManager(Manager):
             seller_id = obj.id
         elif isinstance(obj, AuthUser) and obj.is_seller:
             seller_id = obj.profile.id
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
         else:
-            raise PermissionDenied
+            return Customer.objects.none()
 
-        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
+        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id).order_by('-order_count')
 
     def update_order_count(self):
         qs = super(CustomerManager, self).get_queryset()

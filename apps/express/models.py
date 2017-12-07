@@ -49,9 +49,9 @@ class ExpressCarrierManager(models.Manager):
             return ExpressCarrier.objects.none()
 
         qs = super(ExpressCarrierManager, self).get_queryset()
-        return self.usage_order_by_customer(qs, customer_id)
+        return self.order_by_usage_for_customer(qs, customer_id)
 
-    def usage_order_by_customer(self, qs, customer_id):
+    def order_by_usage_for_customer(self, qs, customer_id):
         return qs.annotate(use_counter=models.Count(models.Case(
             models.When(expressorder__order__customer_id=customer_id, then=1),
             default=0,
