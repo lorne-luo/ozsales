@@ -65,6 +65,7 @@ restart() {
     sed -i '1i ['"`date +%Y-%m-%d\ %H:%M:%S`"'] '"$COMMIT_INFO" media/upgrade.txt
     echo "$COMMIT_INFO"
 
+    $PYTHON manage.py migrate
     $PYTHON manage.py js_reverse
     $PYTHON manage.py init_groups
     $PYTHON manage.py collectstatic --noinput
