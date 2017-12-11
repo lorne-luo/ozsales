@@ -29,17 +29,17 @@ class ProductDetailForm(NoManytoManyHintModelForm):
 class BrandAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'remarks']
 
 
 class BrandUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'remarks']
 
 
 class BrandDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
-        fields = ['name_en', 'name_cn', 'short_name', 'country', 'remarks']
+        fields = ['name_en', 'name_cn', 'short_name', 'remarks']
 
