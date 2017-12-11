@@ -11,8 +11,7 @@ class ProductForm(NoManytoManyHintModelForm):
 class ProductAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
-        fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'spec2', 'spec3', 'normal_price', 'bargain_price',
-                  'safe_sell_price', 'tb_url', 'wd_url', 'wx_url']
+        fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec', 'tb_url', 'wd_url', 'wx_url']
 
     def __init__(self, *args, **kwargs):
         super(ProductAddForm, self).__init__(*args, **kwargs)
@@ -22,8 +21,8 @@ class ProductAddForm(NoManytoManyHintModelForm):
 class ProductDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
-        fields = ['name_en', 'name_cn', 'pic', 'brand', 'spec1', 'spec2', 'spec3', 'normal_price', 'bargain_price',
-                  'safe_sell_price', 'tb_url', 'wd_url', 'wx_url']
+        fields = ['name_en', 'name_cn', 'pic', 'brand', 'last_sell_price', 'avg_sell_price', 'avg_cost', 'spec',
+                  'tb_url', 'wd_url', 'wx_url']
 
 
 class BrandAddForm(NoManytoManyHintModelForm):
@@ -42,4 +41,3 @@ class BrandDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Brand
         fields = ['name_en', 'name_cn', 'short_name', 'remarks']
-

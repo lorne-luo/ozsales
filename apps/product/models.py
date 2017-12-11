@@ -1,19 +1,21 @@
+# coding=utf-8
 import os
 import uuid
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, F, Q
+from django.db.models import Sum, F, Q, Avg, Min, Max
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
-
+from django_countries import countries
 from apps.member.models import Seller
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
 
 from core.auth_user.models import AuthUser
+from core.libs.constants import COUNTRIES_CHOICES
 from core.models.models import PinYinFieldModelMixin
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
@@ -37,11 +39,11 @@ class Category(models.Model):
 
 @python_2_unicode_compatible
 class Brand(models.Model):
-    name_en = models.CharField(_('name_en'), max_length=128, null=False, blank=False, unique=True)
-    name_cn = models.CharField(_('name_cn'), max_length=128, null=True, blank=True)
-    short_name = models.CharField(_('Abbr'), max_length=128, null=True, blank=True)
+    name_en = models.CharField(_('name_en'), max_length=128, blank=False, unique=True)
+    name_cn = models.CharField(_('name_cn'), max_length=128, blank=True)
+    short_name = models.CharField(_('Abbr'), max_length=128, blank=True)
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
-    remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
+    remarks = models.CharField(verbose_name=_('remarks'), max_length=254, blank=True)
 
     class Meta:
         verbose_name_plural = _('Brand')
@@ -58,12 +60,6 @@ def get_product_pic_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = instance.brand.name_en + '_' if instance.brand.name_en else ''
     filename = '%s%s' % (filename, instance.name_en)
-    if instance.spec1:
-        filename = '%s_%s' % (filename, instance.spec1)
-    if instance.spec2:
-        filename = '%s_%s' % (filename, instance.spec2)
-    if instance.spec3:
-        filename = '%s_%s' % (filename, instance.spec3)
     filename = filename.replace(' ', '-')
     filename = '%s.%s' % (filename, ext)
     return os.path.join(instance.get_pic_path(), filename)
@@ -123,9 +119,12 @@ class ProductManager(models.Manager):
 @python_2_unicode_compatible
 class Product(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    code = models.CharField(_(u'code'), max_length=32, null=True, blank=True)
-    name_en = models.CharField(_(u'name_en'), max_length=128, null=False, blank=False)
-    name_cn = models.CharField(_(u'name_cn'), max_length=128, null=False, blank=False)
+    code = models.CharField(_(u'code'), max_length=32, blank=True)
+    name_en = models.CharField(_(u'name_en'), max_length=128, blank=True)
+    name_cn = models.CharField(_(u'name_cn'), max_length=128, blank=True)
+    brand_en = models.CharField(_(u'brand_en'), max_length=128, blank=True)
+    brand_cn = models.CharField(_(u'brand_cn'), max_length=128, blank=True)
+    country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
                         variations={
@@ -133,17 +132,19 @@ class Product(PinYinFieldModelMixin, models.Model):
                             'thumbnail': {"width": 400, "height": 400}
                         })
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
-    spec1 = models.CharField(_(u'spec1'), max_length=128, null=True, blank=True)
-    spec2 = models.CharField(_(u'spec2'), max_length=128, null=True, blank=True)
-    spec3 = models.CharField(_(u'spec3'), max_length=128, null=True, blank=True)
+    spec = models.CharField(_(u'spec'), max_length=128, blank=True)
     category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)  # unit: KG
     sold_count = models.IntegerField(_(u'Sold Count'), default=0, null=False, blank=False)
-    full_price = models.DecimalField(_(u'full price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sell_price = models.DecimalField(_(u'sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
 
-    normal_price = models.DecimalField(_(u'normal price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    bargain_price = models.DecimalField(_(u'bargain price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    last_sell_price = models.DecimalField(_(u'last sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    avg_sell_price = models.DecimalField(_(u'avg sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    min_sell_price = models.DecimalField(_(u'min sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    max_sell_price = models.DecimalField(_(u'max sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    avg_cost = models.DecimalField(_(u'avg cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+    min_cost = models.DecimalField(_(u'min cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+    max_cost = models.DecimalField(_(u'max cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+
     safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
     tb_url = models.URLField(_(u'TB URL'), null=True, blank=True)
     wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
@@ -153,8 +154,7 @@ class Product(PinYinFieldModelMixin, models.Model):
 
     summary = models.TextField(_(u'summary'), null=True, blank=True)
     description = models.TextField(_(u'description'), null=True, blank=True)
-    state = models.CharField(_(u'state'), max_length=32, null=True, blank=True, default=ProductState.ON_SELL,
-                             choices=ProductState.CHOICES)
+    is_active = models.BooleanField(_(u'is active'), default=True, null=False, blank=False)
 
     tags = TaggableManager()
     pinyin_fields_conf = [
@@ -173,8 +173,8 @@ class Product(PinYinFieldModelMixin, models.Model):
         list_template_name = 'customer/adminlte-customer-list.html'
 
         # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
-        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price')
+        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
+        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
         filter_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
         search_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
 
@@ -184,18 +184,10 @@ class Product(PinYinFieldModelMixin, models.Model):
             return queryset
 
     def __str__(self):
-        spec = ''
-        if self.spec1:
-            spec += ' ' + self.spec1
-        if self.spec2:
-            spec += ' ' + self.spec2
-        if self.spec3:
-            spec += ' ' + self.spec3
-
         if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s%s' % (self.brand.name_en, self.name_cn, spec)
+            return '%s %s' % (self.brand.name_en, self.name_cn)
         else:
-            return '%s%s' % (self.name_cn, spec)
+            return self.name_cn
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
@@ -240,17 +232,10 @@ class Product(PinYinFieldModelMixin, models.Model):
     get_pic_link.short_description = 'Pic'
 
     def get_name_cn(self):
-        spec = ''
-        if self.spec1:
-            spec += ' ' + self.spec1
-        if self.spec2:
-            spec += ' ' + self.spec2
-        if self.spec3:
-            spec += ' ' + self.spec3
         if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s%s' % (self.brand.name_cn, self.name_cn, spec)
+            return '%s %s' % (self.brand.name_cn, self.name_cn)
         else:
-            return '%s%s' % (self.name_cn, spec)
+            return self.name_cn
 
     get_name_cn.allow_tags = True
     get_name_cn.short_description = 'CN Name'
@@ -258,10 +243,35 @@ class Product(PinYinFieldModelMixin, models.Model):
     def sell_price_text(self):
         return '%srmb' % self.safe_sell_price
 
-    def stat_sold_count(self):
+    def stat(self):
         from apps.order.models import OrderProduct
-        data = OrderProduct.objects.filter(product_id=self.id).aggregate(sold_count=Sum(F('amount')))
-        self.sold_count = data.get('sold_count') or 0
+        product_sales = OrderProduct.objects.filter(product_id=self.id).order_by('-id')
+        if product_sales.count():
+            data = product_sales.aggregate(sold_count=Sum(F('amount')),
+                                           avg_sell_price=Avg(F('sell_price_rmb')),
+                                           min_sell_price=Min(F('sell_price_rmb')),
+                                           max_sell_price=Max(F('sell_price_rmb')),
+                                           avg_cost=Avg(F('cost_price_aud')),
+                                           min_cost=Min(F('cost_price_aud')),
+                                           max_cost=Max(F('cost_price_aud')))
+            self.last_sell_price = product_sales.first().sell_price_rmb
+            self.sold_count = data.get('sold_count') or 0
+            self.avg_sell_price = data.get('avg_sell_price') or None
+            self.min_sell_price = data.get('min_sell_price') or None
+            self.max_sell_price = data.get('max_sell_price') or None
+            self.avg_cost = data.get('avg_cost') or None
+            self.min_cost = data.get('min_cost') or None
+            self.max_cost = data.get('max_cost') or None
+        else:
+            self.last_sell_price = None
+            self.sold_count = 0
+            self.avg_sell_price = None
+            self.min_sell_price = None
+            self.max_sell_price = None
+            self.avg_cost = None
+            self.min_cost = None
+            self.max_cost = None
+
         self.save()
 
 

@@ -210,7 +210,7 @@ class Order(models.Model):
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
             if p.product:
-                p.product.stat_sold_count()
+                p.product.stat()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -388,8 +388,8 @@ class OrderProduct(models.Model):
             self.amount = 1
 
         if not self.cost_price_aud:
-            if self.product and self.product.normal_price:
-                self.cost_price_aud = self.product.normal_price
+            if self.product and self.product.last_sell_price:
+                self.cost_price_aud = self.product.last_sell_price
             else:
                 self.cost_price_aud = 0
         self.total_price_aud = self.cost_price_aud * self.amount

@@ -62,11 +62,11 @@ class ProductListView(CommonContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser:
-            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-            context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Last Price', 'Avg Price','']
+            context['table_fields'] = ['pic', 'link', 'brand', 'last_sell_price', 'avg_sell_price', 'id']
         else:
-            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Sell Price']
-            context['table_fields'] = ['pic', 'link', 'brand', 'safe_sell_price']
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Avg Price']
+            context['table_fields'] = ['pic', 'link', 'brand', 'avg_sell_price']
         context['brands'] = Brand.objects.all()
         return context
 
@@ -82,8 +82,8 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
 
     def get_context_data(self, **kwargs):
         context = super(ProductAddView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['Pic', 'Name', 'Brand', 'Normal Price', 'Bargain Price', 'Sell Price', '']
-        context['table_fields'] = ['pic', 'link', 'brand', 'normal_price', 'bargain_price', 'safe_sell_price', 'id']
+        context['table_titles'] = ['Pic', 'Name', 'Brand', '']
+        context['table_fields'] = ['pic', 'link', 'brand', 'id']
         return context
 
     def form_valid(self, form):
@@ -105,7 +105,7 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
 class ProductDetailView(CommonContextMixin, UpdateView):
     model = Product
     # template_name_suffix = '_form'
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'category', 'safe_sell_price']
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'category', 'avg_sell_price']
 
 
 class ProductViewSet(CommonViewSet):

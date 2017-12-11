@@ -8,10 +8,8 @@
   <th></th>
   <th>名称</th>
   <th class="hidden-sm hidden-xs">品牌</th>
-  <th>售价</th>
   {% if user.is_superuser %}
     <th>成本</th>
-    <th class="hidden-sm hidden-xs">折扣</th>
     <th class="hidden-sm hidden-xs"></th>
   {% endif %}
 {% endblock %}
@@ -33,11 +31,8 @@
     <td class="hidden-sm hidden-xs">{!! item.brand_display !!}</td>
     <td class="visible-sm visible-xs"><a href="{!! item.edit_url !!}">{!! item.brand_display !!} {!! item.name_cn !!}</a>
     </td>
-    <td>{!! item.safe_sell_price !!}</td>
     {% if user.is_superuser %}
-      <td>{!! item.normal_price !!}</td>
-      <td class="hidden-sm hidden-xs">{!! item.bargain_price !!}</td>
-
+      <td>{!! item.avg_sell_price !!}</td>
       {% block item_buttons %}
         {{ block.super }}
       {% endblock %}

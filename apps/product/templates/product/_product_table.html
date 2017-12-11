@@ -13,9 +13,8 @@
       <th>Pic</th>
       <th>Name</th>
       <th class="hidden-phone">Spec</th>
-      <th>Sell Price</th>
-      <th>Normal Cost</th>
-      <th class="hidden-phone">Bargain Cost</th>
+      <th>Avg Price</th>
+      <th>Avg Cost</th>
       <th>Links</th>
       <th class="hidden-phone"></th>
     </tr>
@@ -35,9 +34,8 @@
             </a>
         </td>
         <td class="hidden-phone">{{product.spec1|default:""}}{{product.spec2|default:""}}{{product.spec3|default:""}}</td>
-        <td>{{product.safe_sell_price}}</td>
-        <td>{{product.normal_price}}</td>
-        <td class="hidden-phone">{{product.bargain_price}}</td>
+        <td>{{product.avg_sell_price}}</td>
+        <td>{{product.avg_price}}</td>
         <td>
             {%if product.wx_url%}
               <a data-placement="bottom" data-original-title="Weixin URL" href="{{ product.wx_url }}" role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
