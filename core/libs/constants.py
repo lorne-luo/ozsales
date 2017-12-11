@@ -96,3 +96,15 @@ class Position(object):
         (VICE_PRESIDENT, u'副总裁'),
         (PRESIDENT, u'总裁'),
     )
+
+
+COUNTRIES_CHOICES = (
+    ('AU', u'澳洲'),
+    ('US', u'北美'),
+    ('EU', u'澳洲'),
+    ('GB', u'英国'),
+    ('JP', u'日本'),
+    ('KR', u'韩国'),
+    ('TW', u'台湾'),
+    ('SEA', u'东南亚'),
+)

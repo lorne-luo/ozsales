@@ -10,6 +10,8 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
+
+from core.libs.constants import COUNTRIES_CHOICES
 from core.payments.stripe.stripe_api import stripe
 from rest_framework.authtoken.models import Token
 
@@ -26,6 +28,7 @@ SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 @python_2_unicode_compatible
 class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
+    country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('name'), max_length=30, null=True, blank=True)
     expire_at = models.DateField(_('member expire at'), auto_now_add=False, editable=True, null=True, blank=True)
