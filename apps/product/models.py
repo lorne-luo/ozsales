@@ -9,7 +9,6 @@ from django.core import validators
 from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
-from django_countries import countries
 from apps.member.models import Seller
 from apps.store.models import Page
 from django.utils.encoding import python_2_unicode_compatible
