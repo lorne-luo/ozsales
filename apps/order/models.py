@@ -1,6 +1,8 @@
 # coding=utf-8
 import datetime
 import logging
+
+from decimal import Decimal
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -218,9 +220,15 @@ class Order(models.Model):
             if ex_order.fee:
                 self.shipping_fee += ex_order.fee
 
+        if self.origin_sell_rmb % 1 < Decimal(0.02):
+            self.origin_sell_rmb = Decimal(int(self.origin_sell_rmb)).quantize(Decimal('.01'))
+
         if self.sell_price_rmb is None and self.products.count() or update_sell_price:
             # init assignment or force update from product.post_save and expressorder.post_save
             self.sell_price_rmb = self.origin_sell_rmb
+        elif self.products.count() == 0:
+            self.sell_price_rmb = 0
+            self.total_amount = 0
 
         post_save.disconnect(update_price_from_order, sender=Order)
         self.save()

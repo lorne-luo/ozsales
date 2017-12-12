@@ -1,4 +1,5 @@
 # coding=utf-8
+from decimal import Decimal, ROUND_UP
 from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory
@@ -64,7 +65,7 @@ class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         widget=FormsetModelSelect2(url='customer:customer-autocomplete',
-                                         attrs={'data-placeholder': u'任意姓名、手机号...'})
+                                   attrs={'data-placeholder': u'任意姓名、手机号...'})
     )
 
     class Meta:
@@ -76,12 +77,11 @@ class OrderAddForm(NoManytoManyHintModelForm):
 
 
 class OrderUpdateForm(NoManytoManyHintModelForm):
-    address = forms.ModelChoiceField(label=u'地址',
-        queryset=Address.objects.all(),
-        widget=FormsetModelSelect2(url='customer:address-autocomplete',
-                                   forward=['customer'],
-                                   attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
-    )
+    address = forms.ModelChoiceField(label=u'地址', queryset=Address.objects.all(),
+                                     widget=FormsetModelSelect2(url='customer:address-autocomplete',
+                                                                forward=['customer'],
+                                                                attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
+                                     )
     status = forms.ChoiceField(label=u'状态', choices=ORDER_STATUS_CHOICES, required=False)
     cost_aud = forms.CharField(label=u'成本', required=False)
     sell_rmb = forms.CharField(label=u'售价', required=False)
@@ -187,7 +187,7 @@ class OrderProductDetailForm(NoManytoManyHintModelForm):
 class OrderProductInlineForm(NoManytoManyHintModelForm):
     sum_price = forms.DecimalField(label=u'小计', required=False, help_text=u'小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.all(), required=False,
+    product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.filter(is_active=True), required=False,
                                      widget=FormsetModelSelect2(url='product:product-autocomplete',
                                                                 attrs={'data-placeholder': u'任意中英文名称...',
                                                                        'class': 'form-control'})
@@ -196,7 +196,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
     amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数 量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=8, decimal_places=2, required=False, help_text=u'单 价',
+    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=10, decimal_places=2, required=False, help_text=u'单 价',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
     cost_price_aud = forms.DecimalField(label=u'成本', max_digits=8, decimal_places=2, required=False, help_text=u'成 本',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -215,10 +215,23 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
         self.fields['order'].widget = forms.HiddenInput()
         instance = getattr(self, 'instance', None)
         if instance and instance.pk and 'sum_price' in self.fields:
-            self.fields['sum_price'].initial = instance.amount * instance.sell_price_rmb
+            sum_price = instance.amount * instance.sell_price_rmb
+            if sum_price % 1 < Decimal(0.02):
+                sum_price = Decimal(int(sum_price)).quantize(Decimal('.01'))
+            self.fields['sum_price'].initial = sum_price
 
     def clean_amount(self):
-        return self.cleaned_data.get('amount') or 1
+        return self.cleaned_data.get('amount', 1)
+
+    def clean(self):
+        cleaned_data = super(OrderProductInlineForm, self).clean()
+        amount = cleaned_data.get('amount')
+        sell_price_rmb = cleaned_data.get('sell_price_rmb')
+        sum_price = cleaned_data.get('sum_price')
+        if not sell_price_rmb and amount and sum_price:
+            sell_price_rmb = sum_price / Decimal(amount)
+            cleaned_data['sell_price_rmb'] = sell_price_rmb.quantize(Decimal('.01'), rounding=ROUND_UP)
+        return cleaned_data
 
 
 # OrderProductFormSet = modelformset_factory(OrderProduct, form=OrderProductInlineForm, extra=1)
