@@ -176,7 +176,7 @@ class ProductAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomple
         return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
 
     def get_queryset(self):
-        qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        qs = Product.objects.all_for_seller(self.request.user).order_by('brand__name_en', 'name_cn')
 
         if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))

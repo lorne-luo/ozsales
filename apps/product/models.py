@@ -86,7 +86,8 @@ class ProductManager(models.Manager):
         else:
             return Product.objects.none()
 
-        qs = super(ProductManager, self).get_queryset().filter(Q(seller__isnull=True) | Q(seller_id=seller_id))
+        qs = super(ProductManager, self).get_queryset().filter(is_active=True).filter(
+            Q(seller__isnull=True) | Q(seller_id=seller_id))
         return self.order_by_usage_for_seller(qs, seller_id)
 
     def order_by_usage_for_seller(self, qs, seller_id):
@@ -109,7 +110,7 @@ class ProductManager(models.Manager):
         return self.order_by_usage_for_customer(qs, customer_id)
 
     def order_by_usage_for_customer(self, qs, customer_id):
-        return qs.annotate(use_counter=models.Count(models.Case(
+        return qs.filter(is_active=True).annotate(use_counter=models.Count(models.Case(
             models.When(orderproduct__order__customer_id=customer_id, then=1),
             default=0,
             output_field=models.IntegerField()
