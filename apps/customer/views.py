@@ -55,8 +55,8 @@ class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
 class AddressViewSet(CommonViewSet):
     queryset = Address.objects.all()
     serializer_class = serializers.AddressSerializer
-    filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
-    search_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
+    filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
+    search_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
 
 
 # views for Customer
