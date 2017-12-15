@@ -85,7 +85,7 @@ def one_express_track(url, track_id):
     if verify_code is None:
         parser = OneExpressParser()
         verify_code = parser.run()
-        r.setex(key, 30 * 60, verify_code)
+        r.setex(key, 55 * 60, verify_code)
 
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
