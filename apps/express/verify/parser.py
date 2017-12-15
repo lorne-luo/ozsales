@@ -62,3 +62,9 @@ class BaseParser(object):
     def verify(self, img):
         """recognise verify code from image"""
         raise NotImplementedError
+
+    def test(self, file_name):
+        file_path = self.get_file_path(file_name)
+        img = Image.open(file_path)
+        result = self.verify(img)
+        print(result)

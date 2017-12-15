@@ -10,8 +10,10 @@ class OneExpressParser(BaseParser):
 
     def verify(self, img):
         # load character models
-        model_number = [8, 9, 3, 0, 2, 4, 6, 5, 7, 1]
-        models = [Image.open('./model/%s.bmp' % i) for i in model_number]
+        model_numbers = [8, 9, 3, 0, 2, 4, 6, 5, 7, 1]
+        models = {}
+        for i in model_numbers:
+            models.update({i: Image.open('./apps/express/verify/one_express//model/%s.bmp' % i)})
 
         result = []
         imgArr = np.asarray(img)
@@ -21,10 +23,10 @@ class OneExpressParser(BaseParser):
         x = 0
         while x < width:
             for y in range(height):
-                for m in range(len(models)):
-                    if self.check_model(width, height, data, x, y, models[m]):
-                        result.append(m)
-                        x = x + models[m].size[0]
+                for number,model in models.items():
+                    if self.check_model(width, height, data, x, y, model):
+                        result.append(number)
+                        x = x + models[number].size[0]
                         y = 0
                         break
             x += 1
@@ -45,11 +47,12 @@ class OneExpressParser(BaseParser):
 
         for i in range(model_w):
             for j in range(model_h):
-                if not model_px[i, j]:
-                    continue
                 xx = x + i
                 yy = y + j
-                value = sum(img[xx, yy]) / 3 < 90
+                if not model_px[i, j] or img[xx, yy] == [100, 100]:
+                    continue
+
+                value = sum(img[xx, yy]) / 3 < 128
                 if not value:
                     miss_match += 1
                     if miss_match >= max_miss:
