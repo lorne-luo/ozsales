@@ -1,7 +1,12 @@
 # coding=utf-8
-import redis
+import os
+import shutil
+
+from PIL import Image
 from bs4 import BeautifulSoup
 import requests
+from django.conf import settings
+
 from .verify.one_express.parser import OneExpressParser
 
 
@@ -37,6 +42,7 @@ def post_table(url, headers, data, tag='table', id_=None, cls=None):
     s = requests.session()
     r = s.post(url, data=data, headers=headers)
     data = r.text
+    # print(data)
     soup = BeautifulSoup(data, "html5lib")
     if id_ is None and cls is None:
         return soup.find(tag)
@@ -79,13 +85,27 @@ def transrush_au_track(url):
 
 
 def one_express_track(url, track_id):
-    key = 'one_express_code'
-    r = redis.StrictRedis(host='localhost', port=6379, db=0)
-    verify_code = r.get(key)
-    if verify_code is None:
-        parser = OneExpressParser()
-        verify_code = parser.run()
-        r.setex(key, 55 * 60, verify_code)
+    s = requests.session()
+    code_url = 'http://www.one-express.cn/index.php/app/Index/verify'
+    file_path = os.path.join(settings.TEMP_ROOT, 'OneExpress.png')
+    response = s.get(code_url, stream=True)
+    with open(file_path, 'wb') as out_file:
+        shutil.copyfileobj(response.raw, out_file)
+    del response
+    img = Image.open(file_path)
+
+    parser = OneExpressParser()
+    verify_code = parser.verify(img)
+    if not verify_code:
+        err_file_path = os.path.join(settings.TEMP_ROOT, 'OneExpress.err.png')
+        os.rename(file_path, err_file_path)
+    else:
+        files = os.listdir(settings.TEMP_ROOT)
+        for f in files:
+            if f.startswith('OneExpress.done'):
+                os.remove(os.path.join(settings.TEMP_ROOT, f))
+        done_file_path = os.path.join(settings.TEMP_ROOT, 'OneExpress.done.%s.png' % verify_code)
+        os.rename(file_path, done_file_path)
 
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
@@ -93,6 +113,14 @@ def one_express_track(url, track_id):
         'verify': verify_code,
         'act': 'do'
     }
-    table = post_table(url, headers, data)
+    # print(data)
+    # table = post_table(url, headers, data)
+
+    r = s.post(url, data=data, headers=headers)
+    html = r.text
+    # print(html)
+    soup = BeautifulSoup(html, "html5lib")
+    table = soup.find('table')
+
     last_record = get_last_record(table)
     return check_delivery(last_record)
