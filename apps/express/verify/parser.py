@@ -1,5 +1,6 @@
 import os
-import urllib
+import shutil
+import requests
 from PIL import Image
 import numpy as np
 from django.conf import settings
@@ -25,7 +26,13 @@ class BaseParser(object):
         if not os.path.exists(settings.TEMP_ROOT):
             os.makedirs(settings.TEMP_ROOT)
 
-        urllib.urlretrieve(self.code_url, self.file_path)
+        # for some verify code, must use same session
+        s = requests.session()
+        response = s.get(self.code_url, stream=True)
+        with open(self.file_path, 'wb') as out_file:
+            shutil.copyfileobj(response.raw, out_file)
+        del response
+
         img = Image.open(self.file_path)
         return img
 
