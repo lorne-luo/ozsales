@@ -13,22 +13,22 @@ from models import ExpressCarrier, ExpressOrder
 class ExpressCarrierAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
-                  'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+                  'rate', 'is_default']
 
 
 class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
-                  'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+                  'rate', 'is_default']
 
 
 class ExpressCarrierUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
-                  'is_default']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+                  'rate', 'is_default']
 
 
 # class ExpressOrderAddForm(NoManytoManyHintModelForm):

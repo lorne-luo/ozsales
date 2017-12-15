@@ -66,7 +66,8 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     name_en = models.CharField(_('name_en'), max_length=50, blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     website = models.URLField(_('Website'), blank=True)
-    search_url = models.URLField(_('Search url'), blank=True)
+    search_url = models.URLField(_('Search url'), blank=True)  # page to track parcel
+    post_search_url = models.URLField(_('Post url'), blank=True)  # some carrier need post to track parcel
     id_upload_url = models.URLField(_('upload url'), blank=True)
     rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
     is_default = models.BooleanField('Default', default=False)
