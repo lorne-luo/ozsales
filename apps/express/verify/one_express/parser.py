@@ -23,8 +23,8 @@ class OneExpressParser(BaseParser):
         x = 0
         while x < width:
             for y in range(height):
-                for number,model in models.items():
-                    if self.check_model(width, height, data, x, y, model):
+                for number in model_numbers:
+                    if self.check_model(width, height, data, x, y, models[number]):
                         result.append(number)
                         x = x + models[number].size[0]
                         y = 0
@@ -38,7 +38,7 @@ class OneExpressParser(BaseParser):
         """compare block on code image with number model"""
         model_w, model_h = model.size
         total = model_w * model_h
-        max_miss = int(total * 0.08)
+        max_miss = 1
         miss_match = 0
         model_px = model.load()
 
