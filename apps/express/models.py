@@ -86,7 +86,9 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     def __str__(self):
         return '%s' % self.name_cn
 
-    def update_track(self, url):
+    def update_track(self, order):
+        url = self.post_search_url or order.get_track_url()
+
         try:
             if 'aupost' in self.website.lower():
                 return None, None
@@ -96,6 +98,8 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
                 return tracker.changjiang_track(url)
             elif 'au.transrush.com' in self.website.lower():
                 return tracker.transrush_au_track(url)
+            elif 'one-express' in self.website.lower():
+                return tracker.one_express_track(url, order.track_id)
             # todo more tracker
             else:
                 return tracker.table_last_tr(url)
@@ -204,7 +208,7 @@ class ExpressOrder(models.Model):
 
     def update_track(self):
         if not self.is_delivered and self.carrier:
-            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            delivered, last_info = self.carrier.update_track(self)
             if delivered is not None:
                 self.is_delivered = delivered
                 self.last_track = last_info[:512]
@@ -212,7 +216,7 @@ class ExpressOrder(models.Model):
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:
-            delivered, last_info = self.carrier.update_track(self.get_track_url())
+            delivered, last_info = self.carrier.update_track(self)
             if not delivered:
                 log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
 
