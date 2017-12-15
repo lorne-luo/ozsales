@@ -65,6 +65,7 @@ restart() {
     sed -i '1i ['"`date +%Y-%m-%d\ %H:%M:%S`"'] '"$COMMIT_INFO" media/upgrade.txt
     echo "$COMMIT_INFO"
 
+    $PIP install -r $REQUIREMENTS
     $PYTHON manage.py migrate
     $PYTHON manage.py js_reverse
     $PYTHON manage.py init_groups
