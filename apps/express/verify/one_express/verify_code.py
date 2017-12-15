@@ -16,7 +16,8 @@ def test():
 
 
 def main(file):
-    models = [Image.open('./verify/model/%s.bmp' % i) for i in range(10)]
+    model_number = [8, 9, 3, 0, 2, 4, 6, 5, 7, 1]
+    models = [Image.open('./verify/model/%s.bmp' % i) for i in model_number]
 
     result = []
 
@@ -42,7 +43,7 @@ def main(file):
                     break
         x += 1
 
-    code =''.join([str(x) for x in result])
+    code = ''.join([str(x) for x in result])
     print(code)
     return code
 
