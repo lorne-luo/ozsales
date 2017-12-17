@@ -160,7 +160,7 @@ STATICFILES_FINDERS = (
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
 MEDIA_URL = '/media/'
 
-TEMP_ROOT = os.path.join(BASE_DIR, 'temp')
+TEMP_ROOT = os.path.join(MEDIA_ROOT, 'temp')
 
 # Templates
 # List of callables that know how to import templates from various sources.

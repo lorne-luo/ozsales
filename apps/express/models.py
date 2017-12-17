@@ -209,14 +209,10 @@ class ExpressOrder(models.Model):
     def update_track(self):
         if not self.is_delivered and self.carrier:
             delivered, last_info = self.carrier.update_track(self)
-            if delivered is None:
-                # deliverd is None = error
-                log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
-            else:
+            if delivered in [True, False]:
                 self.is_delivered = delivered
                 self.last_track = last_info[:512]
                 self.save(update_fields=['last_track', 'last_track'])
-
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:
