@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
-from django.db.models.signals import post_save, post_delete, pre_save
+from django.db.models.signals import post_save, post_delete
 from pypinyin import Style
 
 import apps.express.tracker as tracker
@@ -24,11 +24,15 @@ log = logging.getLogger(__name__)
 class ExpressCarrierManager(models.Manager):
     DEFAULT_CACHE_KEY = 'QUERYSET_CACHE_DEFAULT_CARRIER'
 
+    def clean_cache(self):
+        log.info('[QUERYSET_CACHE] clean carriers.')
+        cache.delete(self.DEFAULT_CACHE_KEY)
+
     def default(self):
         default_carrier = cache.get_or_set(
             self.DEFAULT_CACHE_KEY,
             super(ExpressCarrierManager, self).get_queryset().filter(seller__isnull=True),
-            60 * 60)
+            24 * 60 * 60)
         return default_carrier
 
     def all_for_seller(self, obj):
@@ -133,6 +137,13 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     @staticmethod
     def get_default_carrier():
         return ExpressCarrier.objects.filter(is_default=True).first()
+
+    def save(self, *args, **kwargs):
+        # default to update cache
+        update_cache = kwargs.pop('update_cache', True)
+        super(ExpressCarrier, self).save(*args, **kwargs)
+        if update_cache:
+            ExpressCarrier.objects.clean_cache()
 
 
 @python_2_unicode_compatible
@@ -249,6 +260,13 @@ def express_order_deleted(sender, **kwargs):
 def update_default_carrier(sender, instance=None, created=False, **kwargs):
     if instance.is_default:
         ExpressCarrier.objects.exclude(id=instance.id).update(is_default=False)
+
+
+@receiver(post_delete, sender=ExpressCarrier)
+def express_carrier_deleted(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.seller is None:  # default carrier, clean cache
+        ExpressCarrier.objects.clean_cache()
 
 
 # ========================= carrier sub model ==================================

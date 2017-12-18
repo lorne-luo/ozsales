@@ -1,10 +1,14 @@
 # coding=utf-8
 import os
 import uuid
+
+import logging
 from django.db import models
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db.models import Sum, F, Q, Avg, Min, Max
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
 from pypinyin import Style
@@ -18,6 +22,8 @@ from core.auth_user.models import AuthUser
 from core.libs.constants import COUNTRIES_CHOICES
 from core.models.models import PinYinFieldModelMixin
 from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
+
+log = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
@@ -80,11 +86,15 @@ class ProductState(object):
 class ProductManager(models.Manager):
     DEFAULT_CACHE_KEY = 'QUERYSET_CACHE_DEFAULT_PRODUCT'
 
+    def clean_cache(self):
+        log.info('[QUERYSET_CACHE] clean carriers.')
+        cache.delete(self.DEFAULT_CACHE_KEY)
+
     def default(self):
         default_product = cache.get_or_set(
             self.DEFAULT_CACHE_KEY,
             super(ProductManager, self).get_queryset().filter(is_active=True, seller__isnull=True),
-            60 * 60)
+            24 * 60 * 60)
         return default_product
 
     def all_for_seller(self, obj):
@@ -202,6 +212,10 @@ class Product(PinYinFieldModelMixin, models.Model):
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
         self.set_uuid()
+        field_names = ['seller', 'name_en', 'name_cn', 'brand_id', 'brand_en', 'brand_cn']
+        for field_name in set(field_names):
+            current_value = self.get_attr_by_str(field_name)
+            self._original_fields_value.update({field_name: current_value})
 
     def set_uuid(self):
         if not self.uuid:
@@ -282,7 +296,21 @@ class Product(PinYinFieldModelMixin, models.Model):
             self.min_cost = None
             self.max_cost = None
 
-        self.save()
+        self.save(update_cache=False)
+
+    def save(self, *args, **kwargs):
+        # default to update cache
+        update_cache = kwargs.pop('update_cache', True)
+        super(Product, self).save(*args, **kwargs)
+        if update_cache:
+            Product.objects.clean_cache()
+
+
+@receiver(post_delete, sender=Product)
+def express_carrier_deleted(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.seller is None:  # default carrier, clean cache
+        Product.objects.clean_cache()
 
 
 # ========================= product sub model ==================================
