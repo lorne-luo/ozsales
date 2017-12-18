@@ -2,6 +2,7 @@
 import os
 import uuid
 from django.db import models
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db.models import Sum, F, Q, Avg, Min, Max
 from django.utils.translation import ugettext_lazy as _
@@ -77,6 +78,15 @@ class ProductState(object):
 
 
 class ProductManager(models.Manager):
+    DEFAULT_CACHE_KEY = 'QUERYSET_CACHE_DEFAULT_PRODUCT'
+
+    def default(self):
+        default_product = cache.get_or_set(
+            self.DEFAULT_CACHE_KEY,
+            super(ProductManager, self).get_queryset().filter(is_active=True, seller__isnull=True),
+            60 * 60)
+        return default_product
+
     def all_for_seller(self, obj):
         if isinstance(obj, Seller):
             seller_id = obj.id
@@ -85,9 +95,9 @@ class ProductManager(models.Manager):
         else:
             return Product.objects.none()
 
-        qs = super(ProductManager, self).get_queryset().filter(is_active=True).filter(
-            Q(seller__isnull=True) | Q(seller_id=seller_id))
-        return self.order_by_usage_for_seller(qs, seller_id)
+        default_product = self.default()
+        qs = default_product | super(ProductManager, self).get_queryset().filter(is_active=True, seller_id=seller_id)
+        return qs
 
     def order_by_usage_for_seller(self, qs, seller_id):
         return qs.annotate(use_counter=models.Count(models.Case(

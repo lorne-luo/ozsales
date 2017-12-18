@@ -2,8 +2,8 @@
 import logging
 import re
 
-from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.core.cache import cache
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
@@ -22,6 +22,15 @@ log = logging.getLogger(__name__)
 
 
 class ExpressCarrierManager(models.Manager):
+    DEFAULT_CACHE_KEY = 'QUERYSET_CACHE_DEFAULT_CARRIER'
+
+    def default(self):
+        default_carrier = cache.get_or_set(
+            self.DEFAULT_CACHE_KEY,
+            super(ExpressCarrierManager, self).get_queryset().filter(seller__isnull=True),
+            60 * 60)
+        return default_carrier
+
     def all_for_seller(self, obj):
         if isinstance(obj, Seller):
             seller_id = obj.id
@@ -30,7 +39,8 @@ class ExpressCarrierManager(models.Manager):
         else:
             return ExpressCarrier.objects.none()
 
-        qs = super(ExpressCarrierManager, self).get_queryset().filter(Q(seller__isnull=True) | Q(seller_id=seller_id))
+        default_carrier = self.default()
+        qs = default_carrier | super(ExpressCarrierManager, self).get_queryset().filter(seller_id=seller_id)
         return self.order_by_usage_for_seller(qs, seller_id)
 
     def order_by_usage_for_seller(self, qs, seller_id):
