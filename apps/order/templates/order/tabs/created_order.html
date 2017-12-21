@@ -163,18 +163,16 @@
             </li>
             <li v-if="created_currentPage < created_totalPage">
                 <template v-for="n in 2">
-                    <a v-if="created_currentPage+n+1 <=created_totalPage" href="javascript:void(0);"
-                       page="#[created_currentPage+n+1]" style="width: 45px"
-                       title="第#[created_currentPage+n+1]页" v-on:click="page_created" class="text-bold">#[created_currentPage+n+1]</a>
+{#                    use -0 to avoid combined as string#}
+                    <a v-if="created_currentPage-0+n+1 <=created_totalPage" href="javascript:void(0);"
+                       page="#[created_currentPage-0+n+1]" style="width: 45px"
+                       title="第#[created_currentPage-0+n+1]页" v-on:click="page_created" class="text-bold">#[created_currentPage-0+n+1]</a>
                 </template>
             </li>
-            <li v-if="created_currentPage+2 < created_totalPage">
+            <li v-if="created_currentPage-0+2 < created_totalPage">
                 <a href="javascript:void(0);" page="#[created_totalPage]" v-on:click="page_created"
                    title="第#[created_totalPage]页"
                    class="text-bold">末页</a>
-            </li>
-            <li v-on:click="reload" class="text-bold" id="current_page">
-                <a href="javascript:void(0);">刷新</a>
             </li>
         </ul>
         <br/>
