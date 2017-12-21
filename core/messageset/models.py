@@ -17,7 +17,8 @@ class AbstractMessageContent(models.Model, UsableStatus):
         verbose_name=u'标题', max_length=200
     )
     contents = HTMLField(
-        verbose_name=u'内容'
+        verbose_name=u'内容',
+        blank=True
     )
     status = models.PositiveSmallIntegerField(
         verbose_name=u'状态',
@@ -186,20 +187,6 @@ class SiteMailReceive(AbstractSiteMail):
             return queryset.filter(receiver=request.user).exclude(
                 status=SiteMailReceive.DELETED
             )
-            # if 'receive' in request.query_params \
-            # or 'trash' in request.query_params:
-            # receive = request.query_params.get('receive', None)
-            #     if receive:
-            #
-            #     trash = request.query_params.get('trash', None)
-            #     if trash:
-            #         queryset = queryset.filter(
-            #             Q(status=SiteMailReceive.DELETED),
-            #             Q(sender=request.user) | Q(receive=request.user)
-            #         )
-            # else:
-            #     queryset = SiteMailReceive.objects.none()
-            # return queryset
 
         @classmethod
         def get_object_hook(cls, request, obj):

@@ -1,8 +1,7 @@
-from django.conf.urls import include, url
+from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
-from django.views.generic import TemplateView, FormView
+from core.api.routers import PostHackedRouter
 import views
-
 
 # Page URL
 urlpatterns = [
@@ -31,11 +30,6 @@ urlpatterns = [
     # url(r'/task.html$', TaskListView.as_view(),
     #     name='task'),
 ]
-from django.conf.urls import url
-from django.contrib.auth.decorators import login_required
-from rest_framework.routers import DefaultRouter
-from core.api.routers import PostHackedRouter
-import views
 
 
 router = PostHackedRouter()
