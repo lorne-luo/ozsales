@@ -152,10 +152,13 @@
                    title="第#[ongoing_totalPage]页"
                    class="text-bold">末页</a>
             </li>
+            <li v-on:click="reload" class="text-bold" id="current_page">
+                <a href="javascript:void(0);">刷新</a>
+            </li>
         </ul>
+        <br/>
         <div class="form-group">
-            &nbsp;&nbsp;&nbsp;共 #[ongoing_count] 条数据, 每页 #[ongoing_perPage] 条, 第
-            #[ongoing_currentPage]/#[ongoing_totalPage] 页
+            共 #[ongoing_count] 条, 每页 #[ongoing_perPage] 条, 第 #[ongoing_currentPage]/#[ongoing_totalPage] 页
         </div>
     </div>
     <br/>
