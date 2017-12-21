@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from apps.customer.models import Customer, CustomerCart, CartProduct, Address
-from apps.order.api.views import HansSelect2ViewMixin
+from core.views.autocomplete import HansSelect2ViewMixin
 from core.libs.string import include_non_asc
 from core.views.permission import ProfileRequiredMixin
 from ..product.models import Product

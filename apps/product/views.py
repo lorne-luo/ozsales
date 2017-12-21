@@ -1,18 +1,15 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from django.core.urlresolvers import reverse
 from django.views.generic import ListView, CreateView, UpdateView
 from dal import autocomplete
 from rest_framework import permissions
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin
 
-from apps.order.api.views import HansSelect2ViewMixin
+from core.views.autocomplete import HansSelect2ViewMixin
 from core.libs.string import include_non_asc
 from core.views.permission import ProfileRequiredMixin
 from core.views.views import CommonContextMixin, CommonViewSet
-from core.api.views import CommonListCreateAPIView
 from models import Product, Brand
 import serializers
 import forms

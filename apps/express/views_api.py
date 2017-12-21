@@ -2,7 +2,7 @@ from dal import autocomplete
 from django.db.models import Q, Count, Case, IntegerField, When
 
 from apps.express.models import ExpressCarrier, ExpressOrder
-from apps.order.api.views import HansSelect2ViewMixin
+from core.views.autocomplete import HansSelect2ViewMixin
 from core.api.permission import SellerPermissions
 from core.libs.string import include_non_asc
 from core.views.permission import ProfileRequiredMixin
