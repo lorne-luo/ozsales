@@ -143,7 +143,7 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
         verbose_name = _('Customer')
 
     def __str__(self):
-        return '%s' % self.name
+        return '[C]%s' % self.name
 
     @property
     def profile(self):

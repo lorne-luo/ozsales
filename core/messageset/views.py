@@ -1,11 +1,15 @@
 # coding=utf-8
 from braces.views import MultiplePermissionsRequiredMixin
 from django.contrib.auth.decorators import login_required
+from django.db.models.signals import post_save
 from django.http import JsonResponse, HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, CreateView, UpdateView
 from rest_framework import permissions
-
+from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task, \
+    create_sitemail_datas
+import serializers
 import forms
 import serializers
 from core.django.views import CommonContextMixin
@@ -132,8 +136,13 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         if form.is_valid():
             sitemail = form.save(commit=False)
             sitemail.creator = request.user
+            post_save.disconnect(create_sitemail_datas, sender=SiteMailContent)
             sitemail.save()
-            return HttpResponseRedirect(self.get_success_url())
+            #fixme not correctly create SiteMailReceive
+            sitemail.receivers = form.cleaned_data['receivers']
+            post_save.connect(create_sitemail_datas, sender=SiteMailContent)
+            sitemail.save()
+            return redirect('messageset:sitemail-list')
         else:
 
             return self.form_invalid(form)
@@ -198,13 +207,17 @@ class SiteMailReceiveViewSet(CommonViewSet):
     queryset = SiteMailReceive.objects.all()
     serializer_class = serializers.SiteMailReceiveSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
-    search_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
+    filter_fields = ['title', 'content__contents', 'status', 'sender__seller__name', 'creator__seller__name',
+                     'receiver__seller__name']
+    search_fields = ['title', 'content__contents', 'status', 'sender__seller__name', 'creator__seller__name',
+                     'receiver__seller__name']
+
+    def get_queryset(self):
+        queryset = super(SiteMailReceiveViewSet, self).get_queryset()
+        return queryset.filter(receiver=self.request.user)
 
 
 # views for SiteMailSend
-
-
 class SiteMailSendDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = SiteMailSend
     form_class = forms.SiteMailSendDetailForm
