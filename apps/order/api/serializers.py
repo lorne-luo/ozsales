@@ -55,7 +55,7 @@ class OrderProductDisplaySerializer(OrderProductSerializer):
 class OrderSerializer(BaseSerializer):
     """ Serializer for Order """
     address_display = serializers.CharField(source='address')
-    customer_display = serializers.CharField(source='customer')
+    customer_display = serializers.SerializerMethodField()
     customer_url = serializers.SerializerMethodField()
     shipping_order = serializers.SerializerMethodField()
     paid_url = serializers.SerializerMethodField()
@@ -81,6 +81,9 @@ class OrderSerializer(BaseSerializer):
 
     def get_detail_url(self, obj):
         return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
+
+    def get_customer_display(self, obj):
+        return obj.customer.name
 
     def get_customer_url(self, obj):
         user = self.context['request'].user
