@@ -27,28 +27,10 @@ log = logging.getLogger(__name__)
 
 
 @python_2_unicode_compatible
-class Category(models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    parent_category = models.ForeignKey('Category', default=None, blank=True, null=True, verbose_name=_('parent cate'))
-    remarks = models.CharField(verbose_name=_('remarks'), max_length=254, null=True, blank=True)
-
-    class Meta:
-        verbose_name_plural = _('Category')
-        verbose_name = _('Category')
-
-    def __str__(self):
-        if self.parent_category:
-            return '[%s]%s' % (self.parent_category.name, self.name)
-        else:
-            return self.name
-
-
-@python_2_unicode_compatible
 class Brand(models.Model):
     name_en = models.CharField(_('name_en'), max_length=128, blank=False, unique=True)
     name_cn = models.CharField(_('name_cn'), max_length=128, blank=True)
     short_name = models.CharField(_('Abbr'), max_length=128, blank=True)
-    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
     remarks = models.CharField(verbose_name=_('remarks'), max_length=254, blank=True)
 
     class Meta:
@@ -69,18 +51,6 @@ def get_product_pic_path(instance, filename):
     filename = filename.replace(' ', '-')
     filename = '%s.%s' % (filename, ext)
     return os.path.join(instance.get_pic_path(), filename)
-
-
-class ProductState(object):
-    ON_SELL = 'ON_SELL'
-    NOT_SELL = 'NOT_SELL'
-    NO_STOCK = 'NO_STOCK'
-
-    CHOICES = (
-        (ON_SELL, ON_SELL),
-        (NOT_SELL, NOT_SELL),
-        (NO_STOCK, NO_STOCK)
-    )
 
 
 class ProductManager(models.Manager):
@@ -153,8 +123,8 @@ class Product(PinYinFieldModelMixin, models.Model):
                         })
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
     spec = models.CharField(_(u'spec'), max_length=128, blank=True)
-    category = models.ManyToManyField(Category, blank=True, verbose_name=_('category'))
-    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)  # unit: KG
+    # deliver weight unit: KG
+    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)
     sold_count = models.IntegerField(_(u'Sold Count'), default=0, null=False, blank=False)
 
     last_sell_price = models.DecimalField(_(u'last sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -298,16 +268,27 @@ class Product(PinYinFieldModelMixin, models.Model):
 
         self.save(update_cache=False)
 
+    def assign_brand(self):
+        if self.brand:
+            self.brand_cn = self.brand.name_cn if not self.brand_cn else self.brand_cn
+            self.brand_en = self.brand.name_en if not self.brand_en else self.brand_en
+        else:
+            if self.brand_en:
+                self.brand = Brand.objects.filter(name_en=self.brand_en).first()
+            elif self.brand_cn:
+                self.brand = Brand.objects.filter(name_cn=self.brand_cn).first()
+
     def save(self, *args, **kwargs):
         # default to update cache
         update_cache = kwargs.pop('update_cache', True)
+        self.assign_brand()
         super(Product, self).save(*args, **kwargs)
         if update_cache:
             Product.objects.clean_cache()
 
 
 @receiver(post_delete, sender=Product)
-def express_carrier_deleted(sender, **kwargs):
+def product_deleted(sender, **kwargs):
     instance = kwargs['instance']
     if instance.seller is None:  # default carrier, clean cache
         Product.objects.clean_cache()

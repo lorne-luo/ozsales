@@ -12,7 +12,7 @@ class ProductSerializer(BaseSerializer):
     class Meta:
         model = Product
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en', 'brand', 'brand_display', 'spec', 'max_cost',
+                 ['name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en', 'brand_display', 'spec', 'max_cost',
                   'last_sell_price', 'avg_sell_price', 'min_sell_price', 'max_sell_price', 'avg_cost', 'min_cost']
         read_only_fields = ['id']
 
@@ -33,5 +33,5 @@ class BrandSerializer(BaseSerializer):
     class Meta:
         model = Brand
         fields = ['id', 'edit_url', 'detail_url'] + \
-                 ['name_en', 'name_cn', 'short_name', 'remarks', 'category']
+                 ['name_en', 'name_cn', 'short_name', 'remarks']
         read_only_fields = ['id']

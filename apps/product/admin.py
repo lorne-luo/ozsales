@@ -1,16 +1,8 @@
 from django.contrib import admin
-from models import Category, Brand, Product
+from models import Brand, Product
 from utils.custom_admin_site import member_site
 
-admin.site.register(Category)
-
-
-class BrandAdmin(admin.ModelAdmin):
-    # ordering = ['category']
-    pass
-
-
-admin.site.register(Brand, BrandAdmin)
+admin.site.register(Brand)
 
 
 class ProductAdmin(admin.ModelAdmin):

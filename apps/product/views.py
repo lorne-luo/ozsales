@@ -102,7 +102,7 @@ class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
 class ProductDetailView(CommonContextMixin, UpdateView):
     model = Product
     # template_name_suffix = '_form'
-    fields = ['name_en', 'name_cn', 'pic', 'brand', 'category', 'avg_sell_price']
+    fields = ['name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price']
 
 
 class ProductViewSet(CommonViewSet):
