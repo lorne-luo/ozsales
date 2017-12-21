@@ -234,9 +234,6 @@ class Product(PinYinFieldModelMixin, models.Model):
     get_name_cn.allow_tags = True
     get_name_cn.short_description = 'CN Name'
 
-    def sell_price_text(self):
-        return '%srmb' % self.safe_sell_price
-
     def stat(self):
         from apps.order.models import OrderProduct
         product_sales = OrderProduct.objects.filter(product_id=self.id).order_by('-id')

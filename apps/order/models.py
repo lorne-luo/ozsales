@@ -396,15 +396,15 @@ class OrderProduct(models.Model):
             self.amount = 1
 
         if not self.cost_price_aud:
-            if self.product and self.product.last_sell_price:
-                self.cost_price_aud = self.product.last_sell_price
+            if self.product and self.product.avg_cost:
+                self.cost_price_aud = self.product.avg_cost
             else:
                 self.cost_price_aud = 0
         self.total_price_aud = self.cost_price_aud * self.amount
 
         if self.sell_price_rmb is None:
-            if self.product and self.product.safe_sell_price:
-                self.sell_price_rmb = self.product.safe_sell_price
+            if self.product and self.product.last_sell_price:
+                self.sell_price_rmb = self.product.last_sell_price
             else:
                 self.sell_price_rmb = 0
 
