@@ -30,12 +30,13 @@ class PinYinFieldModelMixin(object):
                 return True
 
     def update_pinyin_fields(self):
+        # only update pinyin field when fields updated
         if self.check_update():
-            setattr(self, self.pinyin_field, '')
+            new_pinyin = ''
             for field_name, style, heteronym in self.pinyin_fields_conf:
                 current_value = self.get_attr_by_str(field_name)
-                new_pinyin = getattr(self, self.pinyin_field, '') + self.get_pinyin(current_value, style, heteronym)
-                setattr(self, self.pinyin_field, new_pinyin)
+                new_pinyin += self.get_pinyin(current_value, style, heteronym)
+                setattr(self, self.pinyin_field, new_pinyin.lower())
 
     @classmethod
     def get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):
