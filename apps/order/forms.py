@@ -84,7 +84,7 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
                                      )
     status = forms.ChoiceField(label=u'状态', choices=ORDER_STATUS_CHOICES, required=False)
     cost_aud = forms.CharField(label=u'成本', required=False)
-    sell_rmb = forms.CharField(label=u'售价', required=False)
+    sell_rmb = forms.CharField(label=u'利润', required=False)
 
     class Meta:
         model = Order
