@@ -8,15 +8,15 @@ from ...sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
-ALIYUN_DAILY_EMAIL_COUNTER = 'ALIYUN_DAILY_EMAIL_COUNTER'
+ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 
 
 @task
 def email_send_task(receivers, subject, html_content, text_content=None):
-    counter = r.get(ALIYUN_DAILY_EMAIL_COUNTER) or 0
+    counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
     if counter < 200:
         send_email(receivers, subject, html_content, text_content=None)
-        r.set(ALIYUN_DAILY_EMAIL_COUNTER, counter + 1)
+        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
     else:
         # todo send from local
         msg = 'Aliyun email exceed daily free limitation.'
@@ -26,4 +26,4 @@ def email_send_task(receivers, subject, html_content, text_content=None):
 
 @periodic_task(run_every=crontab(hour=0, minute=1))
 def reset_email_daily_counter():
-    r.set(ALIYUN_DAILY_EMAIL_COUNTER, 0)
+    r.set(ALIYUN_EMAIL_DAILY_COUNTER, 0)
