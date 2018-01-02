@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     # common app
-    'core', # for command management
+    'core',  # for command management
     'core.auth_user',
     'core.adminlte',
     'core.messageset',
@@ -327,6 +327,9 @@ STRIPE_LIVE_SECRET_KEY = ''
 STRIPE_TEST_PUBLIC_KEY = 'pk_test_vEaCFE2a2NpcE6vDvRrvcf1T'
 STRIPE_TEST_SECRET_KEY = 'sk_test_AZbVO3pCQDtSozlrTUL9BhO0'
 STRIPE_LIVE_MODE = False
+
+# ----------------------------------------- 1Forge API KEY-----------------------------------------------
+ONE_FORGE_API_KEY = 'k8gjMiRhU8LuhmewMftPUxthMZ3BQnIr'
 
 # ----------------------------------------- CACHES -----------------------------------------------
 

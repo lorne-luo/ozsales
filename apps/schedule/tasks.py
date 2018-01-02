@@ -4,14 +4,15 @@ import logging
 import urllib2
 import pytz
 import redis
+import python_forex_quotes
+from django.conf import settings
 from decimal import Decimal
-from yahoo_finance import Currency
 from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from dateutil import parser
+import python_forex_quotes
 
-from apps.order.models import Order, ORDER_STATUS
 from core.sms.telstra_api import MessageSender
 from settings.settings import rate
 from ..express.models import ExpressOrder
@@ -181,9 +182,10 @@ def smzdm_task():
 
 @periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
 def get_aud_rmb():
-    # url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
-    audcny = Currency('AUDCNY')
-    value = audcny.get_rate()
+    api_key = settings.ONE_FORGE_API_KEY
+    client = python_forex_quotes.ForexDataClient(api_key)
+    quotes = client.getQuotes(['AUDCNH', 'USDCNH'])[0]
+    value = quotes['ask']
     rate.aud_rmb_rate = Decimal(value)
     sender = MessageSender()
     sender.send_to_self(value)

@@ -51,3 +51,4 @@ django-stdimage==2.4.2
 pypinyin==0.27
 aliyun-python-sdk-core==2.6.1
 numpy==1.13.3
+python_forex_quotes==1.0
