@@ -2,13 +2,16 @@ import os
 import pycurl
 import datetime
 import json
+import redis
 import logging
 from urllib import urlencode
 from StringIO import StringIO
 from django.conf import settings
 from .models import Sms
+from .tasks import TELSTRA_SMS_MONTHLY_COUNTER
 
 log = logging.getLogger(__name__)
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 
 class MessageSender(object):
@@ -55,6 +58,10 @@ class MessageSender(object):
         # log.info(MessageSender.TOKEN, MessageSender.TOKEN_EXPIRY)
 
     def send_sms(self, to, content, app_name=None):
+        counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
+        if not counter < 1000:
+            return
+
         if MessageSender.TOKEN_EXPIRY <= datetime.datetime.now() or not MessageSender.TOKEN:
             self.get_token()
 
@@ -78,7 +85,11 @@ class MessageSender(object):
         sms = Sms(app_name=app_name, send_to=to, content=content)
         if 'messageId' in data:
             sms.success = True
+            counter += 1
+            r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter)
             sms.save()
+            if counter == 999:
+                self.send_to_self('[Warning] Telstra sms meet monthly limitation.')
             return True, data['messageId']
         elif 'status' in data:
             sms.success = False
