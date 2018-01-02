@@ -12,15 +12,14 @@ log = logging.getLogger(__name__)
 
 
 class MessageSender(object):
-    CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
-    CONSUMER_SECRET = "AUbyh8CJy8gASog1"
+    CONSUMER_KEY = settings.TELSTRA_CONSUMER_KEY
+    CONSUMER_SECRET = settings.TELSTRA_CONSUMER_SECRET
     AUTH_URL = 'https://api.telstra.com/v1/oauth/token'
     SEND_URL = 'https://api.telstra.com/v1/sms/messages'
     TOKEN = None
     TOKEN_EXPIRY = datetime.datetime.now()
     _instance = None
     LENGTH_PER_SMS = 160
-    my_number = '0413725868'
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -87,7 +86,7 @@ class MessageSender(object):
             return False, data['status']
 
     def send_to_self(self, content, app_name=None):
-        return self.send_sms(self.my_number, content, app_name)
+        return self.send_sms(settings.ADMIN_MOBILE_NUMBER, content, app_name)
 
 
 # singleton pattern

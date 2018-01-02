@@ -328,6 +328,11 @@ STRIPE_TEST_PUBLIC_KEY = 'pk_test_vEaCFE2a2NpcE6vDvRrvcf1T'
 STRIPE_TEST_SECRET_KEY = 'sk_test_AZbVO3pCQDtSozlrTUL9BhO0'
 STRIPE_LIVE_MODE = False
 
+# ----------------------------------------- Telstra SMS API KEY-----------------------------------------------
+TELSTRA_CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
+TELSTRA_CONSUMER_SECRET = "AUbyh8CJy8gASog1"
+ADMIN_MOBILE_NUMBER='0413725868'
+
 # ----------------------------------------- 1Forge API KEY-----------------------------------------------
 ONE_FORGE_API_KEY = 'k8gjMiRhU8LuhmewMftPUxthMZ3BQnIr'
 
