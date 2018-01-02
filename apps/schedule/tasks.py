@@ -191,7 +191,7 @@ def get_aud_rmb():
     return rate.aud_rmb_rate
 
 
-@periodic_task(run_every=crontab(hour=10, minute=30))
+@periodic_task(run_every=crontab(hour=20, minute=30))
 def express_id_upload_task():
     unupload_order = ExpressOrder.objects.filter(id_upload=False)
     if unupload_order.exists():
