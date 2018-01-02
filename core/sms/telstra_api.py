@@ -8,10 +8,10 @@ from urllib import urlencode
 from StringIO import StringIO
 from django.conf import settings
 from .models import Sms
-from .tasks import TELSTRA_SMS_MONTHLY_COUNTER
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
+TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 
 
 class MessageSender(object):

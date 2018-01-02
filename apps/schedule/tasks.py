@@ -13,7 +13,8 @@ from celery.task.schedules import crontab
 from dateutil import parser
 import python_forex_quotes
 
-from core.sms.telstra_api import MessageSender
+from core.aliyun.email.tasks import ALIYUN_EMAIL_DAILY_COUNTER
+from core.sms.telstra_api import MessageSender, TELSTRA_SMS_MONTHLY_COUNTER
 from settings.settings import rate
 from ..express.models import ExpressOrder
 from .models import DealSubscribe
@@ -200,3 +201,17 @@ def express_id_upload_task():
         ids = ','.join([o.track_id for o in unupload_order])
         sender = MessageSender()
         sender.send_to_self('Upload ID for %s' % ids)
+
+    log.info('[Express] Daily id upload checking.')
+
+
+@periodic_task(run_every=crontab(hour=0, minute=1))
+def reset_email_daily_counter():
+    r.set(ALIYUN_EMAIL_DAILY_COUNTER, 0)
+    log.info('[EMAIL] Reset aliyun email daily counter.')
+
+
+@periodic_task(run_every=crontab(hour=0, minute=1, day_of_month=1))
+def reset_sms_monthly_counter():
+    r.set(TELSTRA_SMS_MONTHLY_COUNTER, 0)
+    log.info('[SMS] Reset Telstra sms monthly counter.')

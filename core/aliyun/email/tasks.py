@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import redis
-from celery.task import task, periodic_task
-from celery.task.schedules import crontab
+from celery.task import task
 from .smtp import send_email
 from ...sms.telstra_api import MessageSender
 
@@ -22,8 +21,3 @@ def email_send_task(receivers, subject, html_content, text_content=None):
         msg = 'Aliyun email exceed daily free limitation.'
         MessageSender().send_to_self(msg, 'EMAIL_SENDER')
         log.info('[EMAIL SENDER] %s' % msg)
-
-
-@periodic_task(run_every=crontab(hour=0, minute=1))
-def reset_email_daily_counter():
-    r.set(ALIYUN_EMAIL_DAILY_COUNTER, 0)
