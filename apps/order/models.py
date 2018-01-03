@@ -376,6 +376,7 @@ class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text=u'产品名称')
+    description = models.CharField(_('Description'), max_length=128, null=True, blank=True, help_text=u'备注')
     amount = models.IntegerField(_('Amount'), default=1, blank=False, null=False, help_text=u'数量')
     sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, default=0, blank=False,
                                          null=False, help_text=u'单价')
@@ -416,7 +417,8 @@ class OrderProduct(models.Model):
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        return u'%s = ¥%d x %d' % (self.name, self.sell_price_rmb, self.amount)
+        description = ' %s' % self.description if self.description else ''
+        return u'%s%s = ¥%d x %d' % (self.name, description, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:
