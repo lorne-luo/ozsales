@@ -5,15 +5,17 @@ import urllib2
 import pytz
 import redis
 import python_forex_quotes
+from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
 from bs4 import BeautifulSoup
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from dateutil import parser
-import python_forex_quotes
+from dateutil.relativedelta import relativedelta
 
 from core.aliyun.email.tasks import ALIYUN_EMAIL_DAILY_COUNTER
+from core.sms.models import Sms
 from core.sms.telstra_api import MessageSender, TELSTRA_SMS_MONTHLY_COUNTER
 from settings.settings import rate
 from ..express.models import ExpressOrder
@@ -107,7 +109,15 @@ def ozbargin_task():
                 description = ' '.join(x.strip() for x in text_list)
                 summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
                 content = summary + description
-                result, detail = sender.send_to_self(content)
+
+                # avoid duplication
+                day_ago = timezone.now() - relativedelta(day=1)
+                if Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
+                    continue
+
+                result, detail = sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
+                subscribe.msg_count += 1
+                subscribe.save(update_fields=['msg_count'])
                 # print 'sending', content
                 log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
