@@ -1,22 +1,15 @@
 # coding=utf-8
 from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import AllowAny
 from django.http import HttpResponse
 from rest_framework.response import Response
 
+from core.api.permission import AdminOnlyPermissions
 from .telstra_api import MessageSender
 from .models import Sms
 
 
-def sms_send(request):
-    m = MessageSender()
-    m.send_to_self('hello boy')
-
-    return Response({'success': True})
-
-
 class SMSSender(GenericAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [AdminOnlyPermissions]
 
     def get(self, request, *args, **kwargs):
         return self.call_send_sms()
@@ -44,7 +37,7 @@ class SMSSelfSender(SMSSender):
 
 
 def sms_record(request):
-    sms_list = Sms.objects.all().order_by('-time')[:20]
+    sms_list = Sms.objects.all().order_by('-id')[:20]
     sms_records = ''
     for sms in sms_list:
         sms_records += '[%s] %s | %s\n\n' % (sms.time.strftime("%Y-%m-%d %H:%M:%S"), sms.send_to, sms.content)

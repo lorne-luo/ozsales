@@ -8,6 +8,7 @@ from email.mime.base import MIMEBase
 from email.mime.application import MIMEApplication
 from email.header import Header
 
+ALIYUN_EMAIL_SYDNEY_HOST = 'smtpdm-ap-southeast-2.aliyun.com'
 SENDER_EMAIL = 'dev@luotao.net'  # 自定义的回复地址
 SENDER_NAME = 'Youdan Team'  # 自定义的发件人名称
 # 单一发信地址
@@ -44,7 +45,7 @@ def send_email(receivers, subject, html_content, text_content=None):
     try:
         # 必须使用SSL，端口465
         client = smtplib.SMTP_SSL()
-        host = 'smtpdm-ap-southeast-2.aliyun.com'
+        host = ALIYUN_EMAIL_SYDNEY_HOST
         client.connect(host, 465)
         # 开启DEBUG模式
         # client.set_debuglevel(0)
