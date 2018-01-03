@@ -8,7 +8,7 @@ class DealSubscribeAddForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = DealSubscribe
-        fields = ['includes', 'excludes', 'is_active']
+        fields = ['mobile', 'includes', 'excludes', 'is_active']
 
 
 class DealSubscribeDetailForm(NoManytoManyHintModelForm):
@@ -16,7 +16,7 @@ class DealSubscribeDetailForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = DealSubscribe
-        fields = ['includes', 'excludes', 'is_active']
+        fields = ['mobile', 'includes', 'excludes', 'is_active', 'msg_count']
 
 
 class DealSubscribeUpdateForm(NoManytoManyHintModelForm):
@@ -24,5 +24,4 @@ class DealSubscribeUpdateForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = DealSubscribe
-        fields = ['includes', 'excludes', 'is_active']
-
+        fields = ['mobile', 'includes', 'excludes', 'is_active']
