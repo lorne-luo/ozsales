@@ -109,11 +109,7 @@
                 <div class="pull-left">
                     <template v-for="product in item.products">
                     <span>
-                        <template v-if="item.status == 'CREATED'">
-                            <input type="checkbox" v-on:click="makr_as_purchased($event)"
-                                   checked="#[product.is_purchased]" name="markPurchased" value="#[product.id]"/>
-                        </template>
-                        {!! product.name !!}x{!! product.amount !!}
+                        {!! product.name !!} {!! product.description !!} X {!! product.amount !!}
                     </span><br/>
                     </template>
                 </div>

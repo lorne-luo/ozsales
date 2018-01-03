@@ -94,10 +94,13 @@
 
         <div id="{{ product_formset.prefix }}_table" class="box-body form-horizontal">
           <div class="form-group hidden-xs hidden-sm">
-            <div class="col-lg-4 col-md-4 col-xs-10">
+            <div class="col-lg-2 col-md-2 col-xs-10">
               <b>产品</b>
             </div>
-            <div class="col-lg-1 col-sm-2 col-xs-2">
+            <div class="col-lg-2 col-md-2 col-xs-10">
+              <b>备注</b>
+            </div>
+            <div class="col-lg-1 col-sm-1 col-xs-2">
               <b>数量</b>
             </div>
             <div class="col-lg-2 col-sm-2 col-xs-2">
@@ -125,10 +128,14 @@
               {{ product.id }}
               {{ product.order }}
               <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
-              <div class="col-lg-4 col-md-4 col-xs-10">
+              <div class="col-lg-2 col-md-2 col-xs-10">
                 {{ product.product }}
               </div>
-              <div class="col-lg-1 col-md-2 col-xs-2">
+              <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
+              <div class="col-lg-2 col-md-2 col-xs-10">
+                {{ product.description }}
+              </div>
+              <div class="col-lg-1 col-md-1 col-xs-2">
                 {{ product.amount }}
               </div>
               <div class="col-lg-2 col-md-2 col-xs-3">
@@ -281,8 +288,12 @@
           {{ new_product_template.id }}
           {{ new_product_template.order }}
           <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
-          <div class="col-lg-4 col-md-4 col-xs-10">
+          <div class="col-lg-2 col-md-2 col-xs-10">
             {{ new_product_template.product }}
+          </div>
+          <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
+          <div class="col-lg-2 col-md-2 col-xs-10">
+            {{ new_product_template.description }}
           </div>
           <div class="col-lg-1 col-md-2 col-xs-2">
             {{ new_product_template.amount }}

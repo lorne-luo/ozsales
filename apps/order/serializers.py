@@ -49,8 +49,8 @@ class OrderProductDisplaySerializer(OrderProductSerializer):
 
     class Meta:
         model = OrderProduct
-        fields = ['id', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud', 'total_price_aud',
-                  'is_purchased']
+        fields = ['id', 'name', 'description', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+                  'total_price_aud', 'is_purchased']
 
 
 class OrderSerializer(BaseSerializer):
@@ -64,7 +64,6 @@ class OrderSerializer(BaseSerializer):
     create_time = serializers.DateTimeField(format='%m-%d', input_formats=None)
     next_status_url = serializers.SerializerMethodField()
     next_status = serializers.SerializerMethodField()
-    product_summary = serializers.SerializerMethodField()
     sell_price_rmb = serializers.IntegerField()
     shipping_fee = serializers.IntegerField()
     total_cost_aud = serializers.IntegerField()
@@ -76,7 +75,7 @@ class OrderSerializer(BaseSerializer):
         model = Order
         fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
-                  'product_summary', 'address_display', 'detail_url',
+                  'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'id', 'products']
         read_only_fields = ['id']
@@ -107,6 +106,3 @@ class OrderSerializer(BaseSerializer):
 
     def get_public_link(self, obj):
         return obj.get_id_link()
-
-    def get_product_summary(self, obj):
-        return obj.get_product_summary()

@@ -192,7 +192,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
                                                                 attrs={'data-placeholder': u'任意中英文名称...',
                                                                        'class': 'form-control'})
                                      )
-    name = forms.CharField(label=u'名称', max_length=128, required=False, help_text=u'产品名称或备注(可选)',
+    description = forms.CharField(label=u'备注', max_length=128, required=False, help_text=u'名称或备注(可选)',
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
     amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数 量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
@@ -203,7 +203,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = OrderProduct
-        fields = ['product', 'order', 'name', 'amount', 'sell_price_rmb', 'sum_price', 'cost_price_aud', 'store']
+        fields = ['product', 'order', 'description', 'amount', 'sell_price_rmb', 'sum_price', 'cost_price_aud', 'store']
 
     def __init__(self, *args, **kwargs):
         super(OrderProductInlineForm, self).__init__(*args, **kwargs)
@@ -241,7 +241,7 @@ OrderProductFormSet = inlineformset_factory(Order, OrderProduct, form=OrderProdu
 class OrderProductFormForList(OrderProductInlineForm):
     class Meta:
         model = OrderProduct
-        fields = ['product', 'order', 'name', 'amount', 'sell_price_rmb', 'cost_price_aud']
+        fields = ['product', 'order', 'description', 'amount', 'sell_price_rmb', 'cost_price_aud']
 
     def __init__(self, *args, **kwargs):
         super(OrderProductFormForList, self).__init__(*args, **kwargs)

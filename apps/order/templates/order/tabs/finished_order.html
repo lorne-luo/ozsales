@@ -65,7 +65,11 @@
             <td colspan="100%">
                 <div>{!! item.address_display !!}</div>
                 <div class="pull-left">
-                    {!! item.product_summary !!}
+                    <template v-for="product in item.products">
+                    <span>
+                        {!! product.name !!} {!! product.description !!} X {!! product.amount !!}
+                    </span><br/>
+                    </template>
                 </div>
                 <div class="pull-right visible-sm visible-xs">
                     {!! item.shipping_order !!}
