@@ -13,6 +13,7 @@ ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 @task
 def email_send_task(receivers, subject, html_content, text_content=None):
     counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
+    counter = int(counter)
     if counter < 200:
         send_email(receivers, subject, html_content, text_content=None)
         r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)

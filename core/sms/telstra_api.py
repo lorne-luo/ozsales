@@ -59,8 +59,10 @@ class MessageSender(object):
 
     def send_sms(self, to, content, app_name=None):
         counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
+        counter = int(counter)
         if not counter < 1000:
-            return
+            log.info('[SMS] Telstra SMS reach 1000 free limitation.')
+            return False, 'Telstra SMS reach 1000 free limitation.'
 
         if MessageSender.TOKEN_EXPIRY <= datetime.datetime.now() or not MessageSender.TOKEN:
             self.get_token()
