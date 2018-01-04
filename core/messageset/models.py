@@ -1,14 +1,15 @@
 # coding=utf-8
 import datetime
+
 from django.conf import settings
-from django.utils import timezone
-from tinymce import HTMLField
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db import models
 from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
-from core.libs.constants import ReadStatus, TaskStatus, MailStatus, UsableStatus, DICT_NULL_BLANK_TRUE
+from tinymce import HTMLField
+
+from core.django.constants import ReadStatus, TaskStatus, MailStatus, UsableStatus, DICT_NULL_BLANK_TRUE
 
 
 class AbstractMessageContent(models.Model, UsableStatus):

@@ -1,16 +1,16 @@
 # coding=utf-8
+from braces.views import MultiplePermissionsRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
-import serializers
+
 import forms
+import serializers
+from core.django.views import CommonContextMixin
+from core.api.views import CommonViewSet
+from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 
 @login_required

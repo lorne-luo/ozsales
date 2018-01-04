@@ -1,6 +1,6 @@
 import logging
-
 import time
+
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.contrib.sessions.models import Session
@@ -10,14 +10,13 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
-
-from core.libs.constants import COUNTRIES_CHOICES
-from core.payments.stripe.stripe_api import stripe
 from rest_framework.authtoken.models import Token
 
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
+from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
+from core.django.constants import COUNTRIES_CHOICES
 from core.payments.stripe.models import UserProfileStripeMixin
+from core.payments.stripe.stripe_api import stripe
 from core.sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)

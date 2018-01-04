@@ -1,16 +1,17 @@
+from braces.views import MultiplePermissionsRequiredMixin
+from core.utils.string import include_non_asc
+from dal import autocomplete
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, UpdateView
-from dal import autocomplete
 from rest_framework import permissions
-from braces.views import MultiplePermissionsRequiredMixin
 
-from core.views.autocomplete import HansSelect2ViewMixin
-from core.libs.string import include_non_asc
-from core.views.permission import ProfileRequiredMixin
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Product, Brand
-import serializers
 import forms
+import serializers
+from core.django.autocomplete import HansSelect2ViewMixin
+from core.django.permission import ProfileRequiredMixin
+from core.django.views import CommonContextMixin
+from core.api.views import CommonViewSet
+from models import Product, Brand
 
 
 class ProductListView(CommonContextMixin, ListView):

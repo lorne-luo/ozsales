@@ -1,9 +1,10 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 from django.forms.models import modelformset_factory, inlineformset_factory
-from core.forms.forms import NoManytoManyHintModelForm
+from django.utils.translation import ugettext_lazy as _
+
+from core.django.forms import NoManytoManyHintModelForm
 from models import Address, Customer, InterestTag
 
 

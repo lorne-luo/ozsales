@@ -5,7 +5,6 @@ from django.contrib.staticfiles.views import serve
 from dbsettings.views import site_settings, app_settings
 from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from core.auth_user.views import  ChangePasswordView, ChangePasswordDoneView
-from core.views.views import IndexView
 from core import auth_user
 from core.auth_user.views import index
 
@@ -54,9 +53,6 @@ urlpatterns = apps_urlpatterns + [
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
     url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
-
-    # for common views
-    # url(r'^', include('core.views.urls', namespace='adminlte')),
 
     # for common api
     url(r'^api/v1/', include('core.api.urls', namespace='common_api')),

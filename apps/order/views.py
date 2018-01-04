@@ -1,27 +1,28 @@
 # coding=utf-8
+from braces.views import MultiplePermissionsRequiredMixin, GroupRequiredMixin
 from django.contrib import messages
-from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
-from django.utils.translation import ugettext as _
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib.auth import login
+from django.core.urlresolvers import reverse
 from django.db import transaction
-from rest_framework.decorators import list_route
-from django_filters import FilterSet
 from django.db.models import Q
-from django.contrib.auth import authenticate, login
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
+from django_filters import FilterSet
+from rest_framework.decorators import list_route
 
+import forms
+import serializers
 from core.api.permission import SellerPermissions
 from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, ADMIN_GROUP
-from core.views.permission import ProfileRequiredMixin
-from core.views.views import CommonContextMixin, CommonViewSet
+from core.django.permission import ProfileRequiredMixin
+from core.django.views import CommonContextMixin
+from core.api.views import CommonViewSet
 from models import Order, ORDER_STATUS, OrderProduct
-from ..member.models import Seller
 from ..customer.models import Customer
 from ..express.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
-import serializers
-import forms
+from ..member.models import Seller
 
 
 def change_order_status(request, order_id, status_value):
@@ -270,7 +271,6 @@ class OrderPayView(CommonContextMixin, UpdateView):
         return ip.strip()
 
     def get_context_data(self, **kwargs):
-        from ..weixin.models import WxApp
         context = super(OrderPayView, self).get_context_data(**kwargs)
         self.object = self.get_object()
         context['jsapi'] = self.object.get_jsapi(self.get_ip())

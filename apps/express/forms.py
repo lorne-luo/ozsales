@@ -1,12 +1,11 @@
 # coding=utf-8
-from dal import autocomplete
+from django import forms
 from django.contrib import admin
+from django.forms.models import inlineformset_factory
 
 from apps.order.models import Order
-from core.forms.widgets import FormsetModelSelect2
-from core.forms.forms import NoManytoManyHintModelForm
-from django import forms
-from django.forms.models import modelformset_factory, inlineformset_factory
+from core.django.forms import NoManytoManyHintModelForm
+from core.django.autocomplete import FormsetModelSelect2
 from models import ExpressCarrier, ExpressOrder
 
 

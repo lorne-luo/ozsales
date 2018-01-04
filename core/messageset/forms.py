@@ -1,6 +1,5 @@
 # coding=utf-8
-from core.forms.forms import NoManytoManyHintModelForm
-from django.utils.translation import ugettext_lazy as _
+from core.django.forms import NoManytoManyHintModelForm
 from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 

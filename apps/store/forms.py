@@ -1,5 +1,5 @@
 # coding=utf-8
-from core.forms.forms import NoManytoManyHintModelForm
+from core.django.forms import NoManytoManyHintModelForm
 from models import Page, Store
 
 

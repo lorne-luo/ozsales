@@ -1,16 +1,15 @@
 # coding=utf-8
-from django.contrib.auth.mixins import LoginRequiredMixin
+from dal import autocomplete
 from django.db.models import Count, Q
 from django.http import Http404
-from django.core.exceptions import PermissionDenied
-from dal import autocomplete
-from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from apps.customer.models import Customer, CustomerCart, CartProduct, Address
-from core.views.autocomplete import HansSelect2ViewMixin
-from core.libs.string import include_non_asc
-from core.views.permission import ProfileRequiredMixin
+from core.django.autocomplete import HansSelect2ViewMixin
+from core.django.permission import ProfileRequiredMixin
+from core.utils.string import include_non_asc
 from ..product.models import Product
 
 

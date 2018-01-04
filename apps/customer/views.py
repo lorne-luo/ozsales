@@ -1,16 +1,16 @@
 # coding=utf-8
-from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from braces.views import MultiplePermissionsRequiredMixin, GroupRequiredMixin
 from django.db import transaction
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
+from django.http import HttpResponse
+from django.views.generic import ListView, CreateView, UpdateView
 
+import forms
+import serializers
 from core.api.permission import SellerPermissions
 from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Address, Customer, InterestTag
-import serializers
-import forms
+from core.django.views import CommonContextMixin
+from core.api.views import CommonViewSet
+from models import Address, Customer
 
 
 # views for Address

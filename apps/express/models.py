@@ -2,21 +2,20 @@
 import logging
 import re
 
-from django.db import models
 from django.core.cache import cache
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
-from django.dispatch import receiver
+from django.db import models
 from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
 import apps.express.tracker as tracker
 from apps.member.models import Seller
 from core.auth_user.models import AuthUser
-from core.models.models import PinYinFieldModelMixin
-from ..order.models import Order
+from core.django.models import PinYinFieldModelMixin
 from ..customer.models import Address, Customer
+from ..order.models import Order
 
 log = logging.getLogger(__name__)
 

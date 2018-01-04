@@ -1,7 +1,4 @@
-import copy
-from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from pypinyin import pinyin, lazy_pinyin, Style
+from pypinyin import pinyin, Style
 
 
 class PinYinFieldModelMixin(object):

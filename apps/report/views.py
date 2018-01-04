@@ -1,21 +1,13 @@
 # coding=utf-8
-from django.http import Http404
-from django.views.generic import ListView, CreateView, UpdateView, TemplateView
-from django.core.urlresolvers import reverse
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from django.utils import timezone
-from django.db.models import Sum
+from braces.views import MultiplePermissionsRequiredMixin
+from django.views.generic import ListView, CreateView, UpdateView
 
-from core.auth_user.views import OwnerViewSetMixin
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import MonthlyReport
-from apps.customer.models import Customer
-from apps.order.models import Order, Address
-from apps.express.models import ExpressOrder
-import serializers
 import forms
+import serializers
+from core.auth_user.views import OwnerViewSetMixin
+from core.django.views import CommonContextMixin
+from core.api.views import CommonViewSet
+from models import MonthlyReport
 
 
 class MonthlyReportListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):

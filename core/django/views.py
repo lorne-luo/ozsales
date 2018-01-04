@@ -1,28 +1,16 @@
 # coding=utf-8
-from django.contrib.auth.views import password_change
-from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q, Count
-from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
-from django.core.urlresolvers import reverse
-from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
-from django.http import JsonResponse
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ImproperlyConfigured, SuspiciousOperation
+from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import JsonResponse
 from django.views.generic import ListView, CreateView, \
     UpdateView, DeleteView, TemplateView, DetailView
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework_extensions.mixins import PaginateByMaxMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.decorators import detail_route, list_route
-from rest_framework import filters, permissions
-
-from core.api.permission import CommonAPIPermissions, AdminOnlyPermissions
-from core.libs import constants
 
 
-# from core.adminlte.models import Menu, SystemConfig, Permission
-# from core.messageset.models import Notification, Task
-# from core.organization.models import Staff
+from core.django import constants
+
 
 class CommonContextMixin(object):
     @property
@@ -127,16 +115,6 @@ class CommonPageViewMixin(object):
             'page_system_subhead': ''
         }
         context.update(common_dict)
-        return context
-
-
-class IndexView(CommonPageViewMixin, TemplateView):
-    template_name = "adminlte/index.html"
-
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        # staff_count = Staff.objects.filter(status=Staff.IN_JOB).count()
-        # context['staff_count'] = staff_count
         return context
 
 
@@ -260,145 +238,3 @@ class CommonDeletePageView(CommonFormPageMixin, DeleteView):
         pk = pk.split(',')
         return queryset.filter(pk__in=pk)
 
-
-# class CommonBatchDeleteView(GenericAPIView):
-# permission_classes = [permissions.DjangoModelPermissions]
-#
-#     def post(self, request):
-#         pk = self.request.POST.get('pk')
-#         pk = pk.split(',')
-#         objects = self.queryset.filter(pk__in=pk)
-#         for obj in objects:
-#             obj.delete()
-#         return JsonResponse({'success': True}, status=200)
-
-
-class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
-    """ provide list/retrive/patch/delete restful api for model """
-    max_paginate_by = 200
-    filter_backends = (DjangoFilterBackend,
-                       filters.SearchFilter,
-                       filters.OrderingFilter)
-
-    # subclass implement below to specify permission for acitons
-    # permissions_map = {
-    #     'retrieve': [CommonAPIPermissions],
-    #     'create': [CommonAPIPermissions],
-    #     'list': [CommonAPIPermissions],
-    #     'update': [CommonAPIPermissions],
-    #     'delete': [CommonAPIPermissions],  # customized action below
-    #     'destroy': [CommonAPIPermissions],
-    # }
-
-    def get_permissions(self):
-        if hasattr(self, 'permissions_map'):
-            if self.action.lower() in self.permissions_map:
-                self.permission_classes = self.permissions_map[self.action]
-
-        return super(CommonViewSet, self).get_permissions()
-
-    @list_route(methods=['post', 'delete'])
-    def delete(self, request, pk=None):
-        """ for batch delete """
-        pk = request.POST.get('pk')
-        pk = pk.split(',')
-        queryset = self.filter_queryset(self.get_queryset())
-        queryset = queryset.filter(pk__in=pk)
-        if queryset.count():
-            queryset.delete()
-        else:
-            data = {'detail': 'Object not found, or permission denied.'}
-            return Response(data, status=404)
-        return JsonResponse({'success': True}, status=200)
-
-    @list_route(methods=['post', 'get'])
-    def page(self, request):
-        """ pagenation api for jquery.dataTable """
-        draw = request.GET.get('draw', 0)
-        length = int(request.GET.get('length', 5))
-        start = int(request.GET.get('start', 0))
-        order_column = int(request.GET.get('order[0][column]', 0))
-        order_direction = request.GET.get('order[0][dir]', 'asc')
-        search_keyword = request.GET.get('search[value]', '')
-        raise NotImplementedError
-        # column_field_map = {
-        #     0: 'start_time',
-        #     1: 'title',
-        #     2: 'start_time',
-        #     3: 'end_time',
-        #     4: 'version',
-        #     5: 'parental_rating',
-        # }
-        # order_string = column_field_map[order_column]
-        #
-        # if order_direction.lower() == 'desc':
-        #     order_string = '-' + order_string
-        #
-        # events = Event.objects.filter(channel_id=channel_id).order_by(order_string)
-        # records_total = events.count()
-        #
-        # if search_keyword:
-        #     events = events.filter(
-        #         Q(title__icontains=search_keyword) | Q(parental_rating__abbreviation__icontains=search_keyword))
-        # records_filtered_total = events.count()
-        #
-        # if length >= 0:
-        #     events = events[start: start + length]
-        #
-        # data = []
-        # for e in events:
-        #     parental_rating_str = e.parental_rating.abbreviation if e.parental_rating else ''
-        #     item = ['<input type="checkbox" name="selected_events" class="checkboxes" value="%s" />' % e.id,
-        #             '<a href="%s">%s</a>' % (reverse('event-edit', kwargs={'event_id': e.id, }), e.title),
-        #             formats.localize(timezone.localtime(e.start_time)),  # timezone convert and datetime string localize
-        #             formats.localize(timezone.localtime(e.end_time)),
-        #             parental_rating_str,
-        #             EventRecordStatus.get_record_button(e, e.get_record_button_code(request.user))
-        #             ]
-        #     data.append(item)
-        #
-        # result = {
-        #     "draw": draw,
-        #     "length": len(data),
-        #     "start": start,
-        #     "end": start + length,
-        #     "recordsTotal": records_total,
-        #     "recordsFiltered": records_filtered_total,
-        #     "data": data,
-        #     "error": ""
-        # }
-        # return Response(result)
-
-#
-# class AbstractViewSet(PaginateByMaxMixin, ModelViewSet):
-#     """ provide list/retrive/patch/delete restful api for model """
-#     max_paginate_by = 200
-#     filter_backends = (filters.SearchFilter,
-#                        filters.OrderingFilter)
-#     permission_classes = [permissions.DjangoModelPermissions]
-#
-#     def get_queryset(self):
-#         if 'app_name' not in self.kwargs or 'model_name' not in self.kwargs:
-#             raise SuspiciousOperation('CommonView cant get app_name and model_name.')
-#
-#         app_name = self.kwargs.get('app_name').lower()
-#         model_name = self.kwargs.get('model_name').lower()
-#         try:
-#             model_content_type = ContentType.objects.get(app_label=app_name, model=model_name)
-#         except ObjectDoesNotExist:
-#             raise ViewDoesNotExist
-#
-#         self.queryset=model_content_type.model_class().objects.all()
-#         self.serializer_class = model_content_type.model_class()._meta.serializer_class
-#         return self.queryset
-#
-#
-#     @list_route(methods=['post', 'delete'])
-#     def delete(self, request, pk=None):
-#         """ for batch delete """
-#         pk = request.POST.get('pk')
-#         pk = pk.split(',')
-#         objects = self.queryset.filter(pk__in=pk)
-#         for obj in objects:
-#             obj.delete()
-#         return JsonResponse({'success': True}, status=200)

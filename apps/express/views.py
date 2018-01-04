@@ -1,11 +1,10 @@
 # coding=utf-8
+from braces.views import MultiplePermissionsRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
-from django.http import HttpResponseRedirect
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import ExpressCarrier, ExpressOrder
-from ..order.models import ORDER_STATUS
+
 import forms
+from core.django.views import CommonContextMixin
+from models import ExpressCarrier
 
 
 # views for ExpressCarrier

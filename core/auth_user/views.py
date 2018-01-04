@@ -1,14 +1,11 @@
 # coding=utf-8
-from django.shortcuts import render
 from django.contrib.auth.views import password_change
-
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
-
+from django.http import HttpResponseRedirect
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
-from core.views.views import CommonPageViewMixin
+from core.django.views import CommonPageViewMixin
 
 
 class OwnerViewSetMixin(object):

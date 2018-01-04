@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     'kombu.transport.django',
 
     # common app
-    'core',  # for command management
+    'core.commands',  # customized django commands
     'core.auth_user',
     'core.adminlte',
     'core.messageset',
@@ -89,7 +89,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'core.libs.middleware.ProfileAuthenticationMiddleware',
+    'core.django.middleware.ProfileAuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

@@ -1,14 +1,15 @@
 # coding=utf-8
 from decimal import Decimal, ROUND_UP
+
 from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory
 
-from core.forms.widgets import FormsetModelSelect2
-from core.forms.forms import NoManytoManyHintModelForm
+from core.django.forms import NoManytoManyHintModelForm
+from core.django.autocomplete import FormsetModelSelect2
+from models import Order, OrderProduct, ORDER_STATUS_CHOICES
 from ..customer.models import Customer, Address
 from ..product.models import Product
-from models import Order, OrderProduct, ORDER_STATUS, ORDER_STATUS_CHOICES
 
 
 class OrderForm(forms.ModelForm):
