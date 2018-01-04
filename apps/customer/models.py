@@ -147,19 +147,6 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
 
-    class Config:
-        list_template_name = 'customer/adminlte-customer-list.html'
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
-        list_form_fields = ('name', 'email', 'mobile', 'primary_address', 'groups', 'tags')
-        filter_fields = ('name', 'email', 'mobile')
-        search_fields = ('name', 'email', 'mobile')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Customer.objects.all()
-            return queryset
-
     def __str__(self):
         return '%s' % self.name
 
