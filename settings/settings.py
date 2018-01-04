@@ -194,7 +194,7 @@ AUTH_PROFILE_MODULE = 'member.seller'
 AUTHENTICATION_BACKENDS = ['core.auth_user.backend.AuthUserAuthenticateBackend']
 LOGIN_URL = '/member/login/'
 
-LOGOUT_URL = '/member/login/'
+LOGOUT_URL = '/member/logout/'
 
 LOGIN_REDIRECT_URL = '/member/profile/'
 

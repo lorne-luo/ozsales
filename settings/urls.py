@@ -17,7 +17,7 @@ def if_installed(appname, *args, **kwargs):
 
 apps_urlpatterns = [
     url(r'^', include('apps.customer.urls', namespace='customer')),
-    url(r'^', include('apps.member.urls', namespace='member')),
+    url(r'^member/', include('apps.member.urls', namespace='member')),
     url(r'^', include('apps.store.urls', namespace='store')),
     url(r'^', include('apps.product.urls', namespace='product')),
     url(r'^', include('apps.order.urls', namespace='order')),
