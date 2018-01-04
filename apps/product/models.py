@@ -159,20 +159,6 @@ class Product(PinYinFieldModelMixin, models.Model):
         verbose_name_plural = _('Product')
         verbose_name = _('Product')
 
-    class Config:
-        list_template_name = 'customer/adminlte-customer-list.html'
-
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
-        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
-        filter_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
-        search_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Product.objects.all()
-            return queryset
-
     def __str__(self):
         if self.brand and self.brand.name_en.lower() != 'none':
             return '%s %s' % (self.brand.name_en, self.name_cn)

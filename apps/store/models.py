@@ -19,19 +19,6 @@ class Store(models.Model):
     def __str__(self):
         return '%s' % self.short_name
 
-    class Config:
-
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = [u'name', u'short_name', u'address', u'domain', u'Search URL', u'Shipping Rate']
-        list_form_fields = [u'name', u'short_name', u'address', u'domain', u'Search URL', u'Shipping Rate']
-        filter_fields = [u'name', u'short_name', u'address', u'domain']
-        search_fields = [u'name', u'short_name', u'address', u'domain']
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Store.objects.all()
-            return queryset
-
 
 @python_2_unicode_compatible
 class Page(models.Model):

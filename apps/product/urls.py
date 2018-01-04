@@ -13,9 +13,6 @@ urlpatterns += [
     url(r'^product/$', views.ProductListView.as_view(), name="product-list"),
     url(r'^product/product/(?P<pk>\d+)/$', views.ProductDetailView.as_view(), name="product-detail"),
     url(r'^product/product/(?P<pk>\d+)/edit/$', login_required(views.ProductUpdateView.as_view()), name="product-update"),
-    # old
-    url(r'^product/edit/(?P<pk>\d+)/$', views.ProductAddEdit.as_view(), name="product-edit-old"),
-    url(r'^product/add/$', views.ProductAddEdit.as_view(), name="product-add-old"),
     # autocomplete
     url(r'^product/product/autocomplete/$', views.ProductAutocomplete.as_view(), name='product-autocomplete'),
 

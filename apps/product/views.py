@@ -1,5 +1,3 @@
-from django.views.generic import TemplateView
-from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.views.generic import ListView, CreateView, UpdateView
 from dal import autocomplete
@@ -15,41 +13,9 @@ import serializers
 import forms
 
 
-class ProductList(MultiplePermissionsRequiredMixin, TemplateView):
-    ''' List of products. '''
-    template_name = 'product/product-list.html'
-    permissions = {
-        "any": ("product.add_product", "product.view_product")
-    }
-
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        context['products'] = Product.objects.all()
-        return self.render_to_response(context)
-
-
-class ProductAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
-    ''' Add/Edit a product. '''
-    template_name = 'product/product-edit.html'
-    permissions = {
-        "any": ("product.add_product", "product.view_product")
-    }
-
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', '')
-        context = {'form': forms.ProductForm()}
-        if pk:
-            product = get_object_or_404(Product, id=pk)
-            context['product'] = product
-
-        return self.render_to_response(context)
-
-
 class ProductListView(CommonContextMixin, ListView):
     model = Product
-
-    # template_name_suffix = '_list'
-    # template_name = 'product_list.html'
+    template_name_suffix = '_list'
 
     def get_template_names(self):
         if not self.request.user.is_authenticated():
@@ -59,7 +25,7 @@ class ProductListView(CommonContextMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super(ProductListView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser:
-            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Last Price', 'Avg Price','']
+            context['table_titles'] = ['Pic', 'Name', 'Brand', 'Last Price', 'Avg Price', '']
             context['table_fields'] = ['pic', 'link', 'brand', 'last_sell_price', 'avg_sell_price', 'id']
         else:
             context['table_titles'] = ['Pic', 'Name', 'Brand', 'Avg Price']
@@ -71,7 +37,6 @@ class ProductListView(CommonContextMixin, ListView):
 class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = Product
     form_class = forms.ProductAddForm
-    # template_name_suffix = '_create'
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("product.add_product",)
