@@ -20,7 +20,7 @@ from apps.store.models import Page
 from core.auth_user.models import AuthUser
 from core.django.constants import COUNTRIES_CHOICES
 from core.django.models import PinYinFieldModelMixin
-from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
+from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 log = logging.getLogger(__name__)
 

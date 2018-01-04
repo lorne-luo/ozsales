@@ -3,7 +3,6 @@ from django.conf.urls import  include, url
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from dbsettings.views import site_settings, app_settings
-from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from core.auth_user.views import  ChangePasswordView, ChangePasswordDoneView
 from core import auth_user
 from core.auth_user.views import index
@@ -48,7 +47,7 @@ urlpatterns = apps_urlpatterns + [
 #     url(r'^api/', include(api_urlpatterns, namespace='api')),
 
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
+    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),

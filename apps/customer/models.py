@@ -19,7 +19,7 @@ from apps.member.models import Seller
 from apps.product.models import Product
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin
-from settings.settings import ID_PHOTO_FOLDER, MEDIA_URL
+from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
 
 
 @python_2_unicode_compatible

@@ -17,7 +17,7 @@ from dateutil.relativedelta import relativedelta
 from core.aliyun.email.tasks import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.sms.telstra_api import MessageSender, TELSTRA_SMS_MONTHLY_COUNTER
-from settings.settings import rate
+from config.settings import rate
 from ..express.models import ExpressOrder
 from .models import DealSubscribe
 
