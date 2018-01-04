@@ -10,11 +10,6 @@ urlpatterns = (
     url(r'^home/$', views.member_home, name="member-home"),
     url(r'^agent/$', views.AgentView.as_view(), name="member-agent"),
     url(r'^profile/$', views.ProfileView.as_view(), name="member-profile"),
-    url(r'^users/$', views.seller_index, name="seller-index"),
-    url(r'^user/add/$', views.CreateUser.as_view(), name="seller-add"),
-    url(r'^user/edit/(?P<pk>[\d]+)/$', views.ProfileView.as_view(), name="admin-seller-edit"),
-    url(r'^user/delete/(?P<pk>[-\d]+)/$', views.user_delete, name="user-delete"),
-    url(r'^user/password/(?P<pk>[-\d]+)/$', views.user_password_reset, name="user-password"),
 )
 
 urlpatterns += (
