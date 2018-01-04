@@ -51,10 +51,6 @@ urlpatterns = apps_urlpatterns + [
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
     url(r'^media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 
-
-    # registration
-    # url(r'^auth/', include("apps.registration.urls", namespace="registration")),
-
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
     url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),

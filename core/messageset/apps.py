@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.apps import AppConfig
 
-__author__ = 'lyhapple'
+__author__ = 'Lorne'
 
 
 class MessageAppConfig(AppConfig):

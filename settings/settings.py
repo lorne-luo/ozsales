@@ -67,7 +67,6 @@ INSTALLED_APPS = (
     'apps.store',
     'apps.report',
     'apps.schedule',
-    'apps.registration',
     'apps.weixin',
     'core.sms',
     'utils',
