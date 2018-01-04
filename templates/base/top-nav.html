@@ -8,7 +8,7 @@
 <div id="header" class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <a class="brand" href="{% url 'member-home' %}"><img src="{% static 'img/logo.png' %}" alt="OZ Sale"></a>
+          <a class="brand" href="{% url 'member:member-home' %}"><img src="{% static 'img/logo.png' %}" alt="OZ Sale"></a>
           {% if user.is_authenticated %}
           <a data-target=".nav-collapse" data-toggle="collapse" id="main_menu_trigger" class="btn btn-navbar collapsed">
             <i class="fa fa-chevron-down"></i>
@@ -35,8 +35,8 @@
                 <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu">
-                  <li><a href="{% url 'member-profile' %}"><i class="fa fa-user"></i> My Profile</a></li>
-                  <li><a href="{% url 'member-logout' %}"><i class="fa fa-key"></i> Logout</a></li>
+                  <li><a href="{% url 'member:member-profile' %}"><i class="fa fa-user"></i> My Profile</a></li>
+                  <li><a href="{% url 'member:member-logout' %}"><i class="fa fa-key"></i> Logout</a></li>
                 </ul>
               </li>
             </ul>

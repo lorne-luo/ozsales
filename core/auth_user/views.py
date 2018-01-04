@@ -26,7 +26,7 @@ def index(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse_lazy('order:order-list-short'))
     else:
-        return HttpResponseRedirect(reverse_lazy('member-login'))
+        return HttpResponseRedirect(reverse_lazy('member:member-login'))
 
 
 class ChangePasswordView(CommonPageViewMixin, TemplateView):

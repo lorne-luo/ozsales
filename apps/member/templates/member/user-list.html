@@ -18,7 +18,7 @@
       <div class="widget-title">
         <h4><i class="fa fa-user"></i> Users</h4>
         <div class="actions">
-            <a class="btn btn-success btn-mini tooltips" href="{% url 'seller-add' %}"  data-placement="bottom" data-original-title="Add a User"><i class="fa fa-plus"></i> Add User</a>
+            <a class="btn btn-success btn-mini tooltips" href="{% url 'member:seller-add' %}"  data-placement="bottom" data-original-title="Add a User"><i class="fa fa-plus"></i> Add User</a>
             {% if users and perms.member.delete_seller %}
                 <button type='button' class="delete-selected btn btn-danger btn-mini tooltips" data-placement="bottom" data-original-title="Delete Selected User"><i class="fa fa-trash"></i> Delete Selected</button>
             {% endif %}
@@ -52,7 +52,7 @@
                         <img class="avatar" src="{% static 'img/profile-pic.jpg' %}" alt="">
                       {%endif%}
                     </td>
-                    <td><a data-placement="right" data-original-title="Show Profile" href='{% url 'admin-seller-edit' pk=u.pk%}' class="tooltips">
+                    <td><a data-placement="right" data-original-title="Show Profile" href='{% url 'member:admin-seller-edit' pk=u.pk%}' class="tooltips">
                     {{u.username}}
                     </a></td>
                     <td>
@@ -68,7 +68,7 @@
                     <td><i class="fa {% if u.is_active %}fa-check icon-success{%else%}fa-remove text-danger{% endif %}"></i></td>
                     <td>
                         <div class='pull-right'>
-                        <a data-placement="bottom" data-original-title="Edit User" href='{% url 'admin-seller-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
+                        <a data-placement="bottom" data-original-title="Edit User" href='{% url 'member:admin-seller-edit' pk=u.pk%}' role="button" class="btn btn-warning btn-mini tooltips"><i class="fa fa-pencil fa-inverse"></i></a>
                         {% if perms.member.delete_seller %}
                         <button type='button' data-placement="bottom" data-original-title="Delete Seller" class="delete btn btn-danger btn-mini tooltips"><i class="fa fa-trash fa-inverse"></i></button>
                         {% endif%}

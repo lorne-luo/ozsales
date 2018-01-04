@@ -67,7 +67,7 @@ def member_home(request):
 
 def member_logout(request):
     logout(request)
-    return redirect('member-login')
+    return redirect('member:member-login')
 
 
 class CreateUser(PermissionRequiredMixin, TemplateView):
@@ -83,7 +83,7 @@ class ProfileView(PermissionRequiredMixin, FormView):
     form_class = SellerProfileForm
     template_name = 'member/profile.html'
     permission_required = 'member.change_seller'
-    success_url = reverse_lazy('member-profile')
+    success_url = reverse_lazy('member:member-profile')
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk', '')
@@ -161,9 +161,9 @@ def user_password_reset(request, pk):
 
             # user.renew_token()
             if request.user == user:
-                return redirect('member-profile')
+                return redirect('member:member-profile')
             else:
-                return redirect('admin-seller-edit', pk=user.pk)
+                return redirect('member:admin-seller-edit', pk=user.pk)
     return render_to_response('member/user-reset-password.html', {
         'form': form,
         'edit_user': user
@@ -192,7 +192,7 @@ def user_delete(request, pk):
         Seller.objects.get(pk=pk).delete()
     except Seller.DoesNotExist:
         pass
-    return redirect('seller-index')
+    return redirect('member:seller-index')
 
 
 class AgentView(TemplateView):
@@ -206,7 +206,7 @@ class AgentView(TemplateView):
 class RegisterView(FormView):
     template_name = 'adminlte/register.html'
     form_class = RegisterForm
-    success_url = reverse_lazy('member-login')
+    success_url = reverse_lazy('member:member-login')
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()

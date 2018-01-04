@@ -9,7 +9,7 @@
     <ul class="sidebar-menu">
       {% if user.is_authenticated %}
       <li>
-        <a href="{% url 'member-home' %}"><span class="icon-box"><i class="fa fa-dashboard"></i></span>
+        <a href="{% url 'member:member-home' %}"><span class="icon-box"><i class="fa fa-dashboard"></i></span>
           <span class="module_name">Dashboard</span>
         </a>
       </li>
@@ -24,9 +24,9 @@
           <span class="arrow {% ifstartswith "/member/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/member/" %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'member-profile' %}">User Profile</a></li>
+            <li><a href="{% url 'member:member-profile' %}">User Profile</a></li>
           {% if perms.member.add_seller %}
-            <li><a href="{% url 'seller-index' %}">Member User</a></li>
+            <li><a href="{% url 'member:seller-index' %}">Member User</a></li>
           {%endif%}
         </ul>
       </li>
@@ -40,8 +40,8 @@
           <span class="arrow {% ifstartswith '/customer/' %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith '/customer/' %}style='display:block;'{% endifstartswith %}>
-            <li><a href="{% url 'customer-add' %}">Add Customer</a></li>
-            <li><a href="{% url 'customer-list' %}">Customer List</a></li>
+            <li><a href="{% url 'customer:customer-add' %}">Add Customer</a></li>
+            <li><a href="{% url 'customer:customer-list' %}">Customer List</a></li>
         </ul>
       </li>
       {%endif%}
@@ -82,10 +82,10 @@
           <span class="arrow {% ifstartswith "/admin/device/" %}open{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/device/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/schedules/" %}style='display:block;'{% endifstartswith %}>
-          {% if perms.device.add_device %}<li><a href="{% url 'member-home' %}">Device List</a></li>{% endif %}
-          {% if perms.device.add_devicegroup  %}<li><a href="{% url 'member-home' %}">Groups</a></li>{% endif %}
-          {% if perms.schedules.add_schedule %}<li><a href="{% url 'member-home' %}">Schedules</a></li>{% endif %}
-          {% if perms.device.add_message %}<li><a href="{% url 'member-home' %}">Notifications</a></li>{% endif %}
+          {% if perms.device.add_device %}<li><a href="{% url 'member:member-home' %}">Device List</a></li>{% endif %}
+          {% if perms.device.add_devicegroup  %}<li><a href="{% url 'member:member-home' %}">Groups</a></li>{% endif %}
+          {% if perms.schedules.add_schedule %}<li><a href="{% url 'member:member-home' %}">Schedules</a></li>{% endif %}
+          {% if perms.device.add_message %}<li><a href="{% url 'member:member-home' %}">Notifications</a></li>{% endif %}
         </ul>
       </li>
       {% endif %}
@@ -97,8 +97,8 @@
           <span class="arrow {% ifstartswith "/admin/activities/" %}open{% endifstartswith %}{% ifstartswith "/admin/news/" %}open{% endifstartswith %}{% ifstartswith "/admin/signage/" %}open{% endifstartswith %}{% ifstartswith "/admin/meals/" %}open{% endifstartswith %}{% ifstartswith "/admin/feed/" %}open{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}open{% endifstartswith %}"></span>
         </a>
         <ul class="sub" {% ifstartswith "/admin/activities/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/news/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/signage/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/meals/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/feed/" %}style='display:block;'{% endifstartswith %}{% ifstartswith "/admin/twitter/" %}style='display:block;'{% endifstartswith %}">
-          {% if perms.activities.add_activity %}<li><a href="{% url 'member-home' %}">Activities</a></li>{% endif %}
-          {% if perms.news.add_news %}<li><a href="{% url 'member-home' %}">Announcements</a></li>{% endif %}
+          {% if perms.activities.add_activity %}<li><a href="{% url 'member:member-home' %}">Activities</a></li>{% endif %}
+          {% if perms.news.add_news %}<li><a href="{% url 'member:member-home' %}">Announcements</a></li>{% endif %}
 
         </ul>
       </li>
@@ -111,9 +111,9 @@
                 <span class="arrow"></span>
             </a>
             <ul class="sub">
-              {% if perms.can_export %}<li><a href="{% url 'member-home' %}">Backup</a></li>{% endif %}
-              {% if perms.categories.add_category %}<li><a href="{% url 'member-home' %}">Categories</a></li>{% endif %}
-              {% if perms.ldap_auth.add_ldapconfig %}<li><a href="{% url 'member-home' %}">LDAP Authentication</a></li>{% endif %}
+              {% if perms.can_export %}<li><a href="{% url 'member:member-home' %}">Backup</a></li>{% endif %}
+              {% if perms.categories.add_category %}<li><a href="{% url 'member:member-home' %}">Categories</a></li>{% endif %}
+              {% if perms.ldap_auth.add_ldapconfig %}<li><a href="{% url 'member:member-home' %}">LDAP Authentication</a></li>{% endif %}
             </ul>
         </li>
       {% endif %}

@@ -7,6 +7,7 @@ from settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_ROOT
 from core.auth_user.views import  ChangePasswordView, ChangePasswordDoneView
 from core.views.views import IndexView
 from core import auth_user
+from core.auth_user.views import index
 
 def if_installed(appname, *args, **kwargs):
     ret = url(*args, **kwargs)
@@ -15,10 +16,6 @@ def if_installed(appname, *args, **kwargs):
     return ret
 
 apps_urlpatterns = [
-    url(r'^member/', include('apps.member.urls')),
-    # url(r'^order/', include('apps.order.urls')),
-    # url(r'^product/', include('apps.product.urls')),
-    url(r'^customer/', include('apps.customer.urls')),
     url(r'^', include('apps.customer.urls', namespace='customer')),
     url(r'^', include('apps.member.urls', namespace='member')),
     url(r'^', include('apps.store.urls', namespace='store')),
@@ -44,7 +41,7 @@ api_urlpatterns = [
 
 urlpatterns = apps_urlpatterns + [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$', IndexView.as_view(), name='index'),
+    url(r'^$', index, name='index'),
 
     url(r'^payments/', include('djstripe.urls', namespace="djstripe")),
 
