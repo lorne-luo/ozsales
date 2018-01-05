@@ -2,16 +2,16 @@
 var orderListPageVue = new OrderListPageVue({
         data: {
             // API
-            list_api_tag:   'order:api-order-list',
-            detail_api_tag: 'order:api-order-detail',
-            product_detail_api_tag: 'order:api-orderproduct-detail',
-            delete_api_tag: 'order:api-order-delete',
+            list_api_tag:   'api:order-list',
+            detail_api_tag: 'api:order-detail',
+            product_detail_api_tag: 'api:orderproduct-detail',
+            delete_api_tag: 'api:order-delete',
             // page
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',
             update_url_tag: 'order:order-update',
             detail_url_tag: 'order:order-detail-short',
-            list_url:       Urls['order:api-order-list'](),
+            list_url:       Urls['api:order-list'](),
 
             finished_items: [],
             ongoing_items: [],

@@ -1,13 +1,10 @@
 # coding=utf-8
+from braces.views import MultiplePermissionsRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Page, Store
-import serializers
-import forms
+
+from core.django.views import CommonContextMixin
+from .models import Page, Store
+from . import forms
 
 
 # views for Page
@@ -47,15 +44,6 @@ class PageDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
     }
 
 
-# api views for Page
-
-class PageViewSet(CommonViewSet):
-    queryset = Page.objects.all()
-    serializer_class = serializers.PageSerializer
-    filter_fields = ['id']
-    search_fields = ['title', 'url', 'store', 'price', 'original_price']
-
-
 # views for Store
 
 class StoreListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -91,13 +79,3 @@ class StoreDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     permissions = {
         "all": ("store.view_store",)
     }
-
-
-# api views for Store
-
-class StoreViewSet(CommonViewSet):
-    queryset = Store.objects.all()
-    serializer_class = serializers.StoreSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['id']
-    search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']

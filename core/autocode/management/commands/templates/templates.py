@@ -40,15 +40,15 @@ LIST_JS = '''
 var <% model_name %>ListPageVue = new CommonListPageVue({
         data: {
             // API
-            list_api_tag:   '<% app_name %>:api-<% model_name %>-list',
-            detail_api_tag: '<% app_name %>:api-<% model_name %>-detail',
-            delete_api_tag: '<% app_name %>:api-<% model_name %>-delete',
+            list_api_tag:   'api:<% model_name %>-list',
+            detail_api_tag: 'api:<% model_name %>-detail',
+            delete_api_tag: 'api:<% model_name %>-delete',
             // page
             create_url_tag: '<% app_name %>:<% model_name %>-add',
             list_url_tag:   '<% app_name %>:<% model_name %>-list',
             update_url_tag: '<% app_name %>:<% model_name %>-update',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
-            list_url:       Urls['<% app_name %>:api-<% model_name %>-list']() + '?'
+            list_url:       Urls['api:<% model_name %>-list']() + '?'
         }
     }
 );

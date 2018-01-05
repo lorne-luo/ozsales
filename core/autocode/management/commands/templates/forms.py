@@ -1,9 +1,9 @@
 FORMS_HEADER = '''# coding=utf-8
 from django import forms
-from models import <% ALL_MODELS %>
+from .models import <% ALL_MODELS %>
 
 '''
-FORMS_MODEL_TEMPLATE = '''
+FORMS_BODY = '''
 class <% MODEL_NAME %>AddForm(forms.ModelForm):
     """ Add form for <% MODEL_NAME %> """
 

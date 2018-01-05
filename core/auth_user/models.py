@@ -61,11 +61,11 @@ class AuthUser(AbstractUser, UserProfileStripeMixin):
     def is_customer(self):
         return getattr(self, 'customer') is not None
 
-    def __str__(self):
-        return '%s' % self.get_username()
-
     def get_username(self):
-        return self.mobile or self.email
+        profile = self.profile
+        if profile:
+            return unicode(profile)
+        return '[U]%s' % self.mobile or self.email
 
     def in_group(self, group_names):
         if not isinstance(group_names, (list, tuple)):

@@ -1,27 +1,26 @@
 # coding=utf-8
+import logging
 import os
 import uuid
 
-import logging
-from django.db import models
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
-from django.db.models import Sum, F, Q, Avg, Min, Max
-from django.db.models.signals import post_save, post_delete
+from django.db import models
+from django.db.models import Sum, F, Avg, Min, Max
+from django.db.models.signals import post_delete
 from django.dispatch import receiver
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-from django.core import validators
 from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
+
 from apps.member.models import Seller
 from apps.store.models import Page
-from django.utils.encoding import python_2_unicode_compatible
-
 from core.auth_user.models import AuthUser
-from core.libs.constants import COUNTRIES_CHOICES
-from core.models.models import PinYinFieldModelMixin
-from settings.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
+from core.django.constants import COUNTRIES_CHOICES
+from core.django.models import PinYinFieldModelMixin
+from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 log = logging.getLogger(__name__)
 
@@ -158,20 +157,6 @@ class Product(PinYinFieldModelMixin, models.Model):
     class Meta:
         verbose_name_plural = _('Product')
         verbose_name = _('Product')
-
-    class Config:
-        list_template_name = 'customer/adminlte-customer-list.html'
-
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
-        list_form_fields = ('name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price')
-        filter_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
-        search_fields = ('name_en', 'name_cn', 'brand__name_cn', 'brand__name_en')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Product.objects.all()
-            return queryset
 
     def __str__(self):
         if self.brand and self.brand.name_en.lower() != 'none':

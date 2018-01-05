@@ -1,28 +1,22 @@
 # coding=utf-8
-import logging
 import json
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.http import urlquote, urlunquote
-from django.utils import timezone
-from django.contrib.auth import authenticate, login
-from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
+import logging
+
+from django.contrib.auth import login
 from django.contrib.auth.models import Group
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from apps.member.models import Seller
-from apps.customer.models import Customer
-from wechat_sdk.lib.request import WechatRequest
-from wechat_sdk.exceptions import WechatAPIException
-from weixin.login import WeixinLogin
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
+from django.utils import timezone
+from django.utils.http import urlunquote
 from weixin.base import Map
+from weixin.login import WeixinLogin
+
+import conf
+from apps.customer.models import Customer
+from apps.member.models import Seller
 from models import WxApp, WxPayment, WxReturnCode
 from ..order.models import Order
-import conf
 
 log = logging.getLogger(__name__)
 

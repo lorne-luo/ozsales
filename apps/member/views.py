@@ -67,23 +67,14 @@ def member_home(request):
 
 def member_logout(request):
     logout(request)
-    return redirect('member-login')
-
-
-class CreateUser(PermissionRequiredMixin, TemplateView):
-    template_name = 'member/profile.html'
-    permission_required = 'member.add_seller'
-
-    def get(self, request, *args, **kwargs):
-        context = {'form': SellerProfileForm(username_readonly=False)}
-        return self.render_to_response(context)
+    return redirect('member:member-login')
 
 
 class ProfileView(PermissionRequiredMixin, FormView):
     form_class = SellerProfileForm
     template_name = 'member/profile.html'
     permission_required = 'member.change_seller'
-    success_url = reverse_lazy('member-profile')
+    success_url = reverse_lazy('member:member-profile')
 
     def get_object(self, queryset=None):
         pk = self.kwargs.get('pk', '')
@@ -124,77 +115,6 @@ class ProfileView(PermissionRequiredMixin, FormView):
         return super(ProfileView, self).form_valid(form)
 
 
-@permission_required('member.add_seller', raise_exception=True)
-def seller_index(request):
-    if request.user.is_superuser:
-        users = Seller.objects.all().exclude(username=request.user.username)
-    elif request.user.is_group('Admin'):
-        users = Seller.objects.exclude(is_superuser=True).exclude(username=request.user.username)
-    else:
-        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(
-            username=request.user.username)
-
-    return render_to_response('member/user-list.html', {'users': users},
-                              RequestContext(request))
-
-
-def user_password_reset(request, pk):
-    user = get_object_or_404(Seller, pk=pk)
-    allowed_change_other = (request.user.groups.filter(name='Admin').exists() or
-                            request.user.is_superuser or
-                            request.user.has_perm('member.add_seller'))
-    if not request.user == user and not allowed_change_other:
-        log.error('Response forbidden, lacking permission to change other users.')
-        return HttpResponseForbidden()
-
-    form = _reset_password_form(user, request)
-    if request.method == "POST":
-        form = _reset_password_form(user, request, request.POST)
-
-        if form.is_valid():
-            try:
-                form.save()
-            except SMTPException, (value, message):
-                messages.error(request, 'SMTP error while sending user notification: Error %s (%s)' % (value, message))
-            except (SMTPConnectError, socket.error), (value, message):
-                messages.error(request, 'Error while connecting to SMTP server: Error %s (%s)' % (value, message))
-
-            # user.renew_token()
-            if request.user == user:
-                return redirect('member-profile')
-            else:
-                return redirect('admin-seller-edit', pk=user.pk)
-    return render_to_response('member/user-reset-password.html', {
-        'form': form,
-        'edit_user': user
-    }, RequestContext(request))
-
-
-def _reset_password_form(seller, request, POST=False):
-    if seller == request.user.profile:
-        form = UserResetPasswordForm(seller)
-        if POST:
-            form = UserResetPasswordForm(seller, POST)
-    elif request.user.is_superuser:
-        form = ResetPasswordEmailForm(seller)
-        if POST:
-            form = ResetPasswordEmailForm(seller, POST)
-    else:
-        log.error('Lacking permission to change user.')
-        raise Http404
-
-    return form
-
-
-@permission_required('member.delete_seller', raise_exception=True)
-def user_delete(request, pk):
-    try:
-        Seller.objects.get(pk=pk).delete()
-    except Seller.DoesNotExist:
-        pass
-    return redirect('seller-index')
-
-
 class AgentView(TemplateView):
     template_name = 'member/agent.html'
 
@@ -206,7 +126,7 @@ class AgentView(TemplateView):
 class RegisterView(FormView):
     template_name = 'adminlte/register.html'
     form_class = RegisterForm
-    success_url = reverse_lazy('member-login')
+    success_url = reverse_lazy('member:member-login')
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()

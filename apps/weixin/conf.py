@@ -1,4 +1,4 @@
-__author__ = 'Tao'
+__author__ = 'Lorne'
 
 SCOPE_USERINFO = 'snsapi_userinfo'
 SCOPE_BASE = 'snsapi_base'

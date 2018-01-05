@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
 from django.conf import settings
-from core.libs import constants
+from django.db import models, migrations
+
+from core.django import constants
 
 
 class Migration(migrations.Migration):

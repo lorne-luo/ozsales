@@ -39,7 +39,7 @@
         <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
     <!-- BEGIN LOGIN FORM -->
-    <form method="post" id="loginform" action=" {% url "member-login" %}" class="form-vertical no-padding no-margin">
+    <form method="post" id="loginform" action=" {% url "member:member-login" %}" class="form-vertical no-padding no-margin">
       {% csrf_token %}
       <div class="lock">
           <i class="icon-lock"></i>

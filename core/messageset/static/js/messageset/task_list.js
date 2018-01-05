@@ -1,9 +1,9 @@
 
 var taskListPageVue = new CommonListPageVue({
         data: {
-            list_api_tag: 'messageset:api-task-list',
-            delete_api_tag: 'messageset:api-task-delete',
-            detail_api_tag: 'messageset:api-task-detail',
+            list_api_tag: 'api:task-list',
+            delete_api_tag: 'api:task-delete',
+            detail_api_tag: 'api:task-detail',
 
             create_url_tag: 'messageset:task-add',
             list_url_tag:   'messageset:task-list',

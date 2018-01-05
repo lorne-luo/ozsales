@@ -1,4 +1,4 @@
-from core.forms.forms import NoManytoManyHintModelForm
+from core.django.forms import NoManytoManyHintModelForm
 from models import Product, Brand
 
 

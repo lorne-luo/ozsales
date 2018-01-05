@@ -1,14 +1,16 @@
 from django.conf.urls import url
-from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
-import views
+from . import views
 
-urlpatterns = [
-   # url(r'^now/$', views.ChannelViewSet.as_view({'get': 'now_and_next_event'}),
-   #     name="channel-event-now-and-next"),
-]
 router = PostHackedRouter()
 router.include_root_view = False
-router.register(r'order', views.OrderViewSet, 'order')
+
+# reverse('api:order-list'), reverse('api:order-detail', kwargs={'pk': 1})
+router.register(r'order', views.OrderViewSet, base_name='order')
+router.register(r'orderproduct', views.OrderProductViewSet, base_name='orderproduct')
+
+urlpatterns = [
+
+]
 
 urlpatterns += router.urls

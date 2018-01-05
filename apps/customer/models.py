@@ -1,30 +1,25 @@
 # coding:utf-8
 import os
+
 from dateutil.relativedelta import relativedelta
-
-from django.db import models
-from django.core.mail import send_mail
-from django.core import validators
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
-from django.db.models import Q, Manager
-from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
-from django.dispatch import receiver
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group, Permission
 from django.core.exceptions import PermissionDenied
-from django.utils.http import urlquote
-from django.utils.crypto import get_random_string
-from django.utils import timezone
-from django.contrib.auth.hashers import is_password_usable, make_password
-from stdimage import StdImageField
-from pypinyin import Style
-
-from core.auth_user.models import AuthUser, UserProfileMixin
-from core.models.models import PinYinFieldModelMixin
-from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
-from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
+from django.db import models
+from django.db.models import Manager
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+from pypinyin import Style
+from stdimage import StdImageField
+
 from apps.member.models import Seller
 from apps.product.models import Product
+from core.auth_user.models import AuthUser, UserProfileMixin
+from core.django.models import PinYinFieldModelMixin
+from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
 
 
 @python_2_unicode_compatible
@@ -147,21 +142,8 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
 
-    class Config:
-        list_template_name = 'customer/adminlte-customer-list.html'
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
-        list_form_fields = ('name', 'email', 'mobile', 'primary_address', 'groups', 'tags')
-        filter_fields = ('name', 'email', 'mobile')
-        search_fields = ('name', 'email', 'mobile')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Customer.objects.all()
-            return queryset
-
     def __str__(self):
-        return '%s' % self.name
+        return '[C]%s' % self.name
 
     @property
     def profile(self):

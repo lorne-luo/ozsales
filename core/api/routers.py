@@ -2,7 +2,7 @@ from rest_framework.routers import DefaultRouter, Route, DynamicDetailRoute, Dyn
 
 
 class PostHackedRouter(DefaultRouter):
-    """ hack post method for detail api """
+    """ hack post method for detail api, make post method avaliable for partial_update action """
 
     routes = [
         # List route.

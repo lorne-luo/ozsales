@@ -2,16 +2,13 @@ VIEWS_HEADER = '''# coding=utf-8
 from django.views.generic import ListView, CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import <% ALL_MODELS %>
-import serializers
-import forms
+from core.django.views import CommonContextMixin
+from .models import <% ALL_MODELS %>
+from . import forms
 
 '''
 
-VIEWS_MODEL_TEMPLATE = '''
+VIEWS_BODY = '''
 class <% MODEL_NAME %>ListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     """ List views for <% MODEL_NAME %> """
     model = <% MODEL_NAME %>
@@ -49,13 +46,5 @@ class <% MODEL_NAME %>DetailView(MultiplePermissionsRequiredMixin, CommonContext
     permissions = {
         "all": ("<% app_name %>.view_<% model_name %>",)
     }
-
-
-class <% MODEL_NAME %>ViewSet(CommonViewSet):
-    """ API views for <% MODEL_NAME %> """
-    queryset = <% MODEL_NAME %>.objects.all()
-    serializer_class = serializers.<% MODEL_NAME %>Serializer
-    filter_fields = ['id'] + <% fields %>
-    search_fields = <% fields %>
 
 '''

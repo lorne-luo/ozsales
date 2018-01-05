@@ -1,16 +1,11 @@
 # coding=utf-8
-from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from braces.views import MultiplePermissionsRequiredMixin
 from django.db import transaction
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
-
-from core.api.permission import SellerPermissions
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Address, Customer, InterestTag
-import serializers
-import forms
+from django.http import HttpResponse
+from django.views.generic import ListView, CreateView, UpdateView
+from core.django.views import CommonContextMixin
+from . import forms
+from models import Address, Customer
 
 
 # views for Address
@@ -48,15 +43,6 @@ class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Up
     permissions = {
         "all": ("address.view_address",)
     }
-
-
-# api views for Address
-
-class AddressViewSet(CommonViewSet):
-    queryset = Address.objects.all()
-    serializer_class = serializers.AddressSerializer
-    filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
-    search_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
 
 
 # views for Customer
@@ -132,20 +118,3 @@ class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
     permissions = {
         "all": ("customer.view_customer",)
     }
-
-
-# api views for Customer
-class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
-    queryset = Customer.objects.all()
-    serializer_class = serializers.CustomerSerializer
-    filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
-                     'remark', 'tags']
-    search_fields = ['name', 'mobile', 'primary_address__name']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
-    permission_classes = (SellerPermissions,)
-
-    def get_queryset(self):
-        queryset = super(CustomerViewSet, self).get_queryset()
-        if self.request.user.is_admin or self.request.user.is_superuser:
-            return queryset
-        return queryset.filter(seller=self.request.profile)

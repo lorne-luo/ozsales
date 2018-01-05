@@ -1,25 +1,14 @@
 # coding=utf-8
-from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponseRedirect
-from django.views.decorators.http import require_http_methods
+from django.db.models.signals import post_save
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
-import serializers
-import forms
+from braces.views import MultiplePermissionsRequiredMixin
 
-
-@login_required
-@require_http_methods(["POST"])
-def sitemail_markall(request):
-    SiteMailReceive.objects.exclude(
-        status=SiteMailReceive.DELETED
-    ).filter(receiver=request.user).update(status=SiteMailReceive.READ)
-    return JsonResponse({'message': u'ok'}, status=200)
+from core.django.views import CommonContextMixin
+from .models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task, \
+    create_sitemail_datas
+from . import forms
 
 
 # views for Notification
@@ -54,16 +43,6 @@ class NotificationDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
     permissions = {
         "all": ("notification.view_notification",)
     }
-
-
-# api views for Notification
-
-class NotificationViewSet(CommonViewSet):
-    queryset = Notification.objects.all()
-    serializer_class = serializers.NotificationSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-    search_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
@@ -106,16 +85,6 @@ class NotificationContentDetailView(MultiplePermissionsRequiredMixin, CommonCont
     }
 
 
-# api views for NotificationContent
-
-class NotificationContentViewSet(CommonViewSet):
-    queryset = NotificationContent.objects.all()
-    serializer_class = serializers.NotificationContentSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'contents', 'status', 'creator']
-    search_fields = ['title', 'contents', 'status', 'creator']
-
-
 # views for SiteMailContent
 class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = SiteMailContent
@@ -132,8 +101,13 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         if form.is_valid():
             sitemail = form.save(commit=False)
             sitemail.creator = request.user
+            post_save.disconnect(create_sitemail_datas, sender=SiteMailContent)
             sitemail.save()
-            return HttpResponseRedirect(self.get_success_url())
+            # fixme not correctly create SiteMailReceive
+            sitemail.receivers = form.cleaned_data['receivers']
+            post_save.connect(create_sitemail_datas, sender=SiteMailContent)
+            sitemail.save()
+            return redirect('messageset:sitemail-list')
         else:
 
             return self.form_invalid(form)
@@ -155,16 +129,6 @@ class SiteMailContentDetailView(MultiplePermissionsRequiredMixin, CommonContextM
     permissions = {
         "all": ("sitemailcontent.view_sitemailcontent",)
     }
-
-
-# api views for SiteMailContent
-
-class SiteMailContentViewSet(CommonViewSet):
-    queryset = SiteMailContent.objects.all()
-    serializer_class = serializers.SiteMailContentSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'contents', 'status', 'creator']
-    search_fields = ['title', 'contents', 'status', 'creator']
 
 
 # views for SiteMailReceive
@@ -192,19 +156,7 @@ class SiteMailReceiveDetailView(MultiplePermissionsRequiredMixin, CommonContextM
     }
 
 
-# api views for SiteMailReceive
-
-class SiteMailReceiveViewSet(CommonViewSet):
-    queryset = SiteMailReceive.objects.all()
-    serializer_class = serializers.SiteMailReceiveSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
-    search_fields = ['title', 'content__contents', 'sender__name', 'status', 'creator__name', 'receiver__name']
-
-
 # views for SiteMailSend
-
-
 class SiteMailSendDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
     model = SiteMailSend
     form_class = forms.SiteMailSendDetailForm
@@ -212,16 +164,6 @@ class SiteMailSendDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
     permissions = {
         "all": ("sitemailsend.view_sitemailsend",)
     }
-
-
-# api views for SiteMailSend
-
-class SiteMailSendViewSet(CommonViewSet):
-    queryset = SiteMailSend.objects.all()
-    serializer_class = serializers.SiteMailSendSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content', 'sender', 'status', 'creator']
-    search_fields = ['title', 'content', 'sender', 'status', 'creator']
 
 
 # views for Task
@@ -247,13 +189,3 @@ class TaskDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Updat
     permissions = {
         "all": ("task.view_task",)
     }
-
-
-# api views for Task
-
-class TaskViewSet(CommonViewSet):
-    queryset = Task.objects.all()
-    serializer_class = serializers.TaskSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['name', 'start_app', 'status']
-    search_fields = ['name', 'start_app', 'status']

@@ -1,14 +1,15 @@
 # coding=utf-8
 from decimal import Decimal, ROUND_UP
+
 from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory
 
-from core.forms.widgets import FormsetModelSelect2
-from core.forms.forms import NoManytoManyHintModelForm
+from core.django.forms import NoManytoManyHintModelForm
+from core.django.autocomplete import FormsetModelSelect2
+from models import Order, OrderProduct, ORDER_STATUS_CHOICES
 from ..customer.models import Customer, Address
 from ..product.models import Product
-from models import Order, OrderProduct, ORDER_STATUS, ORDER_STATUS_CHOICES
 
 
 class OrderForm(forms.ModelForm):
@@ -64,7 +65,7 @@ class OrderForm2(forms.ModelForm):
 class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
-        widget=FormsetModelSelect2(url='customer:customer-autocomplete',
+        widget=FormsetModelSelect2(url='api:customer-autocomplete',
                                    attrs={'data-placeholder': u'任意姓名、手机号...'})
     )
 
@@ -78,7 +79,7 @@ class OrderAddForm(NoManytoManyHintModelForm):
 
 class OrderUpdateForm(NoManytoManyHintModelForm):
     address = forms.ModelChoiceField(label=u'地址', queryset=Address.objects.all(),
-                                     widget=FormsetModelSelect2(url='customer:address-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:address-autocomplete',
                                                                 forward=['customer'],
                                                                 attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
                                      )
@@ -188,7 +189,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
     sum_price = forms.DecimalField(label=u'小计', required=False, help_text=u'小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.filter(is_active=True), required=False,
-                                     widget=FormsetModelSelect2(url='product:product-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:product-autocomplete',
                                                                 attrs={'data-placeholder': u'任意中英文名称...',
                                                                        'class': 'form-control'})
                                      )

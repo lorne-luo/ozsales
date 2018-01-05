@@ -5,18 +5,15 @@ import logging
 from decimal import Decimal
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core import validators
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
-from django.utils.crypto import get_random_string
 from django.utils import timezone
-from calendar import monthrange
 
 from apps.member.models import Seller
 from utils.enum import enum
-from settings.settings import rate
+from config.settings import rate
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address

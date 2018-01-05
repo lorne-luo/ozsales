@@ -29,7 +29,7 @@
       </div>
     {% endif %}
 
-    <form action="{% url "member-login" %}" method="post">
+    <form action="{% url "member:member-login" %}" method="post">
       <div class="form-group has-feedback{% if form.mobile.errors %} has-error{% endif %}">
         <input id="id_mobile" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码或电子邮件" }}"{% if form.mobile.value and not form.mobile.errors%} value="{{ form.mobile.value }}"{% endif %}
         {% if not form.mobile.value %} autofocus{% endif %}>
@@ -68,8 +68,8 @@
 
     <div class="social-auth-links">
         <p class="text-center">- OR -</p>
-        <a class="btn-block" href="{% url 'password_reset' %}">忘记密码?</a>
-        <a class="btn-block" href="{% url 'member-register' %}">注册新用户</a>
+        <a class="btn-block" href="{% url 'member:password_reset' %}">忘记密码?</a>
+        <a class="btn-block" href="{% url 'member:member-register' %}">注册新用户</a>
     </div>
 
   </div>

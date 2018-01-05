@@ -1,9 +1,9 @@
 
 var abstractsitemailListPageVue = new CommonListPageVue({
         data: {
-            list_api_tag: 'messageset:api-abstractsitemail-list',
-            delete_api_tag: 'messageset:api-abstractsitemail-delete',
-            detail_api_tag: 'messageset:api-abstractsitemail-detail',
+            list_api_tag: 'api:abstractsitemail-list',
+            delete_api_tag: 'api:abstractsitemail-delete',
+            detail_api_tag: 'api:abstractsitemail-detail',
 
             create_url_tag: 'messageset:abstractsitemail-add',
             list_url_tag:   'messageset:abstractsitemail-list',

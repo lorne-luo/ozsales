@@ -1,12 +1,11 @@
 # coding=utf-8
-from dal import autocomplete
+from django import forms
 from django.contrib import admin
+from django.forms.models import inlineformset_factory
 
 from apps.order.models import Order
-from core.forms.widgets import FormsetModelSelect2
-from core.forms.forms import NoManytoManyHintModelForm
-from django import forms
-from django.forms.models import modelformset_factory, inlineformset_factory
+from core.django.forms import NoManytoManyHintModelForm
+from core.django.autocomplete import FormsetModelSelect2
 from models import ExpressCarrier, ExpressOrder
 
 
@@ -68,7 +67,7 @@ class ExpressOrderChangeInline(admin.TabularInline):
 
 class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     carrier = forms.ModelChoiceField(label=u'物流', queryset=ExpressCarrier.objects.all(), required=False,
-                                     widget=FormsetModelSelect2(url='express:expresscarrier-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:carrier-autocomplete',
                                                                 attrs={'data-placeholder': u'物流中英文名称...',
                                                                        'class': 'form-control'})
                                      )
