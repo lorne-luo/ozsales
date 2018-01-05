@@ -1,17 +1,9 @@
-from braces.views import MultiplePermissionsRequiredMixin
-from core.utils.string import include_non_asc
-from dal import autocomplete
-from django.db.models import Q
 from django.views.generic import ListView, CreateView, UpdateView
-from rest_framework import permissions
+from braces.views import MultiplePermissionsRequiredMixin
 
-import forms
-import serializers
-from core.django.autocomplete import HansSelect2ViewMixin
-from core.django.permission import ProfileRequiredMixin
 from core.django.views import CommonContextMixin
-from core.api.views import CommonViewSet
-from models import Product, Brand
+from .models import Product, Brand
+from . import forms
 
 
 class ProductListView(CommonContextMixin, ListView):
@@ -71,17 +63,6 @@ class ProductDetailView(CommonContextMixin, UpdateView):
     fields = ['name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price']
 
 
-class ProductViewSet(CommonViewSet):
-    """
-     A viewset for viewing and editing  instances.
-    """
-    queryset = Product.objects.all()
-    serializer_class = serializers.ProductSerializer
-    permission_classes = [permissions.AllowAny]
-    filter_fields = ['name_en', 'name_cn', 'brand__id', 'brand__name_cn', 'brand__name_en']
-    search_fields = ['name_en', 'name_cn', 'brand__name_cn', 'brand__name_en']
-
-
 class BrandListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     """ List views for Brand """
     model = Brand
@@ -119,33 +100,3 @@ class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
     permissions = {
         "all": ("product.view_brand",)
     }
-
-
-class BrandViewSet(CommonViewSet):
-    """ API views for Brand """
-    queryset = Brand.objects.all()
-    serializer_class = serializers.BrandSerializer
-    filter_fields = ['name_en', 'name_cn']
-    search_fields = ['name_en', 'name_cn']
-
-
-class ProductAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
-    model = Product
-    paginate_by = 20
-    create_field = 'name_cn'
-    profile_required = ('member.seller',)
-
-    def create_object(self, text):
-        return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
-
-    def get_queryset(self):
-        qs = Product.objects.all_for_seller(self.request.user).order_by('brand__name_en', 'name_cn')
-
-        if include_non_asc(self.q):
-            qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
-        else:
-            # all ascii, number and letter
-            key = self.q.lower()
-            qs = qs.filter(
-                Q(pinyin__contains=key) | Q(name_en__icontains=key) | Q(brand__name_en__icontains=key))
-        return qs
