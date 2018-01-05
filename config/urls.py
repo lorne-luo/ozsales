@@ -34,7 +34,7 @@ api_urlpatterns = [
     # if_installed('apps.customer', r'^customer/', include('apps.customer.api.urls')),
     url(r'^customer/', include('apps.customer.api.urls')),
     url(r'^express/', include('apps.express.api.urls')),
-    url(r'^', include('apps.member.api.urls')),
+    url(r'^member/', include('apps.member.api.urls')),
     url(r'^', include('apps.order.api.urls')),
     url(r'^', include('apps.product.api.urls')),
 ]

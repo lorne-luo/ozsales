@@ -1,8 +1,8 @@
 from django.conf.urls import url
 import views
-import serializers
 from apps.member.forms import CustomPasswordResetForm, CustomSetPasswordForm
 from django.contrib.auth import views as auth_views
+
 urlpatterns = (
     url(r'^login/', views.member_login, name='member-login'),
     url(r'^logout/', views.member_logout, name='member-logout'),
@@ -14,8 +14,9 @@ urlpatterns = (
 
 urlpatterns += (
     url(r'^password/reset/$', auth_views.password_reset, {'template_name': 'adminlte/password_reset_form.html',
-                                                 'email_template_name':'adminlte/password_reset_email.html',
-                                                 'password_reset_form': CustomPasswordResetForm}, name='password_reset'),
+                                                          'email_template_name': 'adminlte/password_reset_email.html',
+                                                          'password_reset_form': CustomPasswordResetForm},
+        name='password_reset'),
     url(r'^password/reset/done/$', auth_views.password_reset_done,
         {'template_name': 'adminlte/password_reset_done.html'},
         name='password_reset_done'),

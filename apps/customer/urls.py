@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.conf.urls import url
-import views
+from . import views
 
 urlpatterns = [
     url(r'^customer/address/add/$', views.AddressAddView.as_view(), name='address-add'),
