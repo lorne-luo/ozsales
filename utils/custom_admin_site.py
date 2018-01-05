@@ -58,7 +58,7 @@ class CustomAdminSite(AdminSite):
         return update_wrapper(inner, view)
 
     def get_urls(self):
-        from django.conf.urls import patterns, url, include
+        from django.conf.urls import url, include
         # Since this module gets imported in the application's root package,
         # it cannot import models from other applications at the module level,
         # and django.contrib.contenttypes.views imports ContentType.

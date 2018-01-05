@@ -1,11 +1,11 @@
 SERIALIZERS_HEADER = '''# coding=utf-8
 from rest_framework import serializers
 from core.api.serializers import BaseSerializer
-from models import <% ALL_MODELS %>
+from ..models import <% ALL_MODELS %>
 
 '''
 
-SERIALIZERS_MODEL_TEMPLATE = '''
+SERIALIZERS_BODY = '''
 class <% MODEL_NAME %>Serializer(BaseSerializer):
     """ Serializer for <% MODEL_NAME %> """
 
