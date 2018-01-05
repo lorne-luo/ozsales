@@ -1,7 +1,8 @@
 # coding=utf-8
 from rest_framework import serializers
 from django.core.urlresolvers import reverse
-from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
+from core.messageset.models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, \
+    Task
 
 
 class SiteMailReceiveSerializer(serializers.ModelSerializer):
@@ -141,4 +142,3 @@ class SiteMailContentSerializer(serializers.ModelSerializer):
             url = reverse('messageset:sitemailcontent-detail', args=[obj.id])
             return '<a href="%s">%s</a>' % (url, 'Detail Link')
         return None
-

@@ -25,7 +25,7 @@ apps_urlpatterns = [
     url(r'^report/', include('apps.report.urls', namespace='report')),
     url(r'^wx/', include('apps.weixin.urls', namespace='weixin')),
     url(r'^schedule/', include('apps.schedule.urls', namespace='schedule')),
-    url(r'^', include('core.messageset.urls', namespace='messageset')),
+    url(r'^messageset/', include('core.messageset.urls', namespace='messageset')),
     url(r'^payments/', include('core.payments.stripe.urls', namespace='payments')),
 ]
 
@@ -38,6 +38,7 @@ api_urlpatterns = [
     url(r'^product/', include('apps.product.api.urls')),
     url(r'^report/', include('apps.report.api.urls')),
     url(r'^schedule/', include('apps.schedule.api.urls')),
+    url(r'^messageset/', include('core.messageset.api.urls')),
 ]
 
 urlpatterns = apps_urlpatterns + [
@@ -47,7 +48,6 @@ urlpatterns = apps_urlpatterns + [
     url(r'^payments/', include('djstripe.urls', namespace="djstripe")),
 
     # REST API
-    # url(r'^api/v1/', include('core.api.urls', namespace='common_api')),
     url(r'^api/', include(api_urlpatterns, namespace='api')),
 
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
