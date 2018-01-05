@@ -31,7 +31,6 @@ apps_urlpatterns = [
 
 # REST API
 api_urlpatterns = [
-    # if_installed('apps.customer', r'^customer/', include('apps.customer.api.urls')),
     url(r'^customer/', include('apps.customer.api.urls')),
     url(r'^express/', include('apps.express.api.urls')),
     url(r'^member/', include('apps.member.api.urls')),

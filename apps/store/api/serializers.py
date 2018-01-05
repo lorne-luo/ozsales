@@ -1,7 +1,6 @@
-# coding=utf-8
 from rest_framework import serializers
 from core.api.serializers import BaseSerializer
-from models import Page, Store
+from ..models import Page, Store
 
 
 # Serializer for page
