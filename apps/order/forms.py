@@ -65,7 +65,7 @@ class OrderForm2(forms.ModelForm):
 class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
-        widget=FormsetModelSelect2(url='customer:customer-autocomplete',
+        widget=FormsetModelSelect2(url='api:customer-autocomplete',
                                    attrs={'data-placeholder': u'任意姓名、手机号...'})
     )
 
@@ -79,7 +79,7 @@ class OrderAddForm(NoManytoManyHintModelForm):
 
 class OrderUpdateForm(NoManytoManyHintModelForm):
     address = forms.ModelChoiceField(label=u'地址', queryset=Address.objects.all(),
-                                     widget=FormsetModelSelect2(url='customer:address-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:address-autocomplete',
                                                                 forward=['customer'],
                                                                 attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
                                      )

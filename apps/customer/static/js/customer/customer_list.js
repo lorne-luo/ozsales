@@ -43,9 +43,9 @@ var CustomerListPageVue = CommonListPageVue.extend({
 
 var customerListPageVue = new CustomerListPageVue({
         data: {
-            list_api_tag: 'customer:api-customer-list',
-            delete_api_tag: 'customer:api-customer-delete',
-            detail_api_tag: 'customer:api-customer-detail',
+            list_api_tag: 'api:customer-list',
+            delete_api_tag: 'api:customer-delete',
+            detail_api_tag: 'api:customer-detail',
 
             create_url_tag: 'customer:customer-add',
             list_url_tag: 'customer:customer-list',

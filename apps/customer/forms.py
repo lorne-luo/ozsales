@@ -8,23 +8,6 @@ from core.django.forms import NoManytoManyHintModelForm
 from models import Address, Customer, InterestTag
 
 
-# class CustomerAddForm(forms.ModelForm):
-#     class Meta:
-#         model = Customer
-#         fields = ['name', 'email', 'mobile', 'primary_address', 'tags']
-#
-#     def __init__(self, *args, **kwargs):
-#         super(CustomerAddForm, self).__init__(*args, **kwargs)
-#         # for add
-#         if 'initial' in kwargs and kwargs['initial']:
-#             pass
-#         # for change
-#         elif 'instance' in kwargs and kwargs['instance']:
-#             self.fields['primary_address'].queryset = Address.objects.filter(customer=kwargs['instance'].id)
-#             # self.fields['primary_address'].empty_label = None
-#             self.fields['primary_address'].empty_value = []
-
-
 class AddressAddInline(admin.TabularInline):
     model = Address
     extra = 1
@@ -116,7 +99,6 @@ class CustomerUpdateForm(NoManytoManyHintModelForm):
 
 
 class AddressInlineForm(NoManytoManyHintModelForm):
-
     class Meta:
         model = Address
         fields = '__all__'
@@ -128,6 +110,7 @@ class AddressInlineForm(NoManytoManyHintModelForm):
             field.widget.attrs['class'] = 'form-control'
 
         self.fields['customer'].widget = forms.HiddenInput()
+
 
 AddressFormSet = modelformset_factory(Address, form=AddressInlineForm, can_order=False, can_delete=False, extra=1)
 AddressFormSet2 = inlineformset_factory(Customer, Address, form=AddressInlineForm, extra=1)
