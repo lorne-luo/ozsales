@@ -2,11 +2,9 @@
 from braces.views import MultiplePermissionsRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
 
-import forms
-import serializers
 from core.django.views import CommonContextMixin
-from core.api.views import CommonViewSet
-from models import DealSubscribe
+from .models import DealSubscribe
+from . import forms
 
 
 class DealSubscribeListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -46,12 +44,3 @@ class DealSubscribeDetailView(MultiplePermissionsRequiredMixin, CommonContextMix
     permissions = {
         "all": ("schedule.view_dealsubscribe",)
     }
-
-
-class DealSubscribeViewSet(CommonViewSet):
-    """ API views for DealSubscribe """
-    queryset = DealSubscribe.objects.all()
-    serializer_class = serializers.DealSubscribeSerializer
-    filter_fields = ['id'] + ['includes', 'excludes', 'is_active']
-    search_fields = ['includes', 'excludes', 'is_active']
-
