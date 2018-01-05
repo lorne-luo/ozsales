@@ -111,15 +111,13 @@ def ozbargin_task():
                 content = summary + description
 
                 # avoid duplication
-                day_ago = timezone.now() - relativedelta(day=1)
-                if Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
-                    continue
-
-                result, detail = sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
-                subscribe.msg_count += 1
-                subscribe.save(update_fields=['msg_count'])
-                # print 'sending', content
-                log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
+                day_ago = timezone.now() - relativedelta(days=1)
+                if not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
+                    result, detail = sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
+                    subscribe.msg_count += 1
+                    subscribe.save(update_fields=['msg_count'])
+                    # print 'sending', content
+                    log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(ozbargin_last_date, new_last_date)
 
