@@ -16,17 +16,17 @@ def if_installed(appname, *args, **kwargs):
 
 
 apps_urlpatterns = [
-    url(r'^', include('apps.customer.urls', namespace='customer')),
+    url(r'^customer/', include('apps.customer.urls', namespace='customer')),
     url(r'^member/', include('apps.member.urls', namespace='member')),
-    url(r'^', include('apps.store.urls', namespace='store')),
-    url(r'^', include('apps.product.urls', namespace='product')),
-    url(r'^', include('apps.order.urls', namespace='order')),
-    url(r'^', include('apps.express.urls', namespace='express')),
-    url(r'^', include('apps.report.urls', namespace='report')),
-    url(r'^', include('apps.weixin.urls', namespace='weixin')),
-    url(r'^', include('apps.schedule.urls', namespace='schedule')),
+    url(r'^store/', include('apps.store.urls', namespace='store')),
+    url(r'^product/', include('apps.product.urls', namespace='product')),
+    url(r'^order/', include('apps.order.urls', namespace='order')),
+    url(r'^express/', include('apps.express.urls', namespace='express')),
+    url(r'^report/', include('apps.report.urls', namespace='report')),
+    url(r'^wx/', include('apps.weixin.urls', namespace='weixin')),
+    url(r'^schedule/', include('apps.schedule.urls', namespace='schedule')),
     url(r'^', include('core.messageset.urls', namespace='messageset')),
-    url(r'^', include('core.payments.stripe.urls', namespace='payments')),
+    url(r'^payments/', include('core.payments.stripe.urls', namespace='payments')),
 ]
 
 # REST API

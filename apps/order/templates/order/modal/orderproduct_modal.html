@@ -93,7 +93,7 @@
             $('#add-product #id_cost_price_aud').focus();
             return;
         }
-        var url = Urls['order:api-orderproduct-list']();
+        var url = Urls['api:orderproduct-list']();
 
         $.ajax({
             type: "POST",

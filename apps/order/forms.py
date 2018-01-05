@@ -189,7 +189,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
     sum_price = forms.DecimalField(label=u'小计', required=False, help_text=u'小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.filter(is_active=True), required=False,
-                                     widget=FormsetModelSelect2(url='product:product-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:product-autocomplete',
                                                                 attrs={'data-placeholder': u'任意中英文名称...',
                                                                        'class': 'form-control'})
                                      )
