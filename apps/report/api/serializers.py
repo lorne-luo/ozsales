@@ -1,8 +1,6 @@
-# coding=utf-8
-from django.conf import settings
 from rest_framework import serializers
 from core.api.serializers import BaseSerializer
-from models import MonthlyReport
+from apps.report.models import MonthlyReport
 
 
 class MonthlyReportSerializer(BaseSerializer):

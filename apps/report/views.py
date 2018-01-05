@@ -2,12 +2,9 @@
 from braces.views import MultiplePermissionsRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
 
-import forms
-import serializers
-from core.auth_user.views import OwnerViewSetMixin
 from core.django.views import CommonContextMixin
-from core.api.views import CommonViewSet
-from models import MonthlyReport
+from .models import MonthlyReport
+from . import forms
 
 
 class MonthlyReportListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -53,12 +50,3 @@ class MonthlyReportDetailView(MultiplePermissionsRequiredMixin, CommonContextMix
     permissions = {
         "all": ("report.view_monthlyreport",)
     }
-
-
-class MonthlyReportViewSet(OwnerViewSetMixin, CommonViewSet):
-    """ API views for MonthlyReport """
-    queryset = MonthlyReport.objects.all()
-    serializer_class = serializers.MonthlyReportSerializer
-    filter_fields = ['id']
-    search_fields = ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb',
-                     'profit_rmb']

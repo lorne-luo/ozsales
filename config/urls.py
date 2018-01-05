@@ -37,6 +37,7 @@ api_urlpatterns = [
     url(r'^member/', include('apps.member.api.urls')),
     url(r'^order/', include('apps.order.api.urls')),
     url(r'^product/', include('apps.product.api.urls')),
+    url(r'^report/', include('apps.report.api.urls')),
 ]
 
 urlpatterns = apps_urlpatterns + [
