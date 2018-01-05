@@ -42,9 +42,9 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
 
 var orderListPageVue = new OrderMemberListPageVue({
         data: {
-            list_api_tag: 'order:api-order-list',
-            delete_api_tag: 'order:api-order-delete',
-            detail_api_tag: 'order:api-order-detail',
+            list_api_tag: 'api:order-list',
+            delete_api_tag: 'api:order-delete',
+            detail_api_tag: 'api:order-detail',
 
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',
