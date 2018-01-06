@@ -408,8 +408,11 @@ class OrderProduct(models.Model):
 
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
-        if self.product and not self.name:
+        if self.product:
             self.name = self.product.get_name_cn()
+
+        if self.description:
+            self.name += ' %s' % self.description
 
         return super(OrderProduct, self).save()
 
