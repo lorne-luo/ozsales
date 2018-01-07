@@ -51,7 +51,7 @@ def ozbargin_task():
         return
 
     data = urllib2.urlopen(urllib2.Request(url))
-    soup = BeautifulSoup(data, "html.parser")
+    soup = BeautifulSoup(data, "lxml-xml")
     items = soup.find_all("item")
     last_date_str = r.get(ozbargin_last_date)
     last_date = parser.parse(last_date_str) if last_date_str else datetime.datetime(2016, 1, 1, 0, 0)
@@ -68,7 +68,7 @@ def ozbargin_task():
         except:
             votes_pos = 0
         org_url = meta['url']
-        pub_date = item.pubdate.text
+        pub_date = item.pubDate.text
 
         try:
             item_date = parser.parse(pub_date)
@@ -109,6 +109,7 @@ def ozbargin_task():
                 description = ' '.join(x.strip() for x in text_list)
                 summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
                 content = summary + description
+                content = content[:sender.LENGTH_PER_SMS]
 
                 # avoid duplication
                 day_ago = timezone.now() - relativedelta(days=1)
@@ -146,7 +147,7 @@ def smzdm_task():
         title = item.title.text
         link = item.link.text
         description = item.description.text
-        pub_date = item.pubdate.text
+        pub_date = item.pubDate.text
 
         try:
             item_date = parser.parse(pub_date)

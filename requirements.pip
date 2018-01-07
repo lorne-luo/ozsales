@@ -52,3 +52,4 @@ pypinyin==0.27
 aliyun-python-sdk-core==2.6.1
 numpy==1.13.3
 python_forex_quotes==1.0
+lxml==4.1.1
