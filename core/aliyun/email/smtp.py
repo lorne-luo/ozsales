@@ -1,4 +1,6 @@
 # -*- coding:utf-8 -*-
+import logging
+import redis
 import smtplib
 import email
 from email.mime.multipart import MIMEMultipart
@@ -8,7 +10,12 @@ from email.mime.base import MIMEBase
 from email.mime.application import MIMEApplication
 from email.header import Header
 
+log = logging.getLogger(__name__)
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
+ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
+
 ALIYUN_EMAIL_SYDNEY_HOST = 'smtpdm-ap-southeast-2.aliyun.com'
+ADMIN_EMAIL = 'dev@luotao.net'  # 管理员地址
 SENDER_EMAIL = 'dev@luotao.net'  # 自定义的回复地址
 SENDER_NAME = 'Youdan Team'  # 自定义的发件人名称
 # 单一发信地址
@@ -19,7 +26,7 @@ BATCH_EMAIL_USERNAME = 'info@em.luotao.net'
 BATCH_EMAIL_PASSWORD = 'nv98273rH12j3nF'
 
 
-def send_email(receivers, subject, html_content, text_content=None):
+def _send_email(receivers, subject, html_content, text_content=None):
     if isinstance(receivers, str):
         username = SINGLE_EMAIL_USERNAME
         password = SINGLE_EMAIL_PASSWORD
@@ -31,7 +38,7 @@ def send_email(receivers, subject, html_content, text_content=None):
     msg = MIMEMultipart('alternative')
     msg['Subject'] = Header(subject.decode('utf-8')).encode()
     msg['From'] = '%s <%s>' % (Header(SENDER_NAME.decode('utf-8')).encode(), username)
-    msg['To'] = receivers
+    msg['To'] = ';'.join(receivers) if isinstance(receivers, list) else receivers
     msg['Reply-to'] = SENDER_EMAIL
     msg['Message-id'] = email.utils.make_msgid()
     msg['Date'] = email.utils.formatdate()
@@ -53,7 +60,7 @@ def send_email(receivers, subject, html_content, text_content=None):
         # 发件人和认证地址必须一致
         # 备注：若想取到DATA命令返回值,可参考smtplib的sendmaili封装方法:
         #      使用SMTP.mail/SMTP.rcpt/SMTP.data方法
-        client.sendmail(username, SENDER_EMAIL, msg.as_string())
+        client.sendmail(username, receivers, msg.as_string())
         client.quit()
         print ('邮件发送成功！')
     except smtplib.SMTPConnectError as e:
@@ -70,3 +77,17 @@ def send_email(receivers, subject, html_content, text_content=None):
         print ('邮件发送失败, ', e.message)
     except Exception as e:
         print ('邮件发送异常, ', str(e))
+
+
+def send_email(receivers, subject, html_content, text_content=None):
+    counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
+    counter = int(counter)
+    if counter == 199:
+        _send_email([ADMIN_EMAIL], 'Aliyun Email meet daily limit.', 'Aliyun Email meet daily limit.')
+        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
+    elif counter < 199:
+        _send_email(receivers, subject, html_content, text_content)
+        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
+    else:
+        msg = 'Aliyun email exceed daily free limitation.'
+        log.warning('[EMAIL SENDER] %s' % msg)

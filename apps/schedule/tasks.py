@@ -14,7 +14,7 @@ from celery.task.schedules import crontab
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
-from core.aliyun.email.tasks import ALIYUN_EMAIL_DAILY_COUNTER
+from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.sms.telstra_api import MessageSender, TELSTRA_SMS_MONTHLY_COUNTER
 from config.settings import rate
