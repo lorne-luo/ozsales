@@ -20,5 +20,4 @@ def email_send_task(receivers, subject, html_content, text_content=None):
     else:
         # todo send from local
         msg = 'Aliyun email exceed daily free limitation.'
-        MessageSender().send_to_self(msg, 'EMAIL_SENDER')
-        log.info('[EMAIL SENDER] %s' % msg)
+        log.warning('[EMAIL SENDER] %s' % msg)
