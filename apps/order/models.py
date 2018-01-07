@@ -181,7 +181,7 @@ class Order(models.Model):
         return u'<a href="%s">%s</a>' % (url, name)
 
     def get_public_link(self):
-        return reverse('order:order-detail-short', args=[self.customer.id, self.id])
+        return reverse('order-detail-short', args=[self.customer.id, self.id])
 
     def get_id_link(self):
         return u'<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)

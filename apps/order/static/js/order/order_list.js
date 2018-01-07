@@ -10,7 +10,7 @@ var orderListPageVue = new OrderListPageVue({
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',
             update_url_tag: 'order:order-update',
-            detail_url_tag: 'order:order-detail-short',
+            detail_url_tag: 'order-detail-short',
             list_url:       Urls['api:order-list'](),
 
             finished_items: [],

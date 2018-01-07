@@ -3,6 +3,8 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib.staticfiles.views import serve
 from dbsettings.views import site_settings, app_settings
+
+from apps.order.views import OrderDetailView
 from core.auth_user.views import ChangePasswordView, ChangePasswordDoneView
 from core import auth_user
 from core.auth_user.views import index
@@ -21,6 +23,7 @@ apps_urlpatterns = [
     url(r'^store/', include('apps.store.urls', namespace='store')),
     url(r'^product/', include('apps.product.urls', namespace='product')),
     url(r'^order/', include('apps.order.urls', namespace='order')),
+    url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', OrderDetailView.as_view(), name='order-detail-short'),
     url(r'^express/', include('apps.express.urls', namespace='express')),
     url(r'^report/', include('apps.report.urls', namespace='report')),
     url(r'^wx/', include('apps.weixin.urls', namespace='weixin')),

@@ -10,7 +10,7 @@ urlpatterns = [
 
     url(r'^order/index/$', views.OrderIndex.as_view(), name="order-index"),
     url(r'^$', views.OrderListView.as_view(), name='order-list-short'),
-    url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', views.OrderDetailView.as_view(), name='order-detail-short'),
+    url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', views.OrderDetailView.as_view()),
     url(r'^order/(?P<username>\w+)/$', views.OrderMemberListView.as_view(), name='order-member'),
     url(r'^order/(?P<order_id>\d+)/status/(?P<status_value>\w+)/$', views.change_order_status, name='change-order-status'),
     url(r'^order/paid/(?P<order_id>\d+)/$', views.change_order_paid, name="change-order-paid"),

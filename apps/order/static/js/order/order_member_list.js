@@ -48,7 +48,7 @@ var orderListPageVue = new OrderMemberListPageVue({
 
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',
-            detail_url_tag: 'order:order-detail-short',
+            detail_url_tag: 'order-detail-short',
             update_url_tag: 'order:order-update',
             finished_items: [],
             ongoing_items: [],

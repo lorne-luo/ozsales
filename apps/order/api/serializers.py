@@ -80,7 +80,7 @@ class OrderSerializer(BaseSerializer):
         read_only_fields = ['id']
 
     def get_detail_url(self, obj):
-        return reverse('order:order-detail-short', args=[obj.customer.id, obj.id])
+        return reverse('order-detail-short', args=[obj.customer.id, obj.id])
 
     def get_customer_display(self, obj):
         return obj.customer.name
