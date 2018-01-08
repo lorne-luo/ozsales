@@ -69,6 +69,10 @@
         });
     };
 
+    $.AdminLTE.getApiUrl = function (app, model) {
+        return '/api/' + app + '/' + model;
+    };
+
     $.AdminLTE.apiGet = function (url, data, callback) {
         sendRequest('GET', url, data, callback);
     };
