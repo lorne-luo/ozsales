@@ -18,6 +18,7 @@ def if_installed(appname, *args, **kwargs):
 
 
 apps_urlpatterns = [
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^customer/', include('apps.customer.urls', namespace='customer')),
     url(r'^member/', include('apps.member.urls', namespace='member')),
     url(r'^store/', include('apps.store.urls', namespace='store')),
@@ -42,35 +43,29 @@ api_urlpatterns = [
     url(r'^report/', include('apps.report.api.urls')),
     url(r'^schedule/', include('apps.schedule.api.urls')),
     url(r'^messageset/', include('core.messageset.api.urls')),
+    url(r'^sms/', include('core.sms.urls')),
 ]
 
 urlpatterns = apps_urlpatterns + [
-    url(r'^admin/', include(admin.site.urls)),
     url(r'^$', index, name='index'),
-
-    url(r'^payments/', include('djstripe.urls', namespace="djstripe")),
 
     # REST API
     url(r'^api/', include(api_urlpatterns, namespace='api')),
-
-    # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
-    url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
     url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
 
-    # for sms api
-    url(r'^', include('core.sms.urls')),
+    # dbsettings
+    url(r'^admin/settings/', include('dbsettings.urls')),
 
-    # for dbsettings
-    # (r'^admin/settings/', include('dbsettings.urls')),
-    url(r'^admin/settings/$', site_settings, name='site_settings'),
-    url(r'^admin/settings/(?P<app_label>[^/]+)/$', app_settings, name='app_settings'),
-
-    # for django-tinymce
+    # django-tinymce
     url(r'^tinymce/', include('tinymce.urls')),
 
-    # for js reverse
-    # url(r'^jsreverse/$', 'django_js_reverse.views.urls_js', name='js_reverse'),
 ]
+
+if settings.DEBUG:
+    # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
+    urlpatterns += [
+        url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    ]
