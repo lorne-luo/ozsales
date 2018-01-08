@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from apps.member.models import Seller
 from utils.enum import enum
-from config.settings import rate
+from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address
@@ -128,7 +128,7 @@ class Order(models.Model):
         elif status_value == ORDER_STATUS.DELIVERED:
             self.express_orders.update(is_delivered=True)
         elif status_value == ORDER_STATUS.SHIPPING:
-            self.aud_rmb_rate = rate.aud_rmb_rate
+            self.aud_rmb_rate = forex.AUDCNH
             self.products.update(is_purchased=True)
 
         self.set_finish_time()
@@ -153,7 +153,7 @@ class Order(models.Model):
             self.address_text = self.address.get_text()
 
         if not self.pk:
-            self.aud_rmb_rate = rate.aud_rmb_rate
+            self.aud_rmb_rate = forex.AUDCNH
 
         self.total_cost_aud = self.product_cost_aud or 0
         self.product_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
@@ -190,7 +190,7 @@ class Order(models.Model):
     get_id_link.short_description = 'ID'
 
     def get_aud_rmb_rate(self):
-        return self.aud_rmb_rate or rate.aud_rmb_rate
+        return self.aud_rmb_rate or forex.AUDCNH
 
     def update_price(self, update_sell_price=False):
         if not self.products.count() and not self.express_orders.count():

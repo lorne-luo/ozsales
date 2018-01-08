@@ -103,7 +103,7 @@ class MessageSender(object):
 
 
 # singleton pattern
-# telstra_sender = MessageSender()
+telstra_sender = MessageSender()
 
 if __name__ == '__main__':
     m = MessageSender()

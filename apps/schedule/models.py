@@ -1,3 +1,4 @@
+import dbsettings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import validators
@@ -23,3 +24,16 @@ class DealSubscribe(models.Model):
     def send_msg(self, msg):
         sender = MessageSender()
         sender.send_sms(self.mobile, msg, 'DealSubscribe #%s' % self.id)
+
+
+# http://s.luotao.net/admin/settings/
+class ForexRate(dbsettings.Group):
+    AUDCNH = dbsettings.DecimalValue('AUD-RMB', default=5.2)
+    USDCNH = dbsettings.DecimalValue('USD-RMB', default=6.5)
+    EURCNH = dbsettings.DecimalValue('EUR-RMB', default=7.9)
+    GBPCNH = dbsettings.DecimalValue('GBP-RMB', default=8.8)
+    CADCNH = dbsettings.DecimalValue('CAD-RMB', default=5.23)
+    NZDCNH = dbsettings.DecimalValue('NZD-RMB', default=4.7)
+    JPYCNH = dbsettings.DecimalValue('JPY-RMB', default=0.058)
+
+forex = ForexRate()

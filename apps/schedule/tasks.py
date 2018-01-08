@@ -16,10 +16,9 @@ from dateutil.relativedelta import relativedelta
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
-from core.sms.telstra_api import MessageSender, TELSTRA_SMS_MONTHLY_COUNTER
-from config.settings import rate
+from core.sms.telstra_api import TELSTRA_SMS_MONTHLY_COUNTER, telstra_sender
 from ..express.models import ExpressOrder
-from .models import DealSubscribe
+from .models import DealSubscribe, forex
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -90,7 +89,6 @@ def ozbargin_task():
         elif item_date > new_last_date:
             new_last_date = item_date
 
-        sender = MessageSender()
         for subscribe in subscribe_list:
             includes = subscribe.get_keyword_list()
             excludes = subscribe.get_exclude_list()
@@ -109,12 +107,12 @@ def ozbargin_task():
                 description = ' '.join(x.strip() for x in text_list)
                 summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
                 content = summary + description
-                content = content[:sender.LENGTH_PER_SMS]
+                content = content[:telstra_sender.LENGTH_PER_SMS]
 
                 # avoid duplication
                 day_ago = timezone.now() - relativedelta(days=1)
                 if not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
-                    result, detail = sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
+                    result, detail = telstra_sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
                     subscribe.msg_count += 1
                     subscribe.save(update_fields=['msg_count'])
                     # print 'sending', content
@@ -182,8 +180,7 @@ def smzdm_task():
             description = ' '.join(x.strip() for x in text_list)
             summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
-            sender = MessageSender()
-            result, detail = sender.send_to_self(content)
+            result, detail = telstra_sender.send_to_self(content)
             # print 'sending', content
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
@@ -191,16 +188,20 @@ def smzdm_task():
 
 
 @periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
-def get_aud_rmb():
+def get_forex_quotes():
     api_key = settings.ONE_FORGE_API_KEY
     client = python_forex_quotes.ForexDataClient(api_key)
-    quotes = client.getQuotes(['AUDCNH', 'USDCNH'])[0]
-    value = quotes['ask']
-    rate.aud_rmb_rate = Decimal(value)
-    sender = MessageSender()
-    sender.send_to_self(value)
-
-    return rate.aud_rmb_rate
+    currency_pairs = ['AUDCNH', 'USDCNH', 'NZDCNH', 'EURCNH', 'GBPCNH', 'CADCNH', 'JPYCNH']
+    quotes = client.getQuotes(currency_pairs)
+    msg = ''
+    for quote in quotes:
+        if not quote['ask']:
+            continue
+        value = Decimal(quote['ask'])
+        setattr(forex, quote['symbol'], value)
+        msg += '%s: %.4f\n' % (quote['symbol'], value)
+        
+    telstra_sender.send_to_self(msg.strip())
 
 
 @periodic_task(run_every=crontab(hour=20, minute=30))
@@ -208,8 +209,7 @@ def express_id_upload_task():
     unupload_order = ExpressOrder.objects.filter(id_upload=False)
     if unupload_order.exists():
         ids = ','.join([o.track_id for o in unupload_order])
-        sender = MessageSender()
-        sender.send_to_self('Upload ID for %s' % ids)
+        telstra_sender.send_to_self('Upload ID for %s' % ids)
 
     log.info('[Express] Daily id upload checking.')
 

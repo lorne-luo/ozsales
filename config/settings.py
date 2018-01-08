@@ -349,16 +349,6 @@ CACHES = {
 
 # ----------------------------------------- DBSETTINGS -----------------------------------------------
 
-import dbsettings
-
-
-# http://s.luotao.net/admin/settings/
-class ForexRate(dbsettings.Group):
-    aud_rmb_rate = dbsettings.DecimalValue('AUD-RMB Rate', default=5.2)
-
-
-rate = ForexRate()
-
 # for local settings
 if os.path.exists(os.path.join(os.path.dirname(__file__), "local.py")):
     from .local import *
