@@ -1,10 +1,9 @@
 import logging
 
 from django.http import Http404
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions, BasePermission
-from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, CUSTOMER_GROUP
+from rest_framework.permissions import DjangoModelPermissions, BasePermission
+from core.auth_user.constant import MEMBER_GROUP, CUSTOMER_GROUP, PREMIUM_MEMBER_GROUP
 
 log = logging.getLogger(__name__)
 
@@ -233,8 +232,8 @@ class MemberGroupPermissions(BasePermission):
     group_required = (MEMBER_GROUP,)
 
 
-class FreeMemberGroupPermissions(BasePermission):
-    group_required = (FREE_MEMBER_GROUP,)
+class PremiumMemberGroupPermissions(BasePermission):
+    group_required = (PREMIUM_MEMBER_GROUP,)
 
 
 class CustomerGroupPermissions(BasePermission):

@@ -3,7 +3,6 @@ import time
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
-from django.contrib.sessions.models import Session
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
@@ -12,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
 from rest_framework.authtoken.models import Token
 
-from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP
+from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES
 from core.payments.stripe.models import UserProfileStripeMixin
@@ -84,10 +83,11 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
             self.subscribe_seller_member()
         return card
 
-    def check_membership(self):
-        if self.in_group(FREE_MEMBER_GROUP) or self.auth_user.is_staff:
+    def check_premium_member(self):
+        if self.auth_user.is_superuser:
             return True  # always True
-        elif self.in_group(MEMBER_GROUP):
+        elif self.in_group(PREMIUM_MEMBER_GROUP):
+            return True
             if self.current_month_order_count <= MONTHLY_FREE_ORDER:
                 return True  # in free range
             else:
@@ -98,7 +98,6 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
                 else:
                     return False
         else:
-            log.info('seller[%s] have no group.' % self.auth_user.get_username())
             return False
 
     def enable(self, month):
@@ -137,9 +136,9 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
         self.save(update_fields=['expire_at'])
 
     @staticmethod
-    def create_seller(mobile, email, password, free_account=False):
+    def create_seller(mobile, email, password, premium_account=False):
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
-        group = Group.objects.get(name=FREE_MEMBER_GROUP) if free_account else Group.objects.get(name=MEMBER_GROUP)
+        group = Group.objects.get(name=PREMIUM_MEMBER_GROUP) if premium_account else Group.objects.get(name=MEMBER_GROUP)
         user.groups.add(group)
         seller = Seller(auth_user=user, name=mobile or email)
         seller.save()

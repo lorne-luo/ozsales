@@ -32,15 +32,15 @@ class ProfileRequiredMixin(LoginRequiredMixin):
             return self.handle_no_permission()
 
 
-class ActiveSellerRequiredMixin(ProfileRequiredMixin):
+class PremiumSellerRequiredMixin(ProfileRequiredMixin):
     profile_required = ('member.seller',)
 
     def check_perm(self, request, *args, **kwargs):
-        if super(ActiveSellerRequiredMixin, self).check_perm(request, *args, **kwargs):
-            return request.profile.check_membership()
+        if super(PremiumSellerRequiredMixin, self).check_perm(request, *args, **kwargs):
+            return request.profile.check_premium_member()
         else:
             return False
 
     def handle_no_permission(self):
-        messages.warning(self.request, u'已达到免费订单上限，请加入会员')
+        messages.warning(self.request, u'没有权限访问，请加入高级会员.')
         return HttpResponseRedirect(reverse_lazy('payments:add_card'))

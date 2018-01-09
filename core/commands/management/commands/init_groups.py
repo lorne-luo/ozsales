@@ -6,7 +6,7 @@ from django.contrib.auth.models import Permission, Group
 from django.core import management
 from django.core.management.base import BaseCommand
 
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP, CUSTOMER_GROUP
+from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, CUSTOMER_GROUP, PREMIUM_MEMBER_GROUP
 
 
 class Command(BaseCommand):
@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
     }
 
-    permissions.update({FREE_MEMBER_GROUP: permissions[MEMBER_GROUP]})
+    permissions.update({PREMIUM_MEMBER_GROUP: permissions[MEMBER_GROUP]})
 
     def handle(self, *args, **options):
         management.call_command('validate_permissions')

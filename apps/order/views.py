@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
-from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP
+from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from core.django.permission import ProfileRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
@@ -67,7 +67,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
 class OrderListView(GroupRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
-    group_required = [MEMBER_GROUP, FREE_MEMBER_GROUP]
+    group_required = [MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
 
     def get_context_data(self, **kwargs):
         context = super(OrderListView, self).get_context_data(**kwargs)

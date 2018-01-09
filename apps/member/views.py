@@ -136,7 +136,7 @@ class RegisterView(FormView):
         mobile = form.cleaned_data.get('mobile')
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        Seller.create_seller(mobile, email, password, free_account=True)
+        Seller.create_seller(mobile, email, password, premium_account=False)
         messages.success(self.request, '注册成功, 请登陆.')
 
         return super(RegisterView, self).form_valid(form)

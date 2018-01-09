@@ -12,7 +12,7 @@ from core.django.permission import ProfileRequiredMixin
 from core.utils.string import include_non_asc
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
+from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from ..models import Customer, Address, CustomerCart, CartProduct
 from ...product.models import Product
 
@@ -36,7 +36,7 @@ class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'mobile', 'primary_address__name']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
+    group_required = [ADMIN_GROUP, MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
     permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
