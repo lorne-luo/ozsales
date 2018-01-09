@@ -28,6 +28,7 @@
 
             {% if request.user.is_superuser %}
                 {% include "schedule/_menu.html" %}
+                {% include "messageset/_menu.html" %}
             {% endif %}
 
         </ul>
