@@ -59,6 +59,7 @@
             {% endfor %}
         </div>
         <div class="box-footer">
+        {% block form_footer %}
           <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
           <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
 {#          {% if object.id %}#}
@@ -66,6 +67,7 @@
 {#                  v-on:click="delete({{ object.id }}, $event)">删 除#}
 {#          </button>#}
 {#          {% endif %}#}
+        {% endblock %}
         </div>
     </form>
     </div>
@@ -89,8 +91,10 @@
         $("select[class$='form-control'][readonly=true]").prop('disabled', true);
 
         jQuery(document).ready(function($) {
-            $("select[class$='form-control']").not(".hide select[class$='form-control']")
-                    .chosen({search_contains: true,disable_search_threshold: 10});
+            $("select[class$='form-control']").not(".hide select[class$='form-control']").chosen({
+                search_contains: true,
+                disable_search_threshold: 10
+            });
         });
     </script>
 {% endblock %}

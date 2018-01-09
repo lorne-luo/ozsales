@@ -6,7 +6,7 @@ from models import Notification, NotificationContent, SiteMailContent, SiteMailR
 class NotificationUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Notification
-        fields = ['title', 'content', 'receiver', 'status','read_time', 'creator']
+        fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
 
 
 class NotificationDetailForm(NoManytoManyHintModelForm):
@@ -18,7 +18,11 @@ class NotificationDetailForm(NoManytoManyHintModelForm):
 class NotificationContentAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = NotificationContent
-        fields = ['title', 'contents']
+        fields = ['receivers', 'title', 'contents']
+
+    def __init__(self, *args, **kwargs):
+        super(NotificationContentAddForm, self).__init__(*args, **kwargs)
+        self.fields['receivers'].widget.attrs['data-placeholder'] = u'选择目标用户，留空将发送所有用户...'
 
 
 class NotificationContentUpdateForm(NoManytoManyHintModelForm):
@@ -37,6 +41,10 @@ class SiteMailContentAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = SiteMailContent
         fields = ['receivers', 'title', 'contents']
+
+    def __init__(self, *args, **kwargs):
+        super(SiteMailContentAddForm, self).__init__(*args, **kwargs)
+        self.fields['receivers'].widget.attrs['data-placeholder'] = u'选择收件用户，留空将发送所有用户...'
 
 
 class SiteMailContentUpdateForm(NoManytoManyHintModelForm):
@@ -66,7 +74,7 @@ class SiteMailReceiveUpdateForm(NoManytoManyHintModelForm):
 class SiteMailReceiveDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = SiteMailReceive
-        fields = ['title', 'content', 'sender',  'status', 'creator', 'receiver', 'read_time']
+        fields = ['title', 'content', 'sender', 'status', 'creator', 'receiver', 'read_time']
 
 
 class SiteMailSendAddForm(NoManytoManyHintModelForm):
@@ -84,11 +92,10 @@ class SiteMailSendUpdateForm(NoManytoManyHintModelForm):
 class SiteMailSendDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = SiteMailSend
-        fields = ['sender','title', 'content', 'status']
+        fields = ['sender', 'title', 'content', 'status']
 
 
 class TaskDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Task
         fields = ['name', 'percent', 'start_app', 'status', 'end_time', 'creator']
-
