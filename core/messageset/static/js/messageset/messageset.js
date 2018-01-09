@@ -12,9 +12,9 @@ var messagesetVue = new Vue({
     },
     ready: function(){
         var data = {'status': 0};
-        // this.loadData('sitemailreceive', {"status": 0});
+        this.loadData('sitemailreceive', {"status": 0});
         this.loadData('notification', data);
-        // this.loadData('task', data);
+        this.loadData('task', data);
     },
     methods: {
         detail: function(model, event){
