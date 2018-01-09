@@ -75,6 +75,25 @@ class SiteMailContent(AbstractMessageContent):
             'title', 'contents', 'receivers'
         )
 
+    def send_sitemail(self):
+        kwargs = {
+            'title': self.title,
+            'content': self,
+            'sender': self.creator,
+            'creator': self.creator
+        }
+
+        # if no receivers filed, send to all
+        if not self.receivers.count():
+            self.receivers = get_user_model().objects.all()
+            self.save()
+
+        SiteMailSend(**kwargs).save()
+        for user in self.receivers.all():
+            tmp_kwargs = {'receiver': user}
+            tmp_kwargs.update(kwargs)
+            SiteMailReceive(**tmp_kwargs).save()
+
 
 class AbstractSiteMail(models.Model, MailStatus):
     title = models.CharField(
@@ -141,8 +160,8 @@ class SiteMailSend(AbstractSiteMail):
             'content.contents',
             'send_time',
         )
-        filter_fields = ('status', )
-        search_fields = ('title', )
+        filter_fields = ('status',)
+        search_fields = ('title',)
 
         @classmethod
         def filter_queryset(cls, request, queryset):
@@ -179,8 +198,8 @@ class SiteMailReceive(AbstractSiteMail):
         list_form_fields = (
             'title', 'sender'
         )
-        filter_fields = ('status', )
-        search_fields = ('title', )
+        filter_fields = ('status',)
+        search_fields = ('title',)
 
         @classmethod
         def filter_queryset(cls, request, queryset):
@@ -226,6 +245,22 @@ class NotificationContent(AbstractMessageContent):
         list_form_fields = (
             'title', 'contents', 'receivers'
         )
+
+    def send_notification(self):
+        # if no receivers filed, send to all
+        if not self.receivers.count():
+            self.receivers = get_user_model().objects.all()
+            self.save()
+
+        for user in self.receivers.all():
+            if not Notification.objects.filter(receiver=user, content=self).exists():
+                nf = Notification()
+                nf.title = self.title
+                nf.content = self
+                nf.receiver = user
+                nf.creator = self.creator
+                nf.status = Notification.UNREAD
+                nf.save()
 
 
 class Notification(models.Model, ReadStatus):
@@ -379,7 +414,7 @@ class Task(models.Model, TaskStatus):
             'name', 'percent', 'start_app', 'status'
         )
         # 数据过滤
-        filter_fields = ('status', )
+        filter_fields = ('status',)
         # 模糊搜索
         search_fields = ('name', 'start_app')
 
@@ -390,56 +425,44 @@ class Task(models.Model, TaskStatus):
             )
 
 
-@receiver(post_save, sender=SiteMailContent)
-def create_sitemail_datas(sender, instance, created, **kwargs):
-    """
-    发送邮件时，向收件箱和发件箱添加数据，
-    这里将来可以替换为异步消息队列
-    :param sender:
-    :param instance:
-    :param kwargs:
-    """
-    if created:
-        kwargs = {
-            'title': instance.title,
-            'content': instance,
-            'sender': instance.creator,
-            'creator': instance.creator
-        }
+# @receiver(post_save, sender=SiteMailContent)
+# def create_sitemail_datas(sender, instance, created, **kwargs):
+#     """
+#     发送邮件时，向收件箱和发件箱添加数据，
+#     这里将来可以替换为异步消息队列
+#     :param sender:
+#     :param instance:
+#     :param kwargs:
+#     """
+#     if created:
+#         kwargs = {
+#             'title': instance.title,
+#             'content': instance,
+#             'sender': instance.creator,
+#             'creator': instance.creator
+#         }
+#
+#         # if no receivers filed, send to all
+#         if not instance.receivers.count():
+#             instance.receivers = get_user_model().objects.all()
+#             instance.save()
+#
+#         SiteMailSend(**kwargs).save()
+#         for user in instance.receivers.all():
+#             tmp_kwargs = {
+#                 'receiver': user,
+#             }
+#             tmp_kwargs.update(kwargs)
+#             SiteMailReceive(**tmp_kwargs).save()
 
-        # if no receivers filed, send to all
-        if not instance.receivers.count():
-            instance.receivers = get_user_model().objects.all()
-            instance.save()
-
-        SiteMailSend(**kwargs).save()
-        for user in instance.receivers.all():
-            tmp_kwargs = {
-                'receiver': user,
-            }
-            tmp_kwargs.update(kwargs)
-            SiteMailReceive(**tmp_kwargs).save()
-
-
-@receiver(m2m_changed, sender=NotificationContent.receivers.through)
-def create_notification_datas(sender, instance, **kwargs):
-    """
-    保存系统通知时，给所选用户发送通知，
-    目前是向Notification表添加数据
-    这里将来可以替换为异步消息队列
-    :param sender:
-    :param instance:
-    :param kwargs:
-    """
-    for user in instance.receivers.all():
-        exists = Notification.objects.filter(
-            receiver=user, content=instance
-        ).exists()
-        if not exists:
-            nf = Notification()
-            nf.title = instance.title
-            nf.content = instance
-            nf.receiver = user
-            nf.creator = instance.creator
-            nf.status = Notification.UNREAD
-            nf.save()
+# @receiver(m2m_changed, sender=NotificationContent.receivers.through)
+# def create_notification_datas(sender, instance, **kwargs):
+#     """
+#     保存系统通知时，给所选用户发送通知，
+#     目前是向Notification表添加数据
+#     这里将来可以替换为异步消息队列
+#     :param sender:
+#     :param instance:
+#     :param kwargs:
+#     """
+#     instance.send()

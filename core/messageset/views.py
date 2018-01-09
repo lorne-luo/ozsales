@@ -1,13 +1,11 @@
 # coding=utf-8
-from django.db.models.signals import post_save
-from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from braces.views import MultiplePermissionsRequiredMixin
 
+from core.django.constants import ReadStatus
 from core.django.views import CommonContextMixin
-from .models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task, \
-    create_sitemail_datas
+from .models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 from . import forms
 
 
@@ -45,6 +43,7 @@ class NotificationDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
     }
 
 
+
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = NotificationContent
     form_class = forms.NotificationContentAddForm
@@ -58,10 +57,12 @@ class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContext
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         if form.is_valid():
-            self.object = notification_content = form.save(commit=False)
+            notification_content = form.save(commit=False)
             notification_content.creator = request.user
             notification_content.save()
-            return HttpResponseRedirect(self.get_success_url())
+            form.save_m2m()
+            notification_content.send_notification()
+            return redirect('messageset:notification-list')
         else:
 
             return self.form_invalid(form)
@@ -101,12 +102,9 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
         if form.is_valid():
             sitemail = form.save(commit=False)
             sitemail.creator = request.user
-            post_save.disconnect(create_sitemail_datas, sender=SiteMailContent)
             sitemail.save()
-            # fixme not correctly create SiteMailReceive
-            sitemail.receivers = form.cleaned_data['receivers']
-            post_save.connect(create_sitemail_datas, sender=SiteMailContent)
-            sitemail.save()
+            form.save_m2m()
+            sitemail.send_sitemail()
             return redirect('messageset:sitemail-list')
         else:
 
@@ -129,6 +127,13 @@ class SiteMailContentDetailView(MultiplePermissionsRequiredMixin, CommonContextM
     permissions = {
         "all": ("sitemailcontent.view_sitemailcontent",)
     }
+
+    def get_context_data(self, **kwargs):
+        if self.object:
+            mail_receive = SiteMailReceive.objects.filter(receiver=self.request.user, content=self.object)
+            mail_receive.status = ReadStatus.READ
+            mail_receive.save()
+        return super(SiteMailContentDetailView, self).get_context_data(**kwargs)
 
 
 # views for SiteMailReceive
