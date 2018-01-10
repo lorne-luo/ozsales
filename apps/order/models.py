@@ -306,6 +306,14 @@ class Order(models.Model):
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
 
+    def email_delivered(self):
+        subject = u'%s has all delivered.' % self
+        link = reverse('order-detail-short', args=[self.customer.id, self.id])
+        content = u'%s has all delivered. <a href="%s%s">click here</a> to check.' % \
+                  (self, settings.DOMAIN_URL, link)
+        self.seller.send_email(subject, content)
+        self.customer.send_email(subject, content)
+
     def update_track(self):
         if self.express_orders.count() == 0 or self.status != ORDER_STATUS.SHIPPING:
             return
@@ -319,12 +327,7 @@ class Order(models.Model):
         if all_finished:
             self.set_status(ORDER_STATUS.DELIVERED)
             # notify seller and customer
-            subject = u'%s has all delivered.' % self
-            link = reverse('order-detail-short', args=[self.customer.id, self.id])
-            content = u'%s has all delivered. <a href="%s%s">click here</a> to check.' % \
-                      (self, settings.DOMAIN_URL, link)
-            self.seller.send_email(subject, content)
-            self.customer.send_email(subject, content)
+            self.email_delivered()
 
     @property
     def app(self):
