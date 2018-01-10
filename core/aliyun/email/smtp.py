@@ -25,6 +25,8 @@ SINGLE_EMAIL_PASSWORD = 'nv98273rH12j3nF'  # 发件人密码，通过控制台�
 BATCH_EMAIL_USERNAME = 'info@em.luotao.net'
 BATCH_EMAIL_PASSWORD = 'nv98273rH12j3nF'
 
+ALIYUN_EMAIL_DAILY_FREE_LIMIT = 200
+
 
 def _send_email(receivers, subject, html_content, text_content=None):
     if isinstance(receivers, str):
@@ -82,12 +84,13 @@ def _send_email(receivers, subject, html_content, text_content=None):
 def send_email(receivers, subject, html_content, text_content=None):
     counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
     counter = int(counter)
-    if counter == 199:
-        _send_email([ADMIN_EMAIL], 'Aliyun Email meet daily limit.', 'Aliyun Email meet daily limit.')
+    if counter == ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
+        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
+        _send_email([ADMIN_EMAIL], msg, msg)
         r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
-    elif counter < 199:
+    elif counter < ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
         _send_email(receivers, subject, html_content, text_content)
         r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
     else:
-        msg = 'Aliyun email exceed daily free limitation.'
+        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
         log.warning('[EMAIL SENDER] %s' % msg)
