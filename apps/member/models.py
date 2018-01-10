@@ -33,7 +33,7 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
 
     def __str__(self):
-        return '[S]%s' % self.name
+        return '%s' % self.name
 
     @property
     def email(self):
