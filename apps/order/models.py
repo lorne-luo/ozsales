@@ -3,6 +3,8 @@ import datetime
 import logging
 
 from decimal import Decimal
+
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
@@ -315,8 +317,14 @@ class Order(models.Model):
                 all_finished = False
 
         if all_finished:
-            # todo notify seller
             self.set_status(ORDER_STATUS.DELIVERED)
+            # notify seller and customer
+            subject = u'%s has all delivered.' % self
+            link = reverse('order-detail-short', args=[self.customer.id, self.id])
+            content = u'%s has all delivered. <a href="%s%s">click here</a> to check.' % \
+                      (self, settings.DOMAIN_URL, link)
+            self.seller.send_email(subject, content)
+            self.customer.send_email(subject, content)
 
     @property
     def app(self):
