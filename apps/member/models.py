@@ -3,7 +3,6 @@ import time
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
-from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
@@ -16,7 +15,6 @@ from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES
 from core.payments.stripe.models import UserProfileStripeMixin
 from core.payments.stripe.stripe_api import stripe
-from core.sms.telstra_api import MessageSender
 
 log = logging.getLogger(__name__)
 

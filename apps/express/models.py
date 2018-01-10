@@ -2,14 +2,17 @@
 import logging
 import re
 
+from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
+from core.aliyun.email.tasks import email_send_task
 import apps.express.tracker as tracker
 from apps.member.models import Seller
 from core.auth_user.models import AuthUser
@@ -226,6 +229,16 @@ class ExpressOrder(models.Model):
     def get_address(self):
         return self.order.address
 
+    def email_delivered(self):
+        if self.is_delivered:
+            email = self.order.customer.email
+            subject = u'Parcel %s in %s has delivered.' % (self, self.order)
+            link = reverse('order-detail-short', args=[self.order.customer.id, self.order.id])
+            content = u'Parcel %s in %s has delivered. <a href="%s%s">click here</a> to check.' % \
+                      (self, self.order, settings.DOMAIN_URL, link)
+
+            email_send_task.apply_async(args=([email], subject, content))
+
     def update_track(self):
         if not self.is_delivered and self.carrier:
             delivered, last_info = self.carrier.update_track(self)
@@ -233,6 +246,8 @@ class ExpressOrder(models.Model):
                 self.is_delivered = delivered
                 self.last_track = last_info[:512]
                 self.save(update_fields=['last_track', 'last_track'])
+                if self.is_delivered:
+                    self.email_delivered()
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:
