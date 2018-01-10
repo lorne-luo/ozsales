@@ -232,8 +232,8 @@ class OrderDetailView(CommonContextMixin, UpdateView):
     form_class = forms.OrderDetailForm
 
     def get_template_names(self):
-        if self.request.user.is_superuser:
-            return 'order/order_detail_admin.html'
+        if self.request.profile == self.object.seller:
+            return 'order/order_detail_owner.html'
         else:
             return 'order/order_detail.html'
 
