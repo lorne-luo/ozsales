@@ -111,7 +111,7 @@ def ozbargin_task():
 
                 # avoid duplication
                 day_ago = timezone.now() - relativedelta(days=1)
-                if not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
+                if subscribe.mobile and  not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
                     result, detail = telstra_sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
                     subscribe.msg_count += 1
                     subscribe.save(update_fields=['msg_count'])
