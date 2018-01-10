@@ -27,7 +27,7 @@ DEBUG = False
 
 DOMAIN_NAME='s.luotao.net'
 DOMAIN_URL='http://s.luotao.net'
-ALLOWED_HOSTS = ['luotao.net']
+ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 
