@@ -3,6 +3,10 @@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+DOMAIN_NAME='localhost:8000'
+DOMAIN_URL='http://localhost:8000'
+ALLOWED_HOSTS = ['*']
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 

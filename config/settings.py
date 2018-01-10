@@ -25,7 +25,9 @@ SECRET_KEY = 'n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+DOMAIN_NAME='s.luotao.net'
+DOMAIN_URL='http://s.luotao.net'
+ALLOWED_HOSTS = ['luotao.net']
 
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 
