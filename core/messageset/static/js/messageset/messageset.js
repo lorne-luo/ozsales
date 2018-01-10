@@ -11,10 +11,10 @@ var messagesetVue = new Vue({
         appName: 'messageset'
     },
     ready: function(){
-        var data = {'status': 0};
-        this.loadData('sitemailreceive', {"status": 0});
-        this.loadData('notification', data);
-        this.loadData('task', data);
+        var status_data = {'status': 0};
+        this.loadData('sitemailreceive', status_data);
+        this.loadData('notification', status_data);
+        // this.loadData('task', status_data);
     },
     methods: {
         detail: function(model, event){
