@@ -32,3 +32,4 @@ def update_delivery_tracking():
                 link = reverse('order-detail-short', args=[order.customer.id, order.id])
                 content = u'%s is already delivered. <a href="%s%s">click here</a> to check.' % (order, settings.DOMAIN_URL, link)
                 order.seller.send_email(subject, content)
+                order.customer.send_email(subject, content)

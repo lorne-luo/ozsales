@@ -15,12 +15,14 @@ from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
 
-from apps.member.models import Seller
-from apps.product.models import Product
+from core.sms.telstra_api import telstra_sender
+from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin
 from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
 
+from apps.member.models import Seller
+from apps.product.models import Product
 
 @python_2_unicode_compatible
 class InterestTag(models.Model):
@@ -194,8 +196,21 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
 
         return addr
 
-    get_primary_address.allow_tags = False
-    get_primary_address.short_description = 'Primary Addr'
+    def send_email(self, subject, message):
+        if self.email:
+            email_send_task.apply_async(args=([self.email], subject, message))
+
+    def send_sms(self, content, app_name=None):
+        if not self.mobile:
+            return
+
+        if self.mobile.startswith('04'):
+            # australia mobile
+            telstra_sender.send_sms(self.mobile, content, app_name)
+        elif self.mobile.startswith('1'):
+            # todo send sms for china mobile number
+            pass
+
 
 
 @receiver(post_save, sender=Customer)

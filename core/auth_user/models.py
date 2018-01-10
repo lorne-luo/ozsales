@@ -89,9 +89,13 @@ class AuthUser(AbstractUser, UserProfileStripeMixin):
         return self.is_superuser or self.in_group(ADMIN_GROUP)
 
     def email_user(self, subject, message, from_email=None, **kwargs):
-        email_send_task.apply_async(args=([self.email], subject, message))
+        if self.email:
+            email_send_task.apply_async(args=([self.email], subject, message))
 
     def send_sms(self, content, app_name=None):
+        if not self.mobile:
+            return
+
         if self.mobile.startswith('04'):
             # australia mobile
             telstra_sender.send_sms(self.mobile, content, app_name)

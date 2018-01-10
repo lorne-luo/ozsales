@@ -54,8 +54,8 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
     def send_email(self, subject, message):
         self.auth_user.email_user(subject, message)
 
-    def send_sms(self, content):
-        self.auth_user.send_sms(content)
+    def send_sms(self, content, app_name=None):
+        self.auth_user.send_sms(content, app_name)
 
     def get_name(self):
         return self.name or self.auth_user.get_username()
