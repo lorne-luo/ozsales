@@ -12,7 +12,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
-from core.aliyun.email.tasks import email_send_task
 import apps.express.tracker as tracker
 from apps.member.models import Seller
 from core.auth_user.models import AuthUser
@@ -231,13 +230,12 @@ class ExpressOrder(models.Model):
 
     def email_delivered(self):
         if self.is_delivered:
-            email = self.order.customer.email
             subject = u'Parcel %s in %s has delivered.' % (self, self.order)
             link = reverse('order-detail-short', args=[self.order.customer.id, self.order.id])
             content = u'Parcel %s in %s has delivered. <a href="%s%s">click here</a> to check.' % \
                       (self, self.order, settings.DOMAIN_URL, link)
 
-            email_send_task.apply_async(args=([email], subject, content))
+            self.order.customer.send_email(subject, content)
 
     def update_track(self):
         if not self.is_delivered and self.carrier:
