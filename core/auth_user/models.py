@@ -3,6 +3,8 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
+from core.sms.telstra_api import telstra_sender
+from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
 from core.payments.stripe.models import UserProfileStripeMixin
 
@@ -85,6 +87,17 @@ class AuthUser(AbstractUser, UserProfileStripeMixin):
     @property
     def is_admin(self):
         return self.is_superuser or self.in_group(ADMIN_GROUP)
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        email_send_task.apply_async(args=([self.email], subject, message))
+
+    def send_sms(self, content, app_name=None):
+        if self.mobile.startswith('04'):
+            # australia mobile
+            telstra_sender.send_sms(self.mobile, content, app_name)
+        elif self.mobile.startswith('1'):
+            # todo send sms for china mobile number
+            pass
 
 
 class UserProfileMixin(object):

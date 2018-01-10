@@ -51,6 +51,12 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
         self.auth_user.mobile = mobile
         self.auth_user.save(update_fields=['mobile'])
 
+    def send_email(self, subject, message):
+        self.auth_user.email_user(subject, message)
+
+    def send_sms(self, content):
+        self.auth_user.send_sms(content)
+
     def get_name(self):
         return self.name or self.auth_user.get_username()
 
@@ -111,21 +117,6 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
         self.auth_user.is_active = False
         self.auth_user.save(update_fields=['is_active'])
 
-    def send_email(self, subject, message, **kwargs):
-        from_email = 'service@luotao.net'
-        if self.email:
-            send_mail(subject, message, from_email, [self.email], **kwargs)
-
-    def send_sms(self, content):
-        if self.mobile:
-            if self.mobile.startswith('0'):
-                # australia mobile
-                sender = MessageSender()
-                sender.send_sms(self.mobile, content, app_name='SMS Seller')
-            elif self.mobile.startswith('1'):
-                # china mobile
-                pass
-
     def add_membership(self, charge, months=1):
         membership = MembershipOrder(seller=self)
         membership.start_at = timezone.now().date() if timezone.now().date() > self.expire_at else self.expire_at
@@ -138,7 +129,8 @@ class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
     @staticmethod
     def create_seller(mobile, email, password, premium_account=False):
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
-        group = Group.objects.get(name=PREMIUM_MEMBER_GROUP) if premium_account else Group.objects.get(name=MEMBER_GROUP)
+        group = Group.objects.get(name=PREMIUM_MEMBER_GROUP) if premium_account else Group.objects.get(
+            name=MEMBER_GROUP)
         user.groups.add(group)
         seller = Seller(auth_user=user, name=mobile or email)
         seller.save()

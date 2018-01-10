@@ -3,8 +3,9 @@ import logging
 from dateutil.relativedelta import relativedelta
 from celery.task import periodic_task
 from celery.task.schedules import crontab
+from django.urls import reverse
+from django.conf import settings
 from django.utils import timezone
-
 from apps.order.models import Order, ORDER_STATUS
 from .models import ExpressOrder
 
@@ -22,7 +23,12 @@ def update_delivery_tracking():
     week_ago = now - relativedelta(days=5)
     unfinished_order = Order.objects.filter(status=ORDER_STATUS.SHIPPING, ship_time__lt=week_ago)
     for order in unfinished_order:
-        delivered = [express.is_delivered for express in order.express_orders.all()]
-        if all(delivered):
-            # todo notify seller
-            order.set_status(ORDER_STATUS.DELIVERED)
+        if order.seller.check_premium_member():
+            delivered = [express.is_delivered for express in order.express_orders.all()]
+            if all(delivered):
+                order.set_status(ORDER_STATUS.DELIVERED)
+                # notify seller
+                subject = u'%s is already delivered.' % order
+                link = reverse('order-detail-short', args=[order.customer.id, order.id])
+                content = u'%s is already delivered. <a href="%s%s">click here</a> to check.' % (order, settings.DOMAIN_URL, link)
+                order.seller.send_email(subject, content)
