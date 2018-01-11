@@ -13,7 +13,7 @@ from rest_framework.authtoken.models import Token
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES
-from core.payments.stripe.models import UserProfileStripeMixin
+from core.payments.stripe.models import StripePaymentUserMixin
 from core.payments.stripe.stripe_api import stripe
 
 log = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
 @python_2_unicode_compatible
-class Seller(UserProfileMixin, models.Model, UserProfileStripeMixin):
+class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('name'), max_length=30, null=True, blank=True)

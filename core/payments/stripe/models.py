@@ -12,20 +12,7 @@ from djstripe.sync import sync_subscriber
 log = logging.getLogger(__name__)
 
 
-class StBaseObject(object):
-    def sync(self):
-        """sync single object from stripe according to stripe_id"""
-        if self.stripe_id:
-            data = self.stripe_class.retrieve(self.stripe_id)
-            self._sync(self.__class__._stripe_object_to_record(data))
-            self._attach_objects_hook(self.__class__, data)
-            self.save()
-            self._attach_objects_post_save_hook(self.__class__, data)
-
-        return self
-
-
-class UserProfileStripeMixin(object):
+class StripePaymentUserMixin(object):
     """mixin for stripe customer subscriber model"""
 
     @property

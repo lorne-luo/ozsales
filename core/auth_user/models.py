@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManag
 from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
-from core.payments.stripe.models import UserProfileStripeMixin
+from core.payments.stripe.models import StripePaymentUserMixin
 
 
 class AuthUserManager(UserManager):
@@ -37,7 +37,7 @@ class AuthUserManager(UserManager):
             return super(AuthUserManager, self).get(mobile=mobile_or_email)
 
 
-class AuthUser(AbstractUser, UserProfileStripeMixin):
+class AuthUser(AbstractUser, StripePaymentUserMixin):
     mobile = models.CharField(_('mobile'), max_length=30, unique=True, blank=True)
 
     objects = AuthUserManager()
@@ -81,7 +81,7 @@ class AuthUser(AbstractUser, UserProfileStripeMixin):
 
     @property
     def subscriber(self):
-        # for UserProfileStripeMixin, return correct djstripe subscriber
+        # for StripePaymentUserMixin, return correct djstripe subscriber
         return self
 
     @property
