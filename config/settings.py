@@ -191,7 +191,6 @@ DEFAULT_FROM_EMAIL = 'dev@luotao.net'
 
 # Auth
 AUTH_USER_MODEL = 'auth_user.AuthUser'
-AUTH_PROFILE_MODULE = 'member.seller'
 AUTHENTICATION_BACKENDS = ['core.auth_user.backend.AuthUserAuthenticateBackend']
 LOGIN_URL = '/member/login/'
 
@@ -328,6 +327,7 @@ STRIPE_LIVE_SECRET_KEY = ''
 STRIPE_TEST_PUBLIC_KEY = 'pk_test_vEaCFE2a2NpcE6vDvRrvcf1T'
 STRIPE_TEST_SECRET_KEY = 'sk_test_AZbVO3pCQDtSozlrTUL9BhO0'
 STRIPE_LIVE_MODE = False
+DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_callback'
 
 # ----------------------------------------- Telstra SMS API KEY-----------------------------------------------
 TELSTRA_CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"

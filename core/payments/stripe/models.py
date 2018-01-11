@@ -8,7 +8,6 @@ from django.core.exceptions import SuspiciousOperation
 from stripe.error import (CardError, StripeError, APIConnectionError, AuthenticationError, InvalidRequestError,
                           RateLimitError)
 from djstripe.models import Customer, Charge
-from djstripe.sync import sync_subscriber
 
 log = logging.getLogger(__name__)
 
@@ -30,6 +29,7 @@ class StripePaymentUserMixin(object):
 
     def sync_stripe(self):
         """sync all payment data (customer,card,charge,invoice) from stripe"""
+        from djstripe.sync import sync_subscriber
         sync_subscriber(self.subscriber)
 
     def can_charge(self):
