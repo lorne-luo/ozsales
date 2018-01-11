@@ -1,11 +1,12 @@
-from decimal import Decimal
-
 import logging
-
+from decimal import Decimal
+from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
+from django.core.exceptions import SuspiciousOperation
 from stripe.error import (CardError, StripeError, APIConnectionError, AuthenticationError, InvalidRequestError,
                           RateLimitError)
-from django.core.exceptions import SuspiciousOperation
 from djstripe.models import Customer, Charge
 from djstripe.sync import sync_subscriber
 
@@ -113,3 +114,45 @@ class StripePaymentUserMixin(object):
         subscriptions = self.stripe_customer.valid_subscriptions
         for sub in subscriptions:
             sub.cancel(at_period_end=True)
+
+
+class StripeInvoice(models.Model):
+    """ invoice for stripe charge """
+    charge = models.ForeignKey(Charge, blank=True, null=True)
+    customer = models.ForeignKey(Customer, blank=True, null=True)
+    paid = models.BooleanField(default=False)
+    refunded = models.BooleanField(default=False)
+    status = models.CharField(max_length=32, blank=True)
+    amount = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    amount_refunded = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
+    description = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    modified = models.DateTimeField(auto_now=True, editable=False)
+
+    @property
+    def number(self):
+        if not self.id:
+            self.save()
+        number = hex(self.id).split('x')[-1].upper()
+        return number.zfill(6)
+
+    def update_from_charge(self, charge):
+        self.charge = charge
+        self.paid = charge.paid
+        self.refunded = charge.refunded
+        self.amount_refunded = charge.amount_refunded
+        self.status = charge.status
+        self.amount = charge.amount
+        if self.amount_refunded and self.amount_refunded < self.refunded:
+            self.status = 'PARTIALLY REFUNDED'
+
+    @staticmethod
+    def get_by_charge(charge):
+        return StripeInvoice.objects.filter(charge=charge).first() or StripeInvoice()
+
+
+@receiver(post_save, sender=Charge)
+def update_invoice(sender, instance=None, created=False, update_fields=None, **kwargs):
+    invoice = StripeInvoice.get_by_charge(instance)
+    invoice.update_from_charge(instance)
+    invoice.save()
