@@ -127,11 +127,11 @@ class Order(models.Model):
                 customer.save()
             else:
                 return
-        elif status_value == ORDER_STATUS.DELIVERED:
-            self.express_orders.update(is_delivered=True)
-        elif status_value == ORDER_STATUS.SHIPPING:
-            self.aud_rmb_rate = forex.AUDCNH
-            self.products.update(is_purchased=True)
+        # elif status_value == ORDER_STATUS.DELIVERED:
+        #     self.express_orders.update(is_delivered=True)
+        # elif status_value == ORDER_STATUS.SHIPPING:
+        #     self.aud_rmb_rate = forex.AUDCNH
+        #     self.products.update(is_purchased=True)
 
         self.set_finish_time()
         self.save()
