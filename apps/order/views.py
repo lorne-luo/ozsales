@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
+from apps.express.views import CarrierInfoRequiredMixin
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from core.django.permission import ProfileRequiredMixin
 from core.django.views import CommonContextMixin
@@ -64,12 +65,14 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class OrderListView(GroupRequiredMixin, CommonContextMixin, ListView):
+class OrderListView(CarrierInfoRequiredMixin, GroupRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
     group_required = [MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
 
+
     def get_context_data(self, **kwargs):
+        self.prompt_incomplete_carrier()
         context = super(OrderListView, self).get_context_data(**kwargs)
         context['expressorder_form'] = ExpressOrderInlineEditForm()
         context['orderproduct_form'] = forms.OrderProductFormForList()

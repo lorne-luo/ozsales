@@ -5,6 +5,7 @@ import re
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -100,6 +101,11 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
 
     def __str__(self):
         return '%s' % self.name_cn
+
+    @staticmethod
+    def get_incomplete_carrier_by_user(seller):
+        # return first update required carrier
+        return ExpressCarrier.objects.filter(seller=seller, website__isnull=True).first()
 
     def update_track(self, order):
         url = self.post_search_url or order.get_track_url()

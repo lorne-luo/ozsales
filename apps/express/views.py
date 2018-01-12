@@ -1,10 +1,12 @@
 # coding=utf-8
 from braces.views import MultiplePermissionsRequiredMixin
+from django.contrib import messages
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
-import forms
 from core.django.views import CommonContextMixin
 from models import ExpressCarrier
+from . import forms
 
 
 # views for ExpressCarrier
@@ -47,3 +49,12 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
     permissions = {
         "all": ("express.view_expresscarrier",)
     }
+
+
+class CarrierInfoRequiredMixin(object):
+    def prompt_incomplete_carrier(self, **kwargs):
+        from apps.member.models import Seller
+        if isinstance(self.request.profile, Seller):
+            incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
+            if incomplete_carrier:
+                messages.warning(u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能帮助你更多哦.' % reverse('express:expresscarrier-detail', args=[incomplete_carrier.id]))
