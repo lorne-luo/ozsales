@@ -15,3 +15,16 @@ var CustomerEditPageVue = CommonFormPageVue.extend({
         }
     }
 });
+
+var customerEditPageVue = new CustomerEditPageVue({
+    data: {
+        list_api_tag: 'api:customer-list',
+        delete_api_tag: 'api:customer-delete',
+        detail_api_tag: 'api:customer-detail',
+
+        create_url_tag: 'customer:customer-add',
+        list_url_tag: 'customer:customer-list',
+        detail_url_tag: 'customer:customer-detail',
+        update_url_tag: 'customer:customer-update'
+    }
+});

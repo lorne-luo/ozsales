@@ -51,8 +51,10 @@
             {% endfor %}
         </div>
         <div class="box-footer">
-            <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
-            <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary" name="_continue">保存&编辑</button>
+            {% block main_form_footer %}
+                <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
+                <button type="submit" style="width:108px" v-on:click="submit" class="btn btn-primary" name="_continue">保存&编辑</button>
+            {% endblock %}
         </div>
     </div>
 

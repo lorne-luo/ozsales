@@ -2,6 +2,13 @@
 {% extends "customer/customer_add.html" %}
 {% load i18n admin_static admin_modify static adminlte_tags %}
 
+{% block main_form_footer %}
+    <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-3">保 存</button>
+    <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存&编辑</button>
+    <button type="button" style="width:108px" class="btn btn-danger" v-on:click="delete({{ object.id }}, $event)">删 除</button>
+{% endblock %}
+
+
 {% block inline_formset %}
 {% if address_forms|length %}
 <div id="inline_formset">
@@ -137,11 +144,8 @@
     <link rel="stylesheet" type="text/css" href="{% static "plugins/jquery-chosen/chosen.css" %}" />
     <script type="text/javascript" src="{% static "plugins/jquery-chosen/chosen.jquery.min.js" %}"></script>
     <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
-    <script type="text/javascript" src="{% static "js/customer/customer_edit.js" %}"></script>
 {% endblock %}
 
 {% block footer_page_script %}
-    <script type="text/javascript">
-    var customerEditPageVue = new CustomerEditPageVue();
-    </script>
+    <script type="text/javascript" src="{% static "js/customer/customer_edit.js" %}"></script>
 {% endblock %}
