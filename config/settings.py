@@ -25,8 +25,8 @@ SECRET_KEY = 'n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-DOMAIN_NAME='s.luotao.net'
-DOMAIN_URL='http://s.luotao.net'
+DOMAIN_NAME = 's.luotao.net'
+DOMAIN_URL = 'http://s.luotao.net'
 ALLOWED_HOSTS = ['*']
 
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
@@ -332,13 +332,16 @@ DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_call
 # ----------------------------------------- Telstra SMS API KEY-----------------------------------------------
 TELSTRA_CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
 TELSTRA_CONSUMER_SECRET = "AUbyh8CJy8gASog1"
-ADMIN_MOBILE_NUMBER='0413725868'
+ADMIN_MOBILE_NUMBER = '0413725868'
 
 # ----------------------------------------- 1Forge API KEY-----------------------------------------------
 ONE_FORGE_API_KEY = 'k8gjMiRhU8LuhmewMftPUxthMZ3BQnIr'
 
-# ----------------------------------------- CACHES -----------------------------------------------
+# ----------------------------------------- SENDGRID EMAIL API  -----------------------------------------------
+SENDGRID_API_KEY = os.environ.get(
+    'SENDGRID_API_KEY') or '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'
 
+# ----------------------------------------- CACHES -----------------------------------------------
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
