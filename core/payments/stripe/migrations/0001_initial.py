@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('djstripe', '0012_auto_20171221_1334'),
+        ('djstripe', '0011_auto_20170808_0628'),
     ]
 
     operations = [
