@@ -10,7 +10,7 @@ class DealSubscribe(models.Model):
     excludes = models.CharField(_(u'excludes'), max_length=255, null=True, blank=True)
     mobile = models.CharField(_(u'mobile'), max_length=15, null=True, blank=True)
     is_active = models.BooleanField(_(u'is_active'), default=True, blank=False, null=False)
-    msg_count = models.IntegerField(_(u'message count'), blank=True, null=True, )
+    msg_count = models.IntegerField(_(u'message count'), default=0, blank=True, null=True)
     create_at = models.DateTimeField(_(u'create at'), auto_now_add=True, null=True)
 
     def get_keyword_list(self):
@@ -35,5 +35,6 @@ class ForexRate(dbsettings.Group):
     CADCNH = dbsettings.DecimalValue('CAD-RMB', default=5.23)
     NZDCNH = dbsettings.DecimalValue('NZD-RMB', default=4.7)
     JPYCNH = dbsettings.DecimalValue('JPY-RMB', default=0.058)
+
 
 forex = ForexRate()
