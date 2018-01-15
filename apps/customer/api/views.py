@@ -51,7 +51,6 @@ class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
 class CustomerAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Customer
     paginate_by = 20
-    create_field = 'name'
     profile_required = ('member.seller',)
 
     def create_object(self, text):
