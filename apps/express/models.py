@@ -244,14 +244,16 @@ class ExpressOrder(models.Model):
             self.order.customer.send_email(subject, content)
 
     def update_track(self):
-        if not self.is_delivered and self.carrier:
-            delivered, last_info = self.carrier.update_track(self)
-            if delivered in [True, False]:
-                self.is_delivered = delivered
-                self.last_track = last_info[:512]
-                self.save(update_fields=['last_track', 'last_track'])
-                if self.is_delivered:
-                    self.email_delivered()
+        if self.is_delivered or not self.carrier:
+            return
+
+        delivered, last_info = self.carrier.update_track(self)
+        if delivered in [True, False]:
+            self.is_delivered = delivered
+            self.last_track = last_info[:512]
+            self.save(update_fields=['last_track', 'last_track'])
+            if self.is_delivered:
+                self.email_delivered()
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:

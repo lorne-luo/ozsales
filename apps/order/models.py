@@ -12,6 +12,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
 from apps.member.models import Seller
 from utils.enum import enum
@@ -315,16 +316,22 @@ class Order(models.Model):
         self.customer.send_email(subject, content)
 
     def update_track(self):
-        if self.express_orders.count() == 0 or self.status != ORDER_STATUS.SHIPPING:
+        express_all = self.express_orders.all()
+        if express_all.count() == 0:
             return
 
         all_finished = True
-        for express in self.express_orders.all():
-            express.update_track()
-            if not express.is_delivered:
+        for express in express_all:
+            if express.create_time > timezone.now() - relativedelta(days=3):
+                # send less than 3 days, skip
                 all_finished = False
+                continue
+            else:
+                express.update_track()
+                if not express.is_delivered:
+                    all_finished = False
 
-        if all_finished:
+        if all_finished and express_all.count():
             self.set_status(ORDER_STATUS.DELIVERED)
             # notify seller and customer
             self.email_delivered()

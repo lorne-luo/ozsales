@@ -12,6 +12,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+node_modules/
 env/
 log/
 logs/
@@ -33,6 +34,7 @@ collectstatic/
 *.egg
 local.py
 static/django_js_reverse/
+static/build/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
