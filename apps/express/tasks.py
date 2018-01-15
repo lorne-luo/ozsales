@@ -17,6 +17,6 @@ def update_delivery_tracking():
     now = timezone.now()
     three_days_ago = now - relativedelta(days=3)
     express_orders = ExpressOrder.objects.filter(order__status=ORDER_STATUS.SHIPPING, create_time__lt=three_days_ago)
-    for order in express_orders:
-        if order.seller.check_premium_member():
-            order.update_track()
+    for eo in express_orders:
+        if eo.order.seller.check_premium_member():
+            eo.update_track()
