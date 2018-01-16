@@ -12,14 +12,14 @@ class FormsetSelect2WidgetMixin(Select2WidgetMixin):
 
         css = {
             'all': (
-                'autocomplete_light/vendor/select2/dist/css/select2.css',
+                'autocomplete_light/vendor/select2/dist/css/select2.min.css',
                 'autocomplete_light/select2.css',
             )
         }
         js = (
             'autocomplete_light/jquery.init.js',
-            'js/autocomplete_light/autocomplete.init.js',  # hacked this
-            'autocomplete_light/vendor/select2/dist/js/select2.full.js',
+            'js/autocomplete_light/autocomplete.init.min.js',  # hacked this
+            'autocomplete_light/vendor/select2/dist/js/select2.full.min.js',
             'autocomplete_light/select2.js',
             # Provide an additional i18 js.
             'autocomplete_light/vendor/select2/dist/js/i18n/zh-CN.js',

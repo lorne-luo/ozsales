@@ -30,7 +30,6 @@ setupenv() {
     $PYTHON -m pip install -U pip
 
     $PIP install -r $REQUIREMENTS
-#    npm install
     npm install --global gulp-cli
     npm install
 
