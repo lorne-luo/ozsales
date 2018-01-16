@@ -31,6 +31,8 @@ setupenv() {
 
     $PIP install -r $REQUIREMENTS
 #    npm install
+    npm install --global gulp-cli
+    npm install
 
     printf "\n"
     print "Setup successful!"
@@ -69,6 +71,7 @@ restart() {
     $PYTHON manage.py migrate
     $PYTHON manage.py js_reverse
     $PYTHON manage.py init_groups >> /dev/null
+    gulp build
     $PYTHON manage.py collectstatic --noinput >> /dev/null
     sudo mkdir -p media/temp
     sudo chmod 777 media/temp
