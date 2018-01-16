@@ -81,28 +81,31 @@ registerApp('core/messageset');
  * Mnimize all non-compressed js
  */
 const scriptsSrc = getApps('!(*.min).js');
-gulp.task('scripts', () => {
+scriptsSrc.push('static/js/**/!(*.min).js');
+gulp.task('scripts:apps', () => {
   // Exclude .min file in this glob, to avoid double compress
   gulp.src(scriptsSrc)
     .pipe(uglify())
     .on('error', (err) => {
       gutil.log(gutil.colors.red('[Error]'), err.toString());
     })
-    .pipe(concat('apps_bundle.js'))
-    // .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(BUILD_DEST_PATH));
+    // .pipe(concat('apps_bundle.js'))
+    // .pipe(gulp.dest(BUILD_DEST_PATH));
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest(sourceAsDestination));
 });
 
-gulp.task('scripts', () => {
+gulp.task('scripts:core', () => {
   // Exclude .min file in this glob, to avoid double compress
-  gulp.src('core/adminlte/static/adminlte/js/!(common-list-page).js')
+  gulp.src('core/adminlte/static/adminlte/js/!(*.min).js')
     .pipe(uglify())
     .on('error', (err) => {
       gutil.log(gutil.colors.red('[Error]'), err.toString());
     })
-    .pipe(concat('core_bundle.js'))
-    // .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(BUILD_DEST_PATH));
+    // .pipe(concat('core_bundle.js'))
+    // .pipe(gulp.dest(BUILD_DEST_PATH));
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest(sourceAsDestination));
 });
 
 /**
@@ -114,9 +117,10 @@ cssSrc.push('static/css/style.css');
 gulp.task('styles:css', () => {
   gulp.src(cssSrc)
     .pipe(cleanCSS({ compatibility: CLEAN_CSS_COMPATIBILITY }))
-    // .pipe(rename({ suffix: '.min' }))
-    .pipe(concat('style.css'))
-    .pipe(gulp.dest(BUILD_DEST_PATH))
+    // .pipe(concat('style.css'))
+    // .pipe(gulp.dest(BUILD_DEST_PATH))
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest(sourceAsDestination))
 });
 
 
@@ -124,6 +128,7 @@ gulp.task('styles:css', () => {
  * Bundle task: Compile styles
  */
 gulp.task('styles', ['styles:css']);
+gulp.task('scripts', ['scripts:apps', 'scripts:core']);
 
 /**
  * Bundle task: Build everything which need to be processed
