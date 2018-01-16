@@ -82,6 +82,7 @@ registerApp('core/messageset');
  */
 const scriptsSrc = getApps('!(*.min).js');
 scriptsSrc.push('static/js/**/!(*.min).js');
+scriptsSrc.push('static/django_js_reverse/js/!(*.min).js');
 gulp.task('scripts:apps', () => {
   // Exclude .min file in this glob, to avoid double compress
   gulp.src(scriptsSrc)
