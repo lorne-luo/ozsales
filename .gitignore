@@ -35,6 +35,8 @@ collectstatic/
 local.py
 static/django_js_reverse/
 static/build/
+*.min.js
+*.min.css
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
