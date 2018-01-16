@@ -115,13 +115,18 @@ gulp.task('scripts:core', () => {
  */
 const cssSrc = getApps('css/!(*.min).css');
 cssSrc.push('static/css/style.css');
+cssSrc.push('core/adminlte/static/plugins/sweetalert/1.1.3/sweetalert.min.css');
+cssSrc.push('core/adminlte/static/plugins/bootstrap/css/bootstrap.min.css');
+cssSrc.push('core/adminlte/static/adminlte/css/font-awesome.min.css');
+cssSrc.push('core/adminlte/static/adminlte/css/AdminLTE.min.css');
+cssSrc.push('core/adminlte/static/adminlte/css/skins/skin-blue.min.css');
 gulp.task('styles:css', () => {
   gulp.src(cssSrc)
-    .pipe(cleanCSS({ compatibility: CLEAN_CSS_COMPATIBILITY }))
-    // .pipe(concat('style.css'))
-    // .pipe(gulp.dest(BUILD_DEST_PATH))
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(sourceAsDestination))
+    .pipe(cleanCSS())
+    .pipe(concat('bundle.css'))
+    .pipe(gulp.dest(BUILD_DEST_PATH))
+    // .pipe(rename({ suffix: '.min' }))
+    // .pipe(gulp.dest(sourceAsDestination))
 });
 
 
