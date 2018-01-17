@@ -95,18 +95,29 @@ gulp.task('scripts:apps', () => {
     .pipe(rename({ suffix: '.min' }))
     .pipe(gulp.dest(sourceAsDestination));
 });
-
+const coreScripts=[];
+coreScripts.push('core/adminlte/static/plugins/jQuery/jQuery-2.1.4.min.js');
+coreScripts.push('core/adminlte/static/plugins/bootstrap/js/bootstrap.min.js');
+coreScripts.push('core/adminlte/static/plugins/underscore/underscore-min.js');
+coreScripts.push('core/adminlte/static/plugins/underscore/underscore.string.min.js');
+coreScripts.push('core/adminlte/static/adminlte/js/app.min.js');
+coreScripts.push('core/adminlte/static/plugins/vue/dist/vue.min.js');
+coreScripts.push('core/adminlte/static/plugins/jquery-chosen/chosen.jquery.min.js');
+coreScripts.push('core/adminlte/static/plugins/sweetalert/dist/sweetalert.min.js');
+coreScripts.push('core/adminlte/static/adminlte/js/config.js');
+coreScripts.push('core/adminlte/static/adminlte/js/ajax.js');
+coreScripts.push('static/django_js_reverse/js/reverse.js');
 gulp.task('scripts:core', () => {
   // Exclude .min file in this glob, to avoid double compress
-  gulp.src('core/adminlte/static/adminlte/js/!(*.min).js')
+  gulp.src(coreScripts)
     .pipe(uglify())
     .on('error', (err) => {
       gutil.log(gutil.colors.red('[Error]'), err.toString());
     })
-    // .pipe(concat('core_bundle.js'))
-    // .pipe(gulp.dest(BUILD_DEST_PATH));
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(sourceAsDestination));
+    .pipe(concat('core_bundle.js'))
+    .pipe(gulp.dest(BUILD_DEST_PATH));
+    // .pipe(rename({ suffix: '.min' }))
+    // .pipe(gulp.dest(sourceAsDestination));
 });
 
 /**
