@@ -35,8 +35,12 @@ collectstatic/
 local.py
 static/django_js_reverse/
 static/build/
-*.min.js
-*.min.css
+apps/**/*.min.js
+apps/**/*.min.css
+core/adminlte/static/adminlte/js/**/*.min.js
+core/messageset/**/*.min.js
+static/css/**/*.min.css
+static/js/**/*.min.js
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
