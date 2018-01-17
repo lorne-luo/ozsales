@@ -116,9 +116,10 @@ gulp.task('scripts:core', () => {
 const cssSrc = getApps('css/!(*.min).css');
 cssSrc.push('static/css/style.css');
 cssSrc.push('core/adminlte/static/plugins/sweetalert/1.1.3/sweetalert.min.css');
-cssSrc.push('core/adminlte/static/plugins/bootstrap/css/bootstrap.min.css');
-// cssSrc.push('core/adminlte/static/adminlte/css/font-awesome.min.css');
-cssSrc.push('core/adminlte/static/adminlte/css/AdminLTE.min.css');
+// cssSrc.push('core/adminlte/static/plugins/bootstrap/css/bootstrap.min.css');
+// cssSrc.push('core/adminlte/static/plugins/jquery-chosen/chosen.min.css'); // lead problem
+// cssSrc.push('core/adminlte/static/adminlte/css/font-awesome.min.css'); // lead problem
+// cssSrc.push('core/adminlte/static/adminlte/css/AdminLTE.min.css');
 cssSrc.push('core/adminlte/static/adminlte/css/skins/skin-blue.min.css');
 gulp.task('styles:css', () => {
   gulp.src(cssSrc)
