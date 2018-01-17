@@ -68,12 +68,11 @@ restart() {
 
     $PIP install -r $REQUIREMENTS >> /dev/null
     $PYTHON manage.py migrate
-    $PYTHON manage.py js_reverse
     $PYTHON manage.py init_groups >> /dev/null
-    gulp build
-    $PYTHON manage.py collectstatic --noinput >> /dev/null
     sudo mkdir -p media/temp
     sudo chmod 777 media/temp
+
+    build
     sudo supervisorctl restart ozsales
     sudo supervisorctl restart ozsales_celery
 }
@@ -94,16 +93,12 @@ restart() {
 #    python manage.py loaddata deploy/backup.json
 #}
 
-# Compile our app sources using webpack
-#build() {
-#    if [ "$1" == "--dev" ]; then
-#        $WEBPACKDEV --progress
-#    else
-#        NODE_ENV=production \
-#        $WEBPACKDEV -p --progress --devtool=cheap-module-source-map
-#        $GULP build
-#    fi
-#}
+# Compile & build
+build() {
+    $PYTHON manage.py js_reverse
+    $GULP build
+    $PYTHON manage.py collectstatic --noinput >> /dev/null
+}
 
 # Start django development server
 runserver() {
