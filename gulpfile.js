@@ -11,7 +11,7 @@ const cleanCSS = require('gulp-clean-css');
 const autoprefixer = require('gulp-autoprefixer');
 const sourcemaps = require('gulp-sourcemaps');
 const gutil = require('gulp-util');
-
+const filesExist = require('files-exist');
 
 /**
  |--------------------------------------------------------------------------
@@ -85,7 +85,7 @@ scriptsSrc.push('static/js/**/!(*.min).js');
 scriptsSrc.push('static/django_js_reverse/js/!(*.min).js');
 gulp.task('scripts:apps', () => {
   // Exclude .min file in this glob, to avoid double compress
-  gulp.src(scriptsSrc)
+  gulp.src(filesExist(scriptsSrc))
     .pipe(uglify())
     .on('error', (err) => {
       gutil.log(gutil.colors.red('[Error]'), err.toString());
@@ -103,13 +103,13 @@ coreScripts.push('core/adminlte/static/plugins/underscore/underscore.string.min.
 coreScripts.push('core/adminlte/static/adminlte/js/app.min.js');
 coreScripts.push('core/adminlte/static/plugins/vue/dist/vue.min.js');
 coreScripts.push('core/adminlte/static/plugins/jquery-chosen/chosen.jquery.min.js');
-coreScripts.push('core/adminlte/static/plugins/sweetalert/dist/sweetalert.min.js');
+coreScripts.push('core/adminlte/static/plugins/sweetalert/1.1.3/sweetalert.min.js');
 coreScripts.push('core/adminlte/static/adminlte/js/config.js');
 coreScripts.push('core/adminlte/static/adminlte/js/ajax.js');
 coreScripts.push('static/django_js_reverse/js/reverse.js');
 gulp.task('scripts:core', () => {
   // Exclude .min file in this glob, to avoid double compress
-  gulp.src(coreScripts)
+  gulp.src(filesExist(coreScripts))
     .pipe(uglify())
     .on('error', (err) => {
       gutil.log(gutil.colors.red('[Error]'), err.toString());
@@ -133,7 +133,7 @@ cssSrc.push('core/adminlte/static/plugins/sweetalert/1.1.3/sweetalert.min.css');
 // cssSrc.push('core/adminlte/static/adminlte/css/AdminLTE.min.css');
 cssSrc.push('core/adminlte/static/adminlte/css/skins/skin-blue.min.css');
 gulp.task('styles:css', () => {
-  gulp.src(cssSrc)
+  gulp.src(filesExist(cssSrc))
     .pipe(cleanCSS())
     .pipe(concat('bundle.css'))
     .pipe(gulp.dest(BUILD_DEST_PATH))

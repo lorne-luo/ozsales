@@ -13,6 +13,7 @@
   "license": "MIT",
   "homepage": "https://bitbucket.org/taoluo/ozsales#readme",
   "dependencies": {
+    "files-exist": "^1.0.2",
     "gulp-autoprefixer": "^4.1.0",
     "gulp-clean-css": "^3.9.2",
     "gulp-concat-util": "^0.5.5",
