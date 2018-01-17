@@ -148,8 +148,6 @@ input[type='checkbox'] {
 }
 
 .select2-selection--single .select2-selection__rendered {
-    padding-left: 0 !important;
-    padding-right: 15px !important;
     line-height: 34px;
 }
 
