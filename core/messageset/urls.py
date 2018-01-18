@@ -26,6 +26,7 @@ urlpatterns += [
 # urls for sitemailreceive
 urlpatterns += [
     url(r'^sitemail/list/$', views.SiteMailReceiveListView.as_view(), name='sitemail-list'),
+    url(r'^sitemail/list/$', views.SiteMailReceiveListView.as_view(), name='sitemailreceive-list'),
     url(r'^sitemail/receive/(?P<pk>\d+)/$', views.SiteMailReceiveDetailView.as_view(), name='sitemailreceive-detail'),
 ]
 
