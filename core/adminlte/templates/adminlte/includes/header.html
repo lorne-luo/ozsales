@@ -14,16 +14,19 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav" id="messagesetVue">
                 {% if user.is_authenticated %}
-                {% include "messageset/includes/header_sitemails.html" %}
-                {% include "messageset/includes/header_notifications.html" %}
-{#                {% include "messageset/includes/header_tasks.html" %}#}
-                {% include "adminlte/includes/header_account.html" %}
-                {% endif %}
+{#                    {% include "messageset/includes/header_sitemails.html" %}#}
+{#                    {% include "messageset/includes/header_notifications.html" %}#}
+{#                    {% include "messageset/includes/header_tasks.html" %}#}
+                    {% include "adminlte/includes/header_account.html" %}
 
-                {% if user.is_superuser %}
-                <li>
-                    <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                </li>
+                    <li class="notifications-menu">
+                        <a href="#" data-toggle="control-sidebar">
+                            <i class="fa fa-envelope-o"></i>
+{#                            <template v-if="notification | length > 0">#}
+                                <span class="label label-warning">#[ sitemailreceive | length ]</span>
+{#                            </template>#}
+                        </a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
