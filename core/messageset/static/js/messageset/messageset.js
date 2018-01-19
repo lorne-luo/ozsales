@@ -12,8 +12,8 @@ var messagesetVue = new Vue({
     },
     ready: function () {
         var status_data = {'status': 0};
-        this.loadData('sitemailreceive');
-        // this.loadData('notification', status_data);
+        // this.loadData('sitemailreceive', status_data);
+        this.loadData('notification');
         // this.loadData('task', status_data);
     },
     methods: {
@@ -34,7 +34,7 @@ var messagesetVue = new Vue({
         },
         loadData: function (modelName, data) {
             var self = this,
-                url = $.AdminLTE.getApiUrl(self.appName, modelName);
+                url = $.AdminLTE.getApiUrl(self.appName, modelName) + '?ordering=-send_time';
             $.ajax({
                 type: 'GET',
                 url: url,
@@ -59,15 +59,21 @@ var messagesetVue = new Vue({
                 },
                 success: function (resp) {
                     self[modelName] = resp.results;
+
+                    if (resp.unread_count) {
+                        $('span#notification-counter').text(resp.unread_count);
+                    }
                 }
             });
         },
-        mark_readed:function(){
+        mark_readed: function () {
+            if (!$('span#notification-counter').text()) {
+                return;
+            }
             $.AdminLTE.apiPost(
-                Urls['api:sitemail_markall'](), {},
+                Urls['api:notification_markall'](), {},
                 function (resp) {
-                    //todo remove number badge
-                    console.log("todo remove number badge");
+                    $('span#notification-counter').text('');
                 }
             );
         }

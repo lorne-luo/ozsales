@@ -1,14 +1,14 @@
 {% load static %}
 <aside class="control-sidebar control-sidebar-light messagesetVue">
-    <h4 class="header">
-        您有 #[ sitemailreceive | length ] 条未读系统通知
-    </h4>
     <div class="menu">
-        <template v-for="item in sitemailreceive">
+        <template v-for="item in notification">
             <div v-on:click="mark_readed">
                 <h4 data-pk="#[item.id]">
                     <small data-pk="#[item.id]">
-                        <i class="fa fa-clock-o"></i> #[item.send_time]
+                        <template v-if="item.status == '未读'">
+                            <i class="fa fa-envelope-o"></i>
+                        </template>
+                        #[item.send_time]
                     </small>
                 </h4>
                 <span data-pk="#[item.id]">#[item.title]</span>
