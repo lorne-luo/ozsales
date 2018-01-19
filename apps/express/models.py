@@ -105,7 +105,7 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     @staticmethod
     def get_incomplete_carrier_by_user(seller):
         # return first update required carrier
-        return ExpressCarrier.objects.filter(seller=seller, website__isnull=True).first()
+        return ExpressCarrier.objects.filter(seller=seller).filter(Q(website__isnull=True) | Q(website='')).first()
 
     def update_track(self, order):
         url = self.post_search_url or order.get_track_url()

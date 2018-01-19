@@ -57,4 +57,6 @@ class CarrierInfoRequiredMixin(object):
         if isinstance(self.request.profile, Seller):
             incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
             if incomplete_carrier:
-                messages.warning(u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能帮助你更多哦.' % reverse('express:expresscarrier-detail', args=[incomplete_carrier.id]))
+                msg = u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能提供更好帮助.' % reverse(
+                    'express:expresscarrier-update', args=[incomplete_carrier.id])
+                messages.warning(self.request, msg)
