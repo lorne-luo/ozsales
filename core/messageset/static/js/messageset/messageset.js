@@ -74,6 +74,7 @@ var messagesetVue = new Vue({
                 Urls['api:notification_markall'](), {},
                 function (resp) {
                     $('span#notification-counter').text('');
+                    $('aside.messagesetVue i.read-status').removeClass('fa-envelope-o').addClass('fa-envelope-open-o');
                 }
             );
         }

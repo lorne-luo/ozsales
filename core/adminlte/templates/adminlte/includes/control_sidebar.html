@@ -1,19 +1,23 @@
 {% load static %}
+
 <aside class="control-sidebar control-sidebar-light messagesetVue">
     <div class="menu">
-        <template v-for="item in notification">
-            <div v-on:click="mark_readed">
+        <ul class="list-unstyled mail-list" v-for="item in notification" style="border-bottom:1px solid #ddd">
+            <li v-on:click="mark_readed">
                 <h4 data-pk="#[item.id]">
                     <small data-pk="#[item.id]">
                         <template v-if="item.status == '未读'">
-                            <i class="fa fa-envelope-o"></i>
+                            <i class="fa fa-envelope read-status"></i>
+                        </template>
+                        <template v-if="item.status == '已读'">
+                            <i class="fa fa-envelope-open-o read-status"></i>
                         </template>
                         #[item.send_time]
                     </small>
                 </h4>
-                <span data-pk="#[item.id]">#[item.title]</span>
-            </div>
-        </template>
+                <p data-pk="#[item.id]">{!! item.content !!}</p>
+            </li>
+        </ul>
     </div>
 </aside>
 

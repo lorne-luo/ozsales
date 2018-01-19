@@ -48,7 +48,7 @@ input[type='checkbox'] {
         padding: 1px 5px 0 20px;
     }
 
-    .modal-header h4{
+    .modal-header h4 {
         font-size: 16px;
     }
 }
@@ -177,11 +177,15 @@ input[type='checkbox'] {
     margin-left: 8px;
 }
 
-table td i.show_detail, table th i.show_all_detail{
+table td i.show_detail, table th i.show_all_detail {
     margin-right: 18px;
 }
 
-div.tab-content .pagination > li > a:focus{
+div.tab-content .pagination > li > a:focus {
     color: #666 !important;
     background: #fafafa !important;;
+}
+
+aside.messagesetVue div.menu li {
+    padding: 0 0 0 15px;
 }
