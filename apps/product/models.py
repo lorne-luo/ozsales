@@ -113,6 +113,7 @@ class Product(PinYinFieldModelMixin, models.Model):
     name_cn = models.CharField(_(u'name_cn'), max_length=128, blank=True)
     brand_en = models.CharField(_(u'brand_en'), max_length=128, blank=True)
     brand_cn = models.CharField(_(u'brand_cn'), max_length=128, blank=True)
+    alias = models.CharField(_(u'alias'), max_length=255, blank=True)
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
@@ -151,6 +152,8 @@ class Product(PinYinFieldModelMixin, models.Model):
         ('name_cn', Style.FIRST_LETTER, False),
         ('brand.name_cn', Style.NORMAL, False),
         ('brand.name_cn', Style.FIRST_LETTER, False),
+        ('alias', Style.NORMAL, False),
+        ('alias', Style.FIRST_LETTER, False),
     ]
     objects = ProductManager()
 

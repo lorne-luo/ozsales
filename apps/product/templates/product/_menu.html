@@ -21,7 +21,7 @@
       </li>
     {% endif %}
 
-    {% if perms.product.view_brand %}
+    {% if user.is_superuser %}
       <li>
         <a href="{% url 'product:brand-list' %}" class="main">
           <i class="fa fa-circle-o"></i>
