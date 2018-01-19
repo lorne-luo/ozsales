@@ -15,6 +15,7 @@ router.register(r'task', views.TaskViewSet, base_name='task')
 
 urlpatterns = [
     url(r'sitemail/receive/markall', views.sitemail_markall, name='sitemail_markall'),
+    url(r'notification/markall', views.notification_markall, name='notification_markall'),
 ]
 
 urlpatterns += router.urls

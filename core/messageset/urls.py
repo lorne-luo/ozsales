@@ -11,7 +11,7 @@ urlpatterns = [
 
 # urls for notificationcontent
 urlpatterns += [
-    url(r'^notification/add/$', views.NotificationContentAddView.as_view(), name='notificationcontent-add'),
+    url(r'^notification/add/$', views.NotificationContentAddView.as_view(), name='notification-add'),
     url(r'^notificationcontent/(?P<pk>\d+)/$', views.NotificationContentDetailView.as_view(), name='notificationcontent-detail'),
     # url(r'^notificationcontent/(?P<pk>\d+)/edit/$', views.NotificationContentUpdateView.as_view(), name='notificationcontent-update'),
 ]

@@ -7,7 +7,7 @@
     <ul class="treeview-menu menu-open" style="display: block;">
         {% if perms.messageset.add_notification or perms.messageset.change_notification %}
         <li>
-            <a href="{% url 'messageset:notificationcontent-add' %}" class="pull-right"><i class="fa fa-plus" aria-hidden="true"></i></a>
+            <a href="{% url 'messageset:notification-add' %}" class="pull-right"><i class="fa fa-plus" aria-hidden="true"></i></a>
             <a href="{% url 'messageset:notification-list' %}" class="main"><i class="fa fa-circle-o"></i>Notification</a>
         </li>
         {%endif%}
