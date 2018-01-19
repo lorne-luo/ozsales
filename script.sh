@@ -51,6 +51,7 @@ pull() {
 
 static() {
     $PYTHON manage.py js_reverse
+    $GULP build
     $PYTHON manage.py collectstatic --noinput
 }
 

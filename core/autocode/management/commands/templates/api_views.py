@@ -13,5 +13,6 @@ class <% MODEL_NAME %>ViewSet(CommonViewSet):
     serializer_class = serializers.<% MODEL_NAME %>Serializer
     filter_fields = ['id'] + <% fields %>
     search_fields = <% fields %>
+    ordering_fields = ['id'] + <% fields %>
 
 '''
