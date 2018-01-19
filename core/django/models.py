@@ -2,6 +2,12 @@ from pypinyin import pinyin, Style
 
 
 class PinYinFieldModelMixin(object):
+    """
+    add `pinyin` field in dest model, then inherit from this mixin, configure `pinyin_fields_conf`
+    pinyin_fields_conf = [
+            ('name_cn', Style.NORMAL, False), # original field, style,
+        ]
+    """
     pinyin_field = 'pinyin'
     pinyin_fields_conf = []
     _original_fields_value = {}
@@ -15,7 +21,8 @@ class PinYinFieldModelMixin(object):
             self._original_fields_value.update({field_name: current_value})
 
     def save(self, *args, **kwargs):
-        self.update_pinyin_fields()
+        if self.check_update():
+            self.update_pinyin_fields()
         super(PinYinFieldModelMixin, self).save(*args, **kwargs)
 
     def check_update(self):
@@ -28,12 +35,11 @@ class PinYinFieldModelMixin(object):
 
     def update_pinyin_fields(self):
         # only update pinyin field when fields updated
-        if self.check_update():
-            new_pinyin = ''
-            for field_name, style, heteronym in self.pinyin_fields_conf:
-                current_value = self.get_attr_by_str(field_name)
-                new_pinyin += self.get_pinyin(current_value, style, heteronym)
-                setattr(self, self.pinyin_field, new_pinyin.lower())
+        new_pinyin = ''
+        for field_name, style, heteronym in self.pinyin_fields_conf:
+            current_value = self.get_attr_by_str(field_name)
+            new_pinyin += self.get_pinyin(current_value, style, heteronym)
+            setattr(self, self.pinyin_field, new_pinyin.lower())
 
     @classmethod
     def get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):
