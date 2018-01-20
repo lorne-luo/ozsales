@@ -7,6 +7,7 @@ from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
 from core.payments.stripe.models import StripePaymentUserMixin
+from ..messageset.models import NotificationContent, SiteMailContent
 
 
 class AuthUserManager(UserManager):
@@ -102,6 +103,18 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
         elif self.mobile.startswith('1'):
             # todo send sms for china mobile number
             pass
+
+    def send_notification(self, title, content, sender=None):
+        notification_content = NotificationContent(creator=sender, title=title, contents=content)
+        notification_content.save()
+        notification_content.receivers.add(self)
+        notification_content.send()
+
+    def send_sitemail(self, title, content, sender=None):
+        sitemail_content = SiteMailContent(creator=sender, title=title, contents=content)
+        sitemail_content.save()
+        sitemail_content.receivers.add(self)
+        sitemail_content.send()
 
 
 class UserProfileMixin(object):

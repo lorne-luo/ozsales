@@ -55,6 +55,12 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     def send_sms(self, content, app_name=None):
         self.auth_user.send_sms(content, app_name)
 
+    def send_notification(self, title, content, sender=None):
+        self.auth_user.send_notification(title, content, sender)
+
+    def send_sitemail(self, title, content, sender=None):
+        self.auth_user.send_sitemail(title, content, sender)
+
     def get_name(self):
         return self.name or self.auth_user.get_username()
 
