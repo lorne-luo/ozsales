@@ -236,11 +236,11 @@ class ExpressOrder(models.Model):
 
     def email_delivered(self):
         if self.is_delivered:
-            subject = u'Parcel %s in %s has delivered.' % (self, self.order)
             link = reverse('order-detail-short', args=[self.order.customer.id, self.order.id])
-            content = u'Parcel %s in %s has delivered. <a href="%s%s">click here</a> to check.' % \
-                      (self, self.order, settings.DOMAIN_URL, link)
+            subject = u'%s in %s 已寄达.' % (self, self.order)
+            content = u'%s in <a target="_blank" href="%s">%s</a> 已寄达.' % (self, link, self.order)
 
+            self.order.seller.send_notification(subject, content)
             self.order.customer.send_email(subject, content)
 
     def update_track(self):
