@@ -75,7 +75,7 @@ class SiteMailContent(AbstractMessageContent):
             'title', 'contents', 'receivers'
         )
 
-    def send_sitemail(self):
+    def send(self):
         kwargs = {
             'title': self.title,
             'content': self,
@@ -246,7 +246,7 @@ class NotificationContent(AbstractMessageContent):
             'title', 'contents', 'receivers'
         )
 
-    def send_notification(self):
+    def send(self):
         # if no receivers filed, send to all
         if not self.receivers.count():
             self.receivers = get_user_model().objects.all()

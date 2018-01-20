@@ -61,7 +61,7 @@ class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContext
             notification_content.creator = request.user
             notification_content.save()
             form.save_m2m()
-            notification_content.send_notification()
+            notification_content.send()
             return redirect('messageset:notification-list')
         else:
 
@@ -104,7 +104,7 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
             sitemail.creator = request.user
             sitemail.save()
             form.save_m2m()
-            sitemail.send_sitemail()
+            sitemail.send()
             return redirect('messageset:sitemail-list')
         else:
 
