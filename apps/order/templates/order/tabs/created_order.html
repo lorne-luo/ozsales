@@ -70,11 +70,13 @@
                 <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
                 <div class="pull-right action-button">
                     <template v-if="item.status == 'CREATED'">
-                        <a type="button" data-toggle="modal" data-target="#add-product"
-                           class="btn btn-sm btn-success"
-                           data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
-                            <i class="fa fa-cart-plus fa-inverse"></i>
-                        </a>
+                        <template v-if="!item.is_paid">
+                            <a type="button" data-toggle="modal" data-target="#add-product"
+                               class="btn btn-sm btn-success"
+                               data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                                <i class="fa fa-cart-plus fa-inverse"></i>
+                            </a>
+                        </template>
                         <a type="button" data-toggle="modal" data-target="#add-parcel"
                            class="btn btn-sm btn-info"
                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
@@ -82,9 +84,7 @@
                         </a>
                     </template>
 
-                    <template v-if="item.is_paid">
-                    </template>
-                    <template v-else>
+                    <template v-if="!item.is_paid">
                         <a class="btn btn-sm btn-danger pay" v-on:click="pay(item.id, $event)">
                             <i class="fa fa-jpy" aria-hidden="true"></i>
                         </a>
