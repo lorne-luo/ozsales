@@ -9,14 +9,29 @@ from models import ExpressCarrier
 from . import forms
 
 
+class CarrierInfoRequiredMixin(object):
+    def prompt_incomplete_carrier(self, **kwargs):
+        from apps.member.models import Seller
+        if isinstance(self.request.profile, Seller):
+            incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
+            if incomplete_carrier:
+                msg = u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能提供更好帮助.' % reverse(
+                    'express:expresscarrier-update', args=[incomplete_carrier.id])
+                messages.warning(self.request, msg)
+
+
 # views for ExpressCarrier
 
-class ExpressCarrierListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = ExpressCarrier
     template_name_suffix = '_list'  # express/expresscarrier_list.html
     permissions = {
         "all": ("express.view_expresscarrier",)
     }
+
+    def get_context_data(self, **kwargs):
+        self.prompt_incomplete_carrier()
+        return super(ExpressCarrierListView, self).get_context_data(**kwargs)
 
 
 class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
@@ -49,14 +64,3 @@ class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMi
     permissions = {
         "all": ("express.view_expresscarrier",)
     }
-
-
-class CarrierInfoRequiredMixin(object):
-    def prompt_incomplete_carrier(self, **kwargs):
-        from apps.member.models import Seller
-        if isinstance(self.request.profile, Seller):
-            incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
-            if incomplete_carrier:
-                msg = u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能提供更好帮助.' % reverse(
-                    'express:expresscarrier-update', args=[incomplete_carrier.id])
-                messages.warning(self.request, msg)
