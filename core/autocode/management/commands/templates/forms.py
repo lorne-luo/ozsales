@@ -12,16 +12,13 @@ class <% MODEL_NAME %>AddForm(forms.ModelForm):
         fields = <% fields %>
 
 
+class <% MODEL_NAME %>UpdateForm(<% MODEL_NAME %>AddForm):
+    """ Update form for <% MODEL_NAME %> """
+    pass
+
+
 class <% MODEL_NAME %>DetailForm(forms.ModelForm):
     """ Detail form for <% MODEL_NAME %> """
-
-    class Meta:
-        model = <% MODEL_NAME %>
-        fields = <% fields %>
-
-
-class <% MODEL_NAME %>UpdateForm(forms.ModelForm):
-    """ Update form for <% MODEL_NAME %> """
 
     class Meta:
         model = <% MODEL_NAME %>
