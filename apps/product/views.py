@@ -1,6 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView
-from braces.views import MultiplePermissionsRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 
+from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Product, Brand
 from . import forms
@@ -47,14 +48,11 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         return super(ProductAddView, self).form_valid(form)
 
 
-class ProductUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class ProductUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
     form_class = forms.ProductAddForm
     # template_name_suffix = '_form'
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("product.change_product",)
-    }
 
 
 class ProductDetailView(CommonContextMixin, UpdateView):
@@ -63,40 +61,28 @@ class ProductDetailView(CommonContextMixin, UpdateView):
     fields = ['name_en', 'name_cn', 'pic', 'brand', 'avg_sell_price']
 
 
-class BrandListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class BrandListView(SuperuserRequiredMixin, CommonContextMixin, ListView):
     """ List views for Brand """
     model = Brand
     template_name_suffix = '_list'  # product/brand_list.html
-    permissions = {
-        "all": ("product.view_brand",)
-    }
 
 
-class BrandAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class BrandAddView(SuperuserRequiredMixin, CommonContextMixin, CreateView):
     """ Add views for Brand """
     model = Brand
     form_class = forms.BrandAddForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("product.add_brand",)
-    }
 
 
-class BrandUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class BrandUpdateView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     """ Update views for Brand """
     model = Brand
     form_class = forms.BrandUpdateForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("product.change_brand",)
-    }
 
 
-class BrandDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class BrandDetailView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     """ Detail views for Brand """
     model = Brand
     form_class = forms.BrandDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("product.view_brand",)
-    }
