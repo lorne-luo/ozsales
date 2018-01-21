@@ -78,16 +78,18 @@ class ExpressCarrierManager(models.Manager):
 @python_2_unicode_compatible
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    name_cn = models.CharField(_('name_cn'), max_length=50, blank=False)
-    name_en = models.CharField(_('name_en'), max_length=50, blank=True)
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
-    website = models.URLField(_('Website'), blank=True)
-    search_url = models.URLField(_('Search url'), blank=True)  # page to track parcel
-    post_search_url = models.URLField(_('Post url'), blank=True)  # some carrier need post to track parcel
-    id_upload_url = models.URLField(_('upload url'), blank=True)
-    rate = models.DecimalField(_('Rate'), max_digits=6, decimal_places=2, blank=True, null=True)
-    is_default = models.BooleanField('Default', default=False)
-    track_id_regex = models.CharField(_('ID regex'), max_length=512, blank=True)
+    name_cn = models.CharField(_(u'中文名称'), max_length=50, blank=False, help_text=u'中文名称')
+    name_en = models.CharField(_(u'英文名称'), max_length=50, blank=True, help_text=u'英文名称')
+    pinyin = models.TextField(_(u'pinyin'), max_length=512, blank=True)
+    website = models.URLField(_(u'官网地址'), blank=True, help_text=u'官方网站地址')
+    # page to track parcel
+    search_url = models.URLField(_(u'查询网址'), blank=True, help_text=u'查询网页地址')
+    # some carrier need post to track parcel
+    post_search_url = models.URLField(_(u'查询提交网址'), blank=True, help_text=u'查询提交网址')
+    id_upload_url = models.URLField(_(u'证件上传地址'), blank=True, help_text=u'证件上传地址')
+    rate = models.DecimalField(_(u'费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text=u'每公斤费率')
+    is_default = models.BooleanField(u'默认', default=False, help_text=u'是否默认')
+    track_id_regex = models.CharField(_(u'单号正则'), max_length=512, blank=True, help_text=u'订单号正则表达式')
 
     objects = ExpressCarrierManager()
     pinyin_fields_conf = [
