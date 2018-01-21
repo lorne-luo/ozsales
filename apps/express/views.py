@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
-from core.django.views import CommonContextMixin
+from core.django.views import CommonContextMixin, FormAccessRequestViewMixin
 from models import ExpressCarrier
 from . import forms
 
@@ -34,7 +34,7 @@ class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequir
         return super(ExpressCarrierListView, self).get_context_data(**kwargs)
 
 
-class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class ExpressCarrierAddView(FormAccessRequestViewMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
     model = ExpressCarrier
     form_class = forms.ExpressCarrierAddForm
     template_name = 'adminlte/common_form.html'
@@ -48,7 +48,8 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
         return super(ExpressCarrierAddView, self).form_valid(form)
 
 
-class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class ExpressCarrierUpdateView(FormAccessRequestViewMixin, MultiplePermissionsRequiredMixin, CommonContextMixin,
+                               UpdateView):
     model = ExpressCarrier
     form_class = forms.ExpressCarrierUpdateForm
     template_name = 'adminlte/common_form.html'
