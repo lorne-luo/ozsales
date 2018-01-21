@@ -11,7 +11,7 @@ from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
 from apps.express.views import CarrierInfoRequiredMixin
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
-from core.django.permission import ProfileRequiredMixin
+from core.django.permission import ProfileRequiredMixin, SellerOwnerOnlyRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
@@ -70,7 +70,6 @@ class OrderListView(CarrierInfoRequiredMixin, GroupRequiredMixin, CommonContextM
     template_name_suffix = '_list'  # order/order_list.html
     group_required = [MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
 
-
     def get_context_data(self, **kwargs):
         self.prompt_incomplete_carrier()
         context = super(OrderListView, self).get_context_data(**kwargs)
@@ -117,11 +116,10 @@ class OrderAddView(ProfileRequiredMixin, CommonContextMixin, CreateView):
             return self.form_invalid(form)
 
 
-class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class OrderUpdateView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderUpdateForm
     template_name = 'order/order_form.html'
-    permissions = {"all": ["order.change_order"]}
     products_prefix = 'products'
     express_orders_prefix = 'express_orders'
 
@@ -177,12 +175,7 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
             return self.render_to_response(context)
 
 
-class OrderAddDetailView(ProfileRequiredMixin, OrderUpdateView):
-    profile_required = ('member.seller',)
-    permissions = {
-        "any": ("order.add_order",)
-    }
-
+class OrderAddDetailView(OrderUpdateView):
     def get_object(self, queryset=None):
         try:
             object = super(OrderAddDetailView, self).get_object()
@@ -283,11 +276,8 @@ class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
     }
 
 
-class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class OrderProductDetailView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateView):
     """ Detail views for OrderProduct """
     model = OrderProduct
     form_class = forms.OrderProductDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("order.view_orderproduct",)
-    }

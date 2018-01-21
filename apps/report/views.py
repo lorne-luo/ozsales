@@ -1,19 +1,19 @@
 # coding=utf-8
-from braces.views import MultiplePermissionsRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
 
+from core.django.permission import ProfileRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import MonthlyReport
 from . import forms
 
 
-class MonthlyReportListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class MonthlyReportListView(ProfileRequiredMixin, CommonContextMixin, ListView):
     """ List views for MonthlyReport """
     model = MonthlyReport
     template_name_suffix = '_list'  # report/monthlyreport_list.html
-    permissions = {
-        "all": ("report.view_monthlyreport",)
-    }
+    profile_required = ['member.seller']
+
 
     def get_context_data(self, **kwargs):
         context = super(MonthlyReportListView, self).get_context_data(**kwargs)
@@ -22,31 +22,22 @@ class MonthlyReportListView(MultiplePermissionsRequiredMixin, CommonContextMixin
         return context
 
 
-class MonthlyReportAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class MonthlyReportAddView(SuperuserRequiredMixin, CommonContextMixin, CreateView):
     """ Add views for MonthlyReport """
     model = MonthlyReport
     form_class = forms.MonthlyReportAddForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("report.add_monthlyreport",)
-    }
 
 
-class MonthlyReportUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class MonthlyReportUpdateView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     """ Update views for MonthlyReport """
     model = MonthlyReport
     form_class = forms.MonthlyReportUpdateForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("report.change_monthlyreport",)
-    }
 
 
-class MonthlyReportDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class MonthlyReportDetailView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     """ Detail views for MonthlyReport """
     model = MonthlyReport
     form_class = forms.MonthlyReportDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("report.view_monthlyreport",)
-    }

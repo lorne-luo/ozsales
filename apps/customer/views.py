@@ -1,8 +1,10 @@
 # coding=utf-8
-from braces.views import MultiplePermissionsRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 from django.db import transaction
 from django.http import HttpResponse
 from django.views.generic import ListView, CreateView, UpdateView
+
+from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
 from core.django.views import CommonContextMixin
 from . import forms
 from models import Address, Customer
@@ -10,15 +12,12 @@ from models import Address, Customer
 
 # views for Address
 
-class AddressListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class AddressListView(SuperuserRequiredMixin, CommonContextMixin, ListView):
     model = Address
     template_name_suffix = '_list'  # customer/address_list.html
-    permissions = {
-        "all": ("customer.view_address",)
-    }
 
 
-class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class AddressAddView(SuperuserRequiredMixin, CommonContextMixin, CreateView):
     model = Address
     form_class = forms.AddressAddForm
     template_name = 'adminlte/common_form.html'
@@ -27,22 +26,16 @@ class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
     }
 
 
-class AddressUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class AddressUpdateView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Address
     form_class = forms.AddressUpdateForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("address.change_address",)
-    }
 
 
-class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class AddressDetailView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Address
     form_class = forms.AddressDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("address.view_address",)
-    }
 
 
 # views for Customer
@@ -69,13 +62,10 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
         return super(CustomerAddView, self).form_valid(form)
 
 
-class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class CustomerUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
     form_class = forms.CustomerUpdateForm
     template_name = 'customer/customer_edit.html'
-    permissions = {
-        "all": ("customer.change_customer",)
-    }
 
     def get_context_data(self, **kwargs):
         context = super(CustomerUpdateView, self).get_context_data(**kwargs)
@@ -111,10 +101,7 @@ class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
         return super(CustomerUpdateView, self).post(request, *args, **kwargs)
 
 
-class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class CustomerDetailView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
     form_class = forms.CustomerDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("customer.view_customer",)
-    }
