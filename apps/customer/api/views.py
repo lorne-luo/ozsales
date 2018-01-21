@@ -1,5 +1,4 @@
 import logging
-from braces.views import GroupRequiredMixin
 from dal import autocomplete
 from django.db.models import Count, Q
 from django.http import Http404
@@ -12,7 +11,6 @@ from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, PREMIUM_MEMBER_GROUP
 from ..models import Customer, Address, CustomerCart, CartProduct
 from ...product.models import Product
 
@@ -29,14 +27,13 @@ class AddressViewSet(CommonViewSet):
     search_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
 
 
-class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
+class CustomerViewSet(CommonViewSet):
     """api views for Customer"""
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'mobile', 'primary_address__name']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
     permission_classes = (SellerPermissions,)
 
     def get_queryset(self):

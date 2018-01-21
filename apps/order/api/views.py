@@ -1,12 +1,10 @@
 # coding=utf-8
 import logging
-from braces.views import GroupRequiredMixin
 from rest_framework.decorators import list_route
 from django_filters import FilterSet
 from django.db.models import Q
 
 from core.api.permission import SellerPermissions
-from core.auth_user.constant import MEMBER_GROUP, ADMIN_GROUP, PREMIUM_MEMBER_GROUP
 from core.api.views import CommonViewSet
 from ..models import Order, ORDER_STATUS, OrderProduct
 from . import serializers
@@ -46,14 +44,14 @@ class ShippingOrderFilter(FilterSet):
         return qs
 
 
-class OrderViewSet(GroupRequiredMixin, CommonViewSet):
+class OrderViewSet(CommonViewSet):
     """ api views for Order """
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
     filter_fields = ['id']
     search_fields = ['customer__name', 'address__name', 'address__address']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
+    permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
         queryset = super(OrderViewSet, self).get_queryset()
