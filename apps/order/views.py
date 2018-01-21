@@ -1,5 +1,5 @@
 # coding=utf-8
-from braces.views import MultiplePermissionsRequiredMixin, GroupRequiredMixin
+from braces.views import MultiplePermissionsRequiredMixin
 from django.contrib import messages
 from django.contrib.auth import login
 from django.core.urlresolvers import reverse
@@ -10,8 +10,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
 from apps.express.views import CarrierInfoRequiredMixin
-from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
-from core.django.permission import ProfileRequiredMixin, SellerOwnerOnlyRequiredMixin
+from core.django.permission import  SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
@@ -65,10 +64,9 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class OrderListView(CarrierInfoRequiredMixin, GroupRequiredMixin, CommonContextMixin, ListView):
+class OrderListView(CarrierInfoRequiredMixin, SellerRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
-    group_required = [MEMBER_GROUP, PREMIUM_MEMBER_GROUP]
 
     def get_context_data(self, **kwargs):
         self.prompt_incomplete_carrier()
@@ -100,12 +98,11 @@ class OrderMemberListView(CommonContextMixin, ListView):
         return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
 
 
-class OrderAddView(ProfileRequiredMixin, CommonContextMixin, CreateView):
+class OrderAddView(SellerRequiredMixin, CommonContextMixin, CreateView):
     model = Order
     form_class = forms.OrderAddForm
     # template_name = 'adminlte/common_form.html'
     template_name = 'order/order_add.html'
-    profile_required = ('member.seller',)
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()

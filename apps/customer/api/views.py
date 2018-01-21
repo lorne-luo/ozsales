@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from core.django.autocomplete import HansSelect2ViewMixin
-from core.django.permission import ProfileRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
@@ -46,12 +46,9 @@ class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
         return queryset.filter(seller=self.request.profile)
 
 
-
-
-class CustomerAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+class CustomerAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Customer
     paginate_by = 20
-    profile_required = ('member.seller',)
 
     def create_object(self, text):
         return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
@@ -71,14 +68,13 @@ class CustomerAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocompl
         return qs
 
 
-class AddressAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+class AddressAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Address
     paginate_by = 20
     create_field = 'address'
-    profile_required = ('member.seller',)
 
     def create_object(self, text):
-        #todo extract name, phone number
+        # todo extract name, phone number
         return self.get_queryset().create(**{self.create_field: text, 'customer_id': self.forwarded.get('customer')})
 
     def get_queryset(self):

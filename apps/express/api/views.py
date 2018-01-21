@@ -5,7 +5,7 @@ from apps.express.models import ExpressCarrier, ExpressOrder
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
 from core.django.autocomplete import HansSelect2ViewMixin
-from core.django.permission import ProfileRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
 from . import serializers
 
@@ -45,11 +45,10 @@ class ExpressOrderViewSet(CommonViewSet):
         return queryset.filter(order__seller=self.request.profile)
 
 
-class ExpressCarrierAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+class ExpressCarrierAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = ExpressCarrier
     paginate_by = 50
     create_field = 'name_cn'
-    profile_required = ('member.seller',)
 
     def create_object(self, text):
         return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})

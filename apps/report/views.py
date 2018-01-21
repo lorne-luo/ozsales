@@ -2,17 +2,16 @@
 from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView
 
-from core.django.permission import ProfileRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import MonthlyReport
 from . import forms
 
 
-class MonthlyReportListView(ProfileRequiredMixin, CommonContextMixin, ListView):
+class MonthlyReportListView(SellerRequiredMixin, CommonContextMixin, ListView):
     """ List views for MonthlyReport """
     model = MonthlyReport
     template_name_suffix = '_list'  # report/monthlyreport_list.html
-    profile_required = ['member.seller']
 
 
     def get_context_data(self, **kwargs):

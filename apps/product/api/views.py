@@ -5,7 +5,7 @@ from rest_framework import permissions
 
 from core.utils.string import include_non_asc
 from core.django.autocomplete import HansSelect2ViewMixin
-from core.django.permission import ProfileRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.api.views import CommonViewSet
 from ..models import Product, Brand
 from . import serializers
@@ -30,11 +30,10 @@ class BrandViewSet(CommonViewSet):
     search_fields = ['name_en', 'name_cn']
 
 
-class ProductAutocomplete(ProfileRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+class ProductAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Product
     paginate_by = 20
     create_field = 'name_cn'
-    profile_required = ('member.seller',)
 
     def create_object(self, text):
         return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
