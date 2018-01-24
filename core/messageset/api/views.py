@@ -33,10 +33,15 @@ def notification_markall(request):
 class OwnerMessageViewSetMixin(object):
     def get_queryset(self):
         queryset = super(OwnerMessageViewSetMixin, self).get_queryset()
+        return queryset.filter(receivers=self.request.user)
+
+class OwnerMessageViewSetMixin2(object):
+    def get_queryset(self):
+        queryset = super(OwnerMessageViewSetMixin2, self).get_queryset()
         return queryset.filter(receiver=self.request.user)
 
 
-class NotificationViewSet(OwnerMessageViewSetMixin, CommonViewSet):
+class NotificationViewSet(OwnerMessageViewSetMixin2, CommonViewSet):
     """ api views for Notification """
     queryset = Notification.objects.all()
     serializer_class = serializers.NotificationSerializer
@@ -72,7 +77,7 @@ class SiteMailContentViewSet(OwnerMessageViewSetMixin, CommonViewSet):
     search_fields = ['title', 'contents', 'status', 'creator']
 
 
-class SiteMailReceiveViewSet(OwnerMessageViewSetMixin, CommonViewSet):
+class SiteMailReceiveViewSet(OwnerMessageViewSetMixin2, CommonViewSet):
     """ api views for SiteMailReceive """
     queryset = SiteMailReceive.objects.all()
     serializer_class = serializers.SiteMailReceiveSerializer
@@ -92,7 +97,7 @@ class SiteMailReceiveViewSet(OwnerMessageViewSetMixin, CommonViewSet):
         return response
 
 
-class SiteMailSendViewSet(OwnerMessageViewSetMixin, CommonViewSet):
+class SiteMailSendViewSet(CommonViewSet):
     """ api views for SiteMailSend """
     queryset = SiteMailSend.objects.all()
     serializer_class = serializers.SiteMailSendSerializer
@@ -101,7 +106,7 @@ class SiteMailSendViewSet(OwnerMessageViewSetMixin, CommonViewSet):
     search_fields = ['title', 'content', 'sender', 'status', 'creator']
 
 
-class TaskViewSet(OwnerMessageViewSetMixin, CommonViewSet):
+class TaskViewSet(CommonViewSet):
     """ api views for Task """
     queryset = Task.objects.all()
     serializer_class = serializers.TaskSerializer

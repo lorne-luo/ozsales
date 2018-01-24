@@ -81,6 +81,7 @@ INSTALLED_APPS = (
     'taggit',
     'djstripe',
     'stdimage',
+    'rest_framework_swagger',
 )
 
 MIDDLEWARE_CLASSES = (

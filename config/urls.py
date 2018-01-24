@@ -65,7 +65,12 @@ urlpatterns = apps_urlpatterns + [
 ]
 
 if settings.DEBUG:
+    from rest_framework_swagger.views import get_swagger_view
+
+    schema_view = get_swagger_view(title='OZSales API')
+
     # url(r'^%s/(?P<path>.*)$' % ID_PHOTO_FOLDER, 'django.views.static.serve', {'document_root': os.path.join(BASE_DIR, ID_PHOTO_FOLDER).replace('\\', '/'), 'show_indexes': False}),
     urlpatterns += [
         url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+        url(r'^api/docs/$', schema_view)
     ]
