@@ -15,14 +15,14 @@ class ProductAddForm(NoManytoManyHintModelForm):
 class ProductAdminForm(ProductAddForm):
     class Meta:
         model = Product
-        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand', 'seller']
+        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand', 'brand_en', 'brand_cn', 'seller']
 
 
 class ProductDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
-        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand_en', 'brand_cn', 'spec',
-                  'last_sell_price', 'avg_sell_price', 'avg_cost', 'tb_url', 'wd_url', 'wx_url']
+        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand_en', 'brand_cn', 'last_sell_price', 'avg_sell_price',
+                  'avg_cost']
 
 
 class BrandAddForm(NoManytoManyHintModelForm):
