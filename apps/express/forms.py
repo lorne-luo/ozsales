@@ -10,18 +10,11 @@ from models import ExpressCarrier, ExpressOrder
 
 
 class ExpressCarrierAddForm(NoManytoManyHintModelForm):
-    website = forms.URLField(label=u'官网地址', max_length=30, required=True, help_text=u'官方网站地址')
+    website = forms.URLField(label=u'官网地址', max_length=30, required=True, help_text=u'官方网站地址')  # make mandatory
 
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
-                  'is_default']
-
-    def __init__(self, *args, **kwargs):
-        request = kwargs.pop('request', None)
-        super(ExpressCarrierAddForm, self).__init__(*args, **kwargs)
-        if not request.user.is_superuser:
-            self.fields.pop('track_id_regex', 'is_default', 'post_search_url')
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url']
 
 
 class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
@@ -35,22 +28,11 @@ class ExpressCarrierUpdateForm(ExpressCarrierAddForm):
     pass
 
 
-# class ExpressOrderAddForm(NoManytoManyHintModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
-#
-#
-# class ExpressOrderDetailForm(NoManytoManyHintModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
-#
-#
-# class ExpressOrderUpdateForm(NoManytoManyHintModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+class ExpressCarrierAdminForm(ExpressCarrierUpdateForm):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+                  'seller', 'is_default']
 
 
 class ExpressOrderAddInline(admin.TabularInline):

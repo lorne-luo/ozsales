@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
 from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
-from core.django.views import CommonContextMixin, FormAccessRequestViewMixin
+from core.django.views import CommonContextMixin
 from models import ExpressCarrier
 from . import forms
 
@@ -35,13 +35,19 @@ class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequir
         return super(ExpressCarrierListView, self).get_context_data(**kwargs)
 
 
-class ExpressCarrierAddView(FormAccessRequestViewMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin,
+                            CreateView):
     model = ExpressCarrier
-    form_class = forms.ExpressCarrierAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("express.add_expresscarrier",)
     }
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return forms.ExpressCarrierAdminForm
+        else:
+            return forms.ExpressCarrierAddForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -49,11 +55,16 @@ class ExpressCarrierAddView(FormAccessRequestViewMixin, MultiplePermissionsRequi
         return super(ExpressCarrierAddView, self).form_valid(form)
 
 
-class ExpressCarrierUpdateView(FormAccessRequestViewMixin, SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin,
+class ExpressCarrierUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin,
                                UpdateView):
     model = ExpressCarrier
-    form_class = forms.ExpressCarrierUpdateForm
     template_name = 'adminlte/common_form.html'
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return forms.ExpressCarrierAdminForm
+        else:
+            return forms.ExpressCarrierUpdateForm
 
 
 class ExpressCarrierDetailView(CommonContextMixin, UpdateView):
