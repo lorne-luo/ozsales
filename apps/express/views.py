@@ -51,7 +51,8 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.seller = self.request.profile
+        if not self.request.user.is_superuser:
+            self.object.seller = self.request.profile
         return super(ExpressCarrierAddView, self).form_valid(form)
 
 

@@ -2,20 +2,20 @@ from core.django.forms import NoManytoManyHintModelForm
 from models import Product, Brand
 
 
-class ProductForm(NoManytoManyHintModelForm):
-    class Meta:
-        model = Product
-        fields = '__all__'
-
-
 class ProductAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Product
-        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand', 'spec', 'tb_url', 'wd_url', 'wx_url']
+        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand']
 
     def __init__(self, *args, **kwargs):
         super(ProductAddForm, self).__init__(*args, **kwargs)
         self.fields['brand'].queryset = Brand.objects.all().order_by('name_en')
+
+
+class ProductAdminForm(ProductAddForm):
+    class Meta:
+        model = Product
+        fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand', 'seller']
 
 
 class ProductDetailForm(NoManytoManyHintModelForm):
