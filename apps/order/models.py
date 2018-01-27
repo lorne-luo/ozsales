@@ -313,6 +313,7 @@ class Order(models.Model):
         content = u'<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
 
         self.seller.send_notification(subject, content)
+        self.seller.send_email(subject, content)
         self.customer.send_email(subject, content)
 
     def update_track(self):

@@ -124,3 +124,9 @@ def one_express_track(url, track_id):
 
     last_record = get_last_record(table)
     return check_delivery(last_record)
+
+
+def arkexpress_track(url):
+    table = get_table(url, cls='trackContentTable')
+    last_record = get_last_record(table)
+    return check_delivery(last_record)

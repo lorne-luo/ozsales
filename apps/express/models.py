@@ -123,6 +123,8 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
                 return tracker.transrush_au_track(url)
             elif 'one-express' in self.website.lower():
                 return tracker.one_express_track(url, order.track_id)
+            elif 'arkexpress' in self.website.lower():
+                return tracker.arkexpress_track(url)
             # todo more tracker
             else:
                 return tracker.table_last_tr(url)
