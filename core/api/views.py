@@ -1,21 +1,24 @@
 # coding=utf-8
+import json
 import sys
+
+import subprocess
 from django.http import JsonResponse
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
+from rest_framework import filters, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from .filters import (AjaxDatatableOrderingFilter,
-                                         AjaxDatatablePagination,
-                                         AjaxDatatableSearchFilter,
-                                         pk_in_filter_factory)
-
+                      AjaxDatatablePagination,
+                      AjaxDatatableSearchFilter,
+                      pk_in_filter_factory)
 
 
 def get_app_model_name(kwargs):
@@ -134,7 +137,8 @@ class AjaxDatableView(object):
         self.pagination_class = AjaxDatatablePagination
 
         # get all events for channel
-        self.filter_backends = getattr(self, 'filter_backends', []) + [AjaxDatatableOrderingFilter, AjaxDatatableSearchFilter]
+        self.filter_backends = getattr(self, 'filter_backends', []) + [AjaxDatatableOrderingFilter,
+                                                                       AjaxDatatableSearchFilter]
         queryset = self.get_queryset()
         records_total = queryset.count()  # get total count
         queryset = self.filter_queryset(queryset)
@@ -205,3 +209,14 @@ class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
         order_direction = request.GET.get('order[0][dir]', 'asc')
         search_keyword = request.GET.get('search[value]', '')
         raise NotImplementedError
+
+
+class GitCommitInfoView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        data = subprocess.check_output(
+            ['git', 'show', '-s', '--date=iso8601', '--format=\'{"commit": "%h", "date": "%ad", "comment": "%s"}\''])
+        commit = data.decode("utf-8").strip().strip('\'')
+
+        return Response(json.loads(commit))

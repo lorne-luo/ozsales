@@ -5,6 +5,7 @@ from django.contrib.staticfiles.views import serve
 from dbsettings.views import site_settings, app_settings
 
 from apps.order.views import OrderDetailView
+from core.api.views import GitCommitInfoView
 from core.auth_user.views import ChangePasswordView, ChangePasswordDoneView
 from core import auth_user
 from core.auth_user.views import index
@@ -48,6 +49,7 @@ api_urlpatterns = [
 
 urlpatterns = apps_urlpatterns + [
     url(r'^$', index, name='index'),
+    url(r'^api/version/$', GitCommitInfoView.as_view(), name='api_version'),
 
     # REST API
     url(r'^api/', include(api_urlpatterns, namespace='api')),
