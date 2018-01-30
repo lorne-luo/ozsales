@@ -100,8 +100,8 @@ class CustomerUpdateForm(NoManytoManyHintModelForm):
 
 
 class AddressInlineForm(NoManytoManyHintModelForm):
-    id_photo_front = forms.ImageField(label=_("ID photo front"), widget=ImageInlineInput())
-    id_photo_back = forms.ImageField(label=_("ID photo back"), widget=ImageInlineInput())
+    id_photo_front = forms.ImageField(label=_("ID photo front"), required=False, widget=ImageInlineInput())
+    id_photo_back = forms.ImageField(label=_("ID photo back"), required=False, widget=ImageInlineInput())
 
     class Meta:
         model = Address
