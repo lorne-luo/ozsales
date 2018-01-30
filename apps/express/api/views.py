@@ -15,7 +15,7 @@ class ExpressCarrierViewSet(CommonViewSet):
     queryset = ExpressCarrier.objects.all()
     serializer_class = serializers.ExpressCarrierSerializer
     filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-    search_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
+    search_fields = ['name_cn', 'name_en', 'website', 'pinyin']
     permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
@@ -35,7 +35,8 @@ class ExpressOrderViewSet(CommonViewSet):
     serializer_class = serializers.ExpressOrderSerializer
     # filter_class = OrderFilter
     filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
-    search_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
+    search_fields = ['carrier__name_cn', 'carrier__name_en', 'carrier__pinyin', 'track_id', 'address__name',
+                     'order__customer__name', 'order__customer__pinyin']
     permission_classes = (SellerPermissions,)
 
     def get_queryset(self):

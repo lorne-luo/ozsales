@@ -19,7 +19,7 @@ class ProductViewSet(CommonViewSet):
     serializer_class = serializers.ProductSerializer
     permission_classes = [permissions.AllowAny]
     filter_fields = ['name_en', 'name_cn', 'brand__id', 'brand__name_cn', 'brand__name_en']
-    search_fields = ['name_en', 'name_cn', 'brand__name_cn', 'brand__name_en']
+    search_fields = ['name_en', 'name_cn', 'brand_en', 'brand_cn', 'pinyin']
 
 
 class BrandViewSet(CommonViewSet):
