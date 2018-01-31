@@ -2,7 +2,6 @@
 import logging
 import os
 import uuid
-
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -19,7 +18,7 @@ from apps.member.models import Seller
 from apps.store.models import Page
 from core.auth_user.models import AuthUser
 from core.django.constants import COUNTRIES_CHOICES
-from core.django.models import PinYinFieldModelMixin
+from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
 from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
 
 log = logging.getLogger(__name__)
@@ -106,7 +105,7 @@ class ProductManager(models.Manager):
 
 
 @python_2_unicode_compatible
-class Product(PinYinFieldModelMixin, models.Model):
+class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     code = models.CharField(_(u'code'), max_length=32, blank=True)
     name_en = models.CharField(_(u'name_en'), max_length=128, blank=True)
@@ -264,9 +263,10 @@ class Product(PinYinFieldModelMixin, models.Model):
                 self.brand = Brand.objects.filter(name_cn=self.brand_cn).first()
 
     def save(self, *args, **kwargs):
-        # default to update cache
-        update_cache = kwargs.pop('update_cache', True)
         self.assign_brand()
+        self.resize_image('pic')  # resize images when first uploaded
+
+        update_cache = kwargs.pop('update_cache', True)  # default to update cache
         super(Product, self).save(*args, **kwargs)
         if update_cache:
             Product.objects.clean_cache()

@@ -1,3 +1,7 @@
+import sys
+from io import BytesIO
+from PIL import Image
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from pypinyin import pinyin, Style
 
 
@@ -73,3 +77,31 @@ class PinYinFieldModelMixin(object):
             if obj is None:
                 return None
         return obj
+
+
+class ResizeUploadedImageModelMixin(object):
+    """
+    resize image when first uploaded
+    usage:
+        cal self.resize_image('image_field_name') before super.save()
+    """
+    MAX_WIDTH = 800
+
+    def resize_image(self, image_field_name):
+        # resize uploaded image when save new
+        image = getattr(self, image_field_name)
+        if image and isinstance(image.file, InMemoryUploadedFile):
+            im = Image.open(image)
+            width, height = im.size
+            if width > self.MAX_WIDTH:
+                new_height = int(float(self.MAX_WIDTH) / width * height)
+                output = BytesIO()
+                # Resize/modify the image
+                im = im.resize((self.MAX_WIDTH, new_height))
+                # after modifications, save it to the output
+                im.save(output, format='JPEG', quality=70)
+                output.seek(0)
+                # change the imagefield value to be the newley modifed image value
+                setattr(self, image_field_name, InMemoryUploadedFile(
+                    output, 'ImageField', "%s.jpg" % image.name.split('.')[0],
+                    'image/jpeg', sys.getsizeof(output), None))

@@ -18,7 +18,7 @@ from stdimage import StdImageField
 from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
-from core.django.models import PinYinFieldModelMixin
+from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
 from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
 
 from apps.member.models import Seller
@@ -258,7 +258,7 @@ class AddressManager(Manager):
 
 
 @python_2_unicode_compatible
-class Address(PinYinFieldModelMixin, models.Model):
+class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
     name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
@@ -340,6 +340,13 @@ class Address(PinYinFieldModelMixin, models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
+
+    def save(self, *args, **kwargs):
+        # resize images when first uploaded
+        self.resize_image('id_photo_front')
+        self.resize_image('id_photo_back')
+
+        super(Address, self).save(*args, **kwargs)
 
 
 @receiver(post_delete, sender=CartProduct)
