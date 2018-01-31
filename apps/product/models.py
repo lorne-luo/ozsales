@@ -118,8 +118,8 @@ class Product(PinYinFieldModelMixin, models.Model):
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
                         variations={
-                            'medium': {"width": 800, "height": 800},
-                            'thumbnail': {"width": 400, "height": 400}
+                            'medium': (800, 800, True),
+                            'thumbnail': (400, 400, True)
                         })
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
     spec = models.CharField(_(u'spec'), max_length=128, blank=True)

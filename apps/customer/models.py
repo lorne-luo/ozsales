@@ -24,6 +24,7 @@ from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
 from apps.member.models import Seller
 from apps.product.models import Product
 
+
 @python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
@@ -212,7 +213,6 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
             pass
 
 
-
 @receiver(post_save, sender=Customer)
 def customer_post_save(sender, instance=None, created=False, **kwargs):
     if not instance.primary_address:
@@ -267,13 +267,13 @@ class Address(PinYinFieldModelMixin, models.Model):
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
                                    variations={
-                                       'medium': {'width': 720},
-                                       'thumbnail': {'width': 150}
+                                       'medium': (720, 720, False),
+                                       'thumbnail': (150, 150, False)
                                    })
     id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
                                   variations={
-                                      'medium': {'width': 720},
-                                      'thumbnail': {'width': 150}
+                                      'medium': (720, 720, False),
+                                      'thumbnail': (150, 150, False)
                                   })
 
     objects = AddressManager()
