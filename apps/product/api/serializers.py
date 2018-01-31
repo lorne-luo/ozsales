@@ -6,21 +6,18 @@ from ..models import Product, Brand
 class ProductSerializer(SellerOwnerSerializerMixin, BaseSerializer):
     """Serializer for product"""
     brand_display = serializers.SerializerMethodField()
+    thumbnail = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
         fields = ['id', 'edit_url', 'detail_url', 'is_owner', 'name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en',
                   'brand_display', 'spec', 'max_cost', 'last_sell_price', 'avg_sell_price', 'min_sell_price',
-                  'max_sell_price', 'avg_cost', 'min_cost']
+                  'max_sell_price', 'avg_cost', 'min_cost', 'thumbnail']
         read_only_fields = ['id']
 
-    def get_pic_link(self, obj):
-        if obj.pic:
-            img = '%s' % obj.pic.url
-        else:
-            img = '/static/img/no_image.jpg'
-        return '<a href="%s" target="_blank"><img style="height:90px" src="%s"/></a>' % (img, img)
+    def get_thumbnail(self, obj):
+        return obj.pic.thumbnail.url if obj.pic else None
 
     def get_brand_display(self, obj):
         return str(obj.brand)
