@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
+import os
 import datetime
 import logging
+import shlex
 import urllib2
 import pytz
 import redis
 import python_forex_quotes
+import subprocess
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
 from bs4 import BeautifulSoup
-from celery.task import periodic_task
+from celery.task import periodic_task, task
+
 from celery.task.schedules import crontab
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
@@ -111,7 +115,8 @@ def ozbargin_task():
 
                 # avoid duplication
                 day_ago = timezone.now() - relativedelta(days=1)
-                if subscribe.mobile and  not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile, content=content).exists():
+                if subscribe.mobile and not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile,
+                                                               content=content).exists():
                     result, detail = telstra_sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
                     subscribe.msg_count += 1
                     subscribe.save(update_fields=['msg_count'])
@@ -200,7 +205,7 @@ def get_forex_quotes():
         value = Decimal(quote['ask'])
         setattr(forex, quote['symbol'], value)
         msg += '%s: %.4f\n' % (quote['symbol'], value)
-        
+
     telstra_sender.send_to_self(msg.strip())
 
 
@@ -224,3 +229,37 @@ def reset_email_daily_counter():
 def reset_sms_monthly_counter():
     r.set(TELSTRA_SMS_MONTHLY_COUNTER, 0)
     log.info('[SMS] Reset Telstra sms monthly counter.')
+
+
+def run_shell_command(command_line):
+    """ accept shell command and run"""
+    command_line_args = shlex.split(command_line)
+    log.info('Subprocess: "' + ' '.join(command_line_args) + '"')
+
+    try:
+        command_line_process = subprocess.Popen(
+            command_line_args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+
+        # for l in iter(command_line_process.stdout.readline, b''):
+        #     print l.strip()
+
+        command_line_process.communicate()
+        command_line_process.wait()
+    except (OSError, subprocess.CalledProcessError) as exception:
+        log.info('Exception occured: ' + str(exception))
+        log.info('Subprocess failed')
+        return False
+    else:
+        # no exception was raised
+        log.info('Subprocess finished')
+    return True
+
+
+@task
+def guetzli_compress_image(image_path):
+    GUETZLI_CMD = '/opt/guetzli/bin/Release/guetzli'
+
+    if os.path.exists(GUETZLI_CMD):
+        cmd = '%s --quality 84 %s %s' % (GUETZLI_CMD, image_path, image_path)
+        run_shell_command(cmd)
