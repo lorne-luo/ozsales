@@ -1,8 +1,15 @@
+from django import forms
+from django.utils.translation import ugettext_lazy as _
+
 from core.django.forms import NoManytoManyHintModelForm
-from models import Product, Brand
+from core.django.widgets import ThumbnailImageInput
+from .models import Product, Brand
 
 
 class ProductAddForm(NoManytoManyHintModelForm):
+    pic = forms.ImageField(label=_("picture"), required=False,
+                           widget=ThumbnailImageInput({'width': '280px', 'size': 'thumbnail'}))
+
     class Meta:
         model = Product
         fields = ['name_en', 'name_cn', 'alias', 'pic', 'brand']
