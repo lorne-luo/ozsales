@@ -107,4 +107,4 @@ class ResizeUploadedImageModelMixin(object):
                     'image/jpeg', sys.getsizeof(output), None))
 
             from apps.schedule.tasks import guetzli_compress_image
-            guetzli_compress_image.apply_async(args=(image.path), countdown=120)
+            guetzli_compress_image.apply_async(args=(image.path), countdown=10)
