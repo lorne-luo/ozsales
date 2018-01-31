@@ -48,7 +48,7 @@ def get_product_pic_path(instance, filename):
     filename = '%s%s' % (filename, instance.name_en)
     filename = filename.replace(' ', '-')
     filename = '%s.%s' % (filename, ext)
-    return os.path.join(instance.get_pic_path(), filename)
+    return os.path.join(PRODUCT_PHOTO_FOLDER, filename)
 
 
 class ProductManager(models.Manager):
