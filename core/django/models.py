@@ -90,7 +90,14 @@ class ResizeUploadedImageModelMixin(object):
     def resize_image(self, image_field_name):
         # resize uploaded image when save new
         image = getattr(self, image_field_name)
-        if image and isinstance(image.file, InMemoryUploadedFile):
+        if not image:
+            return
+        try:
+            file = image.file
+        except:
+            return
+
+        if isinstance(file, InMemoryUploadedFile):
             im = Image.open(image)
             width, height = im.size
             if width > self.MAX_WIDTH:
@@ -107,4 +114,4 @@ class ResizeUploadedImageModelMixin(object):
                     'image/jpeg', sys.getsizeof(output), None))
 
             from apps.schedule.tasks import guetzli_compress_image
-            guetzli_compress_image.apply_async(args=(image.path), countdown=10)
+            guetzli_compress_image.apply_async(args=[image.path], countdown=10)
