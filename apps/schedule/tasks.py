@@ -202,7 +202,7 @@ def get_forex_quotes():
     for quote in quotes:
         if not quote['ask']:
             continue
-        value = Decimal(quote['ask'])
+        value = Decimal(str(quote['ask']))
         setattr(forex, quote['symbol'], value)
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
