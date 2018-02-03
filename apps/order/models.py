@@ -78,6 +78,10 @@ class Order(models.Model):
         else:
             return '%s' % (self.customer.name)
 
+    def __init__(self, *args, **kwargs):
+        super(Order, self).__init__(*args, **kwargs)
+        self._currency_original = self.currency
+
     def get_product_summary(self):
         result = ''
         for product in self.products.all():
@@ -157,8 +161,9 @@ class Order(models.Model):
         if self.address:
             self.address_text = self.address.get_text()
 
-        if not self.pk:
-            self.aud_rmb_rate = forex.AUDCNH
+        if not self.pk or self._currency_original != self.currency:
+            # new creating or currency changed, update forex rate
+            self.aud_rmb_rate = getattr(forex, self.currency or self.seller.primary_currency)
 
         self.total_cost_aud = self.product_cost_aud or 0
         self.product_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
@@ -195,7 +200,10 @@ class Order(models.Model):
     get_id_link.short_description = 'ID'
 
     def get_aud_rmb_rate(self):
-        return self.aud_rmb_rate or forex.AUDCNH
+        if self.aud_rmb_rate:
+            return self.aud_rmb_rate
+
+        return getattr(forex, self.currency or self.seller.primary_currency)
 
     def update_price(self, update_sell_price=False):
         if not self.products.count() and not self.express_orders.count():
