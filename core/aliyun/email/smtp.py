@@ -17,7 +17,7 @@ ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 ALIYUN_EMAIL_SYDNEY_HOST = 'smtpdm-ap-southeast-2.aliyun.com'
 ADMIN_EMAIL = 'dev@luotao.net'  # 管理员地址
 SENDER_EMAIL = 'dev@luotao.net'  # 自定义的回复地址
-SENDER_NAME = 'Youdan Team'  # 自定义的发件人名称
+SENDER_NAME = 'Youdan'  # 自定义的发件人名称
 # 单一发信地址
 SINGLE_EMAIL_USERNAME = 'notice@em.luotao.net'  # 发件人地址，通过控制台创建的发件人地址
 SINGLE_EMAIL_PASSWORD = 'nv98273rH12j3nF'  # 发件人密码，通过控制台创建的发件人密码

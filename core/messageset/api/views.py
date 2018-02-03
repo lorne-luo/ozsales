@@ -7,7 +7,9 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 
+from core.api.pagination import CommonPageNumberPagination
 from core.api.views import CommonViewSet
+from core.django.constants import MailStatus
 from ..models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 from . import serializers
 
@@ -31,24 +33,34 @@ def notification_markall(request):
 
 
 class OwnerMessageViewSetMixin(object):
+    """some model use receivers, diff with below one"""
+
     def get_queryset(self):
         queryset = super(OwnerMessageViewSetMixin, self).get_queryset()
         return queryset.filter(receivers=self.request.user)
 
+
 class OwnerMessageViewSetMixin2(object):
+    """some model use receiver"""
+
     def get_queryset(self):
         queryset = super(OwnerMessageViewSetMixin2, self).get_queryset()
         return queryset.filter(receiver=self.request.user)
 
 
+class NotificationPaginator(CommonPageNumberPagination):
+    page_size = 10
+
+
 class NotificationViewSet(OwnerMessageViewSetMixin2, CommonViewSet):
     """ api views for Notification """
-    queryset = Notification.objects.all()
+    queryset = Notification.objects.filter(status__lt=MailStatus.DRAFT)
     serializer_class = serializers.NotificationSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-    search_fields = ['title', 'content', 'receiver', 'status', 'read_time', 'creator']
-    ordering_fields = ['id', 'send_time']
+    filter_fields = ['title', 'status']
+    search_fields = ['title', 'status']
+    ordering_fields = ['id', 'send_time', 'status']
+    pagination_class = NotificationPaginator
 
     def get_paginated_response(self, data):
         response = super(NotificationViewSet, self).get_paginated_response(data)

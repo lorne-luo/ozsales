@@ -34,7 +34,7 @@ var messagesetVue = new Vue({
         },
         loadData: function (modelName, data) {
             var self = this,
-                url = $.AdminLTE.getApiUrl(self.appName, modelName) + '?ordering=-send_time';
+                url = $.AdminLTE.getApiUrl(self.appName, modelName) + '?ordering=status,-send_time';
             $.ajax({
                 type: 'GET',
                 url: url,
