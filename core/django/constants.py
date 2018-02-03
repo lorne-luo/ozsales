@@ -26,6 +26,7 @@ DICT_NULL_BLANK_FALSE = {
     'blank': False
 }
 
+
 class ReadStatus(object):
     UNREAD = 0
     READ = 1
@@ -71,6 +72,7 @@ class DeletableStatus(object):
         (DELETED, u'删除'),
     )
 
+
 class TaskStatus(object):
     NORMAL = 0
     EXCEPT = 1
@@ -107,4 +109,14 @@ COUNTRIES_CHOICES = (
     ('KR', u'韩国'),
     ('TW', u'台湾'),
     ('SEA', u'东南亚'),
+)
+
+CURRENCY_CHOICES = (
+    ('AUDCNH', u'澳元'),
+    ('USDCNH', u'美元'),
+    ('NZDCNH', u'纽元'),
+    ('EURCNH', u'欧元'),
+    ('GBPCNH', u'英镑'),
+    ('CADCNH', u'加元'),
+    ('JPYCNH', u'日元'),
 )
