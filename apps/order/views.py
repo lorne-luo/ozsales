@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
 from apps.express.views import CarrierInfoRequiredMixin
-from core.django.permission import  SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
+from core.django.permission import SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
@@ -188,7 +188,7 @@ class OrderAddDetailView(OrderUpdateView):
         if not Customer.objects.filter(id=customer_id).exists():
             return HttpResponseRedirect(reverse('order:order-add'))
 
-        self.object = Order(customer_id=customer_id)
+        self.object = Order(customer_id=customer_id, seller=self.request.profile)
         form = self.get_form()
         return self.render_to_response(self.get_context_data(form=form))
 

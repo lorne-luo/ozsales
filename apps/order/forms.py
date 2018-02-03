@@ -89,7 +89,7 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = Order
-        fields = ['customer', 'address', 'total_amount', 'status', 'is_paid', 'paid_time', 'ship_time',
+        fields = ['customer', 'address', 'currency', 'status', 'is_paid', 'paid_time', 'ship_time',
                   'cost_aud', 'sell_rmb', 'sell_price_rmb', 'finish_time']
 
     def __init__(self, *args, **kwargs):
@@ -97,16 +97,12 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
         instance = getattr(self, 'instance', None)
 
         if instance and instance.customer:
-            self.fields['total_amount'].widget.attrs['readonly'] = True
             self.fields['customer'].queryset = Customer.objects.filter(pk=instance.customer_id)
             self.fields['customer'].empty_value = []
             self.fields['customer'].empty_label = None
             self.fields['address'].queryset = Address.objects.filter(customer_id=instance.customer_id)
             self.fields['address'].empty_value = []
             self.fields['address'].empty_label = None
-
-            if not instance.total_amount:
-                self.fields.pop('total_amount')
 
             if instance.is_paid:
                 self.fields['paid_time'].widget.attrs['readonly'] = True
@@ -124,14 +120,12 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
                 cost_aud = '%s + %s = %s (%s)' % (instance.product_cost_aud, instance.shipping_fee,
                                                   instance.total_cost_aud, instance.total_cost_rmb)
                 self.initial['cost_aud'] = cost_aud
-                self.fields['cost_aud'].initial = cost_aud
                 self.fields['cost_aud'].widget.attrs['readonly'] = True
 
                 sell_rmb = '[%s] ' % instance.origin_sell_rmb if instance.origin_sell_rmb != instance.sell_price_rmb else ''
                 sell_rmb += '%s - %s = %s' % (instance.sell_price_rmb, instance.total_cost_rmb,
                                               instance.profit_rmb)
                 self.initial['sell_rmb'] = sell_rmb
-                self.fields['sell_rmb'].initial = sell_rmb
                 self.fields['sell_rmb'].widget.attrs['readonly'] = True
             else:
                 self.fields.pop('status')
@@ -143,16 +137,19 @@ class OrderUpdateForm(NoManytoManyHintModelForm):
             else:
                 self.fields.pop('finish_time')
 
+            if not instance.currency and instance.seller:
+                self.initial['currency'] = instance.seller.primary_currency
+
         if not instance.address:
             default_address = Customer.objects.filter(pk=instance.customer_id).first().primary_address
             self.initial['address'] = default_address
-            self.fields['address'].initial = default_address
 
 
 class OrderDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Order
-        fields = ['customer', 'address', 'is_paid', 'status', 'total_amount', 'product_cost_aud', 'product_cost_rmb',
+        fields = ['customer', 'address', 'currency', 'is_paid', 'status', 'total_amount', 'product_cost_aud',
+                  'product_cost_rmb',
                   'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'origin_sell_rmb', 'sell_price_rmb',
                   'profit_rmb', 'finish_time']
 
@@ -194,7 +191,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
                                                                        'class': 'form-control'})
                                      )
     description = forms.CharField(label=u'备注', max_length=128, required=False, help_text=u'名称或备注(可选)',
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
     amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数 量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
     sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=10, decimal_places=2, required=False, help_text=u'单 价',
@@ -219,7 +216,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
             sum_price = instance.amount * instance.sell_price_rmb
             if sum_price % 1 < Decimal(0.02):
                 sum_price = Decimal(int(sum_price)).quantize(Decimal('.01'))
-            self.fields['sum_price'].initial = sum_price
+            self.initial['sum_price'] = sum_price
 
     def clean_amount(self):
         return self.cleaned_data.get('amount', 1)
