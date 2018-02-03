@@ -35,9 +35,9 @@
         <div class="box-header with-border">
           <h3 class="box-title">
             {% if object.id %}
-              <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.id %}">{{ object }}</a>
+              <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.id %}">{{ object.customer.name_and_remarks }}</a>
             {% else %}
-              {{ object }}
+              {{ object.customer.name_and_remarks }}
             {% endif %}
           </h3>
         </div>

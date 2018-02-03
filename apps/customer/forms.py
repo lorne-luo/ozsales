@@ -33,29 +33,6 @@ class InterestTagInline(admin.TabularInline):
     verbose_name_plural = 'Tag'
 
 
-class CustomerEditForm(forms.ModelForm):
-    class Meta:
-        model = Customer
-        fields = ['name', 'email', 'mobile', 'primary_address', 'tags', 'order_count']
-
-    def __init__(self, *args, **kwargs):
-        super(CustomerEditForm, self).__init__(*args, **kwargs)
-        if 'instance' in kwargs:
-            instance = kwargs['instance']
-            self.fields['primary_address'].queryset = Address.objects.filter(customer=instance)
-            self.fields['order_count'].widget.attrs['readonly'] = True
-
-        self.fields['tags'].help_text = ''
-
-    def remove_holddown(self):
-        """This removes the unhelpful "Hold down the...." help texts for the specified fields for a form."""
-        remove_message = unicode(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
-        for field in self.fields:
-            tx = self.fields[field].help_text
-            if self.fields[field].help_text:
-                self.fields[field].help_text = _(self.fields[field].help_text.replace(remove_message, '').strip())
-
-
 class AddressAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Address
@@ -77,26 +54,25 @@ class AddressDetailForm(NoManytoManyHintModelForm):
 class CustomerAddForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'remark', 'tags']
+        fields = ['name', 'remark', 'email', 'mobile']
 
 
 class CustomerDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remark', 'tags']
+        fields = ['name', 'remark', 'email', 'mobile', 'primary_address']
 
 
 class CustomerUpdateForm(NoManytoManyHintModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'email', 'mobile', 'primary_address', 'order_count', 'remark', 'tags']
+        fields = ['name', 'remark', 'email', 'mobile', 'primary_address']
 
     def __init__(self, *args, **kwargs):
         super(CustomerUpdateForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
             instance = kwargs['instance']
             self.fields['primary_address'].queryset = Address.objects.filter(customer=instance)
-            self.fields['order_count'].widget.attrs['readonly'] = True
 
 
 class AddressInlineForm(NoManytoManyHintModelForm):
