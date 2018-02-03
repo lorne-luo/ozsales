@@ -25,7 +25,7 @@ class AddressViewSet(CommonViewSet):
     queryset = Address.objects.all()
     serializer_class = serializers.AddressSerializer
     filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
-    search_fields = ['name', 'mobile', 'address', 'id_number', 'pinyin', 'customer__name', 'customer__pinyin']
+    search_fields = ['name', 'mobile', 'address', 'pinyin', 'customer__name', 'customer__pinyin']
 
 
 class CustomerViewSet(CommonViewSet):
@@ -34,7 +34,7 @@ class CustomerViewSet(CommonViewSet):
     serializer_class = serializers.CustomerSerializer
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
-    search_fields = ['name', 'mobile', 'primary_address__name', 'pinyin']
+    search_fields = ['name', 'mobile', 'primary_address__name', 'remark', 'pinyin']
     permission_classes = (SellerPermissions,)
 
     def get_queryset(self):
