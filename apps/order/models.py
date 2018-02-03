@@ -15,6 +15,7 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 
 from apps.member.models import Seller
+from core.django.constants import CURRENCY_CHOICES
 from utils.enum import enum
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
@@ -57,6 +58,7 @@ class Order(models.Model):
     shipping_fee = models.DecimalField(_(u'快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
                                      verbose_name=_(u'寄出时间'))
+    currency = models.CharField(_(u'货币'), max_length=128, choices=CURRENCY_CHOICES, blank=True)
     total_cost_aud = models.DecimalField(_(u'总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_(u'总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
     origin_sell_rmb = models.DecimalField(_(u'原价'), max_digits=8, decimal_places=2, blank=True, null=True)
