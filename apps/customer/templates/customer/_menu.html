@@ -1,8 +1,23 @@
+<li class="treeview active">
+    <a href="javascript:void(0)">
+        <i class="fa fa-angle-left pull-right"></i>
+        <i class="fa fa-users"></i>
+        <b>Customer</b>
+    </a>
 
-<li class="active">
-  <a href="{% url 'customer:customer-list' %}">
-    <i class="fa fa-users"></i>
-    <b>Customer</b>
-  </a>
-
+    <ul class="treeview-menu menu-open" style="display: block;">
+        {% if perms.customer.view_customer %}
+            <li>
+                {% if perms.customer.add_customer %}
+                    <a href="{% url 'customer:customer-add' %}" class="pull-right">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+                <a href="{% url 'customer:customer-list' %}" class="main">
+                    <i class="fa fa-circle-o"></i>
+                    Customer
+                </a>
+            </li>
+        {% endif %}
+    </ul>
 </li>
