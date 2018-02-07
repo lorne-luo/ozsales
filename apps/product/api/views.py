@@ -1,8 +1,10 @@
 import logging
 from django.db.models import Q
 from dal import autocomplete
-from rest_framework import permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import permissions, filters
 
+from core.api.filters import PinyinSearchFilter
 from core.utils.string import include_non_asc
 from core.django.autocomplete import HansSelect2ViewMixin
 from core.django.permission import SellerRequiredMixin
@@ -19,7 +21,11 @@ class ProductViewSet(CommonViewSet):
     serializer_class = serializers.ProductSerializer
     permission_classes = [permissions.AllowAny]
     filter_fields = ['name_en', 'name_cn', 'brand__id', 'brand__name_cn', 'brand__name_en']
-    search_fields = ['name_en', 'name_cn', 'brand_en', 'brand_cn', 'pinyin']
+    search_fields = ['name_cn', 'brand_cn']
+    pinyin_search_fields = ['name_en', 'brand_en', 'pinyin', 'brand__name_en']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
 
 class BrandViewSet(CommonViewSet):
@@ -27,8 +33,11 @@ class BrandViewSet(CommonViewSet):
     queryset = Brand.objects.all()
     serializer_class = serializers.BrandSerializer
     filter_fields = ['name_en', 'name_cn']
-    search_fields = ['name_en', 'name_cn']
-
+    search_fields = ['name_cn']
+    pinyin_search_fields = ['name_en']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
 class ProductAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Product

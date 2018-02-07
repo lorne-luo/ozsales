@@ -2,11 +2,14 @@ import logging
 from dal import autocomplete
 from django.db.models import Count, Q
 from django.http import Http404
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.api.filters import PinyinSearchFilter
 from core.django.autocomplete import HansSelect2ViewMixin
 from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
@@ -25,7 +28,11 @@ class AddressViewSet(CommonViewSet):
     queryset = Address.objects.all()
     serializer_class = serializers.AddressSerializer
     filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number']
-    search_fields = ['name', 'mobile', 'address', 'pinyin', 'customer__name', 'customer__pinyin']
+    search_fields = ['name', 'address', 'customer__name']
+    pinyin_search_fields = ['customer__pinyin', 'pinyin', 'mobile']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
 
 class CustomerViewSet(CommonViewSet):
@@ -34,8 +41,12 @@ class CustomerViewSet(CommonViewSet):
     serializer_class = serializers.CustomerSerializer
     filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
-    search_fields = ['name', 'mobile', 'primary_address__name', 'remark', 'pinyin']
+    search_fields = ['name', 'primary_address__name', 'remark']
     permission_classes = (SellerPermissions,)
+    pinyin_search_fields = ['pinyin', 'mobile']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
     def get_queryset(self):
         queryset = super(CustomerViewSet, self).get_queryset()

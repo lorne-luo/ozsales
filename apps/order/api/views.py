@@ -1,9 +1,13 @@
 # coding=utf-8
 import logging
+
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import list_route
+from rest_framework import filters
 from django_filters import FilterSet
 from django.db.models import Q
 
+from core.api.filters import PinyinSearchFilter
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
 from ..models import Order, ORDER_STATUS, OrderProduct
@@ -52,6 +56,10 @@ class OrderViewSet(CommonViewSet):
     filter_fields = ['id']
     search_fields = ['customer__name', 'address__name', 'address__address']
     permission_classes = (SellerPermissions,)
+    pinyin_search_fields = ['customer__pinyin', 'address__pinyin']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
     def get_queryset(self):
         queryset = super(OrderViewSet, self).get_queryset()
@@ -77,9 +85,13 @@ class OrderProductViewSet(CommonViewSet):
     queryset = OrderProduct.objects.all()
     serializer_class = serializers.OrderProductSerializer
     filter_fields = ['id']
-    search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_en', 'product__name_cn',
-                     'product__brand__name_en', 'product__brand__name_cn']
-    permission_classes = (SellerPermissions,)
+    search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_cn',
+                     'product__brand__name_cn']
+    permission_classes = [SellerPermissions]
+    pinyin_search_fields = ['product__name_en', 'product__brand__name_en']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
     def get_queryset(self):
         queryset = super(OrderProductViewSet, self).get_queryset()

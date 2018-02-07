@@ -1,7 +1,9 @@
 from dal import autocomplete
 from django.db.models import Q
-
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from apps.express.models import ExpressCarrier, ExpressOrder
+from core.api.filters import PinyinSearchFilter
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
 from core.django.autocomplete import HansSelect2ViewMixin
@@ -15,8 +17,12 @@ class ExpressCarrierViewSet(CommonViewSet):
     queryset = ExpressCarrier.objects.all()
     serializer_class = serializers.ExpressCarrierSerializer
     filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-    search_fields = ['name_cn', 'name_en', 'website', 'pinyin']
+    search_fields = ['name_cn']
     permission_classes = (SellerPermissions,)
+    pinyin_search_fields = ['pinyin', 'name_en', 'website']  # search only input are all ascii chars
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
     def get_queryset(self):
         queryset = super(ExpressCarrierViewSet, self).get_queryset()
@@ -35,9 +41,13 @@ class ExpressOrderViewSet(CommonViewSet):
     serializer_class = serializers.ExpressOrderSerializer
     # filter_class = OrderFilter
     filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
-    search_fields = ['carrier__name_cn', 'carrier__name_en', 'carrier__pinyin', 'track_id', 'address__name',
-                     'order__customer__name', 'order__customer__pinyin']
+    search_fields = ['carrier__name_cn', 'address__name', 'order__customer__name']
     permission_classes = (SellerPermissions,)
+    # search only input are all ascii chars
+    pinyin_search_fields = ['carrier__name_en', 'carrier__pinyin', 'track_id', 'order__customer__pinyin']
+    filter_backends = (DjangoFilterBackend,
+                       PinyinSearchFilter,
+                       filters.OrderingFilter)
 
     def get_queryset(self):
         queryset = super(ExpressOrderViewSet, self).get_queryset()

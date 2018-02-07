@@ -8,8 +8,8 @@ class PageViewSet(CommonViewSet):
     """ api views for Page """
     queryset = Page.objects.all()
     serializer_class = serializers.PageSerializer
-    filter_fields = ['id']
-    search_fields = ['title', 'url', 'store', 'price', 'original_price']
+    filter_fields = ['title', 'url', 'store']
+    search_fields = ['title', 'url', 'store']
 
 
 class StoreViewSet(CommonViewSet):
@@ -17,5 +17,5 @@ class StoreViewSet(CommonViewSet):
     queryset = Store.objects.all()
     serializer_class = serializers.StoreSerializer
     permission_classes = [permissions.DjangoModelPermissions]
-    filter_fields = ['id']
-    search_fields = ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
+    filter_fields = ['name', 'short_name', 'address', 'domain']
+    search_fields = ['name', 'short_name', 'address', 'domain']
