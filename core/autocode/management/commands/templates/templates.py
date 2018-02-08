@@ -54,8 +54,8 @@ var <% model_name %>ListPageVue = new CommonListPageVue({
 );
 '''
 
-MENU_TEMPLATE='''{% load activelink %}
-<li class="treeview active {% ifstartswith '/<% app_name %>/' %}active{% endifstartswith %}">
+MENU_TEMPLATE='''
+<li class="treeview active">
   <a href="javascript:void(0)">
     <i class='fa fa-cloud'></i>
     <b><% App_name %></b>
