@@ -39,7 +39,15 @@ class AuthUserManager(UserManager):
 
 
 class AuthUser(AbstractUser, StripePaymentUserMixin):
-    mobile = models.CharField(_('mobile'), max_length=30, unique=True, blank=True)
+    WEBSITE = 'WEBSITE'
+    WEIXIN = 'WEIXIN'
+    USER_TYPE_CHOICES = (
+        (WEBSITE, WEBSITE),
+        (WEIXIN, WEIXIN),
+    )
+    mobile = models.CharField(_('mobile'), max_length=128, unique=True, blank=True)
+    type = models.CharField(_('type'), max_length=32, choices=USER_TYPE_CHOICES, blank=True, default=WEBSITE)
+    # if type is WEBSIT mobile field is mobile, if type is WEIXIN mobile field is openid
 
     objects = AuthUserManager()
     REQUIRED_FIELDS = []
@@ -65,10 +73,7 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
         return getattr(self, 'customer') is not None
 
     def get_username(self):
-        profile = self.profile
-        if profile:
-            return unicode(profile)
-        return '[U]%s' % self.mobile or self.email
+        return self.mobile or self.email or self.username
 
     def in_group(self, group_names):
         if not isinstance(group_names, (list, tuple)):
