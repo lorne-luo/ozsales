@@ -90,7 +90,6 @@ INSTALLED_APPS = (
 
     # third_app
     'django_js_reverse',
-    'activelink',
     'rest_framework',
     'rest_framework.authtoken',  # must come after accounts for migrations to work
     'modelcluster',
