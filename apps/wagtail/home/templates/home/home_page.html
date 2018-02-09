@@ -1,0 +1,127 @@
+{% extends "wagtail/base.html" %}
+{% load static wagtailuserbar wagtailcore_tags %}
+
+{% block body_class %}page-home{% endblock %}
+
+
+{% block content %}
+    <div class="fluid-banner home__fluid-banner section-slider">
+        <div class="fluid-banner__wrapper">
+            <div class="fluid-banner__detail">
+                <h1 class="fluid-banner__heading">
+                    {% for hero_title in page.hero_titles.all %}
+                        <span>{{ hero_title.title }}</span>
+                    {% endfor %}
+                </h1>
+
+                <p class="fluid-banner__desc">{{ page.hero_banner_description }}</p>
+                {% if  page.hero_banner_button_link %}
+                    <a href="{% pageurl page.hero_banner_button_link %}"
+                       class="btn btn--purple">{{ page.hero_banner_button_text }}</a>
+                {% endif %}
+            </div>
+            <div class="fluid-banner__images slider">
+                <div class="fluid-banner__img">
+                    <img src="https://qa-selfmade-static.s3.amazonaws.com/static/website/img/banners/home-main-banner-1.png" alt="">
+                </div>
+                <div class="fluid-banner__img">
+                    <img src="https://qa-selfmade-static.s3.amazonaws.com/static/website/img/banners/home-main-banner-2.png" alt="">
+                </div>
+                <div class="fluid-banner__img">
+                    <img src="https://qa-selfmade-static.s3.amazonaws.com/static/website/img/banners/home-main-banner-3.png" alt="">
+                </div>
+                <div class="fluid-banner__img">
+                    <img src="https://qa-selfmade-static.s3.amazonaws.com/static/website/img/banners/home-main-banner-4.png" alt="">
+                </div>
+            </div>
+        </div>
+        <a href="#how-banner" class="scroll"><span class="vertical-text">Scroll down</span><span class="icon-mouse"></span></a>
+    </div>
+
+    <div class="page-section how-banner" id="how-banner">
+        <div class="wrapper">
+            <h1 class="page-section__heading">{{ page.how_banner_title }}</h1>
+            <div class="how-banner__row js-slider-mb">
+                <div class="how-banner__col">
+                    <img src="{% static 'website/img/complete.png' %}" alt="">
+                    <p class="how-banner__desc">{{ page.how_step_1 }}</p>
+                </div>
+                <div class="how-banner__col">
+                    <img src="{% static 'website/img/standby.svg' %}" alt="">
+                    <p class="how-banner__desc">{{ page.how_step_2 }}</p>
+                </div>
+                <div class="how-banner__col">
+                    <img src="{% static 'website/img/roll-over.svg' %}" alt="">
+                    <p class="how-banner__desc">{{ page.how_step_3 }}</p>
+                </div>
+                <div class="how-banner__col">
+                    <img src="{% static 'website/img/control.svg' %}" alt="">
+                    <p class="how-banner__desc">{{ page.how_step_4 }}</p>
+                </div>
+            </div>
+            {% if  page.how_banner_button_link %}
+                <a href="{% pageurl page.how_banner_button_link %}"
+                   class="btn btn--purple">{{ page.how_banner_button_text }}</a>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <div class="page-section compare-banner">
+        <div class="wrapper">
+            <h1 class="page-section__heading">Compare</h1>
+            <div class="compare-banner__row js-compare-slider-mb">
+                <div class="compare-banner__col compare-banner__col--small">
+                    <h2 class="compare-banner__title">Accountant</h2>
+                    <p class="compare-banner__sub-tilte">{{ page.accountant_sub_title }}</p>
+                    <div class="compare-banner__price-info">
+
+                            <span>Up to</span>
+                            <span class="compare-banner__price">{{ page.accountant_price }}</span>
+                            <span>per year</span>
+
+                    </div>
+                    <p class="compare-banner__desc">{{ page.accountant_description }}</p>
+                </div>
+                <div class="compare-banner__col compare-banner__col--large">
+                    <h2 class="compare-banner__title"><img src="{% static 'website/img/site-logo-aqua.svg' %}" alt="selfmade logo"></h2>
+                    <p class="compare-banner__sub-tilte">{{ page.selfmade_sub_title }}</p>
+                    <div class="compare-banner__price-info">
+
+                            <span>Up to</span>
+                            <span class="compare-banner__price">{{ page.selfmade_price }}</span>
+                            <span>per year</span>
+
+                    </div>
+                    <p class="compare-banner__desc">{{ page.selfmade_description }}</p>
+                </div>
+                <div class="compare-banner__col compare-banner__col--small">
+                    <h2 class="compare-banner__title">Industry fund</h2>
+                    <p class="compare-banner__sub-tilte">{{ page.industry_sub_title }}</p>
+                    <div class="compare-banner__price-info">
+
+                            <span>Up to</span>
+                            <span class="compare-banner__price">{{ page.industry_price }}</span>
+                            <span>per year</span>
+                    </div>
+                    <p class="compare-banner__desc">{{ page.industry_description }}</p>
+                </div>
+            </div>
+             {% if  page.compare_banner_button_link %}
+                <a href="{% pageurl page.compare_banner_button_link %}"
+                   class="btn btn--aqua">{{ page.compare_banner_button_text }}</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="page-section  about-banner">
+        <div class="wrapper">
+            <h1 class="page-section__heading">{{ page.about_banner_title }}</h1>
+            {{ page.about_banner_description | richtext }}
+            {% if  page.about_banner_button_link %}
+                <a href="{% pageurl page.about_banner_button_link %}"
+                   class="btn btn--purple">{{ page.about_banner_button_text }}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

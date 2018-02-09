@@ -1,12 +1,16 @@
 from django.contrib import admin
 from django.conf.urls import include, url
 from django.conf import settings
+from wagtail.wagtailadmin import urls as wagtailadmin_urls
+from wagtail.wagtailcore import urls as wagtail_urls
+from wagtail.wagtaildocs import urls as wagtaildocs_urls
+from wagtail.wagtailimages import urls as wagtailimages_urls
 
 from apps.order.views import OrderDetailView
+# from apps.wagtail.search.views import search as wagtail_search
 from core.api.views import GitCommitInfoView
 from core.auth_user.views import ChangePasswordView
 from core import auth_user
-from core.auth_user.views import index
 
 
 def if_installed(appname, *args, **kwargs):
@@ -16,8 +20,16 @@ def if_installed(appname, *args, **kwargs):
     return ret
 
 
+wagtail_urlpatterns = [
+    url(r'^admin/', include(wagtailadmin_urls)),
+    url(r'^documents/', include(wagtaildocs_urls)),
+    url(r'^images/', include(wagtailimages_urls)),
+    # url(r'^search/$', wagtail_search, name='wagtail_search'),
+    url(r'^pages/', include(wagtail_urls)),
+]
+
 apps_urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^djadmin/', include(admin.site.urls)),
     url(r'^customer/', include('apps.customer.urls', namespace='customer')),
     url(r'^member/', include('apps.member.urls', namespace='member')),
     url(r'^store/', include('apps.store.urls', namespace='store')),
@@ -43,12 +55,10 @@ api_urlpatterns = [
     url(r'^schedule/', include('apps.schedule.api.urls')),
     url(r'^messageset/', include('core.messageset.api.urls')),
     url(r'^sms/', include('core.sms.urls')),
+    url(r'^version/$', GitCommitInfoView.as_view(), name='api_version'),
 ]
 
-urlpatterns = apps_urlpatterns + [
-    url(r'^$', index, name='index'),
-    url(r'^api/version/$', GitCommitInfoView.as_view(), name='api_version'),
-
+urlpatterns = wagtail_urlpatterns + apps_urlpatterns + [
     # REST API
     url(r'^api/', include(api_urlpatterns, namespace='api')),
 
@@ -57,11 +67,15 @@ urlpatterns = apps_urlpatterns + [
     url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
 
     # dbsettings
-    url(r'^admin/settings/', include('dbsettings.urls')),
+    url(r'^djadmin/settings/', include('dbsettings.urls')),
 
     # django-tinymce
     url(r'^tinymce/', include('tinymce.urls')),
 
+    # For anything not caught by a more specific rule above, hand over to
+    # Wagtail's page serving mechanism. This should be the last pattern in
+    # the list:
+    url(r'', include(wagtail_urls)),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,68 @@
+{% load static wagtailuserbar %}
+
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="x-ua-compatible" content="ie=edge"/>
+    <title>
+        {% block title %}
+            {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
+        {% endblock %}
+        {% block title_suffix %}
+            {% with self.get_site.site_name as site_name %}
+                {% if site_name %}- {{ site_name }}{% endif %}
+            {% endwith %}
+        {% endblock %}
+    </title>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700" rel="stylesheet">
+
+    {# Global stylesheets #}
+    <link rel="stylesheet" type="text/css" href="https://qa-selfmade-static.s3.amazonaws.com/static/website/css/style.css">
+
+    {% block extra_css %}
+        {# Override this in templates to add extra stylesheets #}
+    {% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+{# Header block #}
+{% block header %}
+    {% include "wagtail/header.html" with parent=site_root calling_page=self %}
+{% endblock header %}
+
+<div class="page-content">
+    {# Content block #}
+    {% block content %}{% endblock %}
+</div>
+
+
+{# Footer block #}
+{% block footer %}
+    {% include "wagtail/footer.html" %}
+{% endblock footer %}
+
+{# Global javascript #}
+<script type="text/javascript" src="https://qa-selfmade-static.s3.amazonaws.com/static/common/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="https://qa-selfmade-static.s3.amazonaws.com/static/common/js/modernizr-2.8.3.min.js"></script>
+<script type="text/javascript" src="https://qa-selfmade-static.s3.amazonaws.com/static/website/js/vendor/slick.min.js"></script>
+<script type="text/javascript" src="https://qa-selfmade-static.s3.amazonaws.com/static/website/js/vendor/shadow-scroller.js"></script>
+<script type="text/javascript" src="https://qa-selfmade-static.s3.amazonaws.com/static/website/js/mysite.js"></script>
+
+{% block extra_js %}
+    {# Override this in templates to add extra javascript #}
+{% endblock %}
+
+{% wagtailuserbar %}
+</body>
+</html>
+

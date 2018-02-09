@@ -1,0 +1,57 @@
+{% load static wagtailuserbar %}
+<footer class="site-footer">
+    <div class="wrapper">
+        <div class="site-footer__main">
+            <a href="/" class="site-footer__logo">
+                <img src="https://www.google.com.au/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png" alt="Selfmade logo">
+            </a>
+
+            <div class="site-footer__menu">
+                <a href="#"> footer_menu_item.text</a>
+                {% for footer_menu_item in footer_menu_items %}
+                    <a href="#">  {{ footer_menu_item.text }}</a>
+                {% endfor %}
+            </div>
+            <div class="site-footer__social">
+                {% if  settings.base.SocialMediaSettings.facebook %}
+                    <a href="{{ settings.base.SocialMediaSettings.facebook }}" target="_blank"
+                       class="">
+                    <span class="icon icon-facebook">
+                        <span class="sr-only">Facebook</span>
+                    </span>
+                    </a>
+                {% endif %}
+                {% if  settings.base.SocialMediaSettings.twitter %}
+                    <a href="{{ settings.base.SocialMediaSettings.twitter }}" target="_blank"
+                       class="">
+                    <span class="icon icon-twitter">
+                     <span class="sr-only">Twitter</span>
+                    </span>
+                    </a>
+                {% endif %}
+                {% if  settings.base.SocialMediaSettings.linkedin %}
+                    <a href="{{ settings.base.SocialMediaSettings.linkedin }}" target="_blank"
+                       class="">
+                    <span class="icon icon-linkedin">
+                        <span class="sr-only">Linkedin</span>
+                    </span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="site-footer__bottom">
+            Copyright © {% now "Y" %} Selfmade. All Rights Reserved
+            <div class="site-footer__links">
+                <a href="#">footer_link.text</a>
+                {% for footer_link in footer_links %}
+                    <a href="#">{{ footer_link.text }}</a>
+                {% endfor %}
+            </div>
+            <a href="https://www.butterfly.com.au/" target="_blank" class="site-footer__development">Site by <img
+                    src="https://qa-selfmade-static.s3.amazonaws.com/static/website/img/butterfly-logo.svg" alt="butterfly digital agency logo"></a>
+        </div>
+    </div>
+
+</footer>
+
+

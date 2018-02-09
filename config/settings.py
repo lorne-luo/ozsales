@@ -32,6 +32,21 @@ INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 
 # Application definition
 INSTALLED_APPS = (
+    # WAGTAIL_APPS
+    'wagtail.wagtailforms',
+    'wagtail.wagtailredirects',
+    'wagtail.wagtailembeds',
+    'wagtail.wagtailsites',
+    'wagtail.wagtailusers',
+    'wagtail.wagtailsnippets',
+    'wagtail.wagtaildocs',
+    'wagtail.wagtailimages',
+    'wagtail.wagtailsearch',
+    'wagtail.wagtailadmin',
+    'wagtail.wagtailcore',
+    'wagtail.contrib.modeladmin',
+    'wagtail.contrib.settings',
+
     'django.contrib.sites',
     'django.contrib.admin',
     # 'material',
@@ -71,13 +86,14 @@ INSTALLED_APPS = (
     'apps.weixin',
     'core.sms',
     'utils',
+    'apps.wagtail.home',
 
     # third_app
-    'mptt',
     'django_js_reverse',
     'activelink',
     'rest_framework',
     'rest_framework.authtoken',  # must come after accounts for migrations to work
+    'modelcluster',
     'taggit',
     'djstripe',
     'stdimage',
@@ -97,6 +113,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'core.libs.middleware.ApiPermissionCheck',
     # 'core.libs.middleware.MenuMiddleware',
+
+    # wagtail
+    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 )
 
 ROOT_URLCONF = 'config.urls'
@@ -352,8 +372,32 @@ CACHES = {
     }
 }
 
-# ----------------------------------------- DBSETTINGS -----------------------------------------------
+# ----------------------------------------- WAGTAIL -----------------------------------------------
+WAGTAIL_SITE_NAME = 'YouDan'
+WAGTAILSEARCH_BACKENDS = {
+    'default': {
+        'BACKEND': 'wagtail.wagtailsearch.backends.db',
+    }
+}
+# from wagtail.wagtailembeds.oembed_providers import youtube, vimeo
+# WAGTAILEMBEDS_FINDERS = [{
+#         'class': 'wagtail.wagtailembeds.finders.oembed',
+#         'providers': [youtube, vimeo],
+# }]
+# WAGTAILSEARCH_RESULTS_TEMPLATE = 'myapp/search_results.html'
+# WAGTAILSEARCH_RESULTS_TEMPLATE_AJAX = 'myapp/includes/search_listing.html'
+# WAGTAILSEARCH_HITS_MAX_AGE = 14
+# WAGTAILADMIN_RECENT_EDITS_LIMIT = 5
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 1 * 1024 * 1024  # 1Mb
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'dev@luotao.net'
+WAGTAIL_ENABLE_UPDATE_CHECK = False  # Wagtail update notifications
+WAGTAIL_ALLOW_UNICODE_SLUGS = False
+WAGTAIL_DATE_FORMAT = '%Y/%m/%d'
+WAGTAIL_DATETIME_FORMAT = '%H:%M %Y/%m/%d'
 
-# for local settings
+
+
+# ----------------------------------------- local.py -----------------------------------------------
+
 if os.path.exists(os.path.join(os.path.dirname(__file__), "local.py")):
     from .local import *
