@@ -24,12 +24,11 @@ const filesExist = require('files-exist');
  */
 
 
-
 /**
-  |--------------------------------------------------------------------------
-  | 1. Constants
-  |--------------------------------------------------------------------------
-  */
+ |--------------------------------------------------------------------------
+ | 1. Constants
+ |--------------------------------------------------------------------------
+ */
 
 let BUILD_DEST_PATH = 'static/build/';
 
@@ -39,12 +38,11 @@ const CLEAN_CSS_COMPATIBILITY = 'ie9';
 let _apps = [];
 
 
-
 /**
-  |--------------------------------------------------------------------------
-  | 2. Registered Django apps
-  |--------------------------------------------------------------------------
-  */
+ |--------------------------------------------------------------------------
+ | 2. Registered Django apps
+ |--------------------------------------------------------------------------
+ */
 
 // Register your django apps here!
 registerApp('apps/customer');
@@ -58,12 +56,11 @@ registerApp('apps/store');
 registerApp('core/messageset');
 
 
-
 /**
-  |--------------------------------------------------------------------------
-  | 3. Gulp tasks
-  |--------------------------------------------------------------------------
-  */
+ |--------------------------------------------------------------------------
+ | 3. Gulp tasks
+ |--------------------------------------------------------------------------
+ */
 
 /**
  * Image optimization
@@ -84,18 +81,18 @@ const scriptsSrc = getApps('!(*.min).js');
 scriptsSrc.push('static/js/**/!(*.min).js');
 scriptsSrc.push('static/django_js_reverse/js/!(*.min).js');
 gulp.task('scripts:apps', () => {
-  // Exclude .min file in this glob, to avoid double compress
-  gulp.src(filesExist(scriptsSrc))
-    .pipe(uglify())
-    .on('error', (err) => {
-      gutil.log(gutil.colors.red('[Error]'), err.toString());
-    })
-    // .pipe(concat('apps_bundle.js'))
-    // .pipe(gulp.dest(BUILD_DEST_PATH));
-    .pipe(rename({ suffix: '.min' }))
-    .pipe(gulp.dest(sourceAsDestination));
+    // Exclude .min file in this glob, to avoid double compress
+    gulp.src(filesExist(scriptsSrc))
+        .pipe(uglify())
+        .on('error', (err) => {
+            gutil.log(gutil.colors.red('[Error]'), err.toString());
+        })
+        // .pipe(concat('apps_bundle.js'))
+        // .pipe(gulp.dest(BUILD_DEST_PATH));
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest(sourceAsDestination));
 });
-const coreScripts=[];
+const coreScripts = [];
 coreScripts.push('core/adminlte/static/plugins/jQuery/jQuery-2.1.4.min.js');
 coreScripts.push('core/adminlte/static/plugins/bootstrap/js/bootstrap.min.js');
 coreScripts.push('core/adminlte/static/plugins/underscore/underscore-min.js');
@@ -108,14 +105,14 @@ coreScripts.push('core/adminlte/static/adminlte/js/config.js');
 coreScripts.push('core/adminlte/static/adminlte/js/ajax.js');
 coreScripts.push('static/django_js_reverse/js/reverse.js');
 gulp.task('scripts:core', () => {
-  // Exclude .min file in this glob, to avoid double compress
-  gulp.src(filesExist(coreScripts))
-    .pipe(uglify())
-    .on('error', (err) => {
-      gutil.log(gutil.colors.red('[Error]'), err.toString());
-    })
-    .pipe(concat('core_bundle.js'))
-    .pipe(gulp.dest(BUILD_DEST_PATH));
+    // Exclude .min file in this glob, to avoid double compress
+    gulp.src(filesExist(coreScripts))
+        .pipe(uglify())
+        .on('error', (err) => {
+            gutil.log(gutil.colors.red('[Error]'), err.toString());
+        })
+        .pipe(concat('core_bundle.js'))
+        .pipe(gulp.dest(BUILD_DEST_PATH));
     // .pipe(rename({ suffix: '.min' }))
     // .pipe(gulp.dest(sourceAsDestination));
 });
@@ -133,10 +130,10 @@ cssSrc.push('core/adminlte/static/plugins/sweetalert/1.1.3/sweetalert.min.css');
 // cssSrc.push('core/adminlte/static/adminlte/css/AdminLTE.min.css');
 cssSrc.push('core/adminlte/static/adminlte/css/skins/skin-blue.min.css');
 gulp.task('styles:css', () => {
-  gulp.src(filesExist(cssSrc))
-    .pipe(cleanCSS())
-    .pipe(concat('bundle.css'))
-    .pipe(gulp.dest(BUILD_DEST_PATH))
+    gulp.src(filesExist(cssSrc))
+        .pipe(cleanCSS())
+        .pipe(concat('bundle.css'))
+        .pipe(gulp.dest(BUILD_DEST_PATH))
     // .pipe(rename({ suffix: '.min' }))
     // .pipe(gulp.dest(sourceAsDestination))
 });
@@ -157,8 +154,8 @@ gulp.task('build', ['scripts', 'styles']);
  * Bundle task: Auto compile styles and styles
  */
 gulp.task('watch', ['scripts', 'styles'], () => {
-  gulp.watch(scriptsSrc, ['scripts']);
-  gulp.watch(cssSrc, ['styles:css']);
+    gulp.watch(scriptsSrc, ['scripts']);
+    gulp.watch(cssSrc, ['styles:css']);
 });
 
 /**
@@ -167,48 +164,47 @@ gulp.task('watch', ['scripts', 'styles'], () => {
 gulp.task('default', ['watch']);
 
 
-
 /**
-  |--------------------------------------------------------------------------
-  | Functions
-  |--------------------------------------------------------------------------
-  */
+ |--------------------------------------------------------------------------
+ | Functions
+ |--------------------------------------------------------------------------
+ */
 
 function registerApp(dir, options) {
-  // Construct an object which contained the app properties
-  const app = Object.assign({
-    dir: dir,
-  }, options);
-  // Store in the _apps private variable
-  _apps.push(app);
+    // Construct an object which contained the app properties
+    const app = Object.assign({
+        dir: dir,
+    }, options);
+    // Store in the _apps private variable
+    _apps.push(app);
 }
 
 function getApps(globs) {
-  // Function to convert multi-dimension array into single dimension
-  const flattenArray = nestedArray => [].concat.apply([], nestedArray);
-  // Function to get the full path
-  const getPath = (app, glob) => path.join('.', app.dir, 'static','js', '**', glob);
+    // Function to convert multi-dimension array into single dimension
+    const flattenArray = nestedArray => [].concat.apply([], nestedArray);
+    // Function to get the full path
+    const getPath = (app, glob) => path.join('.', app.dir, 'static', 'js', '**', glob);
 
-  let sources;
-  sources = _apps.map(app => {
-    const paths = [];
-    const excludes = app.excludes || [];
+    let sources;
+    sources = _apps.map(app => {
+        const paths = [];
+        const excludes = app.excludes || [];
 
-    // Add the full glob path
-    paths.push(getPath(app, globs));
+        // Add the full glob path
+        paths.push(getPath(app, globs));
 
-    // Add the exclude paths
-    if (excludes.length) {
-      paths.push('!' + getPath(app, '*(' + excludes.join('|') + ')/**/' + globs));
-    }
+        // Add the exclude paths
+        if (excludes.length) {
+            paths.push('!' + getPath(app, '*(' + excludes.join('|') + ')/**/' + globs));
+        }
 
-    return paths;
-  });
+        return paths;
+    });
 
-  sources = flattenArray(sources);
-  return sources;
+    sources = flattenArray(sources);
+    return sources;
 }
 
 function sourceAsDestination(file) {
-  return file.base;
+    return file.base;
 }
