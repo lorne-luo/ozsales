@@ -1,7 +1,9 @@
 # coding=utf-8
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, UpdateView, DetailView
 from braces.views import MultiplePermissionsRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from core.django.constants import ReadStatus
 from core.django.views import CommonContextMixin
@@ -41,7 +43,6 @@ class NotificationDetailView(MultiplePermissionsRequiredMixin, CommonContextMixi
     permissions = {
         "all": ("notification.view_notification",)
     }
-
 
 
 class NotificationContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
@@ -87,13 +88,15 @@ class NotificationContentDetailView(MultiplePermissionsRequiredMixin, CommonCont
 
 
 # views for SiteMailContent
-class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class SiteMailContentAddView(LoginRequiredMixin, CommonContextMixin, CreateView):
     model = SiteMailContent
-    form_class = forms.SiteMailContentAddForm
     template_name = 'messageset/sitemail_form.html'
-    permissions = {
-        "all": ("sitemailcontent.add_sitemailcontent",)
-    }
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return forms.SiteMailContentAddForm
+        else:
+            return forms.SiteMailContactAdminForm
 
     def post(self, request, *args, **kwargs):
         self.object = None
@@ -105,9 +108,12 @@ class SiteMailContentAddView(MultiplePermissionsRequiredMixin, CommonContextMixi
             sitemail.save()
             form.save_m2m()
             sitemail.send()
-            return redirect('messageset:sitemail-list')
+            if request.user.is_superuser:
+                return redirect('messageset:sitemail-list')
+            else:
+                messages.success(request, '发送成功.')
+                return self.get(request, *args, **kwargs)
         else:
-
             return self.form_invalid(form)
 
 

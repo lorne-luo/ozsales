@@ -54,7 +54,6 @@ class SiteMailContent(AbstractMessageContent):
         settings.AUTH_USER_MODEL, blank=True,
         related_name='sitemail_receivers',
         verbose_name=u'收件人',
-        help_text=u'不选则发送给全体用户'
     )
 
     class Meta:
@@ -85,7 +84,10 @@ class SiteMailContent(AbstractMessageContent):
 
         # if no receivers filed, send to all
         if not self.receivers.count():
-            self.receivers = get_user_model().objects.all()
+            if self.creator.is_superuser:
+                self.receivers = get_user_model().objects.all()
+            else:
+                self.receivers = get_user_model().objects.filter(is_superuser=True)
             self.save()
 
         SiteMailSend(**kwargs).save()
@@ -423,7 +425,6 @@ class Task(models.Model, TaskStatus):
             return queryset.filter(creator=request.user).exclude(
                 status=TaskStatus.DELETED
             )
-
 
 # @receiver(post_save, sender=SiteMailContent)
 # def create_sitemail_datas(sender, instance, created, **kwargs):

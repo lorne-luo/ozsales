@@ -1,7 +1,19 @@
 {% extends "adminlte/common_form.html" %}
 
 {% block content_title %}
-    发送{{ page_title }}
+    {% if request.user.is_superuser %}
+        发送{{ page_title }}
+    {% else %}
+        发送反馈
+    {% endif %}
+{% endblock %}
+
+{% block base_head_title %}
+    {% if request.user.is_superuser %}
+        {{ page_title }}
+    {% else %}
+        发送反馈
+    {% endif %}
 {% endblock %}
 
 {% block app_index %}
@@ -12,4 +24,21 @@
 
 {% block form_footer %}
     <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">发 送</button>
+{% endblock %}
+
+{% block form_content %}
+{% for field in form %}
+    <div class="form-group {% if field.errors %}error{% endif %} {% if field.is_hidden %}hide{% endif %}">
+        <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
+        <div class="col-sm-6 col-xs-9">
+            {{ field }}
+        </div>
+        {% if field.errors %}
+        <div class="col-sm-4 col-xs-12">
+            {{ field.errors }}
+            <span class="help-block">{{ field.help_text }}</span>
+        </div>
+        {% endif %}
+    </div>
+{% endfor %}
 {% endblock %}

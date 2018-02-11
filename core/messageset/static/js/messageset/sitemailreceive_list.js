@@ -7,6 +7,7 @@ var sitemailreceiveListPageVue = new CommonListPageVue({
         create_url_tag: 'messageset:sitemailreceive-add',
         list_url_tag: 'messageset:sitemailreceive-list',
         detail_url_tag: 'messageset:sitemailreceive-detail',
-        update_url_tag: 'messageset:sitemailreceive-update'
+        update_url_tag: 'messageset:sitemailreceive-update',
+        ordering: 'status,-send_time'
     }
 });

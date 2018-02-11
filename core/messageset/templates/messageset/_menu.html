@@ -1,29 +1,40 @@
-<li class="treeview active">
-    <a href="javascript:void(0)">
-        <i class="fa fa-angle-left pull-right"></i>
-        <i class='fa fa-cloud'></i>
-        <b>Messageset</b>
-    </a>
-    <ul class="treeview-menu menu-open" style="display: block;">
-        {% if perms.messageset.add_notification or perms.messageset.change_notification %}
-        <li>
-            <a href="{% url 'messageset:notification-add' %}" class="pull-right"><i class="fa fa-plus" aria-hidden="true"></i></a>
-            <a href="{% url 'messageset:notification-list' %}" class="main"><i class="fa fa-circle-o"></i>Notification</a>
-        </li>
-        {%endif%}
+{% if request.user.is_superuser %}
+    <li class="treeview active">
+        <a href="javascript:void(0)">
+            <i class="fa fa-angle-left pull-right"></i>
+            <i class='fa fa-cloud'></i>
+            <b>Messageset</b>
+        </a>
+        <ul class="treeview-menu menu-open" style="display: block;">
+            {% if perms.messageset.add_notification or perms.messageset.change_notification %}
+                <li>
+                    <a href="{% url 'messageset:notification-add' %}" class="pull-right"><i class="fa fa-plus"
+                                                                                            aria-hidden="true"></i></a>
+                    <a href="{% url 'messageset:notification-list' %}" class="main"><i class="fa fa-circle-o"></i>Notification</a>
+                </li>
+            {% endif %}
 
-        {% if perms.messageset.add_sitemailreceive or perms.messageset.change_sitemailreceive %}
-        <li>
-            <a href="{% url 'messageset:sitemail-add' %}" class="pull-right"><i class="fa fa-plus" aria-hidden="true"></i></a>
-            <a href="{% url 'messageset:sitemail-list' %}"><i class="fa fa-circle-o"></i>Site Mail</a>
-        </li>
-        {%endif%}
+            {% if perms.messageset.add_sitemailreceive or perms.messageset.change_sitemailreceive %}
+                <li>
+                    <a href="{% url 'messageset:sitemail-add' %}" class="pull-right"><i class="fa fa-plus"
+                                                                                        aria-hidden="true"></i></a>
+                    <a href="{% url 'messageset:sitemail-list' %}"><i class="fa fa-circle-o"></i>Site Mail</a>
+                </li>
+            {% endif %}
 
-        {% if perms.messageset.add_task or perms.messageset.change_task %}
-        <li>
-            <a href="{% url 'messageset:task-list' %}"><i class="fa fa-circle-o"></i>Task</a>
-        </li>
-        {%endif%}
+            {% if perms.messageset.add_task or perms.messageset.change_task %}
+                <li>
+                    <a href="{% url 'messageset:task-list' %}"><i class="fa fa-circle-o"></i>Task</a>
+                </li>
+            {% endif %}
 
-    </ul>
-</li>
+        </ul>
+    </li>
+{% else %}
+    <li class="treeview active">
+        <a href="{% url 'messageset:sitemail-add' %}">
+            <i class='fa fa-send'></i>
+            <b>Feedback</b>
+        </a>
+    </li>
+{% endif %}
