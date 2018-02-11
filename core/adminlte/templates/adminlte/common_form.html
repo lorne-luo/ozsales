@@ -45,8 +45,11 @@
         </div>
 
         <div class="box-body">
+            {% include "adminlte/includes/messages.html" %}
+
+            {% block form_content %}
             {% for field in form %}
-                <div class="form-group {% if field.errors %}error{% endif %}">
+                <div class="form-group {% if field.errors %}error{% endif %} {% if field.is_hidden %}hide{% endif %}">
                     <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
                     <div class="col-sm-6 col-xs-9">
                         {{ field }}
@@ -59,6 +62,7 @@
                     {% endif %}
                 </div>
             {% endfor %}
+            {% endblock %}
         </div>
         <div class="box-footer">
         {% block form_footer %}
@@ -78,7 +82,7 @@
 {% endblock %}
 
 {% block footer_base_script %}
-    <script type="text/javascript" src="{% static 'adminlte/js/common-form.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'adminlte/js/common-form.js' %}"></script>
 
     <script type="text/javascript">
         $('#commonForm input').addClass('form-control');
