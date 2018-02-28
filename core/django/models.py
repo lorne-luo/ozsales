@@ -112,6 +112,3 @@ class ResizeUploadedImageModelMixin(object):
                 setattr(self, image_field_name, InMemoryUploadedFile(
                     output, 'ImageField', "%s.jpg" % image.name.split('.')[0],
                     'image/jpeg', sys.getsizeof(output), None))
-
-            from apps.schedule.tasks import guetzli_compress_image
-            guetzli_compress_image.apply_async(args=[image.path], countdown=10)

@@ -19,7 +19,7 @@ from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
-from config.settings import ID_PHOTO_FOLDER, MEDIA_URL
+from config.settings import ID_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
 
 from apps.member.models import Seller
 from apps.product.models import Product
@@ -217,16 +217,24 @@ def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
-    filename = os.path.join(ID_PHOTO_FOLDER, filename)
-    return filename
+    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+
+    from apps.schedule.tasks import guetzli_compress_image
+    full_path = os.path.join(MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    return file_path
 
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
-    filename = os.path.join(ID_PHOTO_FOLDER, filename)
-    return filename
+    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+
+    from apps.schedule.tasks import guetzli_compress_image
+    full_path = os.path.join(MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    return file_path
 
 
 class AddressManager(Manager):
@@ -250,7 +258,7 @@ class AddressManager(Manager):
 
 @python_2_unicode_compatible
 class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
+    name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)

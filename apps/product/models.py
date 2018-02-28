@@ -14,12 +14,13 @@ from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
 
-from apps.member.models import Seller
-from apps.store.models import Page
 from core.auth_user.models import AuthUser
 from core.django.constants import COUNTRIES_CHOICES
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
-from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL
+from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
+
+from apps.member.models import Seller
+from apps.store.models import Page
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +49,12 @@ def get_product_pic_path(instance, filename):
     filename = '%s%s' % (filename, instance.name_en)
     filename = filename.replace(' ', '-')
     filename = '%s.%s' % (filename, ext)
-    return os.path.join(PRODUCT_PHOTO_FOLDER, filename)
+    file_path = os.path.join(PRODUCT_PHOTO_FOLDER, filename)
+
+    from apps.schedule.tasks import guetzli_compress_image
+    full_path = os.path.join(MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    return file_path
 
 
 class ProductManager(models.Manager):
