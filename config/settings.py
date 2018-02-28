@@ -91,7 +91,6 @@ INSTALLED_APPS = (
     # third_app
     'django_js_reverse',
     'rest_framework',
-    'rest_framework.authtoken',  # must come after accounts for migrations to work
     'modelcluster',
     'taggit',
     'djstripe',
@@ -314,7 +313,6 @@ REST_FRAMEWORK = {
         'core.api.permission.CommonAPIPermissions',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': [
