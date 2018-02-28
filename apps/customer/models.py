@@ -258,12 +258,10 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
                                    variations={
-                                       'medium': (720, 720, False),
                                        'thumbnail': (150, 150, False)
                                    })
     id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
                                   variations={
-                                      'medium': (720, 720, False),
                                       'thumbnail': (150, 150, False)
                                   })
 
