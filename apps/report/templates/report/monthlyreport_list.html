@@ -5,23 +5,54 @@
 {% block search_box %}{% endblock %}
 
 {% block content %}
-<div class="row" id="commonDataTableRow">
-<div class="col-xs-12">
-<div class="nav-tabs-custom">
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#tab_monthly" data-toggle="tab" aria-expanded="false">月度统计</a></li>
-      <li class=""><a href="#tab_total" data-toggle="tab" aria-expanded="true">总计</a></li>
-    </ul>
-    <div class="tab-content">
-        {% include 'report/tabs/tab_monthly.html' %}
-        {% include 'report/tabs/tab_total.html' %}
+    <div class="row" id="commonDataTableRow">
+        <div class="col-sm-12 col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Sales Chart</h3>
+{#                    <div class="box-tools pull-right">#}
+{#                        <button type="button" class="btn btn-box-tool" data-widget="collapse">#}
+{#                            <i class="fa fa-minus"></i>#}
+{#                        </button>#}
+{#                    </div>#}
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="sale-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Orders Chart</h3>
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="order-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_monthly" data-toggle="tab" aria-expanded="false">月度统计</a></li>
+                    <li class=""><a href="#tab_total" data-toggle="tab" aria-expanded="true">总计</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    {% include 'report/tabs/tab_monthly.html' %}
+                    {% include 'report/tabs/tab_total.html' %}
+                </div>
+                <!-- /.tab-content -->
+            </div>
+        </div>
     </div>
-    <!-- /.tab-content -->
-  </div>
-</div>
-</div>
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/report/monthlyreport_list.min.js' %}"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/report/monthlyreport_list.js' %}"></script>
 {% endblock %}
