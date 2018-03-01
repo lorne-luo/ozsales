@@ -1,7 +1,10 @@
 var MonthlyReportListPageVue = CommonListPageVue.extend({
-    props: ['loadData'],
     methods: {
-        loadData: function (data) {
+        ready: function (event) {
+            this.loadData(this.get_param(), true);
+        },
+        loadData: function (data, isInit) {
+            var isInit = isInit === true ? isInit : false;
             var self = this;
             var url;
             if (self.list_url)
@@ -15,42 +18,43 @@ var MonthlyReportListPageVue = CommonListPageVue.extend({
                 url,
                 data,
                 function (resp) {
-                    console.log(resp.results);
                     self.items = resp.results;
                     self.count = resp.count;
                     self.perPage = resp.per_page;
                     self.totalPage = resp.total_page;
                     self.currentPage = resp.current_page;
 
-                    var tableData = [];
-                    for (var i = 0; i < resp.results.length; i++) {
-                        tableData.push({
-                            month: resp.results[i].month,
-                            sell_price_rmb: resp.results[i].sell_price_rmb,
-                            profit_rmb: resp.results[i].profit_rmb,
-                            shipping_fee: resp.results[i].shipping_fee,
-                            order_count: resp.results[i].order_count,
-                            parcel_count: resp.results[i].parcel_count
+                    if (isInit) {
+                        var tableData = [];
+                        for (var i = 0; i < resp.results.length; i++) {
+                            tableData.push({
+                                month: resp.results[i].month,
+                                sell_price_rmb: resp.results[i].sell_price_rmb,
+                                profit_rmb: resp.results[i].profit_rmb,
+                                shipping_fee: resp.results[i].shipping_fee,
+                                order_count: resp.results[i].order_count,
+                                parcel_count: resp.results[i].parcel_count
+                            });
+                        }
+
+                        Morris.Line({
+                            element: 'sale-chart',
+                            data: tableData,
+                            xkey: 'month',
+                            ykeys: ['sell_price_rmb', 'profit_rmb', 'shipping_fee'],
+                            labels: ['sell_price_rmb', 'profit_rmb', 'shipping_fee'],
+                            hideHover: true
+                        });
+
+                        Morris.Line({
+                            element: 'order-chart',
+                            data: tableData,
+                            xkey: 'month',
+                            ykeys: ['parcel_count', 'order_count'],
+                            labels: ['parcel_count', 'order_count'],
+                            hideHover: true
                         });
                     }
-
-                    Morris.Line({
-                        element: 'sale-chart',
-                        data: tableData,
-                        xkey: 'month',
-                        ykeys: ['sell_price_rmb', 'profit_rmb', 'shipping_fee'],
-                        labels: ['sell_price_rmb', 'profit_rmb', 'shipping_fee'],
-                        hideHover: true
-                    });
-
-                    Morris.Line({
-                        element: 'order-chart',
-                        data: tableData,
-                        xkey: 'month',
-                        ykeys: ['parcel_count', 'order_count'],
-                        labels: ['parcel_count', 'order_count'],
-                        hideHover: true
-                    });
                 }
             );
         }
