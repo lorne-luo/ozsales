@@ -105,12 +105,13 @@ class MonthlyReport(models.Model):
                                     total_cost_aud=Sum('product_cost_aud'), total_profit_rmb=Sum('profit_rmb'),
                                     total_express_fee=Sum('shipping_fee'))
 
-        data.update({'total_year': distance.days / 365,
-                        'total_day': distance.days % 365,
-                        'total_customer': Customer.objects.filter(seller=seller).count(),
-                        'total_order': own_orders.count(),
-                        'total_address': Address.objects.filter(customer__seller=seller).count(),
-                        'total_expressorder': ExpressOrder.objects.filter(order__seller=seller).count(),
-                        })
+        data.update({'first_day': first_day,
+                     'total_year': distance.days / 365,
+                     'total_day': distance.days % 365,
+                     'total_customer': Customer.objects.filter(seller=seller).count(),
+                     'total_order': own_orders.count(),
+                     'total_address': Address.objects.filter(customer__seller=seller).count(),
+                     'total_expressorder': ExpressOrder.objects.filter(order__seller=seller).count(),
+                     })
         data.update(own_orders.filter(is_paid=False).aggregate(total_unpaid_amount=Sum('sell_price_rmb')))
         return data

@@ -1,6 +1,6 @@
 <div class="tab-pane" id="tab_total">
     {% if total_day %}
-        <h4>系统已运行{{ total_year }}年{{ total_day }}天,共计:</h4>
+        <h4>自{{ first_day|date:"Y/m/j" }}起共计{{ total_year }}年{{ total_day }}天,共计:</h4>
         <ul>
             <li>客户总数: {{ total_customer }} 位</li>
             <li>地址总数: {{ total_address }} 个</li>
