@@ -1,37 +1,26 @@
 var OrderListPageVue = CommonListPageVue.extend({
-    ready: function () {
-        this.loadData(this.get_param(), true);
-    },
     methods: {
-        loadData: function (data, init) {
-            var _init = typeof init !== 'undefined' ? init : false;
-            var self = this;
+        ready: function (event) {
+            this.loadData(this.get_param());
+        },
+        getApiUrl: function () {
             var url;
-            if (self.list_url)
-                url = self.list_url;
-            else if (self.list_api_tag)
-                url = Urls[self.list_api_tag]();
+            if (this.list_url)
+                url = this.list_url;
+            else if (this.list_api_tag)
+                url = Urls[this.list_api_tag]();
             else
-                url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
+                url = $.AdminLTE.getApiUrl(this.appName, this.modelName);
 
-            if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
-                var api_url = url + '?status=FINISHED';
+            return url;
+        },
+        loadData: function (data) {
+            var self = this;
+            var url = this.getApiUrl();
 
-                $.AdminLTE.apiGet(
-                    api_url,
-                    data,
-                    function (resp) {
-                        self.finished_items = resp.results;
-                        self.finished_count = resp.count;
-                        self.finished_perPage = resp.per_page;
-                        self.finished_totalPage = resp.total_page;
-                        self.finished_currentPage = resp.current_page;
-                    }
-                );
-            }
-            if ($('.tab-content #pane-CREATED').hasClass('active') && !_init) {
+            if ($('.tab-content #pane-CREATED').hasClass('active')) {
                 var api_url = url + 'new/';
-
+                // console.log('CREATED');
                 $.AdminLTE.apiGet(
                     api_url,
                     data,
@@ -44,9 +33,26 @@ var OrderListPageVue = CommonListPageVue.extend({
                     }
                 );
             }
-            if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
-                var api_url = url + 'shipping/';
 
+            if ($('.tab-content #pane-FINISHED').hasClass('active')) {
+                var api_url = url + '?status=FINISHED';
+                // console.log('FINISHED');
+                $.AdminLTE.apiGet(
+                    api_url,
+                    data,
+                    function (resp) {
+                        self.finished_items = resp.results;
+                        self.finished_count = resp.count;
+                        self.finished_perPage = resp.per_page;
+                        self.finished_totalPage = resp.total_page;
+                        self.finished_currentPage = resp.current_page;
+                    }
+                );
+            }
+
+            if ($('.tab-content #pane-ONGOING').hasClass('active')) {
+                var api_url = url + 'shipping/';
+                // console.log('ONGOING');
                 $.AdminLTE.apiGet(
                     api_url,
                     data,
@@ -58,6 +64,47 @@ var OrderListPageVue = CommonListPageVue.extend({
                         self.ongoing_currentPage = resp.current_page;
                     }
                 );
+
+            }
+        },
+        initOngoingTab: function () {
+            if (!this.ongoing_tab_initialized) {
+                var self = this;
+                var data = {page: 1, ordering: "-id"};
+                var api_url = this.getApiUrl() + 'shipping/';
+                // console.log('ONGOING init');
+                $.AdminLTE.apiGet(
+                    api_url,
+                    data,
+                    function (resp) {
+                        self.ongoing_items = resp.results;
+                        self.ongoing_count = resp.count;
+                        self.ongoing_perPage = resp.per_page;
+                        self.ongoing_totalPage = resp.total_page;
+                        self.ongoing_currentPage = resp.current_page;
+                    }
+                );
+                this.ongoing_tab_initialized = true;
+            }
+        },
+        initFinishedTab: function () {
+            if (!this.finished_tab_initialized) {
+                var self = this;
+                var data = {page: 1, ordering: "-id"};
+                var api_url = this.getApiUrl() + '?status=FINISHED';
+                // console.log('Finished init.');
+                $.AdminLTE.apiGet(
+                    api_url,
+                    data,
+                    function (resp) {
+                        self.finished_items = resp.results;
+                        self.finished_count = resp.count;
+                        self.finished_perPage = resp.per_page;
+                        self.finished_totalPage = resp.total_page;
+                        self.finished_currentPage = resp.current_page;
+                    }
+                );
+                this.finished_tab_initialized = true;
             }
         },
         reload: function (event) {
@@ -72,9 +119,18 @@ var OrderListPageVue = CommonListPageVue.extend({
             this.currentPage = page;
             this.loadData(this.get_param());
         },
+        tableTab: function (event) {
+            if ($('.tab-content #pane-FINISHED').hasClass('active')) {
+                return 'FINISHED'
+            } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
+                return 'ONGOING';
+            } else {
+                return 'CREATED';
+            }
+        },
         makr_as_purchased: function (event) {
             var productID = $(event.target).val();
-            var value = $(event.target).prop("checked")
+            var value = $(event.target).prop("checked");
             var url = Urls[this.product_detail_api_tag](productID);
             $.AdminLTE.apiPost(
                 url,
@@ -263,20 +319,22 @@ var OrderListPageVue = CommonListPageVue.extend({
 var orderListPageVue = new OrderListPageVue({
         data: {
             // API
-            list_api_tag:   'api:order-list',
+            list_api_tag: 'api:order-list',
             detail_api_tag: 'api:order-detail',
             product_detail_api_tag: 'api:orderproduct-detail',
             delete_api_tag: 'api:order-delete',
             // page
             create_url_tag: 'order:order-add',
-            list_url_tag:   'order:order-list-short',
+            list_url_tag: 'order:order-list-short',
             update_url_tag: 'order:order-update',
             detail_url_tag: 'order-detail-short',
-            list_url:       Urls['api:order-list'](),
+            list_url: Urls['api:order-list'](),
 
             finished_items: [],
             ongoing_items: [],
             created_items: [],
+            ongoing_tab_initialized: false,
+            finished_tab_initialized: false,
             finished_currentPage: 1,
             finished_totalPage: 1,
             finished_perPage: 15,

@@ -21,10 +21,10 @@
       <a data-toggle="tab" href="#pane-CREATED"> 未完成</a>
     </li>
     <li data-status="ONGOING">
-      <a data-toggle="tab" href="#pane-ONGOING"> 在途中</a>
+      <a data-toggle="tab" href="#pane-ONGOING" v-on:click="initOngoingTab"> 在途中</a>
     </li>
     <li data-status="FINISHED">
-      <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
+      <a data-toggle="tab" href="#pane-FINISHED" v-on:click="initFinishedTab"> 已完成</a>
     </li>
   </ul>
 {% endblock %}
