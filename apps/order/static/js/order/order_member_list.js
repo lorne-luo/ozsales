@@ -1,7 +1,6 @@
 var OrderMemberListPageVue = OrderListPageVue.extend({
     methods: {
-        loadData: function (data, init) {
-            var _init = typeof init !== 'undefined' ? init : false;
+        loadData: function (data) {
             var self = this;
             var url;
             if (self.list_api_tag)
@@ -9,7 +8,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
-            if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
+            if ($('.tab-content #pane-FINISHED').hasClass('active')) {
                 url = url + '?ordering=-id&status=FINISHED';
                 $.AdminLTE.apiGet(
                     url,
@@ -22,7 +21,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
                         self.finished_currentPage = resp.current_page;
                     }
                 );
-            } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
+            } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
                 url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-id';
                 $.AdminLTE.apiGet(
                     url,
