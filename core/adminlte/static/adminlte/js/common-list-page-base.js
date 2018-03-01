@@ -29,16 +29,15 @@ var CommonListPageVue = Vue.extend({
     },
     ready: function () {
         this.ready();
+
+        if (this.create_url_tag) {
+            $('a#create').prop('href', Urls[this.create_url_tag]());
+        }
     },
     methods: {
         ready: function (event) {
             if (this.appName && this.modelName) {
                 this.loadData(this.get_param());
-            }
-
-            // link for create new
-            if (this.create_url_tag) {
-                $('a#create').prop('href', Urls[this.create_url_tag]());
             }
         },
         toggleAllBox: function (event) {
