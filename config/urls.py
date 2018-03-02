@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.conf.urls import include, url
 from django.conf import settings
+from django.contrib.auth import views as auth_views
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -11,7 +12,7 @@ from apps.order.views import OrderDetailView
 from core.api.views import GitCommitInfoView
 from core.auth_user.views import ChangePasswordView
 from core import auth_user
-
+from apps.member.forms import CustomPasswordResetForm, CustomSetPasswordForm
 
 def if_installed(appname, *args, **kwargs):
     ret = url(*args, **kwargs)
@@ -65,6 +66,22 @@ urlpatterns = wagtail_urlpatterns + apps_urlpatterns + [
     # auth
     url('^auth/change-password/$', ChangePasswordView.as_view(), name='change_password'),
     url('^auth/change-password-done/$', auth_user.views.ChangePasswordDoneView.as_view(), name='password_change_done'),
+
+    # password reset
+    url(r'^password/reset/$', auth_views.password_reset, {'template_name': 'adminlte/password_reset_form.html',
+                                                          'email_template_name': 'adminlte/password_reset_email.html',
+                                                          'password_reset_form': CustomPasswordResetForm},
+        name='password_reset'),
+    url(r'^password/reset/done/$', auth_views.password_reset_done,
+        {'template_name': 'adminlte/password_reset_done.html'},
+        name='password_reset_done'),
+    url(r'^password/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm,
+        {'template_name': 'adminlte/password_reset_confirm.html',
+         'set_password_form': CustomSetPasswordForm},
+        name='password_reset_confirm'),
+    url(r'^password/reset/complete/$', auth_views.password_reset_complete,
+        {'template_name': 'adminlte/password_reset_complete.html'},
+        name='password_reset_complete'),
 
     # dbsettings
     url(r'^djadmin/settings/', include('dbsettings.urls')),
