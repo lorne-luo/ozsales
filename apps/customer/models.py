@@ -343,7 +343,23 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
         self.resize_image('id_photo_front')
         self.resize_image('id_photo_back')
 
+        self.link_id_photo()
         super(Address, self).save(*args, **kwargs)
+
+    def link_id_photo(self):
+        if self.id_number:
+            existed = None
+            if not self.id_photo_front:
+                existed = Address.objects.filter(id_number=self.id_number, id_photo_front__isnull=False).first()
+                if existed:
+                    self.id_photo_front = existed.id_photo_front
+            if not self.id_photo_back:
+                if existed and existed.id_photo_back:
+                    self.id_photo_back = existed.id_photo_back
+                else:
+                    existed = Address.objects.filter(id_number=self.id_number, id_photo_back__isnull=False).first()
+                    if existed:
+                        self.id_photo_back = existed.id_photo_back
 
 
 @receiver(post_delete, sender=CartProduct)
