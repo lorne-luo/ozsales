@@ -417,24 +417,26 @@ class OrderProduct(models.Model):
     def __str__(self):
         return '%s = %d X %s' % (self.name, self.sell_price_rmb, self.amount)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        if not self.amount:
+    def get_last_sale(self):
+        last_sale = OrderProduct.objects.filter(order__seller_id=self.order.seller_id, product_id=self.product_id
+                                                ).exclude(sell_price_rmb=0
+                                                          ).exclude(id=self.id).order_by('-id').first()
+        return last_sale
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.amount is None:
             self.amount = 1
 
-        if not self.cost_price_aud:
-            if self.product and self.product.avg_cost:
-                self.cost_price_aud = self.product.avg_cost
+        if self.cost_price_aud is None or self.sell_price_rmb is None:
+            last_sale = self.get_last_sale()
+            if last_sale:
+                self.cost_price_aud = self.cost_price_aud if self.cost_price_aud else last_sale.cost_price_aud
+                self.sell_price_rmb = self.sell_price_rmb if self.sell_price_rmb else last_sale.sell_price_rmb
             else:
-                self.cost_price_aud = 0
+                self.cost_price_aud = self.cost_price_aud if self.cost_price_aud else 0
+                self.sell_price_rmb = self.sell_price_rmb if self.sell_price_rmb else 0
+
         self.total_price_aud = self.cost_price_aud * self.amount
-
-        if self.sell_price_rmb is None:
-            if self.product and self.product.last_sell_price:
-                self.sell_price_rmb = self.product.last_sell_price
-            else:
-                self.sell_price_rmb = 0
-
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product:

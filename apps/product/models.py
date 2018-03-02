@@ -229,7 +229,8 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
 
     def stat(self):
         from apps.order.models import OrderProduct
-        product_sales = OrderProduct.objects.filter(product_id=self.id).order_by('-id')
+        product_sales = OrderProduct.objects.filter(product_id=self.id).exclude(
+            sell_price_rmb=0).exclude(cost_price_aud=0).order_by('-id')
         if product_sales.count():
             data = product_sales.aggregate(sold_count=Sum(F('amount')),
                                            avg_sell_price=Avg(F('sell_price_rmb')),
