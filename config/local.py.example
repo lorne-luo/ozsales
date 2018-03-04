@@ -1,25 +1,10 @@
 # Copy this into local.py
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-DOMAIN_NAME='localhost:8000'
-DOMAIN_URL='http://localhost:8000'
-ALLOWED_HOSTS = ['*']
-
-# Database
-# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-DATABASES = {
+CACHES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ozsales',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': '/tmp/django_cache',
     }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-STRIPE_LIVE_MODE = False

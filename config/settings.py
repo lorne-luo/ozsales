@@ -10,25 +10,33 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import environ
 import datetime
 from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+# Load operating system environment variables and then prepare to use them
+env = environ.Env()
+env_file = os.path.join(BASE_DIR, '.env')
+if os.path.exists(env_file):
+    # Operating System Environment variables have precedence over variables defined in the .env file,
+    # that is to say variables from the .env files will only be used if not defined as environment variables.
+    print('[environ] Loading : {}'.format(env_file))
+    env.read_env(env_file)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6'
+SECRET_KEY = env('SECRET_KEY', default='n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x%%o4d73g$6')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-DOMAIN_NAME = 's.luotao.net'
-DOMAIN_URL = 'http://s.luotao.net'
+DEBUG = env.bool('DEBUG', False)
 ALLOWED_HOSTS = ['*']
-
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
+ADMINS = env.list('ADMINS', default=[('Lorne', 'dev@luotao.net')])
+BASE_URL = env('BASE_URL', default='http://localhost:8000')
 
 # Application definition
 INSTALLED_APPS = (
@@ -123,16 +131,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ozsales',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
+    'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales')
+}
+
+DATABASES['default']['OPTIONS'] = {
+    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 }
 
 SITE_ID = 1
@@ -199,6 +203,10 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'customer_tags': 'apps.customer.templatetags.customer_tags',
+
+            }
         },
     },
 ]
@@ -216,7 +224,7 @@ LOGOUT_URL = '/member/logout/'
 
 LOGIN_REDIRECT_URL = '/member/profile/'
 
-SESSION_COOKIE_AGE = 604800 * 4  # 1 week
+SESSION_COOKIE_AGE = 604800 * 4  # 4 weeks
 
 # registration
 # ACCOUNT_ACTIVATION_DAYS=7
@@ -339,24 +347,24 @@ REST_FRAMEWORK = {
 SITE_NAME = 'OZ SALE'
 
 # ----------------------------------------- Stripe payment -----------------------------------------------
-STRIPE_LIVE_PUBLIC_KEY = ''
-STRIPE_LIVE_SECRET_KEY = ''
-STRIPE_TEST_PUBLIC_KEY = 'pk_test_vEaCFE2a2NpcE6vDvRrvcf1T'
-STRIPE_TEST_SECRET_KEY = 'sk_test_AZbVO3pCQDtSozlrTUL9BhO0'
-STRIPE_LIVE_MODE = False
+STRIPE_LIVE_PUBLIC_KEY = env('STRIPE_LIVE_PUBLIC_KEY')
+STRIPE_LIVE_SECRET_KEY = env('STRIPE_LIVE_SECRET_KEY')
+STRIPE_TEST_PUBLIC_KEY = env('STRIPE_TEST_PUBLIC_KEY')
+STRIPE_TEST_SECRET_KEY = env('STRIPE_TEST_SECRET_KEY')
+STRIPE_LIVE_MODE = env.bool('STRIPE_LIVE_MODE', default=False)
+
 DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_callback'
 
 # ----------------------------------------- Telstra SMS API KEY-----------------------------------------------
-TELSTRA_CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
-TELSTRA_CONSUMER_SECRET = "AUbyh8CJy8gASog1"
-ADMIN_MOBILE_NUMBER = '0413725868'
+TELSTRA_CONSUMER_KEY = env('TELSTRA_CONSUMER_KEY')
+TELSTRA_CONSUMER_SECRET = env('TELSTRA_CONSUMER_SECRET')
+ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER')
 
 # ----------------------------------------- 1Forge API KEY-----------------------------------------------
-ONE_FORGE_API_KEY = 'k8gjMiRhU8LuhmewMftPUxthMZ3BQnIr'
+ONE_FORGE_API_KEY = env('ONE_FORGE_API_KEY')
 
 # ----------------------------------------- SENDGRID EMAIL API  -----------------------------------------------
-SENDGRID_API_KEY = os.environ.get(
-    'SENDGRID_API_KEY') or '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'
+SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 
 # ----------------------------------------- CACHES -----------------------------------------------
 CACHES = {
@@ -390,9 +398,7 @@ WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'dev@luotao.net'
 WAGTAIL_ENABLE_UPDATE_CHECK = False  # Wagtail update notifications
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 WAGTAIL_DATE_FORMAT = '%Y/%m/%d'
-WAGTAIL_DATETIME_FORMAT = '%H:%M %Y/%m/%d'
-
-
+WAGTAIL_DATETIME_FORMAT = '%Y/%m/%d %H:%M'
 
 # ----------------------------------------- local.py -----------------------------------------------
 

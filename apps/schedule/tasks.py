@@ -241,9 +241,6 @@ def run_shell_command(command_line):
             command_line_args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
 
-        # for l in iter(command_line_process.stdout.readline, b''):
-        #     print l.strip()
-
         command_line_process.communicate()
         command_line_process.wait()
     except (OSError, subprocess.CalledProcessError) as exception:
