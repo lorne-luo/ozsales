@@ -1,7 +1,12 @@
-{% url 'express:expresscarrier-list' as menu_url %}
+{% load express_tags %}
+
 <li class="treeview active">
-  <a href="{{ menu_url }}">
-    <i class="fa fa-truck"></i>
-    <b>ExpressCarrier</b>
-  </a>
+    <a href="{% url 'express:expresscarrier-list' %}">
+        <i class="fa fa-truck"></i>
+        <b>ExpressCarrier</b>
+
+        <span class="pull-right-container">
+            <small class="label pull-right bg-blue">{% parcel_counter %}</small>
+        </span>
+    </a>
 </li>

@@ -1,8 +1,13 @@
+{% load customer_tags %}
+
 <li class="treeview active">
     <a href="javascript:void(0)">
-        <i class="fa fa-angle-left pull-right"></i>
         <i class="fa fa-users"></i>
         <b>Customer</b>
+
+        <span class="pull-right-container">
+            <small class="label pull-right bg-blue">{% customer_counter %}</small>
+        </span>
     </a>
 
     <ul class="treeview-menu menu-open" style="display: block;">

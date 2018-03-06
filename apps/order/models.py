@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
@@ -36,6 +37,19 @@ ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CANCELED, u'取消'),
     (ORDER_STATUS.CLOSED, u'关闭')
 )
+
+
+class OrderManager(models.Manager):
+    def new(self):
+        qs = super(OrderManager, self).get_queryset()
+        return qs.filter(Q(status=ORDER_STATUS.CREATED) | Q(is_paid=False))
+
+    def shipping(self):
+        qs = super(OrderManager, self).get_queryset()
+        return qs.filter(Q(status=ORDER_STATUS.SHIPPING) | Q(status=ORDER_STATUS.DELIVERED), is_paid=True)
+
+    def finished(self):
+        return super(OrderManager, self).get_queryset().filter(status=ORDER_STATUS.FINISHED)
 
 
 @python_2_unicode_compatible
@@ -71,6 +85,8 @@ class Order(models.Model):
     finish_time = models.DateTimeField(_(u'完成时间'), editable=True, blank=True, null=True)
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
+
+    objects = OrderManager()
 
     def __str__(self):
         if self.id:

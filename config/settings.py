@@ -203,10 +203,6 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
             ],
-            'libraries': {
-                'customer_tags': 'apps.customer.templatetags.customer_tags',
-
-            }
         },
     },
 ]

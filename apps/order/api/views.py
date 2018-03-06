@@ -44,7 +44,7 @@ class ShippingOrderFilter(FilterSet):
     @property
     def qs(self):
         qs = super(ShippingOrderFilter, self).qs.filter(
-            Q(status=ORDER_STATUS.SHIPPING) | Q(status=ORDER_STATUS.DELIVERED)).filter(is_paid=True)
+            Q(status=ORDER_STATUS.SHIPPING) | Q(status=ORDER_STATUS.DELIVERED), is_paid=True)
         return qs
 
 

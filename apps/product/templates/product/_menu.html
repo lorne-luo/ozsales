@@ -1,7 +1,13 @@
+{% load product_tags %}
+
 <li class="treeview active">
     <a href="{% url 'product:product-list' %}">
         <i class='fa fa-shopping-bag'></i>
         <b>Product</b>
+
+        <span class="pull-right-container">
+            <small class="label pull-right bg-blue">{% product_counter %}</small>
+        </span>
     </a>
 
     {% if user.is_superuser %}
