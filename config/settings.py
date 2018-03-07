@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 Django settings for ozsales project.
 
@@ -35,7 +36,8 @@ SECRET_KEY = env('SECRET_KEY', default='n(jg24woqhp5e-9%r@vbm249e5yeqj%8t!1l*h=x
 DEBUG = env.bool('DEBUG', False)
 ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
-ADMINS = env.list('ADMINS', default=[('Lorne', 'dev@luotao.net')])
+ADMIN_EMAIL = env('ADMIN_EMAIL', default='dev@luotao.net')  # 管理员email地址
+ADMINS = [('Admin', ADMIN_EMAIL)]
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
 
 # Application definition
@@ -331,7 +333,7 @@ REST_FRAMEWORK = {
 
 # CONSTANTS SETTINGS
 # ------------------------------------------------------------------------------
-SITE_NAME = 'OZ SALE'
+SITE_NAME = env('SITE_NAME', default='YouDan')
 # Others
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'
@@ -350,17 +352,31 @@ DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_call
 
 # TELSTRA SMS API KEY
 # ------------------------------------------------------------------------------
-TELSTRA_CONSUMER_KEY = env('TELSTRA_CONSUMER_KEY')
-TELSTRA_CONSUMER_SECRET = env('TELSTRA_CONSUMER_SECRET')
-ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER')
+TELSTRA_CONSUMER_KEY = env('TELSTRA_CONSUMER_KEY', default='')
+TELSTRA_CONSUMER_SECRET = env('TELSTRA_CONSUMER_SECRET', default='')
+ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
 
 # 1Forge API KEY
 # ------------------------------------------------------------------------------
-ONE_FORGE_API_KEY = env('ONE_FORGE_API_KEY')
+ONE_FORGE_API_KEY = env('ONE_FORGE_API_KEY', default='')
 
 # SENDGRID EMAIL API
 # ------------------------------------------------------------------------------
-SENDGRID_API_KEY = env('SENDGRID_API_KEY')
+SENDGRID_API_KEY = env('SENDGRID_API_KEY', default='')
+
+# ALIYUN SMS
+# ------------------------------------------------------------------------------
+ALIYUN_ACCESS_KEY_ID = env('ALIYUN_ACCESS_KEY_ID', default='')
+ALIYUN_ACCESS_KEY_SECRET = env('ALIYUN_ACCESS_KEY_SECRET', default='')
+
+# ALIYUN EMAIL
+# ------------------------------------------------------------------------------
+ALIYUN_EMAIL_HOST = env('ALIYUN_EMAIL_HOST', default='smtpdm-ap-southeast-2.aliyun.com')
+ALIYUN_SINGLE_EMAIL_USERNAME = env('ALIYUN_SINGLE_EMAIL_USERNAME', default='')  # 发件人地址，通过控制台创建的发件人地址
+ALIYUN_SINGLE_EMAIL_PASSWORD = env('ALIYUN_SINGLE_EMAIL_PASSWORD', default='')  # 发件人密码，通过控制台创建的发件人密码
+# 批量发信地址
+ALIYUN_BATCH_EMAIL_USERNAME = env('ALIYUN_BATCH_EMAIL_USERNAME', default='')
+ALIYUN_BATCH_EMAIL_PASSWORD = env('ALIYUN_BATCH_EMAIL_PASSWORD', default='')
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -376,7 +392,7 @@ CACHES = {
 
 # WAGTAIL
 # ------------------------------------------------------------------------------
-WAGTAIL_SITE_NAME = 'YouDan'
+WAGTAIL_SITE_NAME = SITE_NAME
 WAGTAILSEARCH_BACKENDS = {
     'default': {
         'BACKEND': 'wagtail.wagtailsearch.backends.db',
@@ -392,7 +408,7 @@ WAGTAILSEARCH_BACKENDS = {
 # WAGTAILSEARCH_HITS_MAX_AGE = 14
 # WAGTAILADMIN_RECENT_EDITS_LIMIT = 5
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 1 * 1024 * 1024  # 1Mb
-WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = 'dev@luotao.net'
+WAGTAILADMIN_NOTIFICATION_FROM_EMAIL = ADMIN_EMAIL
 WAGTAIL_ENABLE_UPDATE_CHECK = False  # Wagtail update notifications
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 WAGTAIL_DATE_FORMAT = '%Y/%m/%d'

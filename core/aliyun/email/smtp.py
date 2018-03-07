@@ -3,27 +3,24 @@ import logging
 import redis
 import smtplib
 import email
+from django.conf import settings
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-from email.mime.base import MIMEBase
-from email.mime.application import MIMEApplication
 from email.header import Header
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='localhost', port=6379, db=0)  # todo move it into settings
 ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 
-ALIYUN_EMAIL_SYDNEY_HOST = 'smtpdm-ap-southeast-2.aliyun.com'
-ADMIN_EMAIL = 'dev@luotao.net'  # 管理员地址
-SENDER_EMAIL = 'dev@luotao.net'  # 自定义的回复地址
-SENDER_NAME = 'Youdan'  # 自定义的发件人名称
+ALIYUN_EMAIL_HOST = settings.ALIYUN_EMAIL_HOST  # smtp server address
+ADMIN_EMAIL = settings.ADMIN_EMAIL  # 管理员地址
+SITE_NAME = settings.SITE_NAME  # 自定义的发件人名称
 # 单一发信地址
-SINGLE_EMAIL_USERNAME = 'notice@em.luotao.net'  # 发件人地址，通过控制台创建的发件人地址
-SINGLE_EMAIL_PASSWORD = 'nv98273rH12j3nF'  # 发件人密码，通过控制台创建的发件人密码
+SINGLE_EMAIL_USERNAME = settings.ALIYUN_SINGLE_EMAIL_USERNAME  # 发件人地址，通过控制台创建的发件人地址
+SINGLE_EMAIL_PASSWORD = settings.ALIYUN_SINGLE_EMAIL_PASSWORD  # 发件人密码，通过控制台创建的发件人密码
 # 批量发信地址
-BATCH_EMAIL_USERNAME = 'info@em.luotao.net'
-BATCH_EMAIL_PASSWORD = 'nv98273rH12j3nF'
+BATCH_EMAIL_USERNAME = settings.ALIYUN_BATCH_EMAIL_USERNAME
+BATCH_EMAIL_PASSWORD = settings.ALIYUN_BATCH_EMAIL_PASSWORD
 
 ALIYUN_EMAIL_DAILY_FREE_LIMIT = 200
 
@@ -39,9 +36,9 @@ def _send_email(receivers, subject, html_content, text_content=None):
     # 构建alternative结构
     msg = MIMEMultipart('alternative')
     msg['Subject'] = Header(subject.decode('utf-8')).encode()
-    msg['From'] = '%s <%s>' % (Header(SENDER_NAME.decode('utf-8')).encode(), username)
+    msg['From'] = '%s <%s>' % (Header(SITE_NAME.decode('utf-8')).encode(), username)
     msg['To'] = ';'.join(receivers) if isinstance(receivers, list) else receivers
-    msg['Reply-to'] = SENDER_EMAIL
+    msg['Reply-to'] = ADMIN_EMAIL
     msg['Message-id'] = email.utils.make_msgid()
     msg['Date'] = email.utils.formatdate()
     # 构建alternative的text/plain部分
@@ -54,7 +51,7 @@ def _send_email(receivers, subject, html_content, text_content=None):
     try:
         # 必须使用SSL，端口465
         client = smtplib.SMTP_SSL()
-        host = ALIYUN_EMAIL_SYDNEY_HOST
+        host = ALIYUN_EMAIL_HOST
         client.connect(host, 465)
         # 开启DEBUG模式
         # client.set_debuglevel(0)

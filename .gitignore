@@ -77,3 +77,4 @@ target/
 
 # console output
 *.out
+.env
