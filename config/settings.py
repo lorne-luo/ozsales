@@ -139,7 +139,6 @@ DATABASES['default']['OPTIONS'] = {
     'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 }
 
-SITE_ID = 1
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -207,19 +206,18 @@ TEMPLATES = [
     },
 ]
 
-# Email
+# EMAIL
+# ------------------------------------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = 'dev@luotao.net'
 
-# Auth
+# AUTH
+# ------------------------------------------------------------------------------
 AUTH_USER_MODEL = 'auth_user.AuthUser'
 AUTHENTICATION_BACKENDS = ['core.auth_user.backend.AuthUserAuthenticateBackend']
 LOGIN_URL = '/member/login/'
-
 LOGOUT_URL = '/member/logout/'
-
 LOGIN_REDIRECT_URL = '/member/profile/'
-
 SESSION_COOKIE_AGE = 604800 * 4  # 4 weeks
 
 # registration
@@ -227,29 +225,21 @@ SESSION_COOKIE_AGE = 604800 * 4  # 4 weeks
 # REGISTRATION_OPEN=True
 # REGISTRATION_SALT='IH*&^AGBIovalaft1AXbas2213klsd73'
 
-
-# Others
-ID_PHOTO_FOLDER = 'id'
-
-PRODUCT_PHOTO_FOLDER = 'product'
-
-# for django-guardian
-ANONYMOUS_USER_ID = -1
-
-# Test
+# TEST
+# ------------------------------------------------------------------------------
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 SOUTH_TESTS_MIGRATE = False
 
-# ----------------------------------------- CELERY -----------------------------------------------
-
+# CELERY
+# ------------------------------------------------------------------------------
 import djcelery
 
 djcelery.setup_loader()
 
-BROKER_URL = 'redis://127.0.0.1:6379'
-BROKER_TRANSPORT = 'redis'
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
-CELERY_RESULT_BACKEND = BROKER_URL
+CELERY_BROKER_URL = BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_BROKER_TRANSPORT = BROKER_TRANSPORT = 'redis'
+CELERY_BROKER_TRANSPORT_OPTIONS = BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
 CELERY_TASK_RESULT_EXPIRES = datetime.timedelta(days=1)  # Take note of the CleanUp task in middleware/tasks.py
 CELERY_MAX_CACHED_RESULTS = 1000
@@ -258,14 +248,14 @@ CELERY_TRACK_STARTED = True
 CELERY_SEND_EVENTS = True
 CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
 
-REDIS_CONNECT_RETRY = True
-REDIS_DB = 0
-BROKER_POOL_LIMIT = 2
+CELERY_REDIS_CONNECT_RETRY = REDIS_CONNECT_RETRY = True
+CELERY_REDIS_DB = REDIS_DB = 0
+CELERY_BROKER_POOL_LIMIT = BROKER_POOL_LIMIT = 2
 CELERYD_CONCURRENCY = 1
 CELERYD_TASK_TIME_LIMIT = 600
 
-# ----------------------------------------- TINYMCE -----------------------------------------------
-
+# TINYMCE
+# ------------------------------------------------------------------------------
 TINYMCE_JS_URL = '/static/tinymce/js/tinymce/tinymce.min.js'
 TINYMCE_SPELLCHECKER = False
 TINYMCE_DEFAULT_CONFIG = {
@@ -282,8 +272,8 @@ TINYMCE_DEFAULT_CONFIG = {
     'language': 'zh_CN'
 }
 
-# ----------------------------------------- REST_FRAMEWORK -----------------------------------------------
-
+# REST_FRAMEWORK
+# ------------------------------------------------------------------------------
 REST_FRAMEWORK = {
     # 'ORDERING_PARAM' : 'order_by', # Renaming ordering to order_by like sql convention
     'PAGE_SIZE': 15,
@@ -339,30 +329,41 @@ REST_FRAMEWORK = {
     )
 }
 
-# ----------------------------------------- CONSTANTS -----------------------------------------------
+# CONSTANTS SETTINGS
+# ------------------------------------------------------------------------------
 SITE_NAME = 'OZ SALE'
+# Others
+ID_PHOTO_FOLDER = 'id'
+PRODUCT_PHOTO_FOLDER = 'product'
+# for django-guardian
+ANONYMOUS_USER_ID = -1
+SITE_ID = 1
 
-# ----------------------------------------- Stripe payment -----------------------------------------------
+# STRIPE PAYMENT
+# ------------------------------------------------------------------------------
 STRIPE_LIVE_PUBLIC_KEY = env('STRIPE_LIVE_PUBLIC_KEY')
 STRIPE_LIVE_SECRET_KEY = env('STRIPE_LIVE_SECRET_KEY')
 STRIPE_TEST_PUBLIC_KEY = env('STRIPE_TEST_PUBLIC_KEY')
 STRIPE_TEST_SECRET_KEY = env('STRIPE_TEST_SECRET_KEY')
 STRIPE_LIVE_MODE = env.bool('STRIPE_LIVE_MODE', default=False)
-
 DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_callback'
 
-# ----------------------------------------- Telstra SMS API KEY-----------------------------------------------
+# TELSTRA SMS API KEY
+# ------------------------------------------------------------------------------
 TELSTRA_CONSUMER_KEY = env('TELSTRA_CONSUMER_KEY')
 TELSTRA_CONSUMER_SECRET = env('TELSTRA_CONSUMER_SECRET')
 ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER')
 
-# ----------------------------------------- 1Forge API KEY-----------------------------------------------
+# 1Forge API KEY
+# ------------------------------------------------------------------------------
 ONE_FORGE_API_KEY = env('ONE_FORGE_API_KEY')
 
-# ----------------------------------------- SENDGRID EMAIL API  -----------------------------------------------
+# SENDGRID EMAIL API
+# ------------------------------------------------------------------------------
 SENDGRID_API_KEY = env('SENDGRID_API_KEY')
 
-# ----------------------------------------- CACHES -----------------------------------------------
+# CACHES
+# ------------------------------------------------------------------------------
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -373,7 +374,8 @@ CACHES = {
     }
 }
 
-# ----------------------------------------- WAGTAIL -----------------------------------------------
+# WAGTAIL
+# ------------------------------------------------------------------------------
 WAGTAIL_SITE_NAME = 'YouDan'
 WAGTAILSEARCH_BACKENDS = {
     'default': {
@@ -396,7 +398,7 @@ WAGTAIL_ALLOW_UNICODE_SLUGS = False
 WAGTAIL_DATE_FORMAT = '%Y/%m/%d'
 WAGTAIL_DATETIME_FORMAT = '%Y/%m/%d %H:%M'
 
-# ----------------------------------------- local.py -----------------------------------------------
-
+# LOCAL.PY
+# ------------------------------------------------------------------------------
 if os.path.exists(os.path.join(os.path.dirname(__file__), "local.py")):
     from .local import *
