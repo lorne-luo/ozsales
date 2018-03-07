@@ -31,7 +31,7 @@ class SMSSelfSender(SMSSender):
         app_name = self.request.query_params.get('app_name', None)
         if body:
             m = MessageSender()
-            result, detail = m.send_to_self(body, app_name)
+            result, detail = m.send_to_admin(body, app_name)
             return Response({'success': result, 'detail': detail})
         return Response({'success': False, 'detail': 'body is null'})
 

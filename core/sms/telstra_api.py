@@ -91,20 +91,20 @@ class MessageSender(object):
             r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter)
             sms.save()
             if counter == 999:
-                self.send_to_self('[Warning] Telstra sms meet monthly limitation.')
+                self.send_to_admin('[Warning] Telstra sms meet monthly limitation.')
             return True, data['messageId']
         elif 'status' in data:
             sms.success = False
             sms.save()
             return False, data['status']
 
-    def send_to_self(self, content, app_name=None):
+    def send_to_admin(self, content, app_name=None):
         return self.send_sms(settings.ADMIN_MOBILE_NUMBER, content, app_name)
 
 
 # singleton pattern
 telstra_sender = MessageSender()
 
-if __name__ == '__main__':
-    m = MessageSender()
-    m.send_to_self('hello boy')
+# if __name__ == '__main__':
+#     m = MessageSender()
+#     m.send_to_admin('hello boy')

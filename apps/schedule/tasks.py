@@ -185,7 +185,7 @@ def smzdm_task():
             description = ' '.join(x.strip() for x in text_list)
             summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
-            result, detail = telstra_sender.send_to_self(content)
+            result, detail = telstra_sender.send_to_admin(content)
             # print 'sending', content
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
@@ -206,7 +206,7 @@ def get_forex_quotes():
         setattr(forex, quote['symbol'], value)
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
-    telstra_sender.send_to_self(msg.strip())
+    telstra_sender.send_to_admin(msg.strip())
 
 
 @periodic_task(run_every=crontab(hour=20, minute=30))
@@ -214,7 +214,7 @@ def express_id_upload_task():
     unupload_order = ExpressOrder.objects.filter(id_upload=False)
     if unupload_order.exists():
         ids = ','.join([o.track_id for o in unupload_order])
-        telstra_sender.send_to_self('Upload ID for %s' % ids)
+        telstra_sender.send_to_admin('Upload ID for %s' % ids)
 
     log.info('[Express] Daily id upload checking.')
 
