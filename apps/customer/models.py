@@ -1,25 +1,26 @@
 # coding:utf-8
 import os
+
 from dateutil.relativedelta import relativedelta
-
-from django.db import models
-from django.core.mail import send_mail
-from django.core import validators
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager, Group, Permission
-from django.db.models import Q, Manager
-from django.db.models.signals import post_save, pre_save, m2m_changed, post_delete
-from django.dispatch import receiver
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group, Permission
 from django.core.exceptions import PermissionDenied
-from django.utils.http import urlquote
-from django.utils.crypto import get_random_string
-from django.utils import timezone
-from django.contrib.auth.hashers import is_password_usable, make_password
-
-from core.auth_user.models import AuthUser, UserProfileMixin
-from settings.settings import BASE_DIR, ID_PHOTO_FOLDER, MEDIA_URL
-from django.utils.encoding import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
+from django.db import models
+from django.db.models import Manager
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
+from django.utils.translation import ugettext_lazy as _
+from pypinyin import Style
+from stdimage import StdImageField
+
+from core.sms.telstra_api import telstra_sender
+from core.aliyun.email.tasks import email_send_task
+from core.auth_user.models import AuthUser, UserProfileMixin
+from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
+from config.settings import ID_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
+
 from apps.member.models import Seller
 from apps.product.models import Product
 
@@ -83,10 +84,16 @@ class CustomerManager(Manager):
             seller_id = obj.id
         elif isinstance(obj, AuthUser) and obj.is_seller:
             seller_id = obj.profile.id
+        elif isinstance(obj, Customer):
+            customer_id = obj.id
+            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
+        elif isinstance(obj, AuthUser) and obj.is_customer:
+            customer_id = obj.profile.id
+            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
         else:
-            raise PermissionDenied
+            return Customer.objects.none()
 
-        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id)
+        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id).order_by('-order_count')
 
     def update_order_count(self):
         qs = super(CustomerManager, self).get_queryset()
@@ -96,59 +103,40 @@ class CustomerManager(Manager):
 
 
 @python_2_unicode_compatible
-class Customer(UserProfileMixin, models.Model):
+class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
+    auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
-    name = models.CharField(_('Name'), max_length=30, null=False, blank=False)
-    email = models.EmailField(_('Email'), max_length=254, null=True, blank=True)
-    mobile = models.CharField(_('Mobile'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
-                                                                    'invalid')])
-    order_count = models.PositiveIntegerField(_('Order Count'), null=True, blank=True, default=0)
+    name = models.CharField(_(u'姓名'), max_length=30, null=False, blank=False)
+    remark = models.CharField(_(u'备注'), max_length=255, blank=True)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
+    email = models.EmailField(_('Email'), max_length=255, blank=True)
+    mobile = models.CharField(_(u'手机'), max_length=15, blank=True)
+    order_count = models.PositiveIntegerField(_(u'订单数'), blank=True, default=0)
     last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('Primary Address'),
-                                        related_name=_('primary_address'))
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_(u'默认地址'),
+                                        related_name='primary_address')
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
-    weixin_id = models.CharField(max_length=32, blank=True, null=True)  # 微信号
-
-    # weixin user info
-    # https://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
-    # https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
-    is_subscribe = models.BooleanField(default=False, blank=False, null=False)  # 用户是否关注公众账号
-    nickname = models.CharField(max_length=32, blank=True, null=True)
-    openid = models.CharField(max_length=64, blank=True, null=True)
-    sex = models.CharField(max_length=5, blank=True, null=True)
-    province = models.CharField(max_length=32, blank=True, null=True)
-    city = models.CharField(max_length=32, blank=True, null=True)
-    country = models.CharField(max_length=32, blank=True, null=True)
-    language = models.CharField(max_length=64, null=True, blank=True)
-    # 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像）
-    headimg_url = models.URLField(max_length=256, blank=True, null=True)
-    privilege = models.CharField(max_length=256, blank=True, null=True)
-    unionid = models.CharField(max_length=64, blank=True, null=True)
-    subscribe_time = models.DateField(blank=True, null=True)
-    remark = models.CharField(_('Remark'), max_length=128, null=True, blank=True)  # 公众号运营者对粉丝的备注
-    groupid = models.CharField(max_length=256, null=True, blank=True)  # 用户所在的分组ID
 
     objects = CustomerManager()
+
+    pinyin_fields_conf = [
+        ('name', Style.NORMAL, False),
+        ('name', Style.FIRST_LETTER, False),
+        ('remark', Style.NORMAL, False),
+        ('remark', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Customer')
         verbose_name = _('Customer')
 
-    class Config:
-        list_template_name = 'customer/adminlte-customer-list.html'
-        # form_template_name = 'customer/customer_form.html'
-        list_display_fields = ('name', 'mobile', 'order_count', 'last_order_time', 'primary_address', 'id')
-        list_form_fields = ('name', 'email', 'mobile', 'primary_address', 'groups', 'tags')
-        filter_fields = ('name', 'email', 'mobile')
-        search_fields = ('name', 'email', 'mobile')
-
-        @classmethod
-        def filter_queryset(cls, request, queryset):
-            queryset = Customer.objects.all()
-            return queryset
-
     def __str__(self):
+        return '%s' % self.name
+
+    @property
+    def name_and_remarks(self):
+        if self.remark:
+            return '%s (%s)' % (self.name, self.remark)
         return '%s' % self.name
 
     @property
@@ -200,8 +188,20 @@ class Customer(UserProfileMixin, models.Model):
 
         return addr
 
-    get_primary_address.allow_tags = False
-    get_primary_address.short_description = 'Primary Addr'
+    def send_email(self, subject, message):
+        if self.email:
+            email_send_task.apply_async(args=([self.email], subject, message))
+
+    def send_sms(self, content, app_name=None):
+        if not self.mobile:
+            return
+
+        if self.mobile.startswith('04'):
+            # australia mobile
+            telstra_sender.send_sms(self.mobile, content, app_name)
+        elif self.mobile.startswith('1'):
+            # todo send sms for china mobile number
+            pass
 
 
 @receiver(post_save, sender=Customer)
@@ -217,16 +217,24 @@ def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
-    filename = os.path.join(ID_PHOTO_FOLDER, filename)
-    return filename
+    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+
+    from apps.schedule.tasks import guetzli_compress_image
+    full_path = os.path.join(MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    return file_path
 
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
-    filename = os.path.join(ID_PHOTO_FOLDER, filename)
-    return filename
+    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+
+    from apps.schedule.tasks import guetzli_compress_image
+    full_path = os.path.join(MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    return file_path
 
 
 class AddressManager(Manager):
@@ -249,18 +257,29 @@ class AddressManager(Manager):
 
 
 @python_2_unicode_compatible
-class Address(models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True,
-                              validators=[validators.RegexValidator(r'^[\d-]+$', _('plz input validated mobile number'),
-                                                                    'invalid')])
+class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
+    name = models.CharField(_('name'), max_length=30, null=False, blank=False)
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
+    mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
-    id_photo_front = models.ImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True)
-    id_photo_back = models.ImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True)
+    id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
+                                   variations={
+                                       'thumbnail': (150, 150, False)
+                                   })
+    id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
+                                  variations={
+                                      'thumbnail': (150, 150, False)
+                                  })
 
     objects = AddressManager()
+    pinyin_fields_conf = [
+        ('name', Style.NORMAL, False),
+        ('name', Style.FIRST_LETTER, False),
+        ('address', Style.NORMAL, False),
+        ('address', Style.FIRST_LETTER, False),
+    ]
 
     class Meta:
         verbose_name_plural = _('Address')
@@ -270,7 +289,12 @@ class Address(models.Model):
         return self.get_text()
 
     def get_text(self):
-        return u'%s,%s,%s' % (self.name, self.mobile, self.address)
+        text = self.address
+        if self.mobile:
+            text = '%s,%s' % (self.mobile, text)
+        if self.name:
+            text = '%s,%s' % (self.name, text)
+        return text
 
     def get_customer_link(self):
         url = reverse('admin:customer_customer_change', args=[self.customer.id])
@@ -313,6 +337,29 @@ class Address(models.Model):
 
     def get_address(self):
         return '%s,%s,%s' % (self.name, self.mobile, self.address)
+
+    def save(self, *args, **kwargs):
+        # resize images when first uploaded
+        self.resize_image('id_photo_front')
+        self.resize_image('id_photo_back')
+
+        self.link_id_photo()
+        super(Address, self).save(*args, **kwargs)
+
+    def link_id_photo(self):
+        if self.id_number:
+            existed = None
+            if not self.id_photo_front:
+                existed = Address.objects.filter(id_number=self.id_number, id_photo_front__isnull=False).first()
+                if existed:
+                    self.id_photo_front = existed.id_photo_front
+            if not self.id_photo_back:
+                if existed and existed.id_photo_back:
+                    self.id_photo_back = existed.id_photo_back
+                else:
+                    existed = Address.objects.filter(id_number=self.id_number, id_photo_back__isnull=False).first()
+                    if existed:
+                        self.id_photo_back = existed.id_photo_back
 
 
 @receiver(post_delete, sender=CartProduct)

@@ -1,7 +1,6 @@
 var OrderMemberListPageVue = OrderListPageVue.extend({
     methods: {
-        loadData: function (data, init) {
-            var _init = typeof init !== 'undefined' ? init : false;
+        loadData: function (data) {
             var self = this;
             var url;
             if (self.list_api_tag)
@@ -9,7 +8,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
             else
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
-            if ($('.tab-content #pane-FINISHED').hasClass('active') || _init) {
+            if ($('.tab-content #pane-FINISHED').hasClass('active')) {
                 url = url + '?ordering=-id&status=FINISHED';
                 $.AdminLTE.apiGet(
                     url,
@@ -22,7 +21,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
                         self.finished_currentPage = resp.current_page;
                     }
                 );
-            } else if ($('.tab-content #pane-ONGOING').hasClass('active') || _init) {
+            } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
                 url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-id';
                 $.AdminLTE.apiGet(
                     url,
@@ -42,13 +41,13 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
 
 var orderListPageVue = new OrderMemberListPageVue({
         data: {
-            list_api_tag: 'order:api-order-list',
-            delete_api_tag: 'order:api-order-delete',
-            detail_api_tag: 'order:api-order-detail',
+            list_api_tag: 'api:order-list',
+            delete_api_tag: 'api:order-delete',
+            detail_api_tag: 'api:order-detail',
 
             create_url_tag: 'order:order-add',
             list_url_tag:   'order:order-list-short',
-            detail_url_tag: 'order:order-detail-short',
+            detail_url_tag: 'order-detail-short',
             update_url_tag: 'order:order-update',
             finished_items: [],
             ongoing_items: [],

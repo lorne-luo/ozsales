@@ -1,0 +1,8 @@
+{% if widget.is_initial %}
+    <a download="{{ widget.download_filename|default:"" }}" href="{{ widget.original_value.url }}" target="_blank">
+        <img src="{{ widget.value.url }}"
+            {% if widget.width %}width="{{ widget.width }}"{% endif %}
+            {% if widget.height %} height="{{ widget.height }}"{% endif %}/>
+    </a>
+{% endif %}
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %} />

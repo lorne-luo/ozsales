@@ -3,7 +3,7 @@
 
 {% block common_list_buttons %}
     {% if request.user and request.user.is_superuser %}
-        <a class="btn btn-primary" href="{% url 'messageset:notificationcontent-add' %}">
+        <a class="btn btn-primary" href="{% url 'messageset:notification-add' %}">
             <i class="fa fa-plus"></i> 发布新通知
         </a>
     {% endif %}
@@ -31,5 +31,5 @@
 
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/messageset/notification_list.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/messageset/notification_list.min.js' %}"></script>
 {% endblock %}

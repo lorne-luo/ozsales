@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import RequestContext
@@ -32,7 +33,7 @@ def member_login(request):
         if request.GET.get('next'):
             c.update({'next': request.GET['next']})
         c.update({'form': LoginForm()})
-        return render_to_response('adminlte/login.html', RequestContext(request, c))
+        return render_to_response('adminlte/login.html', c)
     elif request.method == 'POST':
         old_user = request.user or None
         form = LoginForm(request.POST)
@@ -66,115 +67,52 @@ def member_home(request):
 
 def member_logout(request):
     logout(request)
-    return redirect('member-login')
+    return redirect('member:member-login')
 
 
-class CreateUser(PermissionRequiredMixin, TemplateView):
+class ProfileView(PermissionRequiredMixin, FormView):
+    form_class = SellerProfileForm
     template_name = 'member/profile.html'
-    permission_required = 'member.add_seller'
+    permission_required = 'member.change_seller'
+    success_url = reverse_lazy('member:member-profile')
 
-    def get(self, request, *args, **kwargs):
-        context = {'form': SellerProfileForm(username_readonly=False)}
-        return self.render_to_response(context)
-
-
-class Profile(PermissionRequiredMixin, TemplateView):
-    template_name = 'member/profile.html'
-    permission_required = 'member.view_seller'
-
-    def get(self, request, *args, **kwargs):
-        pk = kwargs.get('pk', '')
-        if pk:  # Admin editing other user's profile
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk', '')
+        if pk and self.request.user.is_superuser:  # Admin editing other user's profile
             try:
-                user = Seller.objects.get(pk=pk)
+                return Seller.objects.get(auth_user_id=pk)
             except Seller.DoesNotExist:
-                log.error("No user pk %s." % pk)
                 raise Http404()
-        else:  # Editing own profile
-            user = request.user
-        if request.user.has_perm('member.add_seller'):
-            form = SellerProfileForm(username_readonly=False, instance=user)
+        elif self.request.user.is_seller:  # Editing own profile
+            return self.request.profile
         else:
-            form = SellerProfileForm(username_readonly=True, instance=user)
+            raise Http404()
 
-        context = {
-            'edit_user': user,
-            'form': form,
-            'resetpasswordform': _reset_password_form(user, request),
-        }
+    def get_initial(self):
+        return {'email': self.request.user.email, 'mobile': self.request.user.mobile}
 
-        return self.render_to_response(context)
+    def get_form_kwargs(self):
+        kwargs = super(ProfileView, self).get_form_kwargs()
+        self.object = self.get_object()
+        kwargs.update({'instance': self.object})
+        return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        context.update({'object': self.object})
+        return context
 
-@permission_required('member.add_seller', raise_exception=True)
-def seller_index(request):
-    if request.user.is_superuser:
-        users = Seller.objects.all().exclude(username=request.user.username)
-    elif request.user.is_group('Admin'):
-        users = Seller.objects.exclude(is_superuser=True).exclude(username=request.user.username)
-    else:
-        users = Seller.objects.exclude(groups__name='Admin').exclude(is_superuser=True).exclude(
-            username=request.user.username)
+    def form_valid(self, form):
+        self.object = form.save()
+        self.request.user.email = form.cleaned_data.get('email')
+        self.request.user.mobile = form.cleaned_data.get('mobile')
 
-    return render_to_response('member/user-list.html', {'users': users},
-                              RequestContext(request))
-
-
-def user_password_reset(request, pk):
-    user = get_object_or_404(Seller, pk=pk)
-    allowed_change_other = (request.user.groups.filter(name='Admin').exists() or
-                            request.user.is_superuser or
-                            request.user.has_perm('member.add_seller'))
-    if not request.user == user and not allowed_change_other:
-        log.error('Response forbidden, lacking permission to change other users.')
-        return HttpResponseForbidden()
-
-    form = _reset_password_form(user, request)
-    if request.method == "POST":
-        form = _reset_password_form(user, request, request.POST)
-
-        if form.is_valid():
-            try:
-                form.save()
-            except SMTPException, (value, message):
-                messages.error(request, 'SMTP error while sending user notification: Error %s (%s)' % (value, message))
-            except (SMTPConnectError, socket.error), (value, message):
-                messages.error(request, 'Error while connecting to SMTP server: Error %s (%s)' % (value, message))
-
-            # user.renew_token()
-            if request.user == user:
-                return redirect('member-profile')
-            else:
-                return redirect('admin-user-edit', pk=user.pk)
-    return render_to_response('member/user-reset-password.html', {
-        'form': form,
-        'edit_user': user
-    }, RequestContext(request))
-
-
-def _reset_password_form(user, request, POST=False):
-    if user == request.user:
-        form = UserResetPasswordForm(user)
-        if POST:
-            form = UserResetPasswordForm(user, POST)
-    elif request.user.has_perm('member.change_seller'):
-        form = ResetPasswordEmailForm(user)
-        if POST:
-            form = ResetPasswordEmailForm(user, POST)
-    else:
-        log.error('Lacking permission to change user.')
-        raise Http404
-
-    return form
-
-
-@permission_required('member.delete_seller', raise_exception=True)
-def user_delete(request, pk):
-    try:
-        Seller.objects.get(pk=pk).delete()
-    except Seller.DoesNotExist:
-        pass
-    return redirect('seller-index')
+        password = form.cleaned_data.get('password')
+        if password:
+            self.request.user.set_password(password)
+        self.request.user.save()
+        messages.success(self.request, u'个人资料已更新')
+        return super(ProfileView, self).form_valid(form)
 
 
 class AgentView(TemplateView):
@@ -186,9 +124,9 @@ class AgentView(TemplateView):
 
 
 class RegisterView(FormView):
-    template_name = 'member/register.html'
+    template_name = 'adminlte/register.html'
     form_class = RegisterForm
-    success_url = reverse_lazy('member-login')
+    success_url = reverse_lazy('member:member-login')
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
@@ -198,6 +136,7 @@ class RegisterView(FormView):
         mobile = form.cleaned_data.get('mobile')
         email = form.cleaned_data.get('email')
         password = form.cleaned_data.get('password')
-        Seller.create_seller(mobile, email, password)
+        Seller.create_seller(mobile, email, password, premium_account=False)
+        messages.success(self.request, '注册成功, 请登陆.')
 
         return super(RegisterView, self).form_valid(form)

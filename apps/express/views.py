@@ -1,101 +1,74 @@
 # coding=utf-8
+from braces.views import MultiplePermissionsRequiredMixin
+from django.contrib import messages
+from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
-from django.http import HttpResponseRedirect
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import ExpressCarrier, ExpressOrder
-from ..order.models import ORDER_STATUS
-import serializers
-import forms
+
+from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
+from core.django.views import CommonContextMixin
+from models import ExpressCarrier
+from . import forms
+
+
+class CarrierInfoRequiredMixin(object):
+    def prompt_incomplete_carrier(self, **kwargs):
+        from apps.member.models import Seller
+        if isinstance(self.request.profile, Seller):
+            incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
+            if incomplete_carrier:
+                msg = u'物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能提供更好帮助.' % reverse(
+                    'express:expresscarrier-update', args=[incomplete_carrier.id])
+                messages.warning(self.request, msg)
 
 
 # views for ExpressCarrier
 
-class ExpressCarrierListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = ExpressCarrier
     template_name_suffix = '_list'  # express/expresscarrier_list.html
     permissions = {
         "all": ("express.view_expresscarrier",)
     }
 
+    def get_context_data(self, **kwargs):
+        self.prompt_incomplete_carrier()
+        return super(ExpressCarrierListView, self).get_context_data(**kwargs)
 
-class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+
+class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin,
+                            CreateView):
     model = ExpressCarrier
-    form_class = forms.ExpressCarrierAddForm
     template_name = 'adminlte/common_form.html'
     permissions = {
         "all": ("express.add_expresscarrier",)
     }
 
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return forms.ExpressCarrierAdminForm
+        else:
+            return forms.ExpressCarrierAddForm
 
-class ExpressCarrierUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if not self.request.user.is_superuser:
+            self.object.seller = self.request.profile
+        return super(ExpressCarrierAddView, self).form_valid(form)
+
+
+class ExpressCarrierUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin,
+                               UpdateView):
     model = ExpressCarrier
-    form_class = forms.ExpressCarrierUpdateForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("express.change_expresscarrier",)
-    }
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return forms.ExpressCarrierAdminForm
+        else:
+            return forms.ExpressCarrierUpdateForm
 
 
-class ExpressCarrierDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class ExpressCarrierDetailView(CommonContextMixin, UpdateView):
     model = ExpressCarrier
     form_class = forms.ExpressCarrierDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("express.view_expresscarrier",)
-    }
-
-
-class ExpressCarrierViewSet(CommonViewSet):
-    """ api views for ExpressCarrier """
-    queryset = ExpressCarrier.objects.all()
-    serializer_class = serializers.ExpressCarrierSerializer
-    filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-    search_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
-
-
-# # views for ExpressOrder
-#
-# class ExpressOrderListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
-#     model = ExpressOrder
-#     template_name_suffix = '_list'  # express/expressorder_list.html
-#     permissions = {
-#         "all": ("express.view_expressorder",)
-#     }
-#
-#
-# class ExpressOrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderAddForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("expressorder.add_expressorder",)
-#     }
-#
-#
-# class ExpressOrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderUpdateForm
-#     template_name = 'adminlte/common_form.html'
-#     permissions = {
-#         "all": ("expressorder.change_expressorder",)
-#     }
-#
-#
-# class ExpressOrderDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
-#     model = ExpressOrder
-#     form_class = forms.ExpressOrderDetailForm
-#     template_name = 'adminlte/common_detail_new.html'
-#     permissions = {
-#         "all": ("expressorder.view_expressorder",)
-#     }
-
-
-# api views for ExpressOrder
-class ExpressOrderViewSet(CommonViewSet):
-    """ api views for ExpressOrder """
-    queryset = ExpressOrder.objects.all()
-    serializer_class = serializers.ExpressOrderSerializer
-    # filter_class = OrderFilter
-    filter_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']
-    search_fields = ['carrier__name_cn', 'carrier__name_en', 'track_id', 'address__name', 'order__customer__name']

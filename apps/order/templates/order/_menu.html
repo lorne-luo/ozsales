@@ -1,9 +1,15 @@
-{% load activelink %}
+{% load order_tags %}
+
 <li class="treeview active">
   <a href="javascript:void(0)">
-    <i class="fa fa-angle-left pull-right"></i>
-    <i class='fa fa-cloud'></i>
+    <i class='fa fa-shopping-cart'></i>
     <b>Order</b>
+
+    <span class="pull-right-container">
+      <small class="label pull-right bg-red">{% finished_order_counter %}</small>
+      <small class="label pull-right bg-green">{% shipping_order_counter %}</small>
+      <small class="label pull-right bg-blue">{% new_order_counter %}</small>
+    </span>
   </a>
   <ul class="treeview-menu menu-open" style="display: block;">
 
@@ -29,6 +35,5 @@
       </a>
     </li>
     {%endif%}
-
   </ul>
 </li>

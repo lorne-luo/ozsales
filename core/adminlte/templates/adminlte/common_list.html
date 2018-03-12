@@ -6,12 +6,13 @@
 
 {% block content %}
   <div class="row" id="commonDataTableRow">
-    <div class="col-xs-12">
+    <div class="col-xs-12 full-width">
       <div class="box box-info">
+
+        {% block content_header %}
         <div class="box-header with-border">
-          <div class="row">
+          {% block common_list_buttons %}
             <div class="col-xs-5 col-sm-6">
-              {% block common_list_buttons %}
                 {% if page_model_perms.add %}
                   <a class="btn btn-primary" id="create">
                     <i class="fa fa-plus"></i>新增
@@ -23,9 +24,11 @@
                     删除
                   </a>
                 {% endif %}
-              {% endblock %}
             </div>
-            <div class="col-xs-7 col-sm-6">
+            {% endblock %}
+
+            {% block search_box %}
+            <div class="col-xs-7 col-sm-6 pull-right">
               <div class="input-group">
                 <input type="text" name="search" id="tableSearch" placeholder="关键字" v-on:keypress.13="search"
                        class="form-control input-sm pull-right">
@@ -40,11 +43,15 @@
                 </div>
               </div>
             </div>
-          </div>
+            {% endblock %}
         </div>
 
+        {% include "adminlte/includes/messages.html" %}
+
+        <!-- /.box-header -->
+        {% endblock %}
+
         {% block tab_content %}
-          <!-- /.box-header -->
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover" id="commonTable">
               <thead>
@@ -80,7 +87,7 @@
                           {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
                                href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
-                              <i class="fa fa-bars fa-inverse"></i>
+                              <i class="fa fa-lg fa-bars fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>
@@ -89,7 +96,7 @@
                           {% if page_model_perms.change %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
                                href="#[item.edit_url]" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.id]">
-                              <i class="fa fa-pencil fa-inverse"></i>
+                              <i class="fa fa-lg fa-pencil fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>
@@ -99,7 +106,7 @@
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
                                data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);"
                                class="btn btn-danger btn-sm delete-btn">
-                              <i class="fa fa-trash-o fa-inverse"></i>
+                              <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                             </a>
                           {% endif %}
                           </template>

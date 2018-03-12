@@ -5,7 +5,7 @@ import logging
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
-from guardian.shortcuts import get_objects_for_user
+# from guardian.shortcuts import get_objects_for_user
 from rest_framework import generics, viewsets, mixins
 from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import ParseError
@@ -86,8 +86,9 @@ class SharedObjectsList(PaginateMaxListAPIView):
         contenttype = ContentType.objects.get_for_model(self.model)
         view_perm = "%s.view_%s" % (contenttype.app_label, self.model.__name__.lower())
 
-        objects = get_objects_for_user(self.request.user, [view_perm],
-                                       klass=self.model,
-                                       use_groups=use_groups)
+        objects = None
+        # objects = get_objects_for_user(self.request.user, [view_perm],
+        #                                klass=self.model,
+        #                                use_groups=use_groups)
 
         return objects

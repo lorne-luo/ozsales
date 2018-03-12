@@ -1,53 +1,63 @@
 {% extends "adminlte/common_list.html" %}
 {% load static %}
 
-{% block common_list_buttons %}{% endblock %}
+{% block content_title %}Report{% endblock %}
+{% block search_box %}{% endblock %}
 
-{% block table_head %}
-  <th class="text-center hidden-sm hidden-xs" style="width:60px;">
-    <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
-  </th>
-  <th>Month</th>
-  <th class="hidden-sm hidden-xs">Order Count</th>
-  <th class="hidden-sm hidden-xs">Parcel Count</th>
-  <th class="hidden-sm hidden-xs">Cost AUD</th>
-  <th class="hidden-sm hidden-xs">Shipping Fee</th>
-  <th class="hidden-sm hidden-xs">Sell Price RMB</th>
-  <th class="hidden-sm hidden-xs">Profit RMB</th>
-  <th class="hidden-sm hidden-xs"></th>
+{% block content %}
+    <div class="row" id="commonDataTableRow">
+        <div class="col-sm-12 col-md-6">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Sales Chart</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="sale-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
 
-  <th class="visible-sm visible-xs">Count</th>
-  <th class="visible-sm visible-xs">Cost</th>
-  <th class="visible-sm visible-xs">Profit</th>
+        <div class="col-sm-12 col-md-6">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Orders Chart</h3>
+                     <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body chart-responsive">
+                    <div class="chart" id="order-chart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
 
-{% endblock %}
+        <div class="col-xs-12">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab_monthly" data-toggle="tab" aria-expanded="false">月度统计</a></li>
+                    <li class=""><a href="#tab_total" data-toggle="tab" aria-expanded="true">总计</a></li>
+                </ul>
 
-{% block table_row %}
-  <tbody v-for="item in items">
-  <tr>
-    <td class="text-center hidden-sm hidden-xs">
-      ##[$index+1]
-      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
-    </td>
-    <td>{!! item.month !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.order_count !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.parcel_count !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.cost_aud !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.shipping_fee !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.sell_price_rmb !!}</td>
-    <td class="hidden-sm hidden-xs">{!! item.profit_rmb !!}</td>
-
-    {% block item_buttons %}
-      {{ block.super }}
-    {% endblock %}
-
-    <td class="visible-sm visible-xs">{!! item.order_count !!}/{!! item.parcel_count !!}</td>
-    <td class="visible-sm visible-xs">{!! item.cost_aud !!}/{!! item.shipping_fee !!}</td>
-    <td class="visible-sm visible-xs">{!! item.sell_price_rmb !!}/{!! item.profit_rmb !!}</td>
-  </tr>
-  </tbody>
+                <div class="tab-content">
+                    {% include 'report/tabs/tab_monthly.html' %}
+                    {% include 'report/tabs/tab_total.html' %}
+                </div>
+                <!-- /.tab-content -->
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/report/monthlyreport_list.js' %}"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script type="text/javascript" src="{% static 'js/report/monthlyreport_list.js' %}"></script>
 {% endblock %}

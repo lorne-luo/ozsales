@@ -4,23 +4,30 @@
 {% block base_head_title %}Login{% endblock %}
 {% block base_head_title_system_name %}OZSALES{% endblock %}
 
-{% block header_base_style %}
-  <link rel="stylesheet" href="{% static 'plugins/iCheck/square/blue.css' %}">
-{% endblock %}
-
 {% block base_body %}
 <body class="hold-transition login-page">
   <div class="login-box">
   <div class="login-logo">
-    <a href="../../index2.html"><b>OZ</b>S</a>
+    <a href="#"><b>OZ</b> Sales</a>
   </div>
   <!-- /.login-logo -->
   <div class="login-box-body">
     <p class="login-box-msg">登陆系统</p>
 
-    <form action="{% url "member-login" %}" method="post">
+    {% if messages %}
+      <div class="row">
+          <div class="col-xs-12">
+            {% for message in messages %}
+              <span class="alert-{{ message.tags }}">{{ message }}</span>
+              <br/><br/>
+            {% endfor %}
+          </div>
+      </div>
+    {% endif %}
+
+    <form action="{% url "member:member-login" %}" method="post">
       <div class="form-group has-feedback{% if form.mobile.errors %} has-error{% endif %}">
-        <input id="id_username" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码" }}"{% if form.mobile.value %} value="{{ form.mobile.value }}"{% endif %}
+        <input id="id_mobile" type="text" name="mobile" class="form-control" placeholder="{{ form.mobile.errors.as_text|default:"手机号码或电子邮件" }}"{% if form.mobile.value and not form.mobile.errors%} value="{{ form.mobile.value }}"{% endif %}
         {% if not form.mobile.value %} autofocus{% endif %}>
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
@@ -55,16 +62,11 @@
       </div>
     </form>
 
-    <hr/>
-    <a class="pull-left" href="{% url 'password_reset' %}">忘记密码?</a>
-    <a class="pull-right" href="{% url 'member-register' %}">注册新用户</a>
-    <br/>
-
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }}">
-      {{ message }}
+    <div class="social-auth-links">
+        <p class="text-center">- OR -</p>
+        <a class="btn-block" href="{% url 'password_reset' %}">忘记密码?</a>
+        <a class="btn-block" href="{% url 'member:member-register' %}">注册新用户</a>
     </div>
-    {% endfor %}
 
   </div>
   <!-- /.login-box-body -->

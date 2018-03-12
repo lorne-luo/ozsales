@@ -258,3 +258,27 @@ class WxPayment(models.Model):
 
     def get_raw_response(self):
         return Map(WeixinPay(None, None, None, None).to_dict(self.xml_response)) if self.xml_response else None
+
+
+class WxUser(models.Model):
+    auth_user = models.OneToOneField('auth_user.AuthUser', on_delete=models.CASCADE, related_name='wxuser', null=True,
+                                     blank=True)
+    weixin_id = models.CharField(max_length=32, blank=True)  # 微信号
+    # weixin user info
+    # https://mp.weixin.qq.com/wiki/14/bb5031008f1494a59c6f71fa0f319c66.html
+    # https://mp.weixin.qq.com/wiki/17/c0f37d5704f0b64713d5d2c37b468d75.html
+    is_subscribe = models.BooleanField(default=False, blank=False, null=False)  # 用户是否关注公众账号
+    nickname = models.CharField(max_length=32, blank=True)
+    openid = models.CharField(max_length=64, blank=True)
+    sex = models.CharField(max_length=5, blank=True)
+    province = models.CharField(max_length=32, blank=True)
+    city = models.CharField(max_length=32, blank=True)
+    country = models.CharField(max_length=32, blank=True)
+    language = models.CharField(max_length=64, blank=True)
+    # 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像）
+    headimg_url = models.URLField(max_length=256, blank=True)
+    privilege = models.CharField(max_length=256, blank=True)
+    unionid = models.CharField(max_length=64, blank=True)
+    subscribe_time = models.DateField(blank=True, null=True)
+    # remark = models.CharField(_('Remark'), max_length=128, blank=True)  # 公众号运营者对粉丝的备注
+    groupid = models.CharField(max_length=256, blank=True)  # 用户所在的分组ID

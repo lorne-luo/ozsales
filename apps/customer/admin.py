@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django.contrib import admin
 from models import Customer, Address, InterestTag
-from forms import CustomerAddForm, AddressAddInline, AddressChangeInline, InterestTagInline
+from forms import AddressAddInline, AddressChangeInline
 from ..order.forms import OrderInline
 
 

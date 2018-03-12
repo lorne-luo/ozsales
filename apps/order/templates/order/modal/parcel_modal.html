@@ -1,0 +1,157 @@
+<div class="modal fade" id="add-parcel" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="X">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class=""><i class="fa fa-truck text-info"></i> <span class="modal-title"></span></h4>
+            </div>
+            <div class="modal-body clearfix">
+                {{ expressorder_form.order }}
+                {% for field in expressorder_form.visible_fields %}
+                    {% ifnotequal field.name 'id_upload' %}
+                        <div class="form-group col-xs-12 form-group-{{ field.name }}">
+                            <label for="id_{{ field.name }}"
+                                   class="ln34 col-sm-2 hidden-xs control-label">{{ field.label }}</label>
+                            <div class="col-sm-7 col-xs-12">
+                                {{ field }}
+                            </div>
+                            <div class="col-sm-3 hidden-xs">
+                                {{ field.errors }}
+                            </div>
+                        </div>
+                    {% endifnotequal %}
+                {% endfor %}
+
+                <div class="col-xs-12">
+                    <div class="col-xs-12">
+                        <div class="col-xs-12 alert alert-success">
+                            <i class="icon fa fa-check"></i> <span>操作成功</span>
+                        </div>
+                        <div class="callout callout-danger col-xs-12 alert-error">
+                            <i class="icon fa fa-ban"></i> <b>提交失败</b>
+                            <p class="error-text">error</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <p class="text-left">* 部分快递单号可自动识别物流公司</p>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button type="button" class="btn btn-primary pull-left" id="parcel-modal-confirm">确定 & 关闭</button>
+                <button type="button" class="btn btn-primary pull-left" id="parcel-modal-confirm-continue">确定 & 继续</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+<script>
+    function resetParcelForm() {
+        $('#add-parcel .form-group-carrier').removeClass('has-error');
+        $('#add-parcel .form-group-track_id').removeClass('has-error');
+        $('#add-parcel .form-group-fee').removeClass('has-error');
+
+        $("#add-parcel #id_carrier").val(null).trigger("change");
+        $('#add-parcel #id_track_id').val("");
+        $('#add-parcel #id_fee').val("");
+    }
+
+    function showParcelError(err) {
+        $("#add-parcel .alert-error .error-text").text(err);
+        $("#add-parcel .alert-error").show();
+    }
+
+    function submitParcel(success) {
+        var orderID = $('#add-parcel #id_order').val();
+        var carrierID = $('#add-parcel #id_carrier').val();
+        var trackID = $('#add-parcel #id_track_id').val();
+        var fee = $('#add-parcel #id_fee').val();
+
+        if (!trackID) {
+            $('#add-parcel .form-group-track_id').addClass('has-error');
+            $('#add-parcel #id_track_id').attr("placeholder", "* 请输入单号");
+            $('#add-parcel #id_track_id').focus();
+            return;
+        } else if (!fee) {
+            $('#add-parcel .form-group-fee').addClass('has-error');
+            $('#add-parcel #id_fee').attr("placeholder", "* 请输入运费");
+            $('#add-parcel #id_fee').focus();
+            return;
+        }
+        var url = Urls['api:expressorder-list']();
+
+        $.ajax({
+            type: "POST",
+            url: url,
+            csrfmiddlewaretoken: $("#csrf-token").val(),
+            data: JSON.stringify({"order": orderID, "carrier": carrierID, "track_id": trackID, "fee": fee}),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
+            .done(function (data) {
+                success();
+            })
+            .fail(function (XMLHttpRequest, textStatus, errorThrown) {
+                try {
+                    var obj = JSON.parse(XMLHttpRequest.responseText);
+                    if (obj.detail)
+                        showParcelError(obj.detail);
+                    else
+                        showParcelError(XMLHttpRequest.responseText);
+                } catch (e) {
+                    showParcelError(XMLHttpRequest.responseText);
+                }
+            });
+    }
+
+    $(document).ready(function () {
+        $('#add-parcel').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var orderID = button.data('order-id');
+            var orderTitle = button.data('order-title');
+            var modal = $(this);
+            modal.find('.modal-title').text('添加物流到' + orderTitle);
+            modal.find('#id_order').val(orderID);
+            resetParcelForm();
+            $("#add-parcel .alert-success").hide();
+            $("#add-parcel .alert-error").hide();
+        });
+
+        $('#add-parcel').on('shown.bs.modal', function () {
+            $('#add-parcel #id_track_id').focus();
+        });
+
+        $('#add-parcel').on('hidden.bs.modal', function () {
+            if (window.need_reload) {
+                orderListPageVue.loadData(orderListPageVue.get_param());
+                window.need_reload = false;
+            }
+        });
+
+        $('#parcel-modal-confirm').on('click', function (event) {
+            submitParcel(function () {
+                window.need_reload = true;
+                $('#add-parcel').modal('hide');
+            })
+        });
+
+        $('#parcel-modal-confirm-continue').on('click', function (event) {
+            submitParcel(function () {
+                window.need_reload = true;
+                $("#add-parcel .alert-success").fadeTo(2000, 500).slideUp(500, function () {
+                    $("#add-parcel .alert-success").slideUp(500);
+                });
+                $("#add-parcel .alert-error").hide();
+                resetParcelForm();
+                $('#add-parcel #id_track_id').focus();
+            })
+        });
+    });
+</script>

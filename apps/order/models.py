@@ -1,20 +1,24 @@
 # coding=utf-8
 import datetime
 import logging
+
+from decimal import Decimal
+
+from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.core import validators
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
-from django.utils.crypto import get_random_string
 from django.utils import timezone
-from calendar import monthrange
+from dateutil.relativedelta import relativedelta
 
 from apps.member.models import Seller
+from core.django.constants import CURRENCY_CHOICES
 from utils.enum import enum
-from settings.settings import rate
+from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
 from ..customer.models import Customer, Address
@@ -35,44 +39,64 @@ ORDER_STATUS_CHOICES = (
 )
 
 
+class OrderManager(models.Manager):
+    def new(self):
+        qs = super(OrderManager, self).get_queryset()
+        return qs.filter(Q(status=ORDER_STATUS.CREATED) | Q(is_paid=False))
+
+    def shipping(self):
+        qs = super(OrderManager, self).get_queryset()
+        return qs.filter(Q(status=ORDER_STATUS.SHIPPING) | Q(status=ORDER_STATUS.DELIVERED), is_paid=True)
+
+    def finished(self):
+        return super(OrderManager, self).get_queryset().filter(status=ORDER_STATUS.FINISHED)
+
+
 @python_2_unicode_compatible
 class Order(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    order_id = models.CharField(_(u'order id'), max_length=32, null=True, blank=True)
-    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
-    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
-    address_text = models.CharField(_('address_text'), max_length=255, null=True, blank=True)
-    is_paid = models.BooleanField(default=False, verbose_name=_('paid'))
+    order_id = models.CharField(_(u'编号'), max_length=32, null=True, blank=True)
+    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_(u'客户'))
+    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_(u'地址'))
+    address_text = models.CharField(_(u'地址'), max_length=255, null=True, blank=True)
+    is_paid = models.BooleanField(default=False, verbose_name=_(u'已支付'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'Paid Time'))
+                                     verbose_name=_(u'支付时间'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
-                              verbose_name=_('status'))
-    total_amount = models.IntegerField(_(u'Amount'), default=0, blank=False, null=False)
-    product_cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, blank=True,
+                              verbose_name=_(u'状态'))
+    total_amount = models.IntegerField(_(u'数量'), default=0, blank=False, null=False)
+    product_cost_aud = models.DecimalField(_(u'货物成本'), max_digits=8, decimal_places=2, blank=True,
                                            null=True)
-    product_cost_rmb = models.DecimalField(_(u'Product Cost RMB'), max_digits=8,
+    product_cost_rmb = models.DecimalField(_(u'货物成本'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'Ship Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_(u'快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'Ship Time'))
-    total_cost_aud = models.DecimalField(_(u'Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_cost_rmb = models.DecimalField(_(u'Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'Origin RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sell_price_rmb = models.DecimalField(_(u'Final RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+                                     verbose_name=_(u'寄出时间'))
+    currency = models.CharField(_(u'货币'), max_length=128, choices=CURRENCY_CHOICES, blank=True)
+    total_cost_aud = models.DecimalField(_(u'总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_cost_rmb = models.DecimalField(_(u'总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
+    origin_sell_rmb = models.DecimalField(_(u'原价'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_(u'售价'), max_digits=8, decimal_places=2, blank=True, null=True)
     payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
     remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
-    profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    aud_rmb_rate = models.DecimalField(_(u'AUD-RMB'), max_digits=8, decimal_places=4, blank=True, null=True)
-    create_time = models.DateTimeField(_(u'Create Time'), auto_now_add=True, editable=False)
-    finish_time = models.DateTimeField(_(u'Finish Time'), editable=True, blank=True, null=True)
+    profit_rmb = models.DecimalField(_(u'利润'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_(u'下单汇率'), max_digits=8, decimal_places=4, blank=True, null=True)
+    create_time = models.DateTimeField(_(u'创建时间'), auto_now_add=True, editable=False)
+    finish_time = models.DateTimeField(_(u'完成时间'), editable=True, blank=True, null=True)
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
+
+    objects = OrderManager()
 
     def __str__(self):
         if self.id:
             return '[%s]%s' % (self.id, self.customer.name)
         else:
             return '%s' % (self.customer.name)
+
+    def __init__(self, *args, **kwargs):
+        super(Order, self).__init__(*args, **kwargs)
+        self._currency_original = self.currency
 
     def get_product_summary(self):
         result = ''
@@ -126,11 +150,11 @@ class Order(models.Model):
                 customer.save()
             else:
                 return
-        elif status_value == ORDER_STATUS.DELIVERED:
-            self.express_orders.update(is_delivered=True)
-        elif status_value == ORDER_STATUS.SHIPPING:
-            self.aud_rmb_rate = rate.aud_rmb_rate
-            self.products.update(is_purchased=True)
+        # elif status_value == ORDER_STATUS.DELIVERED:
+        #     self.express_orders.update(is_delivered=True)
+        # elif status_value == ORDER_STATUS.SHIPPING:
+        #     self.aud_rmb_rate = forex.AUDCNH
+        #     self.products.update(is_purchased=True)
 
         self.set_finish_time()
         self.save()
@@ -144,7 +168,7 @@ class Order(models.Model):
                 self.save(update_fields=['paid_time'])
 
             from ..report.models import MonthlyReport
-            MonthlyReport.stat(self.seller, self.create_time.year, self.create_time.month)
+            MonthlyReport.stat_month(self.seller, self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.address and self.customer.primary_address:
@@ -153,8 +177,18 @@ class Order(models.Model):
         if self.address:
             self.address_text = self.address.get_text()
 
-        if not self.pk:
-            self.aud_rmb_rate = rate.aud_rmb_rate
+        if not self.pk or self._currency_original != self.currency:
+            # new creating or currency changed, update forex rate
+            self.aud_rmb_rate = getattr(forex, self.currency or self.seller.primary_currency)
+
+        self.total_cost_aud = self.product_cost_aud or 0
+        self.product_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
+
+        self.total_cost_aud += self.shipping_fee or 0
+        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
+
+        if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
+            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
         super(Order, self).save()
 
@@ -173,7 +207,7 @@ class Order(models.Model):
         return u'<a href="%s">%s</a>' % (url, name)
 
     def get_public_link(self):
-        return reverse('order:order-detail-short', args=[self.customer.id, self.id])
+        return reverse('order-detail-short', args=[self.customer.id, self.id])
 
     def get_id_link(self):
         return u'<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
@@ -182,9 +216,15 @@ class Order(models.Model):
     get_id_link.short_description = 'ID'
 
     def get_aud_rmb_rate(self):
-        return self.aud_rmb_rate or rate.aud_rmb_rate
+        if self.aud_rmb_rate:
+            return self.aud_rmb_rate
 
-    def update_price(self):
+        return getattr(forex, self.currency or self.seller.primary_currency)
+
+    def update_price(self, update_sell_price=False):
+        if not self.products.count() and not self.express_orders.count():
+            return
+
         self.total_amount = 0
         self.product_cost_aud = 0
         self.product_cost_rmb = 0
@@ -197,7 +237,8 @@ class Order(models.Model):
             self.total_amount += p.amount
             self.product_cost_aud += p.amount * p.cost_price_aud
             self.origin_sell_rmb += p.sell_price_rmb * p.amount
-        self.product_cost_rmb = self.product_cost_aud * self.get_aud_rmb_rate()
+            if p.product:
+                p.product.stat()
 
         express_orders = self.express_orders.all()
         for ex_order in express_orders:
@@ -205,17 +246,20 @@ class Order(models.Model):
             if ex_order.fee:
                 self.shipping_fee += ex_order.fee
 
-        self.total_cost_aud = self.product_cost_aud + self.shipping_fee
-        self.total_cost_rmb = self.total_cost_aud * self.get_aud_rmb_rate()
+        if self.origin_sell_rmb % 1 < Decimal(0.02):
+            self.origin_sell_rmb = Decimal(int(self.origin_sell_rmb)).quantize(Decimal('.01'))
 
-        if not self.sell_price_rmb:
+        if self.sell_price_rmb is None and self.products.count() or update_sell_price:
+            # init assignment or force update from product.post_save and expressorder.post_save
             self.sell_price_rmb = self.origin_sell_rmb
+        elif self.products.count() == 0:
+            self.sell_price_rmb = 0
+            self.total_amount = 0
 
-        if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
-            self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
-
+        post_save.disconnect(update_price_from_order, sender=Order)
         self.save()
         self.update_monthly_report()
+        post_save.connect(update_price_from_order, sender=Order)
 
     def get_paid_button(self):
         if not self.is_paid:
@@ -260,7 +304,8 @@ class Order(models.Model):
     def get_shipping_orders(self):
         result = ''
         for ex in self.express_orders.all():
-            if ex.is_delivered:
+            if self.status not in [ORDER_STATUS.FINISHED, ORDER_STATUS.CANCELED,
+                                   ORDER_STATUS.CLOSED] and ex.is_delivered:
                 result += '<u>%s</u><br/>' % ex.get_tracking_link()
             else:
                 result += ex.get_tracking_link() + '<br/>'
@@ -288,19 +333,35 @@ class Order(models.Model):
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
 
+    def email_delivered(self):
+        link = reverse('order-detail-short', args=[self.customer.id, self.id])
+        subject = u'%s 全部寄达.' % self
+        content = u'<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
+
+        self.seller.send_notification(subject, content)
+        self.seller.send_email(subject, content)
+        self.customer.send_email(subject, content)
+
     def update_track(self):
-        if self.express_orders.count() == 0 or self.status != ORDER_STATUS.SHIPPING:
+        express_all = self.express_orders.all()
+        if express_all.count() == 0:
             return
 
         all_finished = True
-        for express in self.express_orders.all():
-            express.update_track()
-            if not express.is_delivered:
+        for express in express_all:
+            if express.create_time > timezone.now() - relativedelta(days=3):
+                # send less than 3 days, skip
                 all_finished = False
+                continue
+            else:
+                express.update_track()
+                if not express.is_delivered:
+                    all_finished = False
 
-        if all_finished:
-            # todo notify seller
+        if all_finished and express_all.count():
             self.set_status(ORDER_STATUS.DELIVERED)
+            # notify seller and customer
+            self.email_delivered()
 
     @property
     def app(self):
@@ -356,11 +417,14 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
-    name = models.CharField(_('Name'), max_length=128, null=True, blank=True)
-    amount = models.IntegerField(_('Amount'), blank=True, null=True, )
-    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text=u'产品名称')
+    description = models.CharField(_('Description'), max_length=128, null=True, blank=True, help_text=u'备注')
+    amount = models.IntegerField(_('Amount'), default=1, blank=False, null=False, help_text=u'数量')
+    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, default=0, blank=False,
+                                         null=False, help_text=u'单价')
     total_price_rmb = models.DecimalField(_('Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
+    cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, default=0, blank=False,
+                                         null=False, help_text=u'成本')
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
     is_purchased = models.BooleanField(default=False)
@@ -369,33 +433,39 @@ class OrderProduct(models.Model):
     def __str__(self):
         return '%s = %d X %s' % (self.name, self.sell_price_rmb, self.amount)
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        if not self.amount:
+    def get_last_sale(self):
+        last_sale = OrderProduct.objects.filter(order__seller_id=self.order.seller_id, product_id=self.product_id
+                                                ).exclude(sell_price_rmb=0
+                                                          ).exclude(id=self.id).order_by('-id').first()
+        return last_sale
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        if self.amount is None:
             self.amount = 1
 
-        if not self.cost_price_aud:
-            if self.product and self.product.normal_price:
-                self.cost_price_aud = self.product.normal_price
+        if self.cost_price_aud is None or self.sell_price_rmb is None:
+            last_sale = self.get_last_sale()
+            if last_sale:
+                self.cost_price_aud = self.cost_price_aud if self.cost_price_aud else last_sale.cost_price_aud
+                self.sell_price_rmb = self.sell_price_rmb if self.sell_price_rmb else last_sale.sell_price_rmb
             else:
-                self.cost_price_aud = 0
+                self.cost_price_aud = self.cost_price_aud if self.cost_price_aud else 0
+                self.sell_price_rmb = self.sell_price_rmb if self.sell_price_rmb else 0
+
         self.total_price_aud = self.cost_price_aud * self.amount
-
-        if self.sell_price_rmb is None:
-            if self.product and self.product.safe_sell_price:
-                self.sell_price_rmb = self.product.safe_sell_price
-            else:
-                self.sell_price_rmb = 0
-
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
-        if self.product and not self.name:
+        if self.product:
             self.name = self.product.get_name_cn()
+
+        if self.description:
+            self.name += ' %s' % self.description
 
         return super(OrderProduct, self).save()
 
     def get_summary(self):
-        return u'%s = ¥%d x %d' % (self.name, self.sell_price_rmb, self.amount)
+        description = ' %s' % self.description if self.description else ''
+        return u'%s%s = ¥%d x %d' % (self.name, description, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:
@@ -410,21 +480,20 @@ def update_price_from_order(sender, instance=None, created=False, update_fields=
         if 'status' in update_fields or 'is_paid' in update_fields or 'paid_time' in update_fields:
             instance.update_monthly_report()
     elif instance.id:
-        post_save.disconnect(update_price_from_order, sender=Order)
-        instance.update_price()
-        post_save.connect(update_price_from_order, sender=Order)
+        if instance.products.count() or instance.express_orders.count():
+            instance.update_price()
 
 
 @receiver(post_save, sender=OrderProduct)
 def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
     if instance.order and instance.order.id:
-        instance.order.update_price()
+        instance.order.update_price(update_sell_price=True)
 
 
 @receiver(post_delete, sender=OrderProduct)
 def order_product_deleted(sender, **kwargs):
-    order_product = kwargs['instance']
-    order_product.order.update_price()
+    instance = kwargs['instance']
+    instance.order.update_price(update_sell_price=True)
 
 
 def confirm_order_from_cart(cart):

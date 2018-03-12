@@ -1,23 +1,22 @@
-{% load activelink %}
-<li class="treeview active {% ifstartswith '/schedule/' %}active{% endifstartswith %}">
+<li class="treeview active">
   <a href="javascript:void(0)">
+    <i class="fa fa-angle-left pull-right"></i>
     <i class='fa fa-cloud'></i>
     <b>Schedule</b>
-    <i class="fa fa-angle-left pull-right"></i>
   </a>
   <ul class="treeview-menu menu-open" style="display: block;">
 
     {% if perms.schedule.view_dealsubscribe %}
     <li>
-      <a href="{% url 'schedule:dealsubscribe-list' %}"  class="main">
-        <i class="fa fa-circle-o"></i>
-        DealSubscribe
-      </a>
       {% if perms.schedule.add_dealsubscribe %}
       <a href="{% url 'schedule:dealsubscribe-add' %}" class="pull-right">
          <i class="fa fa-plus" aria-hidden="true"></i>
       </a>
       {%endif%}
+      <a href="{% url 'schedule:dealsubscribe-list' %}" class="main">
+        <i class="fa fa-circle-o"></i>
+        DealSubscribe
+      </a>
     </li>
     {%endif%}
 

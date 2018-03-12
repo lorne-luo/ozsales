@@ -1,28 +1,23 @@
 # coding=utf-8
-import logging
 import json
-from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
-from django.core.exceptions import ObjectDoesNotExist
-from django.utils.http import urlquote, urlunquote
-from django.utils import timezone
-from django.contrib.auth import authenticate, login
-from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
+import logging
+
+from django.contrib.auth import login
 from django.contrib.auth.models import Group
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
-from core.views.views import CommonContextMixin, CommonViewSet
-from apps.member.models import Seller
-from apps.customer.models import Customer
-from wechat_sdk.lib.request import WechatRequest
-from wechat_sdk.exceptions import WechatAPIException
-from weixin.login import WeixinLogin
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect, Http404, JsonResponse
+from django.utils import timezone
+from django.utils.http import urlunquote
 from weixin.base import Map
-from models import WxApp, WxPayment, WxReturnCode
-from ..order.models import Order
+from weixin.login import WeixinLogin
+
 import conf
+from apps.customer.models import Customer
+from apps.member.models import Seller
+from core.auth_user.models import AuthUser
+from .models import WxApp, WxPayment, WxReturnCode, WxUser
+from ..order.models import Order
 
 log = logging.getLogger(__name__)
 
@@ -63,37 +58,37 @@ def wx_auth(request, app_name):
     # 1、微信网页授权是通过OAuth2.0机制实现的，在用户授权给公众号后，公众号可以获取到一个网页授权特有的接口调用凭证（网页授权access_token），通过网页授权access_token可以进行授权后接口调用，如获取用户基本信息；
     # 2、其他微信接口，需要通过基础支持中的“获取access_token”接口来获取到的普通access_token调用。
 
-
     if (scope == conf.SCOPE_USERINFO):
         # continue to get userinfo
         userinfo = wx_login.user_info(token, openid)
-        customer = Customer.objects.filter(openid=openid).first() or Customer()
+        wx_user = WxUser.objects.filter(openid=openid).first() or WxUser()
         # update user info
-        customer.openid = openid
-        customer.nickname = userinfo.nickname
-        customer.headimg_url = userinfo.headimgurl
-        customer.sex = userinfo.sex
-        customer.province = userinfo.province
-        customer.city = userinfo.city
-        customer.country = userinfo.country
-        customer.unionid = userinfo.get('unionid', None)
-        customer.privilege = json.dumps(userinfo.privilege)
-        customer.language = userinfo.language
+        wx_user.openid = openid
+        wx_user.nickname = userinfo.nickname
+        wx_user.headimg_url = userinfo.headimgurl
+        wx_user.sex = userinfo.sex
+        wx_user.province = userinfo.province
+        wx_user.city = userinfo.city
+        wx_user.country = userinfo.country
+        wx_user.unionid = userinfo.get('unionid', None)
+        wx_user.privilege = json.dumps(userinfo.privilege)
+        wx_user.language = userinfo.language
 
         # 关于UnionID机制
         # 1、请注意，网页授权获取用户基本信息也遵循UnionID机制。即如果开发者有在多个公众号，或在公众号、移动应用之间统一用户帐号的需求，需要前往微信开放平台（open.weixin.qq.com）绑定公众号后，才可利用UnionID机制来满足上述需求。
         # 2、UnionID机制的作用说明：如果开发者拥有多个移动应用、网站应用和公众帐号，可通过获取用户基本信息中的unionid来区分用户的唯一性，因为同一用户，对同一个微信开放平台下的不同应用（移动应用、网站应用和公众帐号），unionid是相同的。
-        seller = Seller.objects.filter(username=customer.openid).first() or Seller(username=customer.openid)
-        seller.name = customer.nickname
-        seller.save()
-        seller.groups.add(Group.objects.get(name='Customer'))
 
-        customer.seller = seller
-        customer.name = customer.name if customer.name else customer.nickname
-        customer.save()
+        if not wx_user.auth_user:
+            user, created = AuthUser.objects.get_or_create(type=AuthUser.WEIXIN, mobile=wx_user.openid)
+            if created or getattr(user, 'customer', None):
+                customer = Customer(name=wx_user.nickname)
+                customer.auth_user = user
+            wx_user.auth_user = user
 
-        seller.backend = 'django.contrib.auth.backends.ModelBackend'
-        login(request, seller)
+        wx_user.save()
+
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
+        login(request, user)
 
     state = request.GET.get('state', None)  # next url
     if state:
@@ -142,10 +137,10 @@ def wx_pay_notify(request, app_name):
         wx_payment.order.paid_time = timezone.now()
         wx_payment.order.save(update_fields=['is_paid', 'paid_time'])
 
-    customer = Customer.objects.filter(openid=wx_payment.openid).first()
-    if customer:
-        customer.is_subscribe = wx_payment.is_subscribe
-        customer.save(update_fields=['is_subscribe'])
+    wx_user = WxUser.objects.filter(openid=wx_payment.openid).first()
+    if wx_user:
+        wx_user.is_subscribe = wx_payment.is_subscribe
+        wx_user.save(update_fields=['is_subscribe'])
 
     return JsonResponse({'return_code': WxReturnCode.SUCCESS,
                          'return_msg': 'OK'})

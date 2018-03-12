@@ -1,28 +1,23 @@
 # coding=utf-8
-from django.views.generic import ListView, CreateView, UpdateView
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpResponseRedirect, HttpResponse
+from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 from django.db import transaction
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
+from django.http import HttpResponse
+from django.views.generic import ListView, CreateView, UpdateView
 
-from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Address, Customer, InterestTag
-import serializers
-import forms
+from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
+from core.django.views import CommonContextMixin
+from . import forms
+from models import Address, Customer
 
 
 # views for Address
 
-class AddressListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class AddressListView(SuperuserRequiredMixin, CommonContextMixin, ListView):
     model = Address
     template_name_suffix = '_list'  # customer/address_list.html
-    permissions = {
-        "all": ("customer.view_address",)
-    }
 
 
-class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class AddressAddView(SuperuserRequiredMixin, CommonContextMixin, CreateView):
     model = Address
     form_class = forms.AddressAddForm
     template_name = 'adminlte/common_form.html'
@@ -31,31 +26,16 @@ class AddressAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
     }
 
 
-class AddressUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class AddressUpdateView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Address
     form_class = forms.AddressUpdateForm
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("address.change_address",)
-    }
 
 
-class AddressDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class AddressDetailView(SuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Address
     form_class = forms.AddressDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("address.view_address",)
-    }
-
-
-# api views for Address
-
-class AddressViewSet(CommonViewSet):
-    queryset = Address.objects.all()
-    serializer_class = serializers.AddressSerializer
-    filter_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
-    search_fields = ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
 
 
 # views for Customer
@@ -77,18 +57,15 @@ class CustomerAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Crea
     }
 
     def form_valid(self, form):
-        self.object = form.save()
-        self.object.seller = self.request.user.profile
+        self.object = form.save(commit=False)
+        self.object.seller = self.request.profile
         return super(CustomerAddView, self).form_valid(form)
 
 
-class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class CustomerUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
     form_class = forms.CustomerUpdateForm
     template_name = 'customer/customer_edit.html'
-    permissions = {
-        "all": ("customer.change_customer",)
-    }
 
     def get_context_data(self, **kwargs):
         context = super(CustomerUpdateView, self).get_context_data(**kwargs)
@@ -124,22 +101,7 @@ class CustomerUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, U
         return super(CustomerUpdateView, self).post(request, *args, **kwargs)
 
 
-class CustomerDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class CustomerDetailView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
     model = Customer
     form_class = forms.CustomerDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("customer.view_customer",)
-    }
-
-
-# api views for Customer
-class CustomerViewSet(GroupRequiredMixin, CommonViewSet):
-    serializer_class = serializers.CustomerSerializer
-    filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
-                     'remark', 'tags']
-    search_fields = ['name', 'mobile', 'primary_address__name']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
-
-    def get_queryset(self):
-        return Customer.objects.filter(seller=self.request.user.profile)

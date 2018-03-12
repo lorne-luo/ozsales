@@ -1,11 +1,12 @@
 import logging
 
 from django.http import Http404
-from django.core.exceptions import ImproperlyConfigured
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import DjangoModelPermissions, DjangoObjectPermissions
+from rest_framework.permissions import DjangoModelPermissions, BasePermission
+from core.auth_user.constant import MEMBER_GROUP, CUSTOMER_GROUP, PREMIUM_MEMBER_GROUP
 
 log = logging.getLogger(__name__)
+
 
 # add below in settings
 #
@@ -13,12 +14,20 @@ log = logging.getLogger(__name__)
 #         'core.api.permission.CommonAPIPermissions',
 #     ],
 
+class ForbiddenAny(BasePermission):
+    def has_permission(self, request, view):
+        return False
+
+    def has_object_permission(self, request, view, obj):
+        return False
+
+
 class AdminOnlyPermissions(DjangoModelPermissions):
     def has_permission(self, request, view):
         if not request.user.is_authenticated():
             return False
 
-        if request.user.is_admin:
+        if request.user.is_admin or request.user.is_superuser:
             return True
         return False
 
@@ -175,15 +184,57 @@ class CommonAPIPermissions(DjangoModelPermissions):
         'DELETE': ['%(app_label)s.delete_%(model_name)s'],
     }
 
+
+# ================================ customized ============================
+
+class ProfilePermissions(BasePermission):
     def has_permission(self, request, view):
-        if hasattr(view, 'model'):
-            model = view.model
-        elif hasattr(view, 'queryset'):
-            model = view.queryset.model
-        else:
-            raise ImproperlyConfigured('API view not have model or queryset.')
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.user.is_admin or request.user.is_superuser:
+            return True
+        if getattr(request.user, 'profile'):
+            return True
+        return False
 
-        if model in []:
-            raise Http404
 
-        return super(CommonAPIPermissions, self).has_permission(request, view)
+class SellerPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.user.is_admin or request.user.is_superuser or request.user.is_seller:
+            return True
+        return False
+
+
+class CustomerPermissions(BasePermission):
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.user.is_admin or request.user.is_superuser or request.user.is_customer:
+            return True
+        return False
+
+
+class AbstractGroupPermissions(BasePermission):
+    group_required = []
+
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.user.is_admin or request.user.is_superuser:
+            return True
+        user_groups = request.user.groups.values_list("name", flat=True)
+        return set(self.group_required).intersection(set(user_groups))
+
+
+class MemberGroupPermissions(BasePermission):
+    group_required = (MEMBER_GROUP,)
+
+
+class PremiumMemberGroupPermissions(BasePermission):
+    group_required = (PREMIUM_MEMBER_GROUP,)
+
+
+class CustomerGroupPermissions(BasePermission):
+    group_required = (CUSTOMER_GROUP,)

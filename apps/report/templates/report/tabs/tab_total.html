@@ -1,0 +1,20 @@
+<div class="tab-pane" id="tab_total">
+    {% if total_day %}
+        <h4>自{{ first_day|date:"Y/m/j" }}起共计{{ total_year }}年{{ total_day }}天,共计:</h4>
+        <ul>
+            <li>客户总数: {{ total_customer }} 位</li>
+            <li>地址总数: {{ total_address }} 个</li>
+            <li>订单总数: {{ total_order }} 个</li>
+            <li>包裹总数: {{ total_expressorder }} 箱</li>
+            <li>货物总数: {{ total_amount }} 件</li>
+            <li>总邮费: {{ total_express_fee }} 刀</li>
+            <li>总金额: {{ total_sell_price }} 元</li>
+            <li>总成本: {{ total_cost_aud }} 刀</li>
+            <li>总利润: {{ total_profit_rmb }} 元</li>
+            <li>未付总额: {{ total_unpaid_amount }} 元</li>
+        </ul>
+    {% else %}
+        对不起，你还没有任何订单.
+    {% endif %}
+</div>
+<!-- /.tab-pane tab_total-->

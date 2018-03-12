@@ -4,20 +4,16 @@ var sitemailListPageVue = new CommonListPageVue({
         firstCount: true,
         unReadItemsCount: 0,
         showBox: 'in',
-        list_api_tag: 'messageset:api-sitemailreceive-list',
-        delete_api_tag: 'messageset:api-sitemailreceive-delete',
-        detail_api_tag: 'messageset:api-sitemailreceive-detail',
+        list_api_tag: 'api:sitemailreceive-list',
+        delete_api_tag: 'api:sitemailreceive-delete',
+        detail_api_tag: 'api:sitemailreceive-detail',
 
         create_url_tag: 'messageset:sitemail-add',
         list_url_tag:   'messageset:sitemail-list',
         receive_detail_url_tag: 'messageset:sitemailreceive-detail',
         send_detail_url_tag: 'messageset:sitemailsend-detail',
-        update_url_tag: 'messageset:sitemailreceive-update'
-    },
-    ready: function () {
-        if (this.appName && this.modelName) {
-            this.loadData({});
-        }
+        update_url_tag: 'messageset:sitemailreceive-update',
+        ordering: 'status,-send_time'
     },
     methods: {
         newMail: function(event){
@@ -28,21 +24,21 @@ var sitemailListPageVue = new CommonListPageVue({
             $(event.target).parent().addClass('active');
             this.showBox = 'in';
             this.modelName = 'sitemailreceive';
-            this.list_api_tag = 'messageset:api-sitemailreceive-list';
-            this.loadData({});
+            this.list_api_tag = 'api:sitemailreceive-list';
+            this.loadData(this.get_param());
         },
         sendBox: function (event) {
             $(event.target).parent().siblings().removeClass('active');
             $(event.target).parent().addClass('active');
             this.showBox = 'send';
             this.modelName = 'sitemailsend';
-            this.list_api_tag = 'messageset:api-sitemailsend-list';
-            this.loadData({});
+            this.list_api_tag = 'api:sitemailsend-list';
+            this.loadData(this.get_param());
         },
         trashBox: function (event) {
             $(event.target).parent().siblings().removeClass('active');
             $(event.target).parent().addClass('active');
-            this.loadData({});
+            this.loadData(this.get_param());
         },
         mailDetail: function (event) {
             var pk;
@@ -93,7 +89,7 @@ var sitemailListPageVue = new CommonListPageVue({
                 animation: false
             }, function () {
                 $.AdminLTE.apiPost(
-                    Urls['messageset:api-sitemail_markall'](), {},
+                    Urls['api:sitemail_markall'](), {},
                     function (resp) {
                         swal({
                             title: "标识更新成功!",

@@ -12,6 +12,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+node_modules/
 env/
 log/
 logs/
@@ -24,11 +25,22 @@ lib/
 lib64/
 parts/
 sdist/
+testcode/
 var/
+temp/
 collectstatic/
 *.egg-info/
 .installed.cfg
 *.egg
+local.py
+static/django_js_reverse/
+static/build/
+apps/**/*.min.js
+apps/**/*.min.css
+core/adminlte/static/adminlte/js/**/*.min.js
+core/messageset/**/*.min.js
+static/css/**/*.min.css
+static/js/**/*.min.js
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -65,3 +77,4 @@ target/
 
 # console output
 *.out
+.env

@@ -1,0 +1,221 @@
+<div class="box-body">
+    {% if show_title%}<h4>Add Credit Card:</h4>{% endif %}
+    <div class="credit-card-form-wrapper col-xs-12 col-md-6">
+        <div class="credit-card-form-field col-xs-12">
+            <label for="card-number">信用卡号</label>
+            <div class="field-input">
+                <div id="card-number">
+                    <!-- a Stripe Element will be inserted here. -->
+                </div>
+                <div class="error-message">
+                    <div id="card-number-errors" role="alert"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="credit-card-form-field col-xs-12">
+            <label for="card-name">持卡人姓名</label>
+            <div class="field-input">
+                <div class="">
+                    <input id="card-name" type="text" class="card-name form-control StripeElement"
+                           placeholder="持卡人姓名">
+                </div>
+                <div class="error-message">
+                    <div id="card-name-errors" role="alert"></div>
+                </div>
+            </div>
+        </div>
+        <div class="credit-card-form-field credit-card-form-field--expiry col-xs-6">
+            <label for="card-expiry">
+                过期年月
+            </label>
+            <div class="field-input">
+                <div id="card-expiry">
+                    <!-- a Stripe Element will be inserted here. -->
+                </div>
+                <div class="error-message">
+                    <div id="card-expiry-errors" role="alert"></div>
+                </div>
+            </div>
+
+        </div>
+        <div class="credit-card-form-field credit-card-form-field--cvc col-xs-6">
+
+            <label for="card-cvc">
+                CCV/CVC
+            </label>
+            <div class="field-input">
+                <div id="card-cvc">
+                    <!-- a Stripe Element will be inserted here. -->
+                </div>
+                <div class="error-message">
+                    <div id="card-cvc-errors" role="alert"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12">
+            <p class="clear">* papa rosoa <a target="_blank" href="http://stripe.com">stripe.com</a> asfsdf</p>
+        </div>
+        {% if error %}
+            <div class="alert alert--error">{{ error|safe }}</div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+{#    refer https://stripe.com/docs/stripe-js #}
+{#    https://github.com/stripe/elements-examples/#}
+<script src="https://js.stripe.com/v3/"></script>
+
+<style>
+    @media (min-width: 1200px) {
+        .credit-card-form-wrapper {
+            max-width: 700px;
+        }
+    }
+    .credit-card-form-wrapper label {
+        margin-top: 10px;
+    }
+
+    #submit-button {
+        margin-bottom: 20px;
+    }
+
+    .StripeElement {
+        background-color: white;
+        padding: 5px 8px;
+        border: 2px solid #e9eaea;
+        font-size: 14px;
+    }
+
+    #card-name::-webkit-input-placeholder {
+        color: #aab7c4 !important;
+    }
+
+    #card-name:-moz-placeholder { /* Firefox 18- */
+        color: #aab7c4 !important;
+    }
+
+    #card-name::-moz-placeholder { /* Firefox 19+ */
+        color: #aab7c4 !important;
+    }
+
+    #card-name:-ms-input-placeholder {
+        color: #aab7c4 !important;
+    }
+
+    .StripeElement--focus, #card-name:focus {
+        border-color: #0172de;
+    }
+
+    .StripeElement--invalid {
+        border-color: #ed1c24;
+        background-color: #ffd8dd;
+    }
+
+    .StripeElement--webkit-autofill {
+        background-color: #fefde5 !important;
+    }
+</style>
+
+
+<script>
+    // Create a Stripe client
+    var stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
+
+    // Create an instance of Elements
+    var elements = stripe.elements();
+
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+        base: {
+            color: '#32325d',
+            lineHeight: '1.42857143',
+            fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+            fontSmoothing: 'antialiased',
+            fontSize: '14px',
+            '::placeholder': {
+                color: '#aab7c4'
+            }
+        },
+        invalid: {
+            color: '#fa755a',
+            iconColor: '#fa755a',
+            ':focus': {
+                color: '#303238'
+            }
+        }
+    };
+
+    // Create an instance of the card Element
+    var cardNumber = elements.create('cardNumber', {style: style});
+    var cardExpiry = elements.create('cardExpiry', {style: style});
+    var cardCvc = elements.create('cardCvc', {style: style});
+
+    // Add an instance of the card Element into the `card-element` <div>
+    cardNumber.mount('#card-number');
+    cardExpiry.mount('#card-expiry');
+    cardCvc.mount('#card-cvc');
+
+    // Handle real-time validation errors from the card number.
+    cardNumber.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-number-errors');
+        if (event.error) {
+            console.log(event.error);
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle real-time validation errors from the card expire date .
+    cardExpiry.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-expiry-errors');
+        if (event.error) {
+            console.log(event.error);
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle real-time validation errors from the card cvc.
+    cardCvc.addEventListener('change', function (event) {
+        var displayError = document.getElementById('card-cvc-errors');
+        if (event.error) {
+            console.log(event.error);
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle form submission
+    var form = document.getElementById('payment-form');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var options = {
+            name: document.getElementById('card-name').value
+        };
+
+        stripe.createToken(cardExpiry, options).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                return false;
+            } else {
+                // Send the token to your server
+                console.log(result.token.id);
+                var input = $("<input>")
+                    .attr("type", "hidden")
+                    .attr("name", "cardToken").val(result.token.id);
+                $('#payment-form').append($(input)).submit();
+            }
+        });
+    });
+</script>

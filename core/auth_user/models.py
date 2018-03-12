@@ -3,7 +3,11 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
+from core.sms.telstra_api import telstra_sender
+from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
+from core.payments.stripe.models import StripePaymentUserMixin
+from ..messageset.models import NotificationContent, SiteMailContent
 
 
 class AuthUserManager(UserManager):
@@ -34,8 +38,16 @@ class AuthUserManager(UserManager):
             return super(AuthUserManager, self).get(mobile=mobile_or_email)
 
 
-class AuthUser(AbstractUser):
-    mobile = models.CharField(_('mobile'), max_length=30, unique=True, blank=True)
+class AuthUser(AbstractUser, StripePaymentUserMixin):
+    WEBSITE = 'WEBSITE'
+    WEIXIN = 'WEIXIN'
+    USER_TYPE_CHOICES = (
+        (WEBSITE, WEBSITE),
+        (WEIXIN, WEIXIN),
+    )
+    mobile = models.CharField(_('mobile'), max_length=128, unique=True, blank=True)
+    type = models.CharField(_('type'), max_length=32, choices=USER_TYPE_CHOICES, blank=True, default=WEBSITE)
+    # if type is WEBSIT mobile field is mobile, if type is WEIXIN mobile field is openid
 
     objects = AuthUserManager()
     REQUIRED_FIELDS = []
@@ -60,11 +72,8 @@ class AuthUser(AbstractUser):
     def is_customer(self):
         return getattr(self, 'customer') is not None
 
-    def __str__(self):
-        return '%s' % self.get_username()
-
     def get_username(self):
-        return self.mobile or self.email
+        return self.mobile or self.email or self.username
 
     def in_group(self, group_names):
         if not isinstance(group_names, (list, tuple)):
@@ -75,6 +84,42 @@ class AuthUser(AbstractUser):
         user_groups = self.groups.values_list("name", flat=True)
         intersection = set(group_names).intersection(set(user_groups))
         return bool(intersection)
+
+    @property
+    def subscriber(self):
+        # for StripePaymentUserMixin, return correct djstripe subscriber
+        return self
+
+    @property
+    def is_admin(self):
+        return self.is_superuser or self.in_group(ADMIN_GROUP)
+
+    def email_user(self, subject, message, from_email=None, **kwargs):
+        if self.email:
+            email_send_task.apply_async(args=([self.email], subject, message))
+
+    def send_sms(self, content, app_name=None):
+        if not self.mobile:
+            return
+
+        if self.mobile.startswith('04'):
+            # australia mobile
+            telstra_sender.send_sms(self.mobile, content, app_name)
+        elif self.mobile.startswith('1'):
+            # todo send sms for china mobile number
+            pass
+
+    def send_notification(self, title, content, sender=None):
+        notification_content = NotificationContent(creator=sender, title=title, contents=content)
+        notification_content.save()
+        notification_content.receivers.add(self)
+        notification_content.send()
+
+    def send_sitemail(self, title, content, sender=None):
+        sitemail_content = SiteMailContent(creator=sender, title=title, contents=content)
+        sitemail_content.save()
+        sitemail_content.receivers.add(self)
+        sitemail_content.send()
 
 
 class UserProfileMixin(object):

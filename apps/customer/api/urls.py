@@ -1,14 +1,18 @@
-from django.conf.urls import patterns, url
-from rest_framework.routers import DefaultRouter
+from django.conf.urls import url
 from core.api.routers import PostHackedRouter
-import views
+from . import views
 
-urlpatterns = patterns('',
-                       # url(r'^now/$', views.ChannelViewSet.as_view({'get': 'now_and_next_event'}),
-                       #     name="channel-event-now-and-next"),
-                       )
 router = PostHackedRouter()
 router.include_root_view = False
-router.register(r'customer', views.CustomerViewSet, 'customer')
+
+# reverse('api:customer-list'), reverse('api:customer-detail', kwargs={'pk': 1})
+router.register(r'customer', views.CustomerViewSet, base_name='customer')
+router.register(r'address', views.AddressViewSet, base_name='address')
+
+urlpatterns = [
+    url(r'^add_cart', views.AddCart.as_view(), name='add-cart'),
+    url(r'^customer/autocomplete/$', views.CustomerAutocomplete.as_view(), name='customer-autocomplete'),
+    url(r'^address/autocomplete/$', views.AddressAutocomplete.as_view(), name='address-autocomplete'),
+]
 
 urlpatterns += router.urls

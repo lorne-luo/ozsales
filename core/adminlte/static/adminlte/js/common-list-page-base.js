@@ -1,19 +1,19 @@
 var CommonListPageVue = Vue.extend({
-    el: function(){
+    el: function () {
         return '#commonDataTableRow';
     },
-    data: function(){
+    data: function () {
         return {
             // api
-            list_api_tag:undefined,
-            delete_api_tag:undefined,
-            detail_api_tag:undefined,
+            list_api_tag: undefined,
+            delete_api_tag: undefined,
+            detail_api_tag: undefined,
             // page
-            create_url_tag:undefined,
-            list_url_tag:undefined,
-            detail_url_tag:undefined,
-            update_url_tag:undefined,
-            list_url:undefined,
+            create_url_tag: undefined,
+            list_url_tag: undefined,
+            detail_url_tag: undefined,
+            update_url_tag: undefined,
+            list_url: undefined,
 
             items: [],
             userName: $("#adminlte_page_user_name").val(),
@@ -28,18 +28,20 @@ var CommonListPageVue = Vue.extend({
         }
     },
     ready: function () {
-        if(this.appName && this.modelName){
-            this.loadData(this.get_param());
-        }
+        this.ready();
 
-        // link for create new
         if (this.create_url_tag) {
             $('a#create').prop('href', Urls[this.create_url_tag]());
         }
     },
     methods: {
+        ready: function (event) {
+            if (this.appName && this.modelName) {
+                this.loadData(this.get_param());
+            }
+        },
         toggleAllBox: function (event) {
-            var table=$(event.target).closest('table');
+            var table = $(event.target).closest('table');
             $("input[name='checkboxRow']", table).prop(
                 'checked',
                 $(event.target).prop('checked')
@@ -51,15 +53,15 @@ var CommonListPageVue = Vue.extend({
                 pk = $(event.target).data('pk');
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
-            else{
+            else {
                 swal('错误', '无法获取pk', 'error');
                 return;
             }
 
             var url;
-            if (this.detail_url_tag){
+            if (this.detail_url_tag) {
                 url = Urls[this.detail_url_tag](pk);
-            }else{
+            } else {
                 url = Urls['adminlte:common_detail_page'](
                     this.appName,
                     this.modelName,
@@ -74,7 +76,7 @@ var CommonListPageVue = Vue.extend({
                 pk = $(event.target).data('pk');
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
-            else{
+            else {
                 swal('错误', '无法获取pk', 'error');
                 return;
             }
@@ -98,35 +100,35 @@ var CommonListPageVue = Vue.extend({
             else
                 delUrl = Urls['adminlte:common_delete_page'](self.appName, self.modelName);
             swal({
-                    title: "确定要删除吗?",
-                    text: "您确定要删除所选数据吗?",
-                    type: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "确定",
-                    cancelButtonText: "取消",
-                    closeOnConfirm: false,
-                    showLoaderOnConfirm: true,
-                    animation: false
-                }, function () {
-                    $.AdminLTE.apiPost(
-                        delUrl,
-                        $.param({'pk': ids.toString()}),
-                        function (resp) {
-                            self.loadData(self.get_param());
-                            swal({
-                                title: "删除成功!",
-                                type: "success",
-                                animation: false
-                            });
-                            $('input.checkboxAllRow').prop( "checked", false);
-                        }
-                    );
-                });
+                title: "确定要删除吗?",
+                text: "您确定要删除所选数据吗?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+                animation: false
+            }, function () {
+                $.AdminLTE.apiPost(
+                    delUrl,
+                    $.param({'pk': ids.toString()}),
+                    function (resp) {
+                        self.loadData(self.get_param());
+                        swal({
+                            title: "删除成功!",
+                            type: "success",
+                            animation: false
+                        });
+                        $('input.checkboxAllRow').prop("checked", false);
+                    }
+                );
+            });
         },
         removeSelected: function () {
             var ids = [], box = null;
-            if($(".content .tab-pane.active").size()>0)
+            if ($(".content .tab-pane.active").size() > 0)
                 box = $(".content .tab-pane.active input[name='checkboxRow']:checked");
             else
                 box = $(".content input[name='checkboxRow']:checked");
@@ -151,7 +153,7 @@ var CommonListPageVue = Vue.extend({
                 pk = $(event.target).data('pk');
             else if ($(event.target.parentNode).data('pk'))
                 pk = $(event.target.parentNode).data('pk');
-            else{
+            else {
                 swal('错误', '无法获取pk', 'error');
                 return;
             }

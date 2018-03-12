@@ -1,49 +1,38 @@
 # coding=utf-8
-from dal import autocomplete
-from django.contrib import admin
-from core.libs.forms import ModelForm  # extend from django.forms.ModelForm
 from django import forms
-from django.forms.models import modelformset_factory
+from django.contrib import admin
+from django.forms.models import inlineformset_factory
+
+from apps.order.models import Order
+from core.django.forms import NoManytoManyHintModelForm
+from core.django.autocomplete import FormsetModelSelect2
 from models import ExpressCarrier, ExpressOrder
 
 
-class ExpressCarrierAddForm(ModelForm):
+class ExpressCarrierAddForm(NoManytoManyHintModelForm):
+    website = forms.URLField(label=u'官网地址', max_length=30, required=True, help_text=u'官方网站地址')  # make mandatory
+
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url']
+
+
+class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
+    class Meta:
+        model = ExpressCarrier
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
                   'is_default']
 
 
-class ExpressCarrierDetailForm(ModelForm):
+class ExpressCarrierUpdateForm(ExpressCarrierAddForm):
+    pass
+
+
+class ExpressCarrierAdminForm(ExpressCarrierUpdateForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
-                  'is_default']
-
-
-class ExpressCarrierUpdateForm(ModelForm):
-    class Meta:
-        model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'track_id_regex', 'rate',
-                  'is_default']
-
-
-# class ExpressOrderAddForm(ModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
-#
-#
-# class ExpressOrderDetailForm(ModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
-#
-#
-# class ExpressOrderUpdateForm(ModelForm):
-#     class Meta:
-#         model = ExpressOrder
-#         fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+                  'seller', 'is_default']
 
 
 class ExpressOrderAddInline(admin.TabularInline):
@@ -63,42 +52,37 @@ class ExpressOrderChangeInline(admin.TabularInline):
     verbose_name_plural = 'ExpressOrder'
 
 
-class ExpressOrderInlineAddForm(ModelForm):
-    class Meta:
-        model = ExpressOrder
-        fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        super(ExpressOrderInlineAddForm, self).__init__(*args, **kwargs)
-        self.fields['order'].widget = forms.HiddenInput()
-        self.fields['order'].widget.attrs['class'] = 'form-control'
-        self.fields['carrier'].widget.attrs['class'] = 'form-control'
-        self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
-        self.fields['track_id'].widget.attrs['class'] = 'form-control'
-        self.fields['address'].widget.attrs['class'] = 'form-control'
-        self.fields['fee'].widget.attrs['class'] = 'form-control'
-        self.fields['weight'].widget.attrs['class'] = 'form-control'
-        self.fields['remarks'].widget = forms.HiddenInput()
-        self.fields['remarks'].widget.attrs['class'] = 'form-control'
-
-
-class ExpressOrderInlineEditForm(ModelForm):
-    carrier = forms.ModelChoiceField(
-        queryset=ExpressCarrier.objects.all().order_by('-is_default'), required=False,
-        widget=autocomplete.ModelSelect2(url='express:expresscarrier-autocomplete',
-                                         attrs={'data-placeholder': u'选择快递', })
-    )
+class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
+    carrier = forms.ModelChoiceField(label=u'物流', queryset=ExpressCarrier.objects.all(), required=False,
+                                     widget=FormsetModelSelect2(url='api:carrier-autocomplete',
+                                                                attrs={'data-placeholder': u'物流中英文名称...',
+                                                                       'class': 'form-control'})
+                                     )
+    track_id = forms.CharField(label=u'单号', max_length=30, required=False, help_text=u'单 号',
+                               widget=forms.TextInput(attrs={'class': 'form-control'}))
+    fee = forms.DecimalField(label=u'运费', max_digits=8, decimal_places=2, required=False, help_text=u'运 费',
+                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    id_upload = forms.BooleanField(label=u'身份证', required=False)
 
     class Meta:
         model = ExpressOrder
-        fields = ['carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload']
+        fields = ['carrier', 'track_id', 'order', 'fee', 'id_upload']
 
     def __init__(self, *args, **kwargs):
         super(ExpressOrderInlineEditForm, self).__init__(*args, **kwargs)
         self.fields['order'].widget = forms.HiddenInput()
         self.fields['carrier'].widget.attrs['autocomplete'] = 'off'
-        self.fields['carrier'].queryset = ExpressCarrier.objects.all().order_by('-is_default')
+
+    def clean_fee(self):
+        return self.cleaned_data.get('fee') or 0
+
+    def clean(self):
+        carrier = self.cleaned_data.get('carrier')
+        track_id = self.cleaned_data.get('track_id')
+        if not carrier and not ExpressCarrier.identify_carrier(track_id):
+            self.add_error('carrier', u'未能自动识别物流公司，请手动选择')
+
+        return self.cleaned_data
 
 
-ExpressOrderFormSet = modelformset_factory(ExpressOrder, form=ExpressOrderInlineEditForm,
-                                           can_order=False, can_delete=False, extra=1)
+ExpressOrderFormSet = inlineformset_factory(Order, ExpressOrder, form=ExpressOrderInlineEditForm, extra=1)

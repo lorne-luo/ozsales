@@ -1,21 +1,28 @@
 # -*- coding: utf-8 -*-
+import os
 import datetime
 import logging
+import shlex
 import urllib2
 import pytz
 import redis
+import python_forex_quotes
+import subprocess
+from django.utils import timezone
+from django.conf import settings
 from decimal import Decimal
-from yahoo_finance import Currency
 from bs4 import BeautifulSoup
-from celery.task import periodic_task
+from celery.task import periodic_task, task
+
 from celery.task.schedules import crontab
 from dateutil import parser
+from dateutil.relativedelta import relativedelta
 
-from apps.order.models import Order, ORDER_STATUS
-from core.sms.telstra_api import MessageSender
-from settings.settings import rate
+from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
+from core.sms.models import Sms
+from core.sms.telstra_api import TELSTRA_SMS_MONTHLY_COUNTER, telstra_sender
 from ..express.models import ExpressOrder
-from .models import DealSubscribe
+from .models import DealSubscribe, forex
 
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
@@ -47,7 +54,7 @@ def ozbargin_task():
         return
 
     data = urllib2.urlopen(urllib2.Request(url))
-    soup = BeautifulSoup(data, "html.parser")
+    soup = BeautifulSoup(data, "lxml-xml")
     items = soup.find_all("item")
     last_date_str = r.get(ozbargin_last_date)
     last_date = parser.parse(last_date_str) if last_date_str else datetime.datetime(2016, 1, 1, 0, 0)
@@ -64,7 +71,7 @@ def ozbargin_task():
         except:
             votes_pos = 0
         org_url = meta['url']
-        pub_date = item.pubdate.text
+        pub_date = item.pubDate.text
 
         try:
             item_date = parser.parse(pub_date)
@@ -86,7 +93,6 @@ def ozbargin_task():
         elif item_date > new_last_date:
             new_last_date = item_date
 
-        sender = MessageSender()
         for subscribe in subscribe_list:
             includes = subscribe.get_keyword_list()
             excludes = subscribe.get_exclude_list()
@@ -105,9 +111,17 @@ def ozbargin_task():
                 description = ' '.join(x.strip() for x in text_list)
                 summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
                 content = summary + description
-                result, detail = sender.send_to_self(content)
-                # print 'sending', content
-                log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
+                content = content[:telstra_sender.LENGTH_PER_SMS]
+
+                # avoid duplication
+                day_ago = timezone.now() - relativedelta(days=1)
+                if subscribe.mobile and not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile,
+                                                               content=content).exists():
+                    result, detail = telstra_sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
+                    subscribe.msg_count += 1
+                    subscribe.save(update_fields=['msg_count'])
+                    # print 'sending', content
+                    log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
     r.set(ozbargin_last_date, new_last_date)
 
@@ -136,7 +150,7 @@ def smzdm_task():
         title = item.title.text
         link = item.link.text
         description = item.description.text
-        pub_date = item.pubdate.text
+        pub_date = item.pubDate.text
 
         try:
             item_date = parser.parse(pub_date)
@@ -171,8 +185,7 @@ def smzdm_task():
             description = ' '.join(x.strip() for x in text_list)
             summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
-            sender = MessageSender()
-            result, detail = sender.send_to_self(content)
+            result, detail = telstra_sender.send_to_admin(content)
             # print 'sending', content
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
@@ -180,21 +193,70 @@ def smzdm_task():
 
 
 @periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
-def get_aud_rmb():
-    # url = 'http://download.finance.yahoo.com/d/quotes.csv?s=AUDCNY=X&f=sl1d1t1ba&e=.csv'
-    audcny = Currency('AUDCNY')
-    value = audcny.get_rate()
-    rate.aud_rmb_rate = Decimal(value)
-    sender = MessageSender()
-    sender.send_to_self(value)
+def get_forex_quotes():
+    api_key = settings.ONE_FORGE_API_KEY
+    client = python_forex_quotes.ForexDataClient(api_key)
+    currency_pairs = ['AUDCNH', 'USDCNH', 'NZDCNH', 'EURCNH', 'GBPCNH', 'CADCNH', 'JPYCNH']
+    quotes = client.getQuotes(currency_pairs)
+    msg = ''
+    for quote in quotes:
+        if not quote['ask']:
+            continue
+        value = Decimal(str(quote['ask']))
+        setattr(forex, quote['symbol'], value)
+        msg += '%s: %.4f\n' % (quote['symbol'], value)
 
-    return rate.aud_rmb_rate
+    telstra_sender.send_to_admin(msg.strip())
 
 
-@periodic_task(run_every=crontab(hour=10, minute=30))
+@periodic_task(run_every=crontab(hour=20, minute=30))
 def express_id_upload_task():
     unupload_order = ExpressOrder.objects.filter(id_upload=False)
     if unupload_order.exists():
         ids = ','.join([o.track_id for o in unupload_order])
-        sender = MessageSender()
-        sender.send_to_self('Upload ID for %s' % ids)
+        telstra_sender.send_to_admin('Upload ID for %s' % ids)
+
+    log.info('[Express] Daily id upload checking.')
+
+
+@periodic_task(run_every=crontab(hour=0, minute=1))
+def reset_email_daily_counter():
+    r.set(ALIYUN_EMAIL_DAILY_COUNTER, 0)
+    log.info('[EMAIL] Reset aliyun email daily counter.')
+
+
+@periodic_task(run_every=crontab(hour=0, minute=1, day_of_month=1))
+def reset_sms_monthly_counter():
+    r.set(TELSTRA_SMS_MONTHLY_COUNTER, 0)
+    log.info('[SMS] Reset Telstra sms monthly counter.')
+
+
+def run_shell_command(command_line):
+    """ accept shell command and run"""
+    command_line_args = shlex.split(command_line)
+    log.info('Subprocess: "' + ' '.join(command_line_args) + '"')
+
+    try:
+        command_line_process = subprocess.Popen(
+            command_line_args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+
+        command_line_process.communicate()
+        command_line_process.wait()
+    except (OSError, subprocess.CalledProcessError) as exception:
+        log.info('Exception occured: ' + str(exception))
+        log.info('Subprocess failed')
+        return False
+    else:
+        # no exception was raised
+        log.info('Subprocess finished')
+    return True
+
+
+@task
+def guetzli_compress_image(image_path):
+    GUETZLI_CMD = '/opt/guetzli/bin/Release/guetzli'
+
+    if os.path.exists(GUETZLI_CMD):
+        cmd = '%s --quality 84 %s %s' % (GUETZLI_CMD, image_path, image_path)
+        run_shell_command(cmd)

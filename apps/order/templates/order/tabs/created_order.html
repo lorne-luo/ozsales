@@ -1,0 +1,184 @@
+<div class="tab-pane active" id="pane-CREATED">
+    <table class="table table-hover" data-status="CREATED">
+        <thead>
+        <tr>
+            <th class="text-center hidden-sm hidden-xs" style="width:60px;">
+                <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
+            </th>
+            <th>
+                <i class="visible-sm-inline-block visible-xs-inline-block fa fa-plus-square text-muted show_all_detail"
+                   aria-hidden="true" v-on:click="show_all_detail"></i>
+                Date
+            </th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Price</th>
+            <th class="hidden-sm hidden-xs">Ship</th>
+            <th class="hidden-sm hidden-xs"></th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+        </tr>
+        </tfoot>
+        <tbody v-for="item in created_items">
+        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+            <td class="text-center hidden-sm hidden-xs">
+                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+            </td>
+            <td>
+                <i class="visible-sm-inline-block visible-xs-inline-block fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.id !!}"></i>
+                <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
+            </td>
+            <td>
+                <a href="{!! item.customer_url !!}">{!! item.customer_display !!}</a>
+            </td>
+            <td>
+                <template v-if="item.status == 'CREATED'">
+                    <a class="label label-info"
+                       v-on:click="next_ship_status(item.id,item.next_status,'在途', $event)">新建</a>
+                </template>
+                <template v-if="item.status == 'SHIPPING'">
+                    <a class="label label-success" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">在途</a>
+                </template>
+                <template v-if="item.status == 'DELIVERED'">
+                    <a class="label label-warning" v-on:click="next_ship_status(item.id,item.next_status,'完成', $event)">寄达</a>
+                </template>
+                <template v-if="item.status == 'FINISHED'">
+                    <a class="label label-danger" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">完成</a>
+                </template>
+            </td>
+            <td class="hidden-sm hidden-xs">
+                AUD:{!! item.product_cost_aud !!} + {!! item.shipping_fee !!} = {!! item.total_cost_aud !!}<br/>
+                RMB:
+                <template v-if="item.origin_sell_rmb == item.sell_price_rmb">
+                    {!! item.sell_price_rmb !!}
+                </template>
+                <template v-else>
+                    [{!! item.origin_sell_rmb !!}] {!! item.sell_price_rmb !!}
+                </template>
+                - {!! item.total_cost_rmb !!} = {!! item.profit_rmb !!}
+                <template v-if="item.is_paid">
+                </template>
+                <template v-else>
+                    <a class="label-as-badge label label-danger pay" v-on:click="pay(item.id, $event)">
+                        <i class="fa fa-jpy"></i>
+                    </a>
+                </template>
+            </td>
+            <td class="visible-sm visible-xs">
+                <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
+                <div class="pull-right action-button">
+                    <template v-if="item.status == 'CREATED'">
+                        <template v-if="!item.is_paid">
+                            <a type="button" data-toggle="modal" data-target="#add-product"
+                               class="btn btn-sm btn-success"
+                               data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                                <i class="fa fa-cart-plus fa-inverse"></i>
+                            </a>
+                        </template>
+                        <a type="button" data-toggle="modal" data-target="#add-parcel"
+                           class="btn btn-sm btn-info"
+                           data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-truck fa-inverse"></i>
+                        </a>
+                    </template>
+
+                    <template v-if="!item.is_paid">
+                        <a class="btn btn-sm btn-danger pay" v-on:click="pay(item.id, $event)">
+                            <i class="fa fa-jpy" aria-hidden="true"></i>
+                        </a>
+                    </template>
+                </div>
+            </td>
+            <td class="hidden-sm hidden-xs">
+                {!! item.shipping_order !!}
+            </td>
+
+            <td class="text-right hidden-sm hidden-xs">
+                {% if page_model_perms.change %}
+                    <template v-if="item.status == 'CREATED'">
+                        <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"
+                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
+                        </button>
+                        <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm"
+                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            <i class="fa fa-lg fa-truck fa-inverse"></i>
+                        </button>
+                    </template>
+
+                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]"
+                       class="btn btn-warning btn-sm">
+                        <i class="fa fa-lg fa-pencil fa-inverse"></i>
+                    </a>
+                {% endif %}
+                {% if page_model_perms.delete %}
+                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+                       v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                        <i class="fa fa-lg fa-trash-o fa-inverse"></i>
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr class="hide" id="detail_{!! item.id !!}">
+            <td colspan="4" class="hidden-sm hidden-xs"></td>
+            <td colspan="100%">
+                <div>
+                    {!! item.address_display !!}
+                </div>
+                <div class="pull-left">
+                    <template v-for="product in item.products">
+                    <span>
+                        <template v-if="item.status == 'CREATED'">
+                            <input type="checkbox" v-on:click="makr_as_purchased($event)"
+                                   checked="#[product.is_purchased]" name="markPurchased" value="#[product.id]"/>
+                        </template>
+                        {!! product.name !!} X {!! product.amount !!}
+                    </span><br/>
+                    </template>
+                </div>
+                <div class="pull-right visible-sm visible-xs">
+                    {!! item.shipping_order !!}
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="form-inline" align="center">
+        <ul class="pagination pagination-sm no-margin form-group">
+            <li v-if="created_currentPage-2 > 1">
+                <a href="javascript:void(0);" page="1" v-on:click="page_created" class="text-bold" title="第1页">首页</a>
+            </li>
+            <li v-if="created_currentPage > 1">
+                <template v-for="n in 2">
+                    <a v-if="created_currentPage-2+n > 0" href="javascript:void(0);" page="#[created_currentPage-2+n]"
+                       style="width: 45px"
+                       title="第#[created_currentPage-2+n]页" v-on:click="page_created" class="text-bold">#[created_currentPage-2+n]</a>
+                </template>
+            </li>
+            <li v-on:click="reload" class="disabled">
+                <a style="width: 45px" href="javascript:void(0);">#[created_currentPage]</a>
+            </li>
+            <li v-if="created_currentPage < created_totalPage">
+                <template v-for="n in 2">
+{#                    use -0 to avoid combined as string#}
+                    <a v-if="created_currentPage-0+n+1 <=created_totalPage" href="javascript:void(0);"
+                       page="#[created_currentPage-0+n+1]" style="width: 45px"
+                       title="第#[created_currentPage-0+n+1]页" v-on:click="page_created" class="text-bold">#[created_currentPage-0+n+1]</a>
+                </template>
+            </li>
+            <li v-if="created_currentPage-0+2 < created_totalPage">
+                <a href="javascript:void(0);" page="#[created_totalPage]" v-on:click="page_created"
+                   title="第#[created_totalPage]页"
+                   class="text-bold">末页</a>
+            </li>
+        </ul>
+        <br/>
+        <div class="form-group">
+            共 #[created_count] 条, 每页 #[created_perPage] 条, 第 #[created_currentPage]/#[created_totalPage] 页
+        </div>
+    </div>
+    <br/>
+</div>

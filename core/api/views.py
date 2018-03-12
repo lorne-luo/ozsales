@@ -1,17 +1,24 @@
 # coding=utf-8
+import json
 import sys
-from django.http import Http404
+
+import subprocess
+from django.http import JsonResponse
 from django.core.exceptions import ImproperlyConfigured
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ViewDoesNotExist, ObjectDoesNotExist
-from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, list_route
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
+from rest_framework_extensions.mixins import PaginateByMaxMixin
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, GenericAPIView
 from .filters import (AjaxDatatableOrderingFilter,
-                                         AjaxDatatablePagination,
-                                         AjaxDatatableSearchFilter,
-                                         pk_in_filter_factory)
+                      AjaxDatatablePagination,
+                      AjaxDatatableSearchFilter,
+                      pk_in_filter_factory)
 
 
 def get_app_model_name(kwargs):
@@ -83,8 +90,8 @@ class ContentTypeObjectView(GenericAPIView):
 
 
 class CommonListCreateAPIView(ListCreateAPIView, ContentTypeObjectView):
-    filter_backends = (filters.SearchFilter,
-                       filters.DjangoFilterBackend,
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
                        filters.OrderingFilter)
 
     def get(self, request, *args, **kwargs):
@@ -130,7 +137,8 @@ class AjaxDatableView(object):
         self.pagination_class = AjaxDatatablePagination
 
         # get all events for channel
-        self.filter_backends = getattr(self, 'filter_backends', []) + [AjaxDatatableOrderingFilter, AjaxDatatableSearchFilter]
+        self.filter_backends = getattr(self, 'filter_backends', []) + [AjaxDatatableOrderingFilter,
+                                                                       AjaxDatatableSearchFilter]
         queryset = self.get_queryset()
         records_total = queryset.count()  # get total count
         queryset = self.filter_queryset(queryset)
@@ -151,3 +159,64 @@ class AjaxDatableView(object):
         }
         result['data'] = serializer.data
         return Response(result)
+
+
+class CommonViewSet(PaginateByMaxMixin, ModelViewSet):
+    """ provide list/retrive/patch/delete restful api for model """
+    max_paginate_by = 200
+    filter_backends = (DjangoFilterBackend,
+                       filters.SearchFilter,
+                       filters.OrderingFilter)
+
+    # subclass implement below to specify permission for acitons
+    # permissions_map = {
+    #     'retrieve': [CommonAPIPermissions],
+    #     'create': [CommonAPIPermissions],
+    #     'list': [CommonAPIPermissions],
+    #     'update': [CommonAPIPermissions],
+    #     'delete': [CommonAPIPermissions],  # customized action below
+    #     'destroy': [CommonAPIPermissions],
+    # }
+
+    def get_permissions(self):
+        if hasattr(self, 'permissions_map'):
+            if self.action.lower() in self.permissions_map:
+                self.permission_classes = self.permissions_map[self.action]
+
+        return super(CommonViewSet, self).get_permissions()
+
+    @list_route(methods=['post', 'delete'])
+    def delete(self, request, pk=None):
+        """ for batch delete """
+        pk = request.POST.get('pk')
+        pk = pk.split(',')
+        queryset = self.filter_queryset(self.get_queryset())
+        queryset = queryset.filter(pk__in=pk)
+        if queryset.count():
+            queryset.delete()
+        else:
+            data = {'detail': 'Object not found, or permission denied.'}
+            return Response(data, status=404)
+        return JsonResponse({'success': True}, status=200)
+
+    @list_route(methods=['post', 'get'])
+    def page(self, request):
+        """ pagenation api for jquery.dataTable """
+        draw = request.GET.get('draw', 0)
+        length = int(request.GET.get('length', 5))
+        start = int(request.GET.get('start', 0))
+        order_column = int(request.GET.get('order[0][column]', 0))
+        order_direction = request.GET.get('order[0][dir]', 'asc')
+        search_keyword = request.GET.get('search[value]', '')
+        raise NotImplementedError
+
+
+class GitCommitInfoView(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        data = subprocess.check_output(
+            ['git', 'show', '-s', '--date=iso8601', '--format=\'{"commit": "%h", "date": "%ad", "comment": "%s"}\''])
+        commit = data.decode("utf-8").strip().strip('\'')
+
+        return Response(json.loads(commit))

@@ -10,7 +10,7 @@
 
 {% block content %}
     <div class="row" id="commonDataTableRow">
-        <div class="col-xs-12">
+        <div class="col-xs-12 full-width">
             <div class="box box-info">
                 <div class="box-header">
                     <div class="row">
@@ -89,19 +89,19 @@
                                     {% for field in table_fields %}
                                         {% if field == 'id' %}
                                             <td class="text-right">
-                                                {% if page_model_perms.view %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
-                                                   <i class="fa fa-bars fa-inverse"></i>
-                                                </a>
-                                                {% endif %}
+{#                                                {% if page_model_perms.view %}#}
+{#                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">#}
+{#                                                   <i class="fa fa-lg fa-bars fa-inverse"></i>#}
+{#                                                </a>#}
+{#                                                {% endif %}#}
                                                 {% if page_model_perms.change %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
-                                                    <i class="fa fa-pencil fa-inverse"></i>
+                                                    <i class="fa fa-lg fa-pencil fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                                                    <i class="fa fa-trash-o fa-inverse"></i>
+                                                    <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                             </td>
@@ -147,19 +147,19 @@
                                         {% if field == 'id' %}
                                           {% block item_buttons %}
                                             <td class="text-right hidden-sm hidden-xs">
-                                                {% if page_model_perms.view %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">
-                                                   <i class="fa fa-bars fa-inverse"></i>
-                                                </a>
-                                                {% endif %}
+{#                                                {% if page_model_perms.view %}#}
+{#                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">#}
+{#                                                   <i class="fa fa-lg fa-bars fa-inverse"></i>#}
+{#                                                </a>#}
+{#                                                {% endif %}#}
                                                 {% if page_model_perms.change %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit" href="#[item.edit_url]" class="btn btn-warning btn-sm">
-                                                    <i class="fa fa-pencil fa-inverse"></i>
+                                                    <i class="fa fa-lg fa-pencil fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
                                                 <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
-                                                    <i class="fa fa-trash-o fa-inverse"></i>
+                                                    <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
                                             </td>
@@ -177,11 +177,7 @@
             </div>
             {% endblock %}
 
-                {% block common_list_pagination %}
-                    <div class="box-footer clearfix">
-                        {% include 'adminlte/common_list_pagination.html' %}
-                    </div>
-                {% endblock %}
+            {% block common_list_pagination %}{% endblock %}
 
             </div>
         </div>

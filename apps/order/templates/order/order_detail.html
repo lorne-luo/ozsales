@@ -29,7 +29,7 @@
   <tr>
     <th>地址</th>
     <td>
-      {{ object.address }}
+      {{ object.address_text }}
     </td>
   </tr>
   <tr>
@@ -82,21 +82,30 @@
   </tr>
 
   <tr>
-    <th>物流</th>
-    <td>
-      <span>寄出日期: {{ object.ship_time|date }}</span>
-      <br/>
-      {% for ex in object.express_orders.all %}
-        [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
-        {% if ex.get_track_url %}
-          <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a><br/>
-        {% else %}
-          {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
+      <th>物流</th>
+      <td>{% if object.ship_time %}寄出日期: {{ object.ship_time|date }}{% endif %}</td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <table>
+        {% for ex in object.express_orders.all %}
+        <tr><td>
+            [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
+            {% if ex.get_track_url %}
+              <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a> {% if ex.is_delivered %}(已寄达){% endif %}
+            {% else %}
+              {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
+            {% endif %}
+        </td></tr>
+        {% if ex.last_track %}
+        <tr><td>
+            <ul><li>{{ ex.last_track }}</li></ul>
+        </td></tr>
         {% endif %}
-      {% endfor %}
+        {% endfor %}
+      </table>
     </td>
   </tr>
-
 {% endblock %}
 
 

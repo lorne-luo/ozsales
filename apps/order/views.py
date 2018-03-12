@@ -1,27 +1,22 @@
 # coding=utf-8
-from django.shortcuts import get_object_or_404
-from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
-from django.utils.translation import ugettext as _
+from braces.views import MultiplePermissionsRequiredMixin
+from django.contrib import messages
+from django.contrib.auth import login
 from django.core.urlresolvers import reverse
 from django.db import transaction
-from django.core.exceptions import ValidationError, SuspiciousOperation
-from django.forms.models import inlineformset_factory, modelformset_factory
-from django.views.generic.edit import BaseUpdateView, ProcessFormView
-from rest_framework.decorators import list_route
-from django_filters import FilterSet
-from django.db.models import Q
-from django.contrib.auth import authenticate, login
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
-from braces.views import MultiplePermissionsRequiredMixin, PermissionRequiredMixin, GroupRequiredMixin
 
-from core.auth_user.constant import MEMBER_GROUP, FREE_MEMBER_GROUP, ADMIN_GROUP
-from core.views.views import CommonContextMixin, CommonViewSet
-from models import Order, ORDER_STATUS, OrderProduct
-from ..member.models import Seller
+from apps.express.views import CarrierInfoRequiredMixin
+from core.django.permission import SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
+from core.django.views import CommonContextMixin
+from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
-from ..express.forms import ExpressOrderInlineAddForm, ExpressOrderFormSet
-import serializers
-import forms
+from ..express.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
+from ..member.models import Seller
+from . import forms
 
 
 def change_order_status(request, order_id, status_value):
@@ -69,10 +64,16 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         return self.render_to_response(context)
 
 
-class OrderListView(GroupRequiredMixin, CommonContextMixin, ListView):
+class OrderListView(CarrierInfoRequiredMixin, SellerRequiredMixin, CommonContextMixin, ListView):
     model = Order
     template_name_suffix = '_list'  # order/order_list.html
-    group_required = [MEMBER_GROUP, FREE_MEMBER_GROUP]
+
+    def get_context_data(self, **kwargs):
+        self.prompt_incomplete_carrier()
+        context = super(OrderListView, self).get_context_data(**kwargs)
+        context['expressorder_form'] = ExpressOrderInlineEditForm()
+        context['orderproduct_form'] = forms.OrderProductFormForList()
+        return context
 
 
 class OrderMemberListView(CommonContextMixin, ListView):
@@ -97,20 +98,11 @@ class OrderMemberListView(CommonContextMixin, ListView):
         return super(OrderMemberListView, self).get(self, request, *args, **kwargs)
 
 
-class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateView):
+class OrderAddView(SellerRequiredMixin, CommonContextMixin, CreateView):
     model = Order
     form_class = forms.OrderAddForm
     # template_name = 'adminlte/common_form.html'
     template_name = 'order/order_add.html'
-    permissions = {
-        "all": ("order.add_order",)
-    }
-
-    def get_success_url(self):
-        if '_continue' in self.request.POST and self.object:
-            return reverse('order:order-update', args=[self.object.id])
-        else:
-            return reverse('order:order-list-short')
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -121,13 +113,12 @@ class OrderAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, CreateV
             return self.form_invalid(form)
 
 
-class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class OrderUpdateView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderUpdateForm
     template_name = 'order/order_form.html'
-    permissions = {
-        "all": ("order.change_order",)
-    }
+    products_prefix = 'products'
+    express_orders_prefix = 'express_orders'
 
     def get_success_url(self):
         if '_continue' in self.request.POST and self.object:
@@ -137,81 +128,58 @@ class OrderUpdateView(MultiplePermissionsRequiredMixin, CommonContextMixin, Upda
 
     def get_context_data(self, **kwargs):
         context = super(OrderUpdateView, self).get_context_data(**kwargs)
+        instance = getattr(self, 'object')
 
-        context['new_product_form'] = forms.OrderProductInlineAddForm(prefix='products')
-        product_forms = forms.OrderProductFormSet(queryset=self.object.products.all(), prefix='products')
-        context['product_forms'] = product_forms
+        if self.request.POST:
+            context['product_formset'] = forms.OrderProductFormSet(self.request.POST, self.request.FILES,
+                                                                   prefix=self.products_prefix,
+                                                                   instance=instance)
+            context['express_formset'] = ExpressOrderFormSet(self.request.POST, self.request.FILES,
+                                                             prefix=self.express_orders_prefix,
+                                                             instance=instance)
+        else:
+            context['product_formset'] = forms.OrderProductFormSet(prefix=self.products_prefix, instance=instance)
 
-        context['new_express_form'] = ExpressOrderInlineAddForm(prefix='express_orders')
-        express_forms = ExpressOrderFormSet(queryset=self.object.express_orders.all(), prefix='express_orders')
-        context['express_forms'] = express_forms
+            context['express_formset'] = ExpressOrderFormSet(prefix=self.express_orders_prefix, instance=instance)
 
         return context
 
-    def save_product_formset(self, request):
-        products_formset = forms.OrderProductFormSet(request.POST, request.FILES, prefix='products')
-        for form in products_formset:
-            form.is_valid()
-            if form.instance.product_id or form.instance.name:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
-                form.instance.order = self.object
-            else:
-                form._changed_data = []
-            if form._errors and 'order' in form._errors:
-                del form._errors['order']
-
-        if not products_formset.is_valid():
-            raise SuspiciousOperation(str(products_formset.errors))
-        products_formset.save()
-
-    def save_express_formset(self, request):
-        express_formset = ExpressOrderFormSet(request.POST, request.FILES, prefix='express_orders')
-        for form in express_formset:
-            form.is_valid()
-            if form.instance.track_id:
-                form.fields['order'].initial = self.object.id
-                form.base_fields['order'].initial = self.object.id
-                form.changed_data.append('order')
-                form.instance.order_id = self.object.id
-                form.instance.order = self.object
-            else:
-                form._changed_data = []
-            if form._errors and 'order' in form._errors:
-                del form._errors['order']
-
-        if not express_formset.is_valid():
-            raise SuspiciousOperation(str(express_formset.errors))
-        express_formset.save()
-
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        form = self.get_form()
+        context = self.get_context_data(form=form)
+        product_formset = context['product_formset']
+        express_formset = context['express_formset']
 
-        # order products
-        self.save_product_formset(request)
-
-        # express orders
-        self.save_express_formset(request)
-
-        return ProcessFormView.post(self, request, *args, **kwargs)
-        # return super(OrderUpdateView, self).post(request, *args, **kwargs)
+        product_formset_valid = product_formset.is_valid()
+        express_formset_valid = express_formset.is_valid()
+        if form.is_valid() and product_formset_valid and express_formset_valid:
+            try:
+                with transaction.atomic():
+                    result = self.form_valid(form)
+                    product_formset.instance = self.object
+                    product_formset.save()
+                    express_formset.instance = self.object
+                    express_formset.save()
+                    return result
+            except Exception as ex:
+                # from invalid
+                form.add_error(None, str(ex))
+                messages.error(self.request, str(ex))
+                return self.render_to_response(context)
+        else:
+            # from invalid
+            return self.render_to_response(context)
 
 
 class OrderAddDetailView(OrderUpdateView):
-    permissions = {
-        "all": ("order.add_order",)
-    }
-
     def get_object(self, queryset=None):
         try:
             object = super(OrderAddDetailView, self).get_object()
         except:
             object = Order(customer_id=self.kwargs['customer_id'])
             object.address_id = self.request.POST['address']
-            object.seller = self.request.user.profile
+            object.seller = self.request.profile
             object.save()
         return object
 
@@ -220,43 +188,36 @@ class OrderAddDetailView(OrderUpdateView):
         if not Customer.objects.filter(id=customer_id).exists():
             return HttpResponseRedirect(reverse('order:order-add'))
 
-        self.object = Order(customer_id=customer_id)
+        self.object = Order(customer_id=customer_id, seller=self.request.profile)
         form = self.get_form()
         return self.render_to_response(self.get_context_data(form=form))
 
-    @transaction.atomic
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
+        form = self.get_form()
+        context = self.get_context_data(form=form)
+        product_formset = context['product_formset']
+        express_formset = context['express_formset']
 
-        # fill express_orders-%s-order field
-        products_formset_count = int(request.POST['products-TOTAL_FORMS'])
-        express_formset_count = int(request.POST['express_orders-TOTAL_FORMS'])
-        request.POST._mutable = True
-        for i in range(products_formset_count):
-            key = 'products-%s-order' % i
-            product_key = 'products-%s-product' % i
-            name_key = 'products-%s-name' % i
-            if request.POST[product_key] or request.POST[name_key]:
-                request.POST[key] = self.object.id
-
-        for i in range(express_formset_count):
-            key = 'express_orders-%s-order' % i
-            track_key = 'express_orders-%s-track_id' % i
-            if request.POST[track_key]:
-                request.POST[key] = self.object.id
-        request.POST._mutable = False
-
-        # order products
-        self.save_product_formset(request)
-
-        # express orders
-        self.save_express_formset(request)
-
-        next = request.POST.get('next')
-        if next:
-            url = reverse('order:order-update', args=[self.object.id])
-            return HttpResponseRedirect(url)
-        return HttpResponseRedirect(self.get_success_url())
+        product_formset_valid = product_formset.is_valid()
+        express_formset_valid = express_formset.is_valid()
+        if form.is_valid() and product_formset_valid and express_formset_valid:
+            try:
+                with transaction.atomic():
+                    result = self.form_valid(form)
+                    product_formset.instance = self.object
+                    product_formset.save()
+                    express_formset.instance = self.object
+                    express_formset.save()
+                    return result
+            except Exception as ex:
+                # from invalid
+                form.add_error(None, str(ex))
+                messages.error(self.request, str(ex))
+                return self.render_to_response(context)
+        else:
+            # from invalid
+            return self.render_to_response(context)
 
 
 class OrderDetailView(CommonContextMixin, UpdateView):
@@ -264,8 +225,8 @@ class OrderDetailView(CommonContextMixin, UpdateView):
     form_class = forms.OrderDetailForm
 
     def get_template_names(self):
-        if self.request.user.is_superuser:
-            return 'order/order_detail_admin.html'
+        if self.request.profile == self.object.seller:
+            return 'order/order_detail_owner.html'
         else:
             return 'order/order_detail.html'
 
@@ -297,47 +258,10 @@ class OrderPayView(CommonContextMixin, UpdateView):
         return ip.strip()
 
     def get_context_data(self, **kwargs):
-        from ..weixin.models import WxApp
         context = super(OrderPayView, self).get_context_data(**kwargs)
         self.object = self.get_object()
         context['jsapi'] = self.object.get_jsapi(self.get_ip())
         return context
-
-
-class OrderFilter(FilterSet):
-    class Meta:
-        model = Order
-        fields = {
-            'status': ['in', 'exact'],
-            'customer__name': ['exact', 'contains']
-        }
-
-
-class NewOrderFilter(FilterSet):
-    class Meta:
-        model = Order
-
-    @property
-    def qs(self):
-        qs = super(NewOrderFilter, self).qs.filter(Q(status=ORDER_STATUS.CREATED) | Q(is_paid=False))
-        return qs
-
-
-class OrderViewSet(GroupRequiredMixin, CommonViewSet):
-    """ api views for Order """
-    serializer_class = serializers.OrderSerializer
-    filter_class = OrderFilter
-    filter_fields = ['id']
-    search_fields = ['customer__name', 'address__name', 'address__address']
-    group_required = [ADMIN_GROUP, MEMBER_GROUP, FREE_MEMBER_GROUP]
-
-    def get_queryset(self):
-        return Order.objects.filter(seller=self.request.user.profile).select_related('address', 'customer')
-
-    @list_route(methods=['post', 'get'])
-    def new(self, request, *args, **kwargs):
-        self.filter_class = NewOrderFilter
-        return super(OrderViewSet, self).list(self, request, *args, **kwargs)
 
 
 class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
@@ -349,29 +273,8 @@ class OrderProductListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
     }
 
 
-class OrderProductDetailView(MultiplePermissionsRequiredMixin, CommonContextMixin, UpdateView):
+class OrderProductDetailView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateView):
     """ Detail views for OrderProduct """
     model = OrderProduct
     form_class = forms.OrderProductDetailForm
     template_name = 'adminlte/common_detail_new.html'
-    permissions = {
-        "all": ("order.view_orderproduct",)
-    }
-
-
-class OrderProductViewSet(CommonViewSet):
-    """ api views for OrderProduct """
-    serializer_class = serializers.OrderProductSerializer
-    filter_fields = ['id']
-    search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_en', 'product__name_cn',
-                     'product__brand__name_en', 'product__brand__name_cn']
-
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            queryset = OrderProduct.objects.all()
-        elif self.request.user.is_authenticated():
-            queryset = OrderProduct.objects.filter(order__customer__seller=self.request.user)
-        else:
-            queryset = OrderProduct.objects.none()
-
-        return queryset.select_related('order', 'product')

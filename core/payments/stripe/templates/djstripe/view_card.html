@@ -1,0 +1,171 @@
+{% extends 'adminlte/base.html' %}
+{% load  static %}
+
+{% block base_head_title %}View credit card{% endblock %}
+{% block base_head_title_system_name %}OZSALES{% endblock %}
+{% block base_content_header %}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-12 col-md-4">
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h2 class="box-title">支付方式</h2>
+                </div>
+                <div class="box-body">
+                    <div class="credit-card-form-field col-xs-12">
+                        <label class="control-label" for="card-number">CARD NUMBER</label>
+                        <div class="field-input">
+                            <div id="card-number">
+                                **** **** **** <span>{{ object.last4 }}</span> <i class="fa fa-cc-visa fa-lg"></i>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="credit-card-form-field col-xs-12">
+                        <label for="card-name">CARD HOLDERS NAME</label>
+                        <div class="field-input">
+                            <div class="">
+                                <span>{{ object.name|default:"" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="credit-card-form-field credit-card-form-field--expiry col-xs-12">
+                        <label for="card-expiry">
+                            EXPIRY DATE
+                        </label>
+                        <div class="field-input">
+                            <div id="card-expiry">
+                                <span>{{ object.exp_month|default:"" }}/{{ object.exp_year|default:"" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box-footer">
+                    <div class="col-xs-12">
+                        <a class="btn btn-success col-xs-5" href="{% url 'payments:add_card' %}">Update Card</a>
+                        <button type="button" class="btn bg-navy btn-default pull-right col-xs-5" data-toggle="modal"
+                                data-target="#remove-card">Remove Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-md-8">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h2 class="box-title">支付历史</h2>
+                </div>
+                <div class="box-body no-padding">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Task</th>
+                            <th>Progress</th>
+                            <th style="width: 40px">Label</th>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Update software</td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-red">55%</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Clean database</td>
+                            <td>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar progress-bar-yellow" style="width: 70%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-yellow">70%</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Cron job running</td>
+                            <td>
+                                <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar progress-bar-primary" style="width: 30%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-light-blue">30%</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Fix and squish bugs</td>
+                            <td>
+                                <div class="progress progress-xs progress-striped active">
+                                    <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                                </div>
+                            </td>
+                            <td><span class="badge bg-green">90%</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer">
+                    <ul class="pagination pagination-sm no-margin">
+                        <li><a href="#">«</a></li>
+                        <li><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">»</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="remove-card" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="X">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">确认移除尾号{{ object.last4 }}的信用卡？</h4>
+      </div>
+      <div class="modal-body">
+        <p>#todo 你有plan</p>
+        <p>若只是更换信用卡请点击更新信用卡<a href="{% url 'payments:add_card' %}">更新信用卡</a>.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+        <a href="{% url 'payments:remove_card' %}" class="btn btn-primary">确 定</a>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
+{% if subscription %}
+<div class="modal fade" id="remove-plan" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="X">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">确认取消会员？</h4>
+      </div>
+      <div class="modal-body">
+        <p>#todo 取消subscription</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">取 消</button>
+        <a href="{% url 'payments:cancel_subscription' stripe_id=subscription.stripe_id %}" class="btn btn-primary">确 定</a>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+{% endif %}
+
+{% endblock %}

@@ -11,11 +11,13 @@ from django.core.management.base import BaseCommand
 from django.conf import settings
 from optparse import make_option
 
-from templates.urls import URLS_HEADER, URLS_MODEL_TEMPLATE, URLS_FOOTER
-from templates.views import VIEWS_HEADER, VIEWS_MODEL_TEMPLATE
-from templates.forms import FORMS_HEADER, FORMS_MODEL_TEMPLATE
-from templates.serializers import SERIALIZERS_HEADER, SERIALIZERS_MODEL_TEMPLATE
-from templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE, TABLE_HEAD_TEMPLATES, \
+from .templates.urls import URLS_HEADER, URLS_BODY, URLS_FOOTER
+from .templates.views import VIEWS_HEADER, VIEWS_BODY
+from .templates.forms import FORMS_HEADER, FORMS_BODY
+from .templates.api_serializers import SERIALIZERS_HEADER, SERIALIZERS_BODY
+from .templates.api_urls import API_URLS_HEADER, API_URLS_BODY, API_URLS_FOOTER
+from .templates.api_views import API_VIEWS_HEADER, API_VIEWS_BODY
+from .templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE, TABLE_HEAD_TEMPLATES, \
     TABLE_ROW_TEMPLATES
 
 reload(sys)
@@ -37,24 +39,25 @@ class Command(BaseCommand):
 
     '''
 
-    option_list = BaseCommand.option_list + (
-        make_option("--overwrite", "-o", action="store_true", dest="is_overwrite", default=False,
-                    help="Overwrite all files."),
-    )
-
     args = "app folder path or models.py path"
     module = None
     model_list = []
     is_overwrite = False
 
+    def add_arguments(self, parser):
+        parser.add_argument("--overwrite", "-o", action="store_true", dest="is_overwrite", default=False,
+                            help="Overwrite all files.")
+        parser.add_argument('path', nargs='+', type=str)
+
     def handle(self, *args, **options):
-        if len(args) < 1:
+        params = options.get("path")
+        if len(params) < 1:
             self.stderr.write(self.help)
             return
         self.is_overwrite = options.get("is_overwrite")
 
-        self.raw_input = args[0]
-        self.module_str = args[0].replace('.py', '').replace('/', '.').strip('.')
+        path = params[0]
+        self.module_str = path.replace('.py', '').replace('/', '.').strip('.')
         self.module_str = self.module_str if '.models' in self.module_str else self.module_str + '.models'
 
         try:
@@ -96,10 +99,12 @@ class Command(BaseCommand):
             raise AttributeError('Found no model in %s' % name)
 
         self.app_name = self.model_list[0]._meta.app_label
-        self.app_str = self.module_str.replace('.models', '')
+        self.app_str = self.module_str[:self.module_str.find('.models')]
         self.module_file = self.module.__file__[:-1]
         self.module_folder = os.path.dirname(self.module.__file__)
-        self.serializers_file = os.path.join(self.module_folder, 'serializers.py')
+        self.serializers_file = os.path.join(self.module_folder, 'api', 'serializers.py')
+        self.api_urls_file = os.path.join(self.module_folder, 'api', 'urls.py')
+        self.api_views_file = os.path.join(self.module_folder, 'api', 'views.py')
         self.views_file = os.path.join(self.module_folder, 'views.py')
         self.urls_file = os.path.join(self.module_folder, 'urls.py')
         self.forms_file = os.path.join(self.module_folder, 'forms.py')
@@ -193,7 +198,7 @@ class Command(BaseCommand):
     def get_urls_content(self):
         content = URLS_HEADER
         for model in self.model_list:
-            content += self.render_content(URLS_MODEL_TEMPLATE, model)
+            content += self.render_content(URLS_BODY, model)
         content += URLS_FOOTER
         self.stdout.write(content)
         return content
@@ -201,21 +206,14 @@ class Command(BaseCommand):
     def get_views_content(self):
         content = self.render_content(VIEWS_HEADER)
         for model in self.model_list:
-            content += self.render_content(VIEWS_MODEL_TEMPLATE, model)
+            content += self.render_content(VIEWS_BODY, model)
         self.stdout.write(content)
         return content
 
     def get_forms_content(self):
         content = self.render_content(FORMS_HEADER)
         for model in self.model_list:
-            content += self.render_content(FORMS_MODEL_TEMPLATE, model)
-        self.stdout.write(content)
-        return content
-
-    def get_serializers_content(self):
-        content = self.render_content(SERIALIZERS_HEADER)
-        for model in self.model_list:
-            content += self.render_content(SERIALIZERS_MODEL_TEMPLATE, model)
+            content += self.render_content(FORMS_BODY, model)
         self.stdout.write(content)
         return content
 
@@ -226,6 +224,28 @@ class Command(BaseCommand):
             model_menu += self.render_content(MENU_APP_TEMPLATE, model)
 
         content = content.replace('<% model_menu %>', model_menu)
+        self.stdout.write(content)
+        return content
+
+    def get_api_serializers_content(self):
+        content = self.render_content(SERIALIZERS_HEADER)
+        for model in self.model_list:
+            content += self.render_content(SERIALIZERS_BODY, model)
+        self.stdout.write(content)
+        return content
+
+    def get_api_urls_content(self):
+        content = self.render_content(API_URLS_HEADER)
+        for model in self.model_list:
+            content += self.render_content(API_URLS_BODY, model)
+        content += API_URLS_FOOTER
+        self.stdout.write(content)
+        return content
+
+    def get_api_views_content(self):
+        content = self.render_content(API_VIEWS_HEADER)
+        for model in self.model_list:
+            content += self.render_content(API_VIEWS_BODY, model)
         self.stdout.write(content)
         return content
 
@@ -240,10 +260,17 @@ class Command(BaseCommand):
         self.create_file(self.forms_file, self.get_forms_content())
         self.stdout.write('\n######### %s #########' % self.views_file)
         self.create_file(self.views_file, self.get_views_content())
-        self.stdout.write('\n######### %s #########' % self.serializers_file)
-        self.create_file(self.serializers_file, self.get_serializers_content())
         self.stdout.write('\n######### %s #########' % self.menu_html_file)
         self.create_file(self.menu_html_file, self.get_menu_html())
+
+        # api
+        self.create_file(os.path.join(self.module_folder, 'api', '__init__.py'), '')
+        self.stdout.write('\n######### %s #########' % self.serializers_file)
+        self.create_file(self.serializers_file, self.get_api_serializers_content())
+        self.stdout.write('\n######### %s #########' % self.api_urls_file)
+        self.create_file(self.api_urls_file, self.get_api_urls_content())
+        self.stdout.write('\n######### %s #########' % self.api_views_file)
+        self.create_file(self.api_views_file, self.get_api_views_content())
 
         for model in self.model_list:
             list_js_file = self.js_folder % model.__name__.lower()
@@ -263,10 +290,13 @@ class Command(BaseCommand):
         self.get_reverse_js()
         self.stdout.write('')
         self.stdout.write('')
-        self.stderr.write('# Remember make below step:')
+        self.stderr.write('# Still need to add some codes manually:')
         self.stdout.write('')
         self.stderr.write(" * Add 'url(r'^', include('%s.urls', namespace='%s')),' into super urls.py" % (
             self.app_str, self.app_name))
+        self.stdout.write('')
+        self.stderr.write(" * Add 'url(r'^%s/', include('%s.api.urls')),' into super urls.py" % (
+            self.app_name, self.app_str))
         self.stdout.write('')
         self.stderr.write(
             " * Add '{% include \"" + self.app_name + "/_menu.html\" %}' into core/adminlte/templates/adminlte/includes/menu.html")

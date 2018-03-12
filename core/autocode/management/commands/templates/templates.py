@@ -40,22 +40,22 @@ LIST_JS = '''
 var <% model_name %>ListPageVue = new CommonListPageVue({
         data: {
             // API
-            list_api_tag:   '<% app_name %>:api-<% model_name %>-list',
-            detail_api_tag: '<% app_name %>:api-<% model_name %>-detail',
-            delete_api_tag: '<% app_name %>:api-<% model_name %>-delete',
+            list_api_tag:   'api:<% model_name %>-list',
+            detail_api_tag: 'api:<% model_name %>-detail',
+            delete_api_tag: 'api:<% model_name %>-delete',
             // page
             create_url_tag: '<% app_name %>:<% model_name %>-add',
             list_url_tag:   '<% app_name %>:<% model_name %>-list',
             update_url_tag: '<% app_name %>:<% model_name %>-update',
             detail_url_tag: '<% app_name %>:<% model_name %>-detail',
-            list_url:       Urls['<% app_name %>:api-<% model_name %>-list']() + '?'
+            list_url:       Urls['api:<% model_name %>-list']() + '?'
         }
     }
 );
 '''
 
-MENU_TEMPLATE='''{% load activelink %}
-<li class="treeview active {% ifstartswith '/<% app_name %>/' %}active{% endifstartswith %}">
+MENU_TEMPLATE='''
+<li class="treeview active">
   <a href="javascript:void(0)">
     <i class='fa fa-cloud'></i>
     <b><% App_name %></b>
@@ -72,15 +72,11 @@ MENU_TEMPLATE='''{% load activelink %}
 MENU_APP_TEMPLATE='''
     {% if perms.<% app_name %>.view_<% model_name %> %}
     <li>
-      <a href="{% url '<% app_name %>:<% model_name %>-list' %}"  class="main">
-        <i class="fa fa-circle-o"></i>
-        <% MODEL_NAME %>
-      </a>
       {% if perms.<% app_name %>.add_<% model_name %> %}
-      <a href="{% url '<% app_name %>:<% model_name %>-add' %}" class="pull-right">
-         <i class="fa fa-plus" aria-hidden="true"></i>
-      </a>
+      <a href="{% url '<% app_name %>:<% model_name %>-add' %}" class="pull-right"><i class="fa fa-plus" aria-hidden="true"></i></a>
       {%endif%}
+      <a href="{% url '<% app_name %>:<% model_name %>-list' %}" class="main"><i class="fa fa-circle-o"></i><% MODEL_NAME %></a>
     </li>
+    
     {%endif%}
 '''

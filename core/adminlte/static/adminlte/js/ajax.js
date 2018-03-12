@@ -47,7 +47,7 @@
                         text = '对不起，没有权限进行此操作!';
                         break;
                     case 404:
-                        text = '找不到该页面!';
+                        text = '找不到该对象或页面!';
                         break;
                     case 405:
                         text = '不允许该访问方法!';
@@ -70,7 +70,7 @@
     };
 
     $.AdminLTE.getApiUrl = function (app, model) {
-        return Urls['common_api:listcreate_api'](app, model);
+        return '/api/' + app + '/' + model + '/';
     };
 
     $.AdminLTE.apiGet = function (url, data, callback) {

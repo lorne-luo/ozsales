@@ -4,9 +4,9 @@ input[type='checkbox'] {
     cursor: pointer;
 }
 
-.treeview-menu li a.main{
-    display:inline-block;
-    width:150px
+.treeview-menu li a.main {
+    display: inline-block;
+    width: 150px
 }
 
 @media (max-width: 767px) {
@@ -17,6 +17,11 @@ input[type='checkbox'] {
     .table-responsive > .table > tbody > tr > td,
     .table-responsive > .table > tfoot > tr > td {
         white-space: normal !important;
+    }
+
+    .full-width {
+        padding-right: 0;
+        padding-left: 0;
     }
 
     #commonDataTableRow .box-header {
@@ -34,6 +39,18 @@ input[type='checkbox'] {
     #commonDataTableRow #tableSearch {
         width: 100%;
     }
+
+    .control-sidebar {
+        padding-top: 50px !important;
+    }
+
+    .modal-header {
+        padding: 1px 5px 0 20px;
+    }
+
+    .modal-header h4 {
+        font-size: 16px;
+    }
 }
 
 @media (min-width: 992px) {
@@ -43,13 +60,13 @@ input[type='checkbox'] {
 }
 
 @media (max-width: 991px) {
-    .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, body:not(.login-page) .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7,body:not(.login-page) .col-xs-8, .col-xs-9 {
+    .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, body:not(.login-page) .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, body:not(.login-page) .col-xs-8, .col-xs-9 {
         padding-right: 8px;
         padding-left: 8px;
         margin-top: 3px;
     }
 
-    body:not(.login-page) .col-xs-12,body:not(.login-page) .col-sm-12 {
+    .full-width {
         padding-right: 0;
         padding-left: 0;
     }
@@ -65,7 +82,7 @@ input[type='checkbox'] {
         margin-bottom: 5px;
     }
 
-    div.form-group.odd {
+    div.form-group.dynamic-form:nth-child(odd) {
         background: #f0f0ff;
     }
 
@@ -73,7 +90,7 @@ input[type='checkbox'] {
         padding: 0;
     }
 
-    .content-header>.breadcrumb {
+    .content-header > .breadcrumb {
         margin: 0;
     }
 
@@ -84,6 +101,10 @@ input[type='checkbox'] {
 
 .ln34 {
     line-height: 34px;
+}
+
+.clear {
+    clear: both;
 }
 
 /* Chosen */
@@ -108,21 +129,63 @@ input[type='checkbox'] {
 .label-as-badge {
     border-radius: 0.8em;
 }
+
 .label {
     padding: .2em .6em .2em;
 }
 
 /* Auto Complete */
-.form-horizontal .inline-related .select2-container{
-    min-width:0 !important;
+.select2-container {
+    width: 100% !important;
 }
 
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 34px;
+.form-horizontal .inline-related .select2-container {
+    min-width: 0 !important;
 }
-.select2-container--classic .select2-selection--single .select2-selection__rendered {
-    line-height: 34px;
-}
+
 .select2-container .select2-selection--single {
     height: 34px !important;
+}
+
+.select2-selection--single .select2-selection__rendered {
+    padding-left: 0 !important;
+    line-height: 34px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    margin-top: 0 !important;
+}
+
+/* payment form */
+#payment-form .btn-group .btn {
+    background-color: #d2d6de;
+    margin-right: 20px;
+    border-radius: 6px;
+}
+
+#payment-form .btn-group .btn.active {
+    background-color: #00a7d0;
+}
+
+/* order list modal */
+#add-parcel .alert, #add-product .alert {
+    padding: 6px;
+    margin-bottom: 0;
+}
+
+.action-button a.label:not(:first-child) {
+    margin-left: 8px;
+}
+
+table td i.show_detail, table th i.show_all_detail {
+    margin-right: 18px;
+}
+
+div.tab-content .pagination > li > a:focus {
+    color: #666 !important;
+    background: #fafafa !important;;
+}
+
+aside.messagesetVue div.menu li {
+    padding: 0 0 0 15px;
 }

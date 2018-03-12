@@ -1,25 +1,28 @@
-{% load activelink %}
+{% load customer_tags %}
+
 <li class="treeview active">
     <a href="javascript:void(0)">
-      <i class="fa fa-angle-left pull-right"></i>
-      <i class='fa fa-cloud'></i>
-      <b>Customer</b>
+        <i class="fa fa-users"></i>
+        <b>Customer</b>
+
+        <span class="pull-right-container">
+            <small class="label pull-right bg-blue">{% customer_counter %}</small>
+        </span>
     </a>
+
     <ul class="treeview-menu menu-open" style="display: block;">
-
         {% if perms.customer.view_customer %}
-        <li>
-            {% if perms.customer.add_customer %}
-            <a href="{% url 'customer:customer-add' %}" class="pull-right">
-                <i class="fa fa-plus" aria-hidden="true"></i>
-            </a>
-            {%endif%}
-            <a href="{% url 'customer:customer-list' %}" class="main">
-                <i class="fa fa-circle-o"></i>
-                Customer
-            </a>
-        </li>
-        {%endif%}
-
+            <li>
+                {% if perms.customer.add_customer %}
+                    <a href="{% url 'customer:customer-add' %}" class="pull-right">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
+                {% endif %}
+                <a href="{% url 'customer:customer-list' %}" class="main">
+                    <i class="fa fa-circle-o"></i>
+                    Customer
+                </a>
+            </li>
+        {% endif %}
     </ul>
 </li>

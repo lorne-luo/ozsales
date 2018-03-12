@@ -8,10 +8,8 @@
   <th></th>
   <th>名称</th>
   <th class="hidden-sm hidden-xs">品牌</th>
-  <th>售价</th>
   {% if user.is_superuser %}
     <th>成本</th>
-    <th class="hidden-sm hidden-xs">折扣</th>
     <th class="hidden-sm hidden-xs"></th>
   {% endif %}
 {% endblock %}
@@ -24,7 +22,7 @@
       <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
     </td>
     <td>
-      <a v-if="item.pic" href="{!! item.pic !!}" target="_blank"><img style="height:75px" src="{!! item.pic !!}"/></a>
+      <a v-if="item.thumbnail" href="{!! item.thumbnail !!}" target="_blank"><img style="height:75px" src="{!! item.thumbnail !!}"/></a>
       <img v-else style="height:75px" src="/static/img/no_image.jpg"/>
     </td>
     <td class="hidden-sm hidden-xs">
@@ -33,19 +31,45 @@
     <td class="hidden-sm hidden-xs">{!! item.brand_display !!}</td>
     <td class="visible-sm visible-xs"><a href="{!! item.edit_url !!}">{!! item.brand_display !!} {!! item.name_cn !!}</a>
     </td>
-    <td>{!! item.safe_sell_price !!}</td>
     {% if user.is_superuser %}
-      <td>{!! item.normal_price !!}</td>
-      <td class="hidden-sm hidden-xs">{!! item.bargain_price !!}</td>
+      <td>{!! item.avg_sell_price !!}</td>
 
-      {% block item_buttons %}
-        {{ block.super }}
-      {% endblock %}
+        {% block item_buttons %}
+            <td class="text-right hidden-sm hidden-xs">
+                <template v-if="detail_url_tag">
+                    {% if page_model_perms.view %}
+                        <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
+                           href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
+                            <i class="fa fa-lg fa-bars fa-inverse"></i>
+                        </a>
+                    {% endif %}
+                </template>
+
+                <template v-if="update_url_tag && item.is_owner">
+                    {% if page_model_perms.change %}
+                        <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
+                           href="#[item.edit_url]" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.id]">
+                            <i class="fa fa-lg fa-pencil fa-inverse"></i>
+                        </a>
+                    {% endif %}
+                </template>
+
+                <template v-if="delete_api_tag && item.is_owner">
+                    {% if page_model_perms.delete %}
+                        <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
+                           data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);"
+                           class="btn btn-danger btn-sm delete-btn">
+                            <i class="fa fa-lg fa-trash-o fa-inverse"></i>
+                        </a>
+                    {% endif %}
+                </template>
+            </td>
+        {% endblock %}
     {% endif %}
   </tr>
   </tbody>
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/product/product_list.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/product/product_list.min.js' %}"></script>
 {% endblock %}

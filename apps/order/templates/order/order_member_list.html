@@ -2,8 +2,8 @@
 {% load static %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/order/order_list_base.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/order/order_member_list.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_list_base.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_member_list.min.js' %}"></script>
 {% endblock %}
 
 {% block tab_nav %}
@@ -12,7 +12,7 @@
       <a data-toggle="tab" href="#pane-ONGOING"> 进行中</a>
     </li>
     <li data-status="FINISHED">
-      <a data-toggle="tab" href="#pane-FINISHED"> 已完成</a>
+      <a data-toggle="tab" href="#pane-FINISHED" v-on:click="initFinishedTab"> 已完成</a>
     </li>
   </ul>
 {% endblock %}

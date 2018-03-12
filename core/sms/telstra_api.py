@@ -2,6 +2,7 @@ import os
 import pycurl
 import datetime
 import json
+import redis
 import logging
 from urllib import urlencode
 from StringIO import StringIO
@@ -9,18 +10,19 @@ from django.conf import settings
 from .models import Sms
 
 log = logging.getLogger(__name__)
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
+TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 
 
 class MessageSender(object):
-    CONSUMER_KEY = "ZDuzM5gKWl9IM8G4e0VMH2bKorRIU33t"
-    CONSUMER_SECRET = "AUbyh8CJy8gASog1"
+    CONSUMER_KEY = settings.TELSTRA_CONSUMER_KEY
+    CONSUMER_SECRET = settings.TELSTRA_CONSUMER_SECRET
     AUTH_URL = 'https://api.telstra.com/v1/oauth/token'
     SEND_URL = 'https://api.telstra.com/v1/sms/messages'
     TOKEN = None
     TOKEN_EXPIRY = datetime.datetime.now()
     _instance = None
     LENGTH_PER_SMS = 160
-    my_number = '0413725868'
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
@@ -56,6 +58,12 @@ class MessageSender(object):
         # log.info(MessageSender.TOKEN, MessageSender.TOKEN_EXPIRY)
 
     def send_sms(self, to, content, app_name=None):
+        counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
+        counter = int(counter)
+        if not counter < 1000:
+            log.info('[SMS] Telstra SMS reach 1000 free limitation.')
+            return False, 'Telstra SMS reach 1000 free limitation.'
+
         if MessageSender.TOKEN_EXPIRY <= datetime.datetime.now() or not MessageSender.TOKEN:
             self.get_token()
 
@@ -79,20 +87,24 @@ class MessageSender(object):
         sms = Sms(app_name=app_name, send_to=to, content=content)
         if 'messageId' in data:
             sms.success = True
+            counter += 1
+            r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter)
             sms.save()
+            if counter == 999:
+                self.send_to_admin('[Warning] Telstra sms meet monthly limitation.')
             return True, data['messageId']
         elif 'status' in data:
             sms.success = False
             sms.save()
             return False, data['status']
 
-    def send_to_self(self, content, app_name=None):
-        return self.send_sms(self.my_number, content, app_name)
+    def send_to_admin(self, content, app_name=None):
+        return self.send_sms(settings.ADMIN_MOBILE_NUMBER, content, app_name)
 
 
 # singleton pattern
-# telstra_sender = MessageSender()
+telstra_sender = MessageSender()
 
-if __name__ == '__main__':
-    m = MessageSender()
-    m.send_to_self('hello boy')
+# if __name__ == '__main__':
+#     m = MessageSender()
+#     m.send_to_admin('hello boy')

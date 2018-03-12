@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 
 class Sms(models.Model):
     time = models.DateTimeField(_(u'DateTime'), auto_now_add=True, editable=False)
-    app_name = models.CharField(_(u'App Name'), max_length=16, null=True, blank=True)
+    app_name = models.CharField(_(u'App Name'), max_length=64, null=True, blank=True)
     send_to = models.CharField(_(u'Send To'), max_length=32, null=False, blank=False)
     content = models.CharField(_(u'Content'), max_length=255, null=True, blank=True)
     url = models.URLField(_(u'Url'), max_length=255, null=True, blank=True)

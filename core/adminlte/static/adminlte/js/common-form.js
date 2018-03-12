@@ -118,7 +118,7 @@ var CommonFormPageVue = Vue.extend({
             var self = this;
             swal({
                 title: "确定删除",
-                text: "确定删除本条记录?",
+                text: "确定删除本条记录? 所有相关数据均会一并删除。",
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
