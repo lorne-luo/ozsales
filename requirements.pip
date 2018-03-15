@@ -27,7 +27,7 @@ django-webtest==1.7.8
 django-nose==1.4.5
 django-js-reverse==0.8.1
 uwsgi==2.0.12
-pycurl
+pycurl==7.43.0.1  --global-option="--with-nss"
 python-dateutil
 gunicorn==18.0
 Wand==0.4.3
