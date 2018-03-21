@@ -69,6 +69,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'django_extensions',
     'django_webtest',
     'django_nose',
@@ -106,6 +107,7 @@ INSTALLED_APPS = (
     'djstripe',
     'stdimage',
     'rest_framework_swagger',
+    'robots',
 )
 
 MIDDLEWARE_CLASSES = (

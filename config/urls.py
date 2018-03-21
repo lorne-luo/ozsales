@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib.auth import views as auth_views
+from wagtail.contrib.wagtailsitemaps.views import sitemap
+
 from wagtail.wagtailadmin import urls as wagtailadmin_urls
 from wagtail.wagtailcore import urls as wagtail_urls
 from wagtail.wagtaildocs import urls as wagtaildocs_urls
@@ -88,6 +90,10 @@ urlpatterns = wagtail_urlpatterns + apps_urlpatterns + [
 
     # django-tinymce
     url(r'^tinymce/', include('tinymce.urls')),
+
+    # Site map and robots.txt
+    url(r'^robots\.txt', include('robots.urls')),
+    url(r'^sitemap\.xml$', sitemap),
 
     # For anything not caught by a more specific rule above, hand over to
     # Wagtail's page serving mechanism. This should be the last pattern in
