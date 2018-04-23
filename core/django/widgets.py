@@ -41,8 +41,16 @@ class ThumbnailImageInput(forms.ClearableFileInput):
         return context
 
     def get_download_filename(self, value):
+        if value and value.path:
+            filename = os.path.basename(value.path)
+            return filename
+        return None
+
+
+class IDThumbnailImageInput(ThumbnailImageInput):
+    def get_download_filename(self, value):
         if value:
             side = u'正面' if 'front' in value.field.name else u'反面'
             filename, file_ext = os.path.splitext(value.name)
             return '%s_%s%s' % (value.instance.name, side, file_ext)
-        return None
+        return super(IDThumbnailImageInput, self).get_download_filename(value)

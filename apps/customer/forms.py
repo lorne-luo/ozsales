@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from core.django.forms import NoManytoManyHintModelForm
 from models import Address, Customer, InterestTag
-from core.django.widgets import ThumbnailImageInput
+from core.django.widgets import IDThumbnailImageInput
 
 
 class AddressAddInline(admin.TabularInline):
@@ -77,9 +77,9 @@ class CustomerUpdateForm(NoManytoManyHintModelForm):
 
 class AddressInlineForm(NoManytoManyHintModelForm):
     id_photo_front = forms.ImageField(label=_("ID photo front"), required=False,
-                                      widget=ThumbnailImageInput({'width': '100%', 'size': 'thumbnail'}))
+                                      widget=IDThumbnailImageInput({'width': '100%', 'size': 'thumbnail'}))
     id_photo_back = forms.ImageField(label=_("ID photo back"), required=False,
-                                     widget=ThumbnailImageInput({'width': '100%', 'size': 'thumbnail'}))
+                                     widget=IDThumbnailImageInput({'width': '100%', 'size': 'thumbnail'}))
 
     class Meta:
         model = Address
