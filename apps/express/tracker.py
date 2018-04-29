@@ -71,6 +71,10 @@ def sfx_track(url):
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
+def bluesky_track(url):
+    table = get_table(url, id_='oTHtable')
+    last_record = get_last_record(table)
+    return check_delivery(last_record)
 
 def changjiang_track(url):
     table = get_table(url, cls='table')

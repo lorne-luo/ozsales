@@ -117,6 +117,8 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
                 return None, None
             elif 'emms' in self.website.lower():
                 return tracker.sfx_track(url)
+            elif 'blueskyexpress' in self.website.lower():
+                return tracker.bluesky_track(url)
             elif 'changjiang' in self.website.lower():
                 return tracker.changjiang_track(url)
             elif 'au.transrush.com' in self.website.lower():
