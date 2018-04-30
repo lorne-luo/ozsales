@@ -78,8 +78,8 @@ class ExpressCarrierManager(models.Manager):
 @python_2_unicode_compatible
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    name_cn = models.CharField(_(u'中文名称'), max_length=50, blank=False, help_text=u'中文名称')
-    name_en = models.CharField(_(u'英文名称'), max_length=50, blank=True, help_text=u'英文名称')
+    name_cn = models.CharField(_(u'中文名称'), max_length=255, blank=False, help_text=u'中文名称')
+    name_en = models.CharField(_(u'英文名称'), max_length=255, blank=True, help_text=u'英文名称')
     pinyin = models.TextField(_(u'pinyin'), max_length=512, blank=True)
     website = models.URLField(_(u'官网地址'), blank=True, help_text=u'官方网站地址')
     # page to track parcel
