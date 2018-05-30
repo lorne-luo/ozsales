@@ -187,7 +187,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
     product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.filter(is_active=True), required=False,
                                      widget=FormsetModelSelect2(url='api:product-autocomplete',
-                                                                attrs={'data-placeholder': u'任意中英文名称...',
+                                                                attrs={'data-placeholder': u'搜索或输入"品牌@品名"新建',
                                                                        'class': 'form-control'})
                                      )
     description = forms.CharField(label=u'备注', max_length=128, required=False, help_text=u'名称或备注(可选)',

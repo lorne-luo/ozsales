@@ -39,12 +39,31 @@ class BrandViewSet(CommonViewSet):
                        PinyinSearchFilter,
                        filters.OrderingFilter)
 
+
 class ProductAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Product
     paginate_by = 20
     create_field = 'name_cn'
 
+    def get_or_create_brand(self, brand_name):
+        if include_non_asc(brand_name):
+            brand, created = Brand.objects.get_or_create(name_cn=brand_name)
+        else:
+            brand, created = Brand.objects.get_or_create(name_en=brand_name)
+        return brand
+
     def create_object(self, text):
+        if '@' in text:
+            brand_name = text.split('@')[0]
+            product_name = text[text.index('@') + 1:]
+            brand = self.get_or_create_brand(brand_name)
+            if include_non_asc(product_name):
+                product, created = Product.objects.get_or_create(brand=brand, name_cn=product_name,
+                                                                 seller=self.request.profile)
+            else:
+                product, created = Product.objects.get_or_create(brand=brand, name_en=product_name,
+                                                                 seller=self.request.profile)
+            return product
         return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
 
     def get_queryset(self):

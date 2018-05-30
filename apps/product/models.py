@@ -37,10 +37,7 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
-        if self.name_en.lower() == 'none':
-            return ''
-        else:
-            return self.name_en
+        return self.name_cn or self.name_en
 
 
 def get_product_pic_path(instance, filename):
@@ -167,10 +164,9 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
         verbose_name = _('Product')
 
     def __str__(self):
-        if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s' % (self.brand.name_en, self.name_cn)
-        else:
-            return self.name_cn
+        brand = self.brand or self.brand_cn or self.brand_en
+        name = self.name_cn or self.name_en
+        return u'%s %s' % (unicode(brand), name)
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
