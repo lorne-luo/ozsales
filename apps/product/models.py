@@ -37,7 +37,8 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
-        return self.name_cn or self.name_en
+        name = self.name_cn or self.name_en
+        return unicode(name)
 
 
 def get_product_pic_path(instance, filename):
@@ -166,7 +167,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def __str__(self):
         brand = self.brand or self.brand_cn or self.brand_en
         name = self.name_cn or self.name_en
-        return u'%s %s' % (unicode(brand), name)
+        return u'%s %s' % (brand, name)
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
