@@ -342,7 +342,8 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
         # resize images when first uploaded
         self.resize_image('id_photo_front')
         self.resize_image('id_photo_back')
-        self.id_number = self.id_number.upper()
+        if self.id_number and 'x' in self.id_number:
+            self.id_number = self.id_number.upper()
 
         self.link_id_photo()
         super(Address, self).save(*args, **kwargs)
