@@ -226,7 +226,8 @@ class OrderDetailView(CommonContextMixin, UpdateView):
 
     def get_template_names(self):
         if self.request.profile == self.object.seller:
-            return 'order/order_detail_owner.html'
+            # return 'order/order_detail_owner.html'
+            return 'order/order_detail.html'
         else:
             return 'order/order_detail.html'
 
