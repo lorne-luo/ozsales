@@ -71,10 +71,12 @@ def sfx_track(url):
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
+
 def bluesky_track(url):
     table = get_table(url, id_='oTHtable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
+
 
 def changjiang_track(url):
     table = get_table(url, cls='table')
@@ -83,9 +85,11 @@ def changjiang_track(url):
 
 
 def transrush_au_track(url):
-    table = get_table(url)
-    last_record = get_last_record(table, index=1)
-    return check_delivery(last_record)
+    resp = requests.get(url=url)
+    data = resp.json()
+    last = data['data'][0]['tracks'][0]
+    last_text = '%s %s' % (last['TrackDate'], last['TrackContent'])
+    return check_delivery(last_text)
 
 
 def one_express_track(url, track_id):

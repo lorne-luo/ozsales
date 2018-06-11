@@ -110,9 +110,14 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
         return ExpressCarrier.objects.filter(seller=seller).filter(Q(website__isnull=True) | Q(website='')).first()
 
     def update_track(self, order):
-        url = self.post_search_url or order.get_track_url()
+        url = self.post_search_url or self.search_url or order.remarks
+        if '%s' in url:
+            url = url % order.track_id
 
         try:
+            if not url or not url.startswith('http'):
+                raise Exception('invalid url')
+
             if 'aupost' in self.website.lower():
                 return None, None
             elif 'emms' in self.website.lower():
