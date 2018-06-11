@@ -20,7 +20,7 @@ class ProductSerializer(SellerOwnerSerializerMixin, BaseSerializer):
         return obj.pic.thumbnail.url if obj.pic else None
 
     def get_brand_display(self, obj):
-        return str(obj.brand)
+        return unicode(obj.brand)
 
 
 class BrandSerializer(BaseSerializer):
