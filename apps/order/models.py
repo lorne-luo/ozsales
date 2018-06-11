@@ -456,7 +456,7 @@ class OrderProduct(models.Model):
         self.total_price_rmb = self.sell_price_rmb * self.amount
 
         if self.product:
-            self.name = self.product.get_name_cn()
+            self.name = str(self.product)
 
         if self.description:
             self.name += ' %s' % self.description
