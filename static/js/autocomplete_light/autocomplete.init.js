@@ -55,7 +55,7 @@ In order to integrate autocomplete and jquery.formset
     });
 
     $(document).bind('DOMNodeInserted', function(e) {
-        $(e.target).find('[data-autocomplete-light-function]').each(initialize);
+        $(e.target).find('[data-autocomplete-light-function]').not($('[id*="_template"] [data-autocomplete-light-function]')).each(initialize);
     });
 
     // using jQuery

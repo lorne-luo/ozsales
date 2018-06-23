@@ -2,6 +2,8 @@
 import logging
 import os
 import uuid
+
+import sys
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -24,6 +26,8 @@ from apps.store.models import Page
 
 log = logging.getLogger(__name__)
 
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 @python_2_unicode_compatible
 class Brand(models.Model):
@@ -166,7 +170,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def __str__(self):
         brand = self.brand or self.brand_cn or self.brand_en
         name = self.name_cn or self.name_en
-        return u'%s %s' % (unicode(brand), name)
+        return u'%s %s' % (brand, name)
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
