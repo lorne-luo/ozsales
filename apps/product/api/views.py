@@ -54,8 +54,8 @@ class ProductAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplet
 
     def create_object(self, text):
         if '@' in text:
-            brand_name = unicode(text.split('@')[0])
-            product_name = unicode(text[text.index('@') + 1:])
+            brand_name = text.split('@')[0]
+            product_name = text[text.index('@') + 1:]
             brand = self.get_or_create_brand(brand_name)
             if include_non_asc(product_name):
                 product, created = Product.objects.get_or_create(brand=brand, name_cn=product_name,
