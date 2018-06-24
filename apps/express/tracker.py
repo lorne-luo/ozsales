@@ -15,7 +15,8 @@ def check_delivery(text):
     if any([u'签收' in text,
             u'投妥' in text,
             u'妥投' in text,
-            u'投到' in text]) and all([
+            u'投到' in text,
+            u'收件人已取走' in text]) and all([
                 u'未签收' not in text,
                 u'未投妥' not in text,
                 u'未妥投' not in text,
