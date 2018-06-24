@@ -28,11 +28,24 @@ var CommonListPageVue = Vue.extend({
         }
     },
     ready: function () {
-        this.ready();
+        // init search keyword from query string
+        this.search_keyword = this.getQueryStringValue("search");
+        if (this.search_keyword) {
+            $("#tableSearch").val(this.search_keyword);
+        }
+
+        var page = this.getQueryStringValue("page");
+        page = parseInt(page);
+        if (page && page > 0) {
+            this.currentPage = page;
+            console.log(this.currentPage);
+        }
 
         if (this.create_url_tag) {
             $('a#create').prop('href', Urls[this.create_url_tag]());
         }
+
+        this.ready();
     },
     methods: {
         ready: function (event) {

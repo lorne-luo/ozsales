@@ -38,6 +38,7 @@
     <div class="col-xs-12 full-width">
     <div class="box box-info">
         <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
+        <input type="hidden" name="from_page" value="{{ from_page }}"/>
         {% csrf_token %}
 
         <div class="box-header with-border">
