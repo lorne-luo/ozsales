@@ -3,361 +3,373 @@
 
 
 {% block breadcrumb %}
-  <ol class="breadcrumb">
-    <li>
-      <a href="#">
-        <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
-      </a>
-    </li>
-    {% if page_title != default_dashboard_title %}
-      <li class="active">
-        {% if user.is_superuser %}
-          <a href="{% url 'order:order-list' %}">Order</a>
-        {% else %}
-          {{ page_title }}
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+            <li class="active">
+                {% if user.is_superuser %}
+                    <a href="{% url 'order:order-list' %}">Order</a>
+                {% else %}
+                    {{ page_title }}
+                {% endif %}
+            </li>
         {% endif %}
-      </li>
-    {% endif %}
-    {% if object != None %}
-      <li class="active">{{ page_title }}详情</li>
-    {% endif %}
-  </ol>
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
 {% endblock %}
 
 
 {% block content %}
-  <div class="row">
-    <div class="col-xs-12 full-width">
-      <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
-      {% csrf_token %}
+    <div class="row">
+        <div class="col-xs-12 full-width">
+            <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form"
+                  id="commonForm">
+                {% csrf_token %}
+                <input type="hidden" name="from_page" value="{{ from_page }}"/>
+                <input type="hidden" name="search" value="{{ search }}"/>
 
-      <div class="box box-info">
-        <div class="box-header with-border">
-          <h3 class="box-title">
-            {% if object.id %}
-              <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.id %}">{{ object.customer.name_and_remarks }}</a>
-            {% else %}
-              {{ object.customer.name_and_remarks }}
-            {% endif %}
-          </h3>
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">
+                            {% if object.id %}
+                                <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.id %}">{{ object.customer.name_and_remarks }}</a>
+                            {% else %}
+                                {{ object.customer.name_and_remarks }}
+                            {% endif %}
+                        </h3>
+                    </div>
+
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+
+                    <div class="box-body">
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for="id_{{ field.name }}"
+                                       class="col-sm-2 col-xs-2 control-label">{{ field.label }}</label>
+                                <div class="col-sm-6 col-xs-10">
+                                    {{ field }}
+                                </div>
+                                <div class="col-sm-4 hidden-xs">
+                                    {{ field.errors }}
+                                    <p class="help-block">{{ field.help_text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% if object.id %}
+                        <div class="box-footer">
+                            <button type="submit" style="width:108px"
+                                    class="btn btn-primary col-sm-offset-2 col-xs-offset-0">保 存
+                            </button>
+                            <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑
+                            </button>
+                            <button type="button" style="width:108px" class="btn btn-danger"
+                                    v-on:click="delete({{ object.id }}, $event)">删 除
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <input id="object_id" type="hidden" value="{{ object.id }}">
+
+                {#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
+
+                <div id="orderproduct" class="box box-info inline-related">
+                    <div class="box-header with-border">
+                        <div class="col-xs-1 hidden-xs hidden-sm"><h3 class="box-title">产 品</h3></div>
+                        <div class="col-xs-2 hidden-xs hidden-sm"></div>
+                        <div class="col-md-8 col-xs-12"><span>地址：<span id="address-text"></span></span></div>
+
+                    </div>
+
+                    <div id="{{ product_formset.prefix }}_table" class="box-body form-horizontal">
+                        <div class="form-group hidden-xs hidden-sm">
+                            <div class="col-lg-2 col-md-2 col-xs-10">
+                                <b>产品</b>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-xs-10">
+                                <b>备注</b>
+                            </div>
+                            <div class="col-lg-1 col-sm-1 col-xs-2">
+                                <b>数量</b>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-xs-2">
+                                <b>单价</b>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-xs-2  hidden-sm hidden-xs">
+                                <b>小计</b>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-xs-2">
+                                <b>成本</b>
+                            </div>
+                            {#            <div class="col-xs-2 hidden-sm hidden-xs">#}
+                            {#              <b>来源</b>#}
+                            {#            </div>#}
+                        </div>
+
+                        <input id="product_forms_length" name="product_forms_length" type="hidden"
+                               value="{{ product_formset|length }}">
+                        <div>
+                            {{ product_formset.management_form }}
+                        </div>
+                        {% for product in product_formset %}
+                            <div class="form-group product-form"
+                                 id="{{ product_formset.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %}
+                                 data-pk="{{ product.instance.pk }}"{% endif %}>
+                                {{ product.id }}
+                                {{ product.order }}
+                                <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
+                                <div class="col-lg-2 col-md-2 col-xs-10">
+                                    {{ product.product }}
+                                </div>
+                                <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
+                                <div class="col-lg-2 col-md-2 col-xs-10">
+                                    {{ product.description }}
+                                </div>
+                                <div class="col-lg-1 col-md-1 col-xs-2">
+                                    {{ product.amount }}
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-xs-3">
+                                    {{ product.sell_price_rmb }}
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-xs-3">
+                                    {{ product.sum_price }}
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-xs-3">
+                                    {{ product.cost_price_aud }}
+                                    {% if product.instance.pk %}{{ product.DELETE }}{% endif %}
+                                </div>
+                                {#              <div class="col-lg-2 col-md-4 col-xs-1 hidden-xs hidden-sm inline">#}
+                                {#                  {{ product.store }}#}
+                                {#                <a href="javascript:void(0)" class="ln34 delete_product">#}
+                                {#                  <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
+                                {#                </a>#}
+                                {#                <input class="hide" style="visibility: hidden"#}
+                                {#                       id="id_{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE"#}
+                                {#                       name="{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">#}
+                                {#              </div>#}
+                            </div>
+                        {% endfor %}
+                    </div><!-- //express_table -->
+
+                    <div class="box-footer">
+                        {#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
+                        <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
+                        <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑
+                        </button>
+                    </div>
+                </div>
+
+                <div id="expressorders" class="box box-info inline-related">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">物流</h3>
+                    </div>
+
+                    <div id="{{ express_formset.prefix }}_table" class="box-body form-horizontal">
+
+                        <div class="form-group hidden-xs hidden-sm">
+                            <div class="col-md-3">
+                                <b>物流</b>
+                            </div>
+                            <div class="col-md-3">
+                                <b>单号</b>
+                            </div>
+                            <div class="col-md-2 col-xs-2">
+                                <b>运费</b>
+                            </div>
+                            {#            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">#}
+                            {#              <b>重量</b>#}
+                            {#            </div>#}
+                            <div class="col-lg-1 col-sm-2 col-xs-2">
+                                <b>证件</b>
+                            </div>
+                        </div>
+
+                        <div>
+                            {{ express_formset.management_form }}
+                        </div>
+                        <input id="express_forms_length" name="express_forms_length" type="hidden"
+                               value="{{ express_formset|length }}">
+
+                        {% for express in express_formset %}
+                            <div class="form-group express-form"
+                                 id="{{ express_formset.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %}
+                                 data-pk="{{ express.instance.pk }}"{% endif %}>
+                                {{ express.id }}
+                                {{ express.order }}
+                                <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
+                                <div class="col-md-3 col-xs-10">
+                                    {{ express.carrier }}
+                                </div>
+                                <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
+                                <div class="col-md-3 col-xs-10">
+                                    {{ express.track_id }}
+                                </div>
+                                <div class="visible-xs visible-sm col-xs-2 ln34">运费</div>
+                                <div class="col-md-2 col-xs-3">
+                                    {{ express.fee }}
+                                </div>
+                                {#              <div class="col-lg-1 col-md-1 col-xs-3">#}
+                                {#                {{ express.weight }}#}
+                                {#              </div>#}
+                                <div class="col-lg-1 col-md-1 col-xs-1 inline ln34">
+                                    {{ express.id_upload }}
+                                    {% if express.instance.pk %}{{ express.DELETE }}{% endif %}
+                                </div>
+                                {#              <div class="col-lg-1 col-md-1 col-xs-3">#}
+                                {#                  <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express">#}
+                                {#                    <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
+                                {#                  </a>#}
+                                {#                  {% if form.instance.pk %}{{ form.DELETE }}{% endif %}#}
+                                {#              </div>#}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="box-footer">
+                        {#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
+                        <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
+                        <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 &
+                            编辑
+                        </button>
+                    </div>
+
+                </div><!-- //expressorders -->
+            </form>
+
+
+            <div class="hide" id="{{ express_formset.prefix }}_template">
+                <div class="form-group">
+                    {% with express_formset.extra_forms|first as new_express_template %}
+                        {#          <input id="id_{{ express_formset.prefix }}-id" name="{{ express_formset.prefix }}-id" type="hidden">#}
+                        {#          <input id="id_{{ express_formset.prefix }}-order" name="{{ express_formset.prefix }}-order" type="hidden"#}
+                        {#                 value="{{ object.id }}">#}
+                        {{ new_express_template.id }}
+                        {{ new_express_template.order }}
+                        <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
+                        <div class="col-md-3 col-xs-10">
+                            {{ new_express_template.carrier }}
+                        </div>
+                        <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
+                        <div class="col-md-3 col-xs-10">
+                            {{ new_express_template.track_id }}
+                        </div>
+                        <div class="visible-xs visible-sm col-xs-2 ln34">运费</div>
+                        <div class="col-md-2 col-xs-3">
+                            {{ new_express_template.fee }}
+                        </div>
+                        {#          <div class="col-lg-1 col-md-1 col-xs-3">#}
+                        {#            {{ new_express_template.weight }}#}
+                        {#          </div>#}
+                        <div class="col-lg-1 col-md-1 col-xs-3 inline ln34">
+                            {{ new_express_template.id_upload }}
+                            {% if new_express_template.instance.pk %}{{ new_express_template.DELETE }}{% endif %}
+                            {#            <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"#}
+                            {#              <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
+                            {#            </a>#}
+                        </div>
+                    {% endwith %}
+                </div><!-- //express_template -->
+            </div>
+
+            <div class="hide" id="{{ product_formset.prefix }}_template">
+                <div class="form-group">
+                    {% with product_formset.extra_forms|first as new_product_template %}
+                        {#          <input id="id_{{ product_formset.prefix }}-id" name="{{ product_formset.prefix }}-id" type="hidden">#}
+                        {#          <input id="id_{{ product_formset.prefix }}-order" name="{{ product_formset.prefix }}-order" type="hidden"#}
+                        {#                 value="{{ object.id }}">#}
+                        {{ new_product_template.id }}
+                        {{ new_product_template.order }}
+                        <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
+                        <div class="col-lg-2 col-md-2 col-xs-10">
+                            {{ new_product_template.product }}
+                        </div>
+                        <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
+                        <div class="col-lg-2 col-md-2 col-xs-10">
+                            {{ new_product_template.description }}
+                        </div>
+                        <div class="col-lg-1 col-md-2 col-xs-2">
+                            {{ new_product_template.amount }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-xs-3">
+                            {{ new_product_template.sell_price_rmb }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-xs-3">
+                            {{ new_product_template.sum_price }}
+                        </div>
+                        <div class="col-lg-2 col-md-2 col-xs-3">
+                            {{ new_product_template.cost_price_aud }}
+                            {% if new_product_template.instance.pk %}{{ new_product_template.DELETE }}{% endif %}
+                        </div>
+                        {#          <div class="col-lg-2 col-md-4 col-xs-1">#}
+                        {#            <div class="inline hidden-xs hidden-sm">#}
+                        {#              {{ new_product_template.store }}#}
+                        {#            </div>#}
+                        {#            <a href="javascript:void(0)" class="ln34 delete_product">#}
+                        {#              <i style="color:#dd4b39;" class="fa fa-lg fa-trash"></i>#}
+                        {#            </a>#}
+                        {#          </div>#}
+                        </div>
+                    {% endwith %}
+            </div><!-- //product_template -->
         </div>
-
-        {% for message in messages %}
-          <div class="alert alert-{{ message.tags }}">
-            {{ message }}
-          </div>
-          {% endfor %}
-
-        <div class="box-body">
-          {% for field in form %}
-            <div class="form-group">
-              <label for="id_{{ field.name }}" class="col-sm-2 col-xs-2 control-label">{{ field.label }}</label>
-              <div class="col-sm-6 col-xs-10">
-                {{ field }}
-              </div>
-              <div class="col-sm-4 hidden-xs">
-                {{ field.errors }}
-                <p class="help-block">{{ field.help_text }}</p>
-              </div>
-            </div>
-          {% endfor %}
-        </div>
-        {% if object.id %}
-          <div class="box-footer">
-            <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2 col-xs-offset-0">保 存</button>
-            <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
-            <button type="button" style="width:108px" class="btn btn-danger" v-on:click="delete({{ object.id }}, $event)">删 除</button>
-          </div>
-        {% endif %}
-      </div>
-
-      <input id="object_id" type="hidden" value="{{ object.id }}">
-
-      {#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
-
-      <div id="orderproduct" class="box box-info inline-related">
-        <div class="box-header with-border">
-          <div class="col-xs-1 hidden-xs hidden-sm"><h3 class="box-title">产 品</h3></div>
-          <div class="col-xs-2 hidden-xs hidden-sm"></div>
-          <div class="col-md-8 col-xs-12"><span>地址：<span id="address-text"></span></span></div>
-
-        </div>
-
-        <div id="{{ product_formset.prefix }}_table" class="box-body form-horizontal">
-          <div class="form-group hidden-xs hidden-sm">
-            <div class="col-lg-2 col-md-2 col-xs-10">
-              <b>产品</b>
-            </div>
-            <div class="col-lg-2 col-md-2 col-xs-10">
-              <b>备注</b>
-            </div>
-            <div class="col-lg-1 col-sm-1 col-xs-2">
-              <b>数量</b>
-            </div>
-            <div class="col-lg-2 col-sm-2 col-xs-2">
-              <b>单价</b>
-            </div>
-            <div class="col-lg-2 col-sm-2 col-xs-2  hidden-sm hidden-xs">
-              <b>小计</b>
-            </div>
-            <div class="col-lg-2 col-sm-2 col-xs-2">
-              <b>成本</b>
-            </div>
-{#            <div class="col-xs-2 hidden-sm hidden-xs">#}
-{#              <b>来源</b>#}
-{#            </div>#}
-          </div>
-
-          <input id="product_forms_length" name="product_forms_length" type="hidden" value="{{ product_formset|length }}">
-          <div>
-            {{ product_formset.management_form }}
-          </div>
-          {% for product in product_formset %}
-            <div class="form-group product-form"
-                 id="{{ product_formset.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %}
-                 data-pk="{{ product.instance.pk }}"{% endif %}>
-              {{ product.id }}
-              {{ product.order }}
-              <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
-              <div class="col-lg-2 col-md-2 col-xs-10">
-                {{ product.product }}
-              </div>
-              <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
-              <div class="col-lg-2 col-md-2 col-xs-10">
-                {{ product.description }}
-              </div>
-              <div class="col-lg-1 col-md-1 col-xs-2">
-                {{ product.amount }}
-              </div>
-              <div class="col-lg-2 col-md-2 col-xs-3">
-                {{ product.sell_price_rmb }}
-              </div>
-              <div class="col-lg-2 col-md-2 col-xs-3">
-                {{ product.sum_price }}
-              </div>
-              <div class="col-lg-2 col-md-2 col-xs-3">
-                {{ product.cost_price_aud }}
-                {% if product.instance.pk %}{{ product.DELETE }}{% endif %}
-              </div>
-{#              <div class="col-lg-2 col-md-4 col-xs-1 hidden-xs hidden-sm inline">#}
-{#                  {{ product.store }}#}
-{#                <a href="javascript:void(0)" class="ln34 delete_product">#}
-{#                  <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-{#                </a>#}
-{#                <input class="hide" style="visibility: hidden"#}
-{#                       id="id_{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE"#}
-{#                       name="{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">#}
-{#              </div>#}
-            </div>
-          {% endfor %}
-        </div><!-- //express_table -->
-
-        <div class="box-footer">
-{#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
-          <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
-          <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
-        </div>
-      </div>
-
-      <div id="expressorders" class="box box-info inline-related">
-        <div class="box-header with-border">
-          <h3 class="box-title">物流</h3>
-        </div>
-
-        <div id="{{ express_formset.prefix }}_table" class="box-body form-horizontal">
-
-          <div class="form-group hidden-xs hidden-sm">
-            <div class="col-md-3">
-              <b>物流</b>
-            </div>
-            <div class="col-md-3">
-              <b>单号</b>
-            </div>
-            <div class="col-md-2 col-xs-2">
-              <b>运费</b>
-            </div>
-{#            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">#}
-{#              <b>重量</b>#}
-{#            </div>#}
-            <div class="col-lg-1 col-sm-2 col-xs-2">
-              <b>证件</b>
-            </div>
-          </div>
-
-          <div>
-            {{ express_formset.management_form }}
-          </div>
-          <input id="express_forms_length" name="express_forms_length" type="hidden" value="{{ express_formset|length }}">
-
-          {% for express in express_formset %}
-            <div class="form-group express-form"
-                 id="{{ express_formset.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %}
-                 data-pk="{{ express.instance.pk }}"{% endif %}>
-              {{ express.id }}
-              {{ express.order }}
-              <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
-              <div class="col-md-3 col-xs-10">
-                {{ express.carrier }}
-              </div>
-              <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
-              <div class="col-md-3 col-xs-10">
-                {{ express.track_id }}
-              </div>
-              <div class="visible-xs visible-sm col-xs-2 ln34">运费</div>
-              <div class="col-md-2 col-xs-3">
-                {{ express.fee }}
-              </div>
-{#              <div class="col-lg-1 col-md-1 col-xs-3">#}
-{#                {{ express.weight }}#}
-{#              </div>#}
-              <div class="col-lg-1 col-md-1 col-xs-1 inline ln34">
-                  {{ express.id_upload }}
-                  {% if express.instance.pk %}{{ express.DELETE }}{% endif %}
-              </div>
-{#              <div class="col-lg-1 col-md-1 col-xs-3">#}
-{#                  <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express">#}
-{#                    <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-{#                  </a>#}
-{#                  {% if form.instance.pk %}{{ form.DELETE }}{% endif %}#}
-{#              </div>#}
-            </div>
-          {% endfor %}
-        </div>
-        <div class="box-footer">
-{#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
-          <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
-          <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 &
-            编辑
-          </button>
-        </div>
-
-      </div><!-- //expressorders -->
-      </form>
-
-
-      <div class="hide" id="{{ express_formset.prefix }}_template">
-        <div class="form-group">
-        {% with express_formset.extra_forms|first as new_express_template %}
-{#          <input id="id_{{ express_formset.prefix }}-id" name="{{ express_formset.prefix }}-id" type="hidden">#}
-{#          <input id="id_{{ express_formset.prefix }}-order" name="{{ express_formset.prefix }}-order" type="hidden"#}
-{#                 value="{{ object.id }}">#}
-          {{ new_express_template.id }}
-          {{ new_express_template.order }}
-          <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
-          <div class="col-md-3 col-xs-10">
-            {{ new_express_template.carrier }}
-          </div>
-          <div class="visible-xs visible-sm col-xs-2 ln34">单 号</div>
-          <div class="col-md-3 col-xs-10">
-            {{ new_express_template.track_id }}
-          </div>
-          <div class="visible-xs visible-sm col-xs-2 ln34">运费</div>
-          <div class="col-md-2 col-xs-3">
-            {{ new_express_template.fee }}
-          </div>
-{#          <div class="col-lg-1 col-md-1 col-xs-3">#}
-{#            {{ new_express_template.weight }}#}
-{#          </div>#}
-          <div class="col-lg-1 col-md-1 col-xs-3 inline ln34">
-              {{ new_express_template.id_upload }}
-              {% if new_express_template.instance.pk %}{{ new_express_template.DELETE }}{% endif %}
-{#            <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"#}
-{#              <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-{#            </a>#}
-          </div>
-        {% endwith %}
-        </div><!-- //express_template -->
-      </div>
-
-      <div class="hide" id="{{ product_formset.prefix }}_template">
-        <div class="form-group">
-          {% with product_formset.extra_forms|first as new_product_template %}
-{#          <input id="id_{{ product_formset.prefix }}-id" name="{{ product_formset.prefix }}-id" type="hidden">#}
-{#          <input id="id_{{ product_formset.prefix }}-order" name="{{ product_formset.prefix }}-order" type="hidden"#}
-{#                 value="{{ object.id }}">#}
-          {{ new_product_template.id }}
-          {{ new_product_template.order }}
-          <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
-          <div class="col-lg-2 col-md-2 col-xs-10">
-            {{ new_product_template.product }}
-          </div>
-          <div class="visible-xs visible-sm ln34 col-xs-2">备 注</div>
-          <div class="col-lg-2 col-md-2 col-xs-10">
-            {{ new_product_template.description }}
-          </div>
-          <div class="col-lg-1 col-md-2 col-xs-2">
-            {{ new_product_template.amount }}
-          </div>
-          <div class="col-lg-2 col-md-2 col-xs-3">
-            {{ new_product_template.sell_price_rmb }}
-          </div>
-          <div class="col-lg-2 col-md-2 col-xs-3">
-            {{ new_product_template.sum_price }}
-          </div>
-          <div class="col-lg-2 col-md-2 col-xs-3">
-            {{ new_product_template.cost_price_aud }}
-            {% if new_product_template.instance.pk %}{{ new_product_template.DELETE }}{% endif %}
-          </div>
-{#          <div class="col-lg-2 col-md-4 col-xs-1">#}
-{#            <div class="inline hidden-xs hidden-sm">#}
-{#              {{ new_product_template.store }}#}
-{#            </div>#}
-{#            <a href="javascript:void(0)" class="ln34 delete_product">#}
-{#              <i style="color:#dd4b39;" class="fa fa-lg fa-trash"></i>#}
-{#            </a>#}
-{#          </div>#}
-        </div>
-        {% endwith %}
-      </div><!-- //product_template -->
     </div>
-  </div>
 
-  <div class="row" style="min-height: 140px">
-    <div class="col-xs-12 full-width">
-      {{ object.address.name }} {{ object.address.id_number }} {{ object.address.mobile }}<br/>
-      {{ object.address }}<br/>
-      <br/>
-      {% for product in object.products.all %}
-        {{ product }}<br/>
-      {% endfor %}
+    <div class="row" style="min-height: 140px">
+        <div class="col-xs-12 full-width">
+            {{ object.address.name }} {{ object.address.id_number }} {{ object.address.mobile }}<br/>
+            {{ object.address }}<br/>
+            <br/>
+            {% for product in object.products.all %}
+                {{ product }}<br/>
+            {% endfor %}
+        </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block header_page_script %}
-  {{ block.super }}
-  <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
-  <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "js/jquery.formset.min.js" %}"></script>
+    <script src="{% static 'plugins/iCheck/icheck.min.js' %}"></script>
 {% endblock %}
 
 {% block footer_page_script %}
-  <script type="text/javascript" src="{% static "js/order/order_edit.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/order/order_edit.min.js" %}"></script>
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-        $('#orderproduct .product-form').formset({
-            formTemplate: '#{{ product_formset.prefix }}_template .form-group',
-            prefix: '{{ product_formset.prefix }}',
-            deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
-            deleteCssClass: 'delete-row inline ln34',
-            formCssClass: 'dynamic-form',
-            addText: '<button type="button" style="width:108px" class="btn btn-success">增加一项</button>',
-            added: function (row) {
-                $('[data-autocomplete-light-function]',row).each(window.__dal__initialize);
-            }
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#orderproduct .product-form').formset({
+                formTemplate: '#{{ product_formset.prefix }}_template .form-group',
+                prefix: '{{ product_formset.prefix }}',
+                deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
+                deleteCssClass: 'delete-row inline ln34',
+                formCssClass: 'dynamic-form',
+                addText: '<button type="button" style="width:108px" class="btn btn-success">增加一项</button>',
+                added: function (row) {
+                    $('[data-autocomplete-light-function]', row).each(window.__dal__initialize);
+                }
+            });
+            $('#expressorders .express-form').formset({
+                formTemplate: '#{{ express_formset.prefix }}_template .form-group',
+                prefix: '{{ express_formset.prefix }}',
+                deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
+                deleteCssClass: 'delete-row inline ln34',
+                formCssClass: 'dynamic-form',
+                addText: '<button type="button" style="width:108px" class="btn btn-success">增加一项</button>',
+                added: function (row) {
+                    $('[data-autocomplete-light-function]', row).each(window.__dal__initialize);
+                }
+            });
         });
-        $('#expressorders .express-form').formset({
-            formTemplate: '#{{ express_formset.prefix }}_template .form-group',
-            prefix: '{{ express_formset.prefix }}',
-            deleteText: '<i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>',
-            deleteCssClass: 'delete-row inline ln34',
-            formCssClass: 'dynamic-form',
-            addText: '<button type="button" style="width:108px" class="btn btn-success">增加一项</button>',
-            added: function (row) {
-                $('[data-autocomplete-light-function]',row).each(window.__dal__initialize);
-            }
-        });
-    });
-  </script>
+    </script>
 {% endblock %}
 

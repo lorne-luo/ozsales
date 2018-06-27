@@ -39,10 +39,9 @@
             <div class="box box-info">
                 <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form"
                       id="commonForm">
+                    {% csrf_token %}
                     <input type="hidden" name="from_page" value="{{ from_page }}"/>
                     <input type="hidden" name="search" value="{{ search }}"/>
-
-                    {% csrf_token %}
 
                     <div class="box-header with-border">
                         <h3 class="box-title">{{ object }}</h3>
