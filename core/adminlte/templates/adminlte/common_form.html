@@ -17,15 +17,15 @@
             </a>
         </li>
         {% if page_title != default_dashboard_title %}
-        <li class="active">
-            {% block app_index %}
-            {% if page_app_name and page_model_name %}
-                <a href="{% url page_app_name|add:':'|add:page_model_name|add:'-list' %}">
-                    {{ page_app_name }}
-                </a>
-            {% endif %}
-            {% endblock %}
-        </li>
+            <li class="active">
+                {% block app_index %}
+                    {% if page_app_name and page_model_name %}
+                        <a href="{% url page_app_name|add:':'|add:page_model_name|add:'-list' %}">
+                            {{ page_app_name }}
+                        </a>
+                    {% endif %}
+                {% endblock %}
+            </li>
         {% endif %}
         {% if object != None %}
             <li class="active">{{ page_title }}</li>
@@ -35,50 +35,56 @@
 
 {% block content %}
     <div class="row">
-    <div class="col-xs-12 full-width">
-    <div class="box box-info">
-        <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form" id="commonForm">
-        <input type="hidden" name="from_page" value="{{ from_page }}"/>
-        {% csrf_token %}
+        <div class="col-xs-12 full-width">
+            <div class="box box-info">
+                <form method="post" action="" enctype="multipart/form-data" class="form-horizontal" role="form"
+                      id="commonForm">
+                    <input type="hidden" name="from_page" value="{{ from_page }}"/>
+                    <input type="hidden" name="search" value="{{ search }}"/>
 
-        <div class="box-header with-border">
-          <h3 class="box-title">{{ object }}</h3>
-        </div>
+                    {% csrf_token %}
 
-        <div class="box-body">
-            {% include "adminlte/includes/messages.html" %}
-
-            {% block form_content %}
-            {% for field in form %}
-                <div class="form-group {% if field.errors %}error{% endif %} {% if field.is_hidden %}hide{% endif %}">
-                    <label for="id_{{ field.name }}" class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
-                    <div class="col-sm-6 col-xs-9">
-                        {{ field }}
+                    <div class="box-header with-border">
+                        <h3 class="box-title">{{ object }}</h3>
                     </div>
-                    {% if field.errors %}
-                    <div class="col-sm-4 col-xs-12">
-                        {{ field.errors }}
-                        <span class="help-block">{{ field.help_text }}</span>
+
+                    <div class="box-body">
+                        {% include "adminlte/includes/messages.html" %}
+
+                        {% block form_content %}
+                            {% for field in form %}
+                                <div class="form-group {% if field.errors %}error{% endif %} {% if field.is_hidden %}hide{% endif %}">
+                                    <label for="id_{{ field.name }}"
+                                           class="col-sm-2 col-xs-3 control-label">{{ field.label }}</label>
+                                    <div class="col-sm-6 col-xs-9">
+                                        {{ field }}
+                                    </div>
+                                    {% if field.errors %}
+                                        <div class="col-sm-4 col-xs-12">
+                                            {{ field.errors }}
+                                            <span class="help-block">{{ field.help_text }}</span>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endblock %}
                     </div>
-                    {% endif %}
-                </div>
-            {% endfor %}
-            {% endblock %}
+                    <div class="box-footer">
+                        {% block form_footer %}
+                            <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存
+                            </button>
+                            <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑
+                            </button>
+                            {#          {% if object.id %}#}
+                            {#          <button type="button" style="width:108px" class="btn btn-danger"#}
+                            {#                  v-on:click="delete({{ object.id }}, $event)">删 除#}
+                            {#          </button>#}
+                            {#          {% endif %}#}
+                        {% endblock %}
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="box-footer">
-        {% block form_footer %}
-          <button type="submit" style="width:108px" class="btn btn-primary col-sm-offset-2">保 存</button>
-          <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑</button>
-{#          {% if object.id %}#}
-{#          <button type="button" style="width:108px" class="btn btn-danger"#}
-{#                  v-on:click="delete({{ object.id }}, $event)">删 除#}
-{#          </button>#}
-{#          {% endif %}#}
-        {% endblock %}
-        </div>
-    </form>
-    </div>
-    </div>
     </div>
 {% endblock %}
 
@@ -91,7 +97,7 @@
         $('#commonForm textarea').addClass('form-control');
         $("select[class$='form-control'][readonly=true]").prop('disabled', true);
 
-        jQuery(document).ready(function($) {
+        jQuery(document).ready(function ($) {
             $("select[class$='form-control']").not(".hide select[class$='form-control']").chosen({
                 search_contains: true,
                 disable_search_threshold: 10

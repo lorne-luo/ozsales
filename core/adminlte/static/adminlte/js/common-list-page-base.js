@@ -22,8 +22,8 @@ var CommonListPageVue = Vue.extend({
             currentPage: 1,
             totalPage: 1,
             perPage: 10,
-            search_keyword: undefined,
-            ordering: undefined,
+            search_keyword: '',
+            ordering: '',
             count: 0
         }
     },
@@ -220,7 +220,6 @@ var CommonListPageVue = Vue.extend({
                 param['ordering'] = this.ordering;
             if (this.search_keyword)
                 param['search'] = this.search_keyword;
-
             return param;
         },
         reload: function (event) {
