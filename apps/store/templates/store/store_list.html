@@ -22,7 +22,7 @@
       ##[$index+1]
       <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
     </td>
-    <td><a href="{!! item.edit_url !!}">{!! item.name !!}</a></td>
+    <td><a href="{!! item.edit_url !!}?from_page={!! currentPage !!}&search={!! search_keyword !!}">{!! item.name !!}</a></td>
     <td>{!! item.short_name !!}</td>
     <td class="hidden-sm hidden-xs">{!! item.address !!}</td>
     <td>{!! item.domain !!}</td>
