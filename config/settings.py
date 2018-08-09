@@ -219,9 +219,9 @@ DEFAULT_FROM_EMAIL = 'dev@luotao.net'
 # ------------------------------------------------------------------------------
 AUTH_USER_MODEL = 'auth_user.AuthUser'
 AUTHENTICATION_BACKENDS = ['core.auth_user.backend.AuthUserAuthenticateBackend']
-LOGIN_URL = '/member/login/'
-LOGOUT_URL = '/member/logout/'
-LOGIN_REDIRECT_URL = '/member/profile/'
+LOGIN_URL = '/'
+LOGOUT_URL = '/logout/'
+LOGIN_REDIRECT_URL = '/order/'
 SESSION_COOKIE_AGE = 604800 * 4  # 4 weeks
 
 # registration

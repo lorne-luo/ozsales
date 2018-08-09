@@ -3,7 +3,7 @@ import logging
 from django.template.context_processors import csrf
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.shortcuts import get_object_or_404, render_to_response, redirect, resolve_url
 from django.template import RequestContext
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
@@ -12,6 +12,7 @@ from django.views.decorators.cache import never_cache
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
+from django.conf import settings
 from django.views.generic import TemplateView, FormView
 from braces.views import PermissionRequiredMixin
 from smtplib import SMTPException, SMTPConnectError
@@ -52,7 +53,7 @@ def member_login(request):
             # not have the permission to see the page in ?next
             if old_user == user or not next_page:
                 # Redirect chefs to meals page
-                next_page = reverse('order:order-list-short')
+                next_page = resolve_url(settings.LOGIN_REDIRECT_URL)
 
             return HttpResponseRedirect(next_page)
         else:

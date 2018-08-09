@@ -15,7 +15,7 @@ from core.api.views import GitCommitInfoView
 from core.auth_user.views import ChangePasswordView
 from core import auth_user
 from apps.member.forms import CustomPasswordResetForm, CustomSetPasswordForm
-from apps.member.views import member_login
+from apps.member.views import member_login, member_logout
 
 def if_installed(appname, *args, **kwargs):
     ret = url(*args, **kwargs)
@@ -33,8 +33,9 @@ wagtail_urlpatterns = [
 ]
 
 apps_urlpatterns = [
-    url(r'^', member_login),
-    url(r'^djadmin/', include(admin.site.urls)),
+    url(r'^$', member_login,name='member-login'),
+    url(r'^logout/$', member_logout,name='member-logout'),
+    # url(r'^djadmin/', include(admin.site.urls)),
     url(r'^customer/', include('apps.customer.urls', namespace='customer')),
     url(r'^member/', include('apps.member.urls', namespace='member')),
     url(r'^store/', include('apps.store.urls', namespace='store')),
