@@ -68,7 +68,7 @@ def member_home(request):
 
 def member_logout(request):
     logout(request)
-    return redirect('member:member-login')
+    return redirect('member-login')
 
 
 class ProfileView(PermissionRequiredMixin, FormView):
@@ -127,7 +127,7 @@ class AgentView(TemplateView):
 class RegisterView(FormView):
     template_name = 'adminlte/register.html'
     form_class = RegisterForm
-    success_url = reverse_lazy('member:member-login')
+    success_url = reverse_lazy('member-login')
 
     def get(self, request, *args, **kwargs):
         form = self.get_form()
