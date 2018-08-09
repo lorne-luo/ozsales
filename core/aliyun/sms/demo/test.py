@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
-from aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
-from aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
-from aliyunsdkcore.client import AcsClient
 import uuid
+from ..aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
+from ..aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
+from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
+from django.conf import settings
 
 """
 短信业务调用接口示例，版本号：v20170525
@@ -22,8 +23,8 @@ PRODUCT_NAME = "Dysmsapi"
 DOMAIN = "dysmsapi.aliyuncs.com"
 
 # ACCESS_KEY_ID/ACCESS_KEY_SECRET 根据实际申请的账号信息进行替换
-ACCESS_KEY_ID = "$AccessKeyId"
-ACCESS_KEY_SECRET = "$AccessKeySecret"
+ACCESS_KEY_ID = 'C1c2BoiPjWUR1Vxw'
+ACCESS_KEY_SECRET = 'TdCsRd1an0x0zFFjx61ObsTMWMYhQb'
 
 acs_client = AcsClient(ACCESS_KEY_ID, ACCESS_KEY_SECRET, REGION)
 region_provider.add_endpoint(PRODUCT_NAME,REGION,DOMAIN)
@@ -75,12 +76,14 @@ def query_send_detail(biz_id, phone_number, page_size, current_page, send_date):
     return queryResponse
 
 
-__name__ = 'query'
+__name__ = 'send'
 if __name__ == 'send':
     __business_id = uuid.uuid1()
     print __business_id
-    params = "{\"code\":\"12345\",\"product\":\"云通信\"}"
-    print send_sms(__business_id, "13000000000", "云通信测试", "SMS_5250008", params)
+    # params = "{\"code\":\"12345\",\"product\":\"云通信\"}"
+    # print send_sms(__business_id, "13707437028", "云通信测试", "SMS_5250008", params)
+    params = "{\"code\":\"12345\"}"
+    print send_sms(__business_id, "13707437028", "海马爸爸澳洲代购", "SMS_116567674", params)
 
 if __name__ == 'query':
-    print query_send_detail("1234567^8901234", "13000000000", 10, 1, "20170612")
+    print query_send_detail("718519833769273197^0", "13707437028", 10, 1, "20180809")
