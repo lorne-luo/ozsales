@@ -13,10 +13,11 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
-import apps.express.tracker as tracker
-from apps.member.models import Seller
 from core.auth_user.models import AuthUser
+from core.aliyun.sms.service import send_sms
 from core.django.models import PinYinFieldModelMixin
+import tracker as tracker
+from ..member.models import Seller
 from ..customer.models import Address, Customer
 from ..order.models import Order
 
@@ -254,6 +255,13 @@ class ExpressOrder(models.Model):
             self.order.seller.send_notification(subject, content)
             self.order.customer.send_email(subject, content)
 
+    def sms_delivered(self):
+        mobile = self.order.get_mobile()
+        bz_id = 'ExpressOrder#%s-delivered' % self.id
+        url = reverse('order-detail-short', kwargs={'customer_id': self.order.customer.id, 'pk': self.order.id})
+        data = "{\"url\":\"%s\"}" % url
+        success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
+
     def update_track(self):
         if self.is_delivered or not self.carrier:
             return
@@ -264,7 +272,7 @@ class ExpressOrder(models.Model):
             self.last_track = last_info[:512]
             self.save(update_fields=['last_track', 'last_track'])
             if self.is_delivered:
-                self.email_delivered()
+                self.sms_delivered()
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:

@@ -1,7 +1,6 @@
 # coding=utf-8
-import datetime
+import uuid
 import logging
-
 from decimal import Decimal
 
 from django.conf import settings
@@ -17,6 +16,7 @@ from dateutil.relativedelta import relativedelta
 
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
+from core.aliyun.sms.service import send_sms
 from utils.enum import enum
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
@@ -86,6 +86,9 @@ class Order(models.Model):
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
 
+    send_msg_sent = models.BooleanField(_(u'send msg'), default=False, null=False, blank=False)  # 寄出通知
+    delivery_msg_sent = models.BooleanField(_(u'delivery msg'), default=False, null=False, blank=False)  # 寄达通知
+
     objects = OrderManager()
 
     def __str__(self):
@@ -97,6 +100,40 @@ class Order(models.Model):
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
         self._currency_original = self.currency
+
+    def get_mobile(self):
+        if self.customer and self.customer.mobile:
+            return self.customer.mobile
+        elif self.address and self.address.mobile:
+            return self.address.mobile
+        return None
+
+    def sms_send(self):
+        mobile = self.get_mobile()
+        if not mobile or self.send_msg_sent:
+            return
+
+        bz_id = 'Order#%s-sent' % self.id
+        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
+        data = "{\"url\":\"%s\"}" % url
+        template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
+        success, detail = send_sms(bz_id, mobile, template, data)
+        if success:
+            self.send_msg_sent = True
+            self.save(update_fields=['send_msg_sent'])
+
+    def sms_delivered(self):
+        mobile = self.get_mobile()
+        if not mobile or self.delivery_msg_sent:
+            return
+
+        bz_id = 'Order#%s-delivered' % self.id
+        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
+        data = "{\"url\":\"%s\"}" % url
+        success, detail = send_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
+        if success:
+            self.delivery_msg_sent = True
+            self.save(update_fields=['delivery_msg_sent'])
 
     def get_product_summary(self):
         result = ''
@@ -361,7 +398,7 @@ class Order(models.Model):
         if all_finished and express_all.count():
             self.set_status(ORDER_STATUS.DELIVERED)
             # notify seller and customer
-            self.email_delivered()
+            self.sms_delivered()
 
     @property
     def app(self):
