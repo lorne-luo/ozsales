@@ -257,7 +257,7 @@ class ExpressOrder(models.Model):
 
     def sms_delivered(self):
         mobile = self.order.get_mobile()
-        bz_id = 'ExpressOrder#%s-delivered' % self.id
+        bz_id = 'ExpressOrder#%s-delivered' % self.track_id
         url = reverse('order-detail-short', kwargs={'customer_id': self.order.customer.id, 'pk': self.order.id})
         data = "{\"url\":\"%s\"}" % url
         success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)

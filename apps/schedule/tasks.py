@@ -206,7 +206,8 @@ def get_forex_quotes():
         setattr(forex, quote['symbol'], value)
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
-    telstra_sender.send_to_admin(msg.strip())
+    # todo china sms instead of australia
+    # telstra_sender.send_to_admin(msg.strip())
 
 
 @periodic_task(run_every=crontab(hour=20, minute=30))
@@ -214,7 +215,8 @@ def express_id_upload_task():
     unupload_order = ExpressOrder.objects.filter(id_upload=False)
     if unupload_order.exists():
         ids = ','.join([o.track_id for o in unupload_order])
-        telstra_sender.send_to_admin('Upload ID for %s' % ids)
+        # todo china sms instead of australia
+        #  telstra_sender.send_to_admin('Upload ID for %s' % ids)
 
     log.info('[Express] Daily id upload checking.')
 
