@@ -8,6 +8,8 @@ from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
 from django.conf import settings
 
+from core.sms.models import Sms
+
 """
 短信业务调用接口示例，版本号：v20170525
 
@@ -59,6 +61,13 @@ def send_sms(business_id, phone_numbers, template_code, template_param=None):
     data = json.loads(smsResponse)
     # {u'Message': u'OK', u'Code': u'OK', u'RequestId': u'22DB9012-D22D-412A-A27A-816CF80F09AA', u'BizId': u'178515533880148197^0'}
     success = data.get('Code', None) == 'OK'
+    msg = data.get('Message', '')
+    request_id = data.get('RequestId', '')
+
+    # save sms history
+    sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), url=template_code,
+              remark=msg, request_id=request_id, success=success)
+    sms.save()
     return success, data['Message']
 
 
