@@ -9,7 +9,22 @@ log = logging.getLogger(__name__)
 
 @periodic_task(run_every=crontab(minute=0, hour='9,12,15,18,21,0'))
 def update_delivery_tracking():
-    for order in Order.objects.filter(status__in=[ORDER_STATUS.SHIPPING, ORDER_STATUS.CREATED]):
+    for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
         if not order.seller.check_premium_member():
             continue
         order.update_track()
+
+
+@periodic_task(run_every=crontab(minute=0, hour=17))
+def send_delivery_sms():
+    for order in Order.objects.filter(status=ORDER_STATUS.DELIVERED):
+        if not order.seller.check_premium_member():
+            continue
+        if not order.delivery_msg_sent:
+            order.sms_delivered()
+        order.set_status(ORDER_STATUS.FINISHED)
+
+    for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
+        if not order.seller.check_premium_member():
+            continue
+        order.sms_delivered()

@@ -30,11 +30,11 @@ ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED',
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, u'创建'),
-    (ORDER_STATUS.CONFIRMED, u'确认'),
+    # (ORDER_STATUS.CONFIRMED, u'确认'),
     (ORDER_STATUS.SHIPPING, u'在途'),
     (ORDER_STATUS.DELIVERED, u'寄达'),
     (ORDER_STATUS.FINISHED, u'完成'),
-    (ORDER_STATUS.CANCELED, u'取消'),
+    # (ORDER_STATUS.CANCELED, u'取消'),
     (ORDER_STATUS.CLOSED, u'关闭')
 )
 
@@ -127,13 +127,28 @@ class Order(models.Model):
         if not mobile or self.delivery_msg_sent:
             return
 
-        bz_id = 'Order#%s-delivered' % self.id
         url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
-        data = "{\"url\":\"%s\"}" % url
-        success, detail = send_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
-        if success:
-            self.delivery_msg_sent = True
-            self.save(update_fields=['delivery_msg_sent'])
+        # all delivered, send ORDER_DELIVERED_TEMPLATE
+        if self.express_orders.filter(is_delivered=True).count() == self.express_orders.count():
+            bz_id = 'Order#%s-delivered' % self.id
+            data = "{\"url\":\"%s\"}" % url
+            success, detail = send_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
+            if success:
+                self.delivery_msg_sent = True
+                self.save(update_fields=['delivery_msg_sent'])
+                self.express_orders.all().update(delivery_sms_sent=True)
+            return
+
+        # part of parcels delivered, send PACKAGE_DELIVERED_TEMPLATE
+        need_sms = self.express_orders.filter(is_delivered=True, delivery_sms_sent=False)
+        track_ids = [x.track_id for x in need_sms]
+        if track_ids:
+            bz_id = 'OrderParcels#%s-delivered' % self.id
+            track_id = ','.join(track_ids)
+            data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, url)
+            success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
+            if success:
+                need_sms.update(delivery_sms_sent=True)
 
     def get_product_summary(self):
         result = ''
