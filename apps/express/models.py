@@ -178,6 +178,7 @@ class ExpressOrder(models.Model):
     weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'重量')
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
+    delivery_sms_sent = models.BooleanField(_(u'delivery sms'), default=False, null=False, blank=False)  # 寄达通知
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     class Meta:
@@ -257,10 +258,16 @@ class ExpressOrder(models.Model):
 
     def sms_delivered(self):
         mobile = self.order.get_mobile()
+        if not mobile or self.delivery_sms_sent:
+            return
+
         bz_id = 'ExpressOrder#%s-delivered' % self.track_id
         url = reverse('order-detail-short', kwargs={'customer_id': self.order.customer.id, 'pk': self.order.id})
-        data = "{\"url\":\"%s\"}" % url
+        data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (self.track_id, url)
         success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
+        if success:
+            self.delivery_sms_sent = True
+            self.save(update_fields=['delivery_sms_sent'])
 
     def update_track(self):
         if self.is_delivered or not self.carrier:
