@@ -15,8 +15,8 @@ TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 
 
 class MessageSender(object):
-    CONSUMER_KEY = settings.TELSTRA_CONSUMER_KEY
-    CONSUMER_SECRET = settings.TELSTRA_CONSUMER_SECRET
+    CONSUMER_KEY = settings.TELSTRA_CLIENT_KEY
+    CONSUMER_SECRET = settings.TELSTRA_CLIENT_SECRET
     AUTH_URL = 'https://api.telstra.com/v1/oauth/token'
     SEND_URL = 'https://api.telstra.com/v1/sms/messages'
     TOKEN = None

@@ -354,8 +354,8 @@ DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_call
 
 # TELSTRA SMS API KEY
 # ------------------------------------------------------------------------------
-TELSTRA_CONSUMER_KEY = env('TELSTRA_CONSUMER_KEY', default='')
-TELSTRA_CONSUMER_SECRET = env('TELSTRA_CONSUMER_SECRET', default='')
+TELSTRA_CLIENT_KEY = env('TELSTRA_CLIENT_KEY', default='')
+TELSTRA_CLIENT_SECRET = env('TELSTRA_CLIENT_SECRET', default='')
 ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
 
 # 1Forge API KEY
