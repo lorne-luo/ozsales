@@ -34,7 +34,21 @@ acs_client = AcsClient(ACCESS_KEY_ID, ACCESS_KEY_SECRET, REGION)
 region_provider.add_endpoint(PRODUCT_NAME, REGION, DOMAIN)
 
 
+def validate_mobile_number(mobile):
+    if mobile.startswith('+86'):
+        mobile = mobile.replace('+86', '')
+    if mobile.startswith('086'):
+        mobile = mobile.replace('086', '')
+    if mobile.startswith('0086'):
+        mobile = mobile.replace('0086', '')
+    mobile = mobile.strip()
+    if mobile.startswith('1') and len(mobile) == len('13300000000'):
+        return mobile
+    return None
+
+
 def send_sms(business_id, phone_numbers, template_code, template_param=None):
+    phone_numbers = validate_mobile_number(phone_numbers)
     if not phone_numbers:
         return False, 'INVALID_PHONE_NUMBER'
 
