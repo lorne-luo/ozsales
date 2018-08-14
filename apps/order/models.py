@@ -1,18 +1,17 @@
 # coding=utf-8
-import uuid
 import logging
 from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils import timezone
-from dateutil.relativedelta import relativedelta
 
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
@@ -129,7 +128,7 @@ class Order(models.Model):
 
         url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
         # all delivered, send ORDER_DELIVERED_TEMPLATE
-        if self.express_orders.filter(is_delivered=True).count() == self.express_orders.count():
+        if self.is_all_delivered:
             bz_id = 'Order#%s-delivered' % self.id
             data = "{\"url\":\"%s\"}" % url
             success, detail = send_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
@@ -202,15 +201,9 @@ class Order(models.Model):
                 customer.save()
             else:
                 return
-        # elif status_value == ORDER_STATUS.DELIVERED:
-        #     self.express_orders.update(is_delivered=True)
-        # elif status_value == ORDER_STATUS.SHIPPING:
-        #     self.aud_rmb_rate = forex.AUDCNH
-        #     self.products.update(is_purchased=True)
 
         self.set_finish_time()
         self.save()
-
         self.update_price()
 
     def update_monthly_report(self):
@@ -399,21 +392,21 @@ class Order(models.Model):
         if express_all.count() == 0:
             return
 
-        all_finished = True
+        all_delivered = True
         for express in express_all:
-            if express.create_time > timezone.now() - relativedelta(days=3):
-                # send less than 3 days, skip
-                all_finished = False
-                continue
-            else:
-                express.update_track()
-                if not express.is_delivered:
-                    all_finished = False
+            express.update_track()
+            if not express.is_delivered:
+                all_delivered = False
 
-        if all_finished and express_all.count():
+        if all_delivered:
             self.set_status(ORDER_STATUS.DELIVERED)
             # notify seller and customer
             self.sms_delivered()
+
+    @cached_property
+    def is_all_delivered(self):
+        parcels = self.express_orders.all()
+        return parcels.count() and parcels.filter(is_delivered=False).count() == 0
 
     @property
     def app(self):

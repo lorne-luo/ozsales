@@ -15,7 +15,7 @@ def update_delivery_tracking():
         order.update_track()
 
 
-@periodic_task(run_every=crontab(minute=0, hour=17))
+@periodic_task(run_every=crontab(minute=0, hour='11,14,17,19,23'))
 def send_delivery_sms():
     for order in Order.objects.filter(status=ORDER_STATUS.DELIVERED):
         if not order.seller.check_premium_member():
@@ -28,3 +28,5 @@ def send_delivery_sms():
         if not order.seller.check_premium_member():
             continue
         order.sms_delivered()
+        if order.is_all_delivered:
+            order.set_status(ORDER_STATUS.FINISHED)

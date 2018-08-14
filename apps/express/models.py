@@ -2,10 +2,12 @@
 import logging
 import re
 
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
@@ -273,13 +275,14 @@ class ExpressOrder(models.Model):
         if self.is_delivered or not self.carrier:
             return
 
+        if self.create_time > timezone.now() - relativedelta(days=3):
+            return  # send less than 3 days, skip
+
         delivered, last_info = self.carrier.update_track(self)
         if delivered in [True, False]:
             self.is_delivered = delivered
             self.last_track = last_info[:512]
-            self.save(update_fields=['last_track', 'last_track'])
-            if self.is_delivered:
-                self.sms_delivered()
+            self.save(update_fields=['last_track', 'is_delivered'])
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:
