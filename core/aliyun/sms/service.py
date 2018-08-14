@@ -76,11 +76,11 @@ def send_sms(business_id, phone_numbers, template_code, template_param=None):
     # {u'Message': u'OK', u'Code': u'OK', u'RequestId': u'22DB9012-D22D-412A-A27A-816CF80F09AA', u'BizId': u'178515533880148197^0'}
     success = data.get('Code', None) == 'OK'
     msg = data.get('Message', '')
-    request_id = data.get('RequestId', '')
+    biz_id = data.get('BizId', '')
 
     # save sms history
-    sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), url=template_code,
-              remark=msg, request_id=request_id, success=success)
+    sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
+              remark=msg, biz_id=biz_id, success=success)
     sms.save()
     return success, data['Message']
 
@@ -100,7 +100,7 @@ def query_send_detail(biz_id, phone_number, page_size, current_page, send_date):
 
     # 调用短信记录查询接口，返回json
     queryResponse = acs_client.do_action_with_exception(queryRequest)
+    # {u'TotalCount': 0, u'Message': u'OK', u'Code': u'OK', u'RequestId': u'17526F21-4145-4E3F-B50C-C12598683BE6', u'SmsSendDetailDTOs': {u'SmsSendDetailDTO': []}}
 
     data = json.loads(queryResponse)
-    success = data.get('Code', None) == 'OK'
-    return success, data['Message']
+    return data

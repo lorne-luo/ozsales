@@ -11,11 +11,18 @@ class Sms(models.Model):
     app_name = models.CharField(_(u'App Name'), max_length=64, null=True, blank=True)
     send_to = models.CharField(_(u'Send To'), max_length=32, null=False, blank=False)
     content = models.CharField(_(u'Content'), max_length=255, null=True, blank=True)
-    url = models.CharField(_(u'Url'), max_length=255, null=True, blank=True)
-    request_id = models.CharField(_(u'request_id'), max_length=255, null=True, blank=True)
+    template_code = models.CharField(_(u'template code'), max_length=255, null=True, blank=True)
+    biz_id = models.CharField(_(u'biz_id'), max_length=255, null=True, blank=True)
     remark = models.CharField(_(u'remark'), max_length=255, null=True, blank=True)
     success = models.BooleanField(_(u'Success'), default=False)
 
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        # todo extract url from content
-        super(Sms, self).save()
+    # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+    #     # todo extract url from content
+    #     super(Sms, self).save()
+
+    def query_sms(self):
+        if self.biz_id:
+            # aliyun sms, china mobile
+            from core.aliyun.sms.service import query_send_detail
+            return query_send_detail(self.biz_id, self.send_to, 10, 1, self.time.strftime('%Y%m%d'))
+        return None
