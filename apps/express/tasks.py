@@ -30,3 +30,4 @@ def send_delivery_sms():
         order.sms_delivered()
         if order.is_all_delivered:
             order.set_status(ORDER_STATUS.FINISHED)
+            order.express_orders.update(delivery_sms_sent=True)

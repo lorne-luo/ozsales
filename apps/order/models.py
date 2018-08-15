@@ -385,7 +385,7 @@ class Order(models.Model):
 
         self.seller.send_notification(subject, content)
         self.seller.send_email(subject, content)
-        self.customer.send_email(subject, content)
+        # self.customer.send_email(subject, content)
 
     def update_track(self):
         express_all = self.express_orders.all()

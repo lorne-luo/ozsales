@@ -8,6 +8,8 @@ import redis
 from django.conf import settings
 from Telstra_Messaging.rest import ApiException
 
+from core.sms.models import Sms
+
 log = logging.getLogger(__name__)
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
@@ -49,7 +51,7 @@ def get_from_number():
     provision_number_request = Telstra_Messaging.ProvisionNumberRequest()  # ProvisionNumberRequest | A JSON payload containing the required attributes
     api_response = api_instance.create_subscription(provision_number_request)
     destination_address = api_response.destination_address
-    expiry_timestamp = api_response.expiry_date / 1000
+    expiry_timestamp = int(api_response.expiry_date / 1000)
     expires_in = expiry_timestamp - int(time.mktime(datetime.datetime.now().timetuple()))
     r.setex(TELSTRA_SMS_DESTINATION_ADDRESS, expires_in, destination_address)
     return destination_address
@@ -96,12 +98,17 @@ def send_au_sms(to, body, app_name=None):
         #                'to': '+61413725868'}],
         #  'number_segments': 1}
         api_response = api_instance.send_sms(send_sms_request)
-        if api_response.messages[0].delivery_status == 'MessageWaiting':
+        success = api_response.messages[0].delivery_status == 'MessageWaiting'
+        sms = Sms(app_name=app_name, send_to=to, content=body, success=success,
+                  template_code=api_response.messages[0].delivery_status,
+                  remark=api_response.messages[0].message_status_url, biz_id=api_response.messages[0].delivery_status)
+        sms.save()
+
+        if success:
             return True, 'MessageWaiting'
     except ApiException as e:
         log.error("Exception when calling MessagingApi->send_sms: %s\n" % e)
         return False, e.message
-
 
 # api_instance = Telstra_Messaging.ProvisioningApi(Telstra_Messaging.ApiClient(configuration))
 # provision_number_request = Telstra_Messaging.ProvisionNumberRequest() # ProvisionNumberRequest | A JSON payload containing the required attributes
