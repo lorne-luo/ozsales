@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
 from core.auth_user.models import AuthUser
-from core.aliyun.sms.service import send_sms
+from core.aliyun.sms.service import send_cn_sms
 from core.django.models import PinYinFieldModelMixin
 import tracker as tracker
 from ..member.models import Seller
@@ -266,7 +266,7 @@ class ExpressOrder(models.Model):
         bz_id = 'ExpressOrder#%s-delivered' % self.track_id
         url = reverse('order-detail-short', kwargs={'customer_id': self.order.customer.id, 'pk': self.order.id})
         data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (self.track_id, url)
-        success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
+        success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
         if success:
             self.delivery_sms_sent = True
             self.save(update_fields=['delivery_sms_sent'])

@@ -15,7 +15,6 @@ from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
 
-from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
@@ -191,17 +190,6 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
     def send_email(self, subject, message):
         if self.email:
             email_send_task.apply_async(args=([self.email], subject, message))
-
-    def send_sms(self, content, app_name=None):
-        if not self.mobile:
-            return
-
-        if self.mobile.startswith('04'):
-            # australia mobile
-            telstra_sender.send_sms(self.mobile, content, app_name)
-        elif self.mobile.startswith('1'):
-            # todo send sms for china mobile number
-            pass
 
 
 @receiver(post_save, sender=Customer)

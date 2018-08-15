@@ -3,10 +3,10 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
-from core.sms.telstra_api import telstra_sender
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
 from core.payments.stripe.models import StripePaymentUserMixin
+from core.sms.telstra_api_v2 import send_au_sms
 from ..messageset.models import NotificationContent, SiteMailContent
 
 
@@ -98,16 +98,8 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
         if self.email:
             email_send_task.apply_async(args=([self.email], subject, message))
 
-    def send_sms(self, content, app_name=None):
-        if not self.mobile:
-            return
-
-        if self.mobile.startswith('04'):
-            # australia mobile
-            telstra_sender.send_sms(self.mobile, content, app_name)
-        elif self.mobile.startswith('1'):
-            # todo send sms for china mobile number
-            pass
+    def send_au_sms(self, content, app_name=None):
+        send_au_sms(self.mobile,content, app_name)
 
     def send_notification(self, title, content, sender=None):
         notification_content = NotificationContent(creator=sender, title=title, contents=content)

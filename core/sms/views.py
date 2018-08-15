@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 
 from core.api.permission import AdminOnlyPermissions
-from .telstra_api import MessageSender
+from core.sms.telstra_api_v2 import send_au_sms, send_to_admin
 from .models import Sms
 
 
@@ -19,8 +19,7 @@ class SMSSender(GenericAPIView):
         to = self.request.query_params.get('to', '')
         app_name = self.request.query_params.get('app_name', None)
         if body and to:
-            m = MessageSender()
-            result, detail = m.send_sms(to, body, app_name)
+            result, detail = send_au_sms(to, body, app_name)
             return Response({'success': result, 'detail': detail})
         return Response({'success': False, 'detail': 'to or body is null'})
 
@@ -30,8 +29,7 @@ class SMSSelfSender(SMSSender):
         body = self.request.query_params.get('body', '')
         app_name = self.request.query_params.get('app_name', None)
         if body:
-            m = MessageSender()
-            result, detail = m.send_to_admin(body, app_name)
+            result, detail = send_to_admin(body, app_name)
             return Response({'success': result, 'detail': detail})
         return Response({'success': False, 'detail': 'body is null'})
 

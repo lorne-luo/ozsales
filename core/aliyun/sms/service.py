@@ -35,6 +35,8 @@ region_provider.add_endpoint(PRODUCT_NAME, REGION, DOMAIN)
 
 
 def validate_mobile_number(mobile):
+    if not mobile:
+        return None
     if mobile.startswith('+86'):
         mobile = mobile.replace('+86', '')
     if mobile.startswith('086'):
@@ -46,8 +48,26 @@ def validate_mobile_number(mobile):
         return mobile
     return None
 
+def clean_mobile_number(mobile):
+    if not mobile:
+        return ''
+    if mobile.startswith('+86'):
+        mobile = mobile.replace('+86', '')
+    if mobile.startswith('086'):
+        mobile = mobile.replace('086', '')
+    if mobile.startswith('0086'):
+        mobile = mobile.replace('0086', '')
+    if mobile.startswith('+61'):
+        mobile = mobile.replace('+61', '')
+    if mobile.startswith('061'):
+        mobile = mobile.replace('061', '')
+    if mobile.startswith('0061'):
+        mobile = mobile.replace('0061', '')
 
-def send_sms(business_id, phone_numbers, template_code, template_param=None):
+    return mobile.strip()
+
+
+def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
     phone_numbers = validate_mobile_number(phone_numbers)
     if not phone_numbers:
         return False, 'INVALID_PHONE_NUMBER'

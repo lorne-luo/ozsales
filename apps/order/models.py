@@ -15,7 +15,7 @@ from django.utils import timezone
 
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
-from core.aliyun.sms.service import send_sms
+from core.aliyun.sms.service import send_cn_sms
 from utils.enum import enum
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
@@ -116,7 +116,7 @@ class Order(models.Model):
         url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
         data = "{\"url\":\"%s\"}" % url
         template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
-        success, detail = send_sms(bz_id, mobile, template, data)
+        success, detail = send_cn_sms(bz_id, mobile, template, data)
         if success:
             self.send_msg_sent = True
             self.save(update_fields=['send_msg_sent'])
@@ -131,7 +131,7 @@ class Order(models.Model):
         if self.is_all_delivered:
             bz_id = 'Order#%s-delivered' % self.id
             data = "{\"url\":\"%s\"}" % url
-            success, detail = send_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
+            success, detail = send_cn_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
             if success:
                 self.delivery_msg_sent = True
                 self.save(update_fields=['delivery_msg_sent'])
@@ -145,7 +145,7 @@ class Order(models.Model):
             bz_id = 'OrderParcels#%s-delivered' % self.id
             track_id = ','.join(track_ids)
             data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, url)
-            success, detail = send_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
+            success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
             if success:
                 need_sms.update(delivery_sms_sent=True)
 

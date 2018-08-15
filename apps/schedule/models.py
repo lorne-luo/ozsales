@@ -1,8 +1,9 @@
 import dbsettings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core import validators
-from core.sms.telstra_api import MessageSender
+
+from core.aliyun.sms.service import clean_mobile_number
+from core.sms.telstra_api_v2 import send_au_sms
 
 
 class DealSubscribe(models.Model):
@@ -22,8 +23,16 @@ class DealSubscribe(models.Model):
         return excludes.split(' ')
 
     def send_msg(self, msg):
-        sender = MessageSender()
-        sender.send_sms(self.mobile, msg, 'DealSubscribe #%s' % self.id)
+        mobile = clean_mobile_number(self.mobile)
+        if not mobile:
+            return
+
+        if mobile.startswith('04'):
+            # australia mobile
+            send_au_sms(self.mobile, msg, 'DealSubscribe #%s' % self.id)
+        elif mobile.startswith('1'):
+            # todo chinese mobile
+            pass
 
 
 # http://s.luotao.net/admin/settings/

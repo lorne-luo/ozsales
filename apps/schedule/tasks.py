@@ -20,7 +20,7 @@ from dateutil.relativedelta import relativedelta
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
-from core.sms.telstra_api import TELSTRA_SMS_MONTHLY_COUNTER, telstra_sender
+from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS,TELSTRA_SMS_MONTHLY_COUNTER
 from ..express.models import ExpressOrder
 from .models import DealSubscribe, forex
 
@@ -111,13 +111,13 @@ def ozbargin_task():
                 description = ' '.join(x.strip() for x in text_list)
                 summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
                 content = summary + description
-                content = content[:telstra_sender.LENGTH_PER_SMS]
+                content = content[:TELSTRA_LENGTH_PER_SMS]
 
                 # avoid duplication
                 day_ago = timezone.now() - relativedelta(days=1)
                 if subscribe.mobile and not Sms.objects.filter(time__gt=day_ago, send_to=subscribe.mobile,
                                                                content=content).exists():
-                    result, detail = telstra_sender.send_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
+                    result, detail = send_au_sms(subscribe.mobile, content, 'OZBARGIN_SUBSCRIBE')
                     subscribe.msg_count += 1
                     subscribe.save(update_fields=['msg_count'])
                     # print 'sending', content
@@ -185,7 +185,7 @@ def smzdm_task():
             description = ' '.join(x.strip() for x in text_list)
             summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
-            result, detail = telstra_sender.send_to_admin(content)
+            result, detail = send_to_admin(content)
             # print 'sending', content
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 

@@ -15,6 +15,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 TELSTRA_SMS_ACCESS_TOKEN = 'TELSTRA_SMS_ACCESS_TOKEN'
 TELSTRA_SMS_DESTINATION_ADDRESS = 'TELSTRA_SMS_DESTINATION_ADDRESS'
+TELSTRA_LENGTH_PER_SMS = 160
 
 
 def get_token():
@@ -58,6 +59,8 @@ def get_from_number():
 
 
 def validate_mobile_number(mobile):
+    if not mobile:
+        return None
     if mobile.startswith('+61'):
         mobile = mobile.replace('+61', '')
     if mobile.startswith('061'):
@@ -109,6 +112,10 @@ def send_au_sms(to, body, app_name=None):
     except ApiException as e:
         log.error("Exception when calling MessagingApi->send_sms: %s\n" % e)
         return False, e.message
+
+
+def send_to_admin(body, app_name=None):
+    send_au_sms(settings.ADMIN_MOBILE_NUMBER, body, app_name)
 
 # api_instance = Telstra_Messaging.ProvisioningApi(Telstra_Messaging.ApiClient(configuration))
 # provision_number_request = Telstra_Messaging.ProvisionNumberRequest() # ProvisionNumberRequest | A JSON payload containing the required attributes
