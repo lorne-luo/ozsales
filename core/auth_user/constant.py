@@ -1,4 +1,5 @@
 ADMIN_GROUP = 'Admin'
 MEMBER_GROUP = 'Member'
 PREMIUM_MEMBER_GROUP = 'Premium Member'
+FREE_PREMIUM_GROUP = 'Free Member'
 CUSTOMER_GROUP = 'Customer'

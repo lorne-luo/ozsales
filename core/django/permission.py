@@ -45,7 +45,7 @@ class PremiumSellerRequiredMixin(ProfileRequiredMixin):
 
     def check_perm(self, request, *args, **kwargs):
         if super(PremiumSellerRequiredMixin, self).check_perm(request, *args, **kwargs):
-            return request.profile.check_premium_member()
+            return request.profile.is_premium
         else:
             return False
 

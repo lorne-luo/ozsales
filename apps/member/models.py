@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
 from rest_framework.authtoken.models import Token
 
-from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP
+from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES, CURRENCY_CHOICES
 from core.payments.stripe.models import StripePaymentUserMixin
@@ -74,7 +74,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         month = timezone.now().month
         return Order.objects.filter(seller=self, create_time__year=year, create_time__month=month).count()
 
-    def subscribe_seller_member(self):
+    def subscribe_premium_plan(self):
         plan_id = SELLER_MEMBER_PLAN_ID
         if not self.stripe_customer.has_active_subscription(plan_id):
             plan = Plan.objects.filter(stripe_id=plan_id).first()
@@ -92,26 +92,25 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
 
     def add_card(self, source, remove_old=False, set_default=True):
         card = super(Seller, self).add_card(source, remove_old=False, set_default=True)
-        if card:
-            self.subscribe_seller_member()
         return card
 
-    def check_premium_member(self):
+    @property
+    def is_premium(self):
         if self.auth_user.is_superuser:
             return True  # always True
-        elif self.in_group(PREMIUM_MEMBER_GROUP):
-            return True
-            if self.current_month_order_count <= MONTHLY_FREE_ORDER:
-                return True  # in free range
-            else:
-                if self.can_charge():
-                    if not self.stripe_customer.has_active_subscription(SELLER_MEMBER_PLAN_ID):
-                        self.subscribe_seller_member()
-                    return True  # paid seller
-                else:
-                    return False
+        return self.in_group(PREMIUM_MEMBER_GROUP) or self.in_group(FREE_PREMIUM_GROUP)
+
+    def join_premium(self):
+        if self.can_charge():
+            if not self.stripe_customer.has_active_subscription(SELLER_MEMBER_PLAN_ID):
+                self.subscribe_premium_plan()
+            self.auth_user.groups.add(Group.objects.get(name=PREMIUM_MEMBER_GROUP))
+            return True  # chargeable seller
         else:
             return False
+
+    def cancel_premium(self):
+        self.auth_user.groups.remove(Group.objects.get(name=PREMIUM_MEMBER_GROUP))
 
     def enable(self, month):
         self.auth_user.is_active = True
