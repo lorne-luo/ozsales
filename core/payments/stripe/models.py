@@ -95,7 +95,9 @@ class StripePaymentUserMixin(object):
                 continue
 
     def remove_card(self, stripe_id):
-        self.stripe_customer.sources.filter(stripe_id=stripe_id).first().remove()
+        card = self.stripe_customer.sources.filter(stripe_id=stripe_id).first()
+        if card:
+            card.remove()
 
     def get_default_card(self):
         """all credit card"""

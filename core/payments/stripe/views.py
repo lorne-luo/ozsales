@@ -11,8 +11,10 @@ from djstripe.enums import SubscriptionStatus
 from djstripe.models import Card, Plan, Subscription
 from djstripe.mixins import PaymentsContextMixin, SubscriptionMixin
 
+from core.django.permission import SellerRequiredMixin
 
-class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateView):
+
+class UpdateCreditCardView(SellerRequiredMixin, PaymentsContextMixin, TemplateView):
     """A view to render the add card template."""
     template_name = "djstripe/add_card.html"
 
@@ -35,30 +37,35 @@ class UpdateCreditCardView(LoginRequiredMixin, PaymentsContextMixin, TemplateVie
         return HttpResponseRedirect(reverse_lazy('payments:view_card'))
 
 
-class RemoveAllCardView(LoginRequiredMixin, RedirectView):
+class RemoveAllCardView(SellerRequiredMixin, RedirectView):
     http_method_names = ['post']
     pattern_name = 'payments:add_card'
 
     def post(self, request, *args, **kwargs):
         profile = self.request.profile
         profile.remove_all_card()
+        profile.cancel_premium()
         return super(RemoveAllCardView, self).post(request, *args, **kwargs)
 
 
-class RemoveSingleCardView(LoginRequiredMixin, RedirectView):
+class RemoveSingleCardView(SellerRequiredMixin, RedirectView):
     http_method_names = ['post']
     pattern_name = 'payments:add_card'
 
     def post(self, request, *args, **kwargs):
         card_id = kwargs.get("pk")
         card = Card.objects.filter(id=card_id).first()
+        profile = self.request.profile
         if card:
-            profile = self.request.profile
             profile.remove_card(card.stripe_id)
+
+        if not profile.get_all_card().count():
+            profile.cancel_premium()
+
         return super(RemoveSingleCardView, self).post(request, *args, **kwargs)
 
 
-class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
+class ViewCreditCardView(SellerRequiredMixin, PaymentsContextMixin, DetailView):
     template_name = "djstripe/view_card.html"
 
     def get_object(self, queryset=None):
@@ -79,14 +86,14 @@ class ViewCreditCardView(LoginRequiredMixin, PaymentsContextMixin, DetailView):
         return self.render_to_response(context)
 
 
-class RemoveCreditCardView(LoginRequiredMixin, RedirectView):
+class RemoveCreditCardView(SellerRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         profile = self.request.profile
         profile.remove_all_card()
         return reverse_lazy('payments:add_card')
 
 
-class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
+class PlanPurchaseView(SellerRequiredMixin, SubscriptionMixin, TemplateResponseMixin, ContextMixin, ProcessFormView):
     template_name = 'djstripe/plan_purchase.html'
 
     def post(self, request, *args, **kwargs):
@@ -102,7 +109,7 @@ class PlanPurchaseView(LoginRequiredMixin, SubscriptionMixin, TemplateResponseMi
         return HttpResponseRedirect(reverse_lazy('payments:view_card'))
 
 
-class CancelSubscriptionView(LoginRequiredMixin, RedirectView):
+class CancelSubscriptionView(SellerRequiredMixin, RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         sub_stripe_id = kwargs.get("stripe_id")
         sub = Subscription.objects.filter(stripe_id=sub_stripe_id).first()
