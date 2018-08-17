@@ -11,7 +11,6 @@ from django.db import models
 from django.db.models import Sum, F, Avg, Min, Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
@@ -27,10 +26,7 @@ from apps.store.models import Page
 
 log = logging.getLogger(__name__)
 
-# reload(sys)
-# sys.setdefaultencoding('utf8')
 
-@python_2_unicode_compatible
 class Brand(models.Model):
     name_en = models.CharField(_('name_en'), max_length=128, blank=False, unique=True)
     name_cn = models.CharField(_('name_cn'), max_length=128, blank=True)
@@ -112,7 +108,6 @@ class ProductManager(models.Manager):
         ))).order_by('-use_counter')
 
 
-@python_2_unicode_compatible
 class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     code = models.CharField(_('code'), max_length=32, blank=True)

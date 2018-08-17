@@ -4,7 +4,6 @@ from django.db import models
 from dateutil.relativedelta import relativedelta
 from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 from django.db.models import F, Sum, Count
 from django.utils import timezone
 
@@ -15,7 +14,6 @@ from apps.order.models import Order, ORDER_STATUS
 
 
 # Create your models here.
-@python_2_unicode_compatible
 class MonthlyReport(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,

@@ -8,7 +8,6 @@ from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.core.urlresolvers import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils import timezone
@@ -51,7 +50,6 @@ class OrderManager(models.Manager):
         return super(OrderManager, self).get_queryset().filter(status=ORDER_STATUS.FINISHED)
 
 
-@python_2_unicode_compatible
 class Order(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     order_id = models.CharField(_('编号'), max_length=32, null=True, blank=True)
@@ -458,7 +456,6 @@ class Order(models.Model):
         return wx_order.get_jsapi()
 
 
-@python_2_unicode_compatible
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))

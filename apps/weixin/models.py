@@ -8,7 +8,6 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlquote, urlunquote
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 from wechat_sdk import WechatConf, WechatBasic
 from wechat_sdk.exceptions import OfficialAPIError
 from weixin.login import WeixinLogin
@@ -19,7 +18,6 @@ from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 log = logging.getLogger(__name__)
 
 
-@python_2_unicode_compatible
 class WxApp(models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     app_id = models.CharField(_('App ID'), max_length=128, null=False, blank=False)

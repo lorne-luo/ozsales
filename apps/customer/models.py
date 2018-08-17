@@ -10,7 +10,6 @@ from django.db.models import Manager
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
@@ -24,7 +23,6 @@ from apps.member.models import Seller
 from apps.product.models import Product
 
 
-@python_2_unicode_compatible
 class InterestTag(models.Model):
     name = models.CharField(_('name'), unique=True, max_length=30, null=False, blank=False)
     remarks = models.CharField(_('remarks'), max_length=254, null=True, blank=True)
@@ -101,7 +99,6 @@ class CustomerManager(Manager):
             item.save(update_fields=['order_count'])
 
 
-@python_2_unicode_compatible
 class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
@@ -244,7 +241,6 @@ class AddressManager(Manager):
             raise PermissionDenied
 
 
-@python_2_unicode_compatible
 class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)

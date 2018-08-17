@@ -1,9 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class Store(models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     short_name = models.CharField(_('short name'), max_length=30, null=True, blank=True)
@@ -20,7 +18,6 @@ class Store(models.Model):
         return '%s' % self.short_name
 
 
-@python_2_unicode_compatible
 class Page(models.Model):
     title = models.CharField(_('name'), max_length=254, null=False, blank=False)
     url = models.URLField(_('url'), null=False, blank=False)

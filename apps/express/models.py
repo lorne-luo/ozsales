@@ -11,7 +11,6 @@ from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
@@ -78,7 +77,6 @@ class ExpressCarrierManager(models.Manager):
         ))).order_by('-use_counter')
 
 
-@python_2_unicode_compatible
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
@@ -167,7 +165,6 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
             ExpressCarrier.objects.clean_cache()
 
 
-@python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')

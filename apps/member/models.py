@@ -6,10 +6,8 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
-from rest_framework.authtoken.models import Token
 
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
@@ -23,7 +21,6 @@ MONTHLY_FREE_ORDER = 10
 SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
-@python_2_unicode_compatible
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)
