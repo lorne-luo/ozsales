@@ -59,7 +59,7 @@ class SiteMailContent(AbstractMessageContent):
     class Meta:
         verbose_name_plural = verbose_name = '站内邮件内容'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Config:
@@ -146,7 +146,7 @@ class AbstractSiteMail(models.Model, MailStatus):
 
 
 class SiteMailSend(AbstractSiteMail):
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % self.title
 
     class Meta:
@@ -184,7 +184,7 @@ class SiteMailReceive(AbstractSiteMail):
         **DICT_NULL_BLANK_TRUE
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % self.title
 
     class Meta:
@@ -233,7 +233,7 @@ class NotificationContent(AbstractMessageContent):
     class Meta:
         verbose_name_plural = verbose_name = '系统通知内容'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     class Config:
@@ -316,7 +316,7 @@ class Notification(models.Model, ReadStatus):
         **DICT_NULL_BLANK_TRUE
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % self.content.title
 
     class Meta:
@@ -387,7 +387,7 @@ class Task(models.Model, TaskStatus):
         **DICT_NULL_BLANK_TRUE
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s' % self.name
 
     def get_absolute_url(self):
