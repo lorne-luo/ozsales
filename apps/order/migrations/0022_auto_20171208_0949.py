@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='status',
-            field=models.CharField(choices=[(b'CREATED', '\u521b\u5efa'), (b'CONFIRMED', '\u786e\u8ba4'), (b'SHIPPING', '\u5728\u9014'), (b'DELIVERED', '\u5bc4\u8fbe'), (b'FINISHED', '\u5b8c\u6210'), (b'CANCELED', '\u53d6\u6d88'), (b'CLOSED', '\u5173\u95ed')], default=b'CREATED', max_length=20, verbose_name='\u72b6\u6001'),
+            field=models.CharField(choices=[('CREATED', '\u521b\u5efa'), ('CONFIRMED', '\u786e\u8ba4'), ('SHIPPING', '\u5728\u9014'), ('DELIVERED', '\u5bc4\u8fbe'), ('FINISHED', '\u5b8c\u6210'), ('CANCELED', '\u53d6\u6d88'), ('CLOSED', '\u5173\u95ed')], default='CREATED', max_length=20, verbose_name='\u72b6\u6001'),
         ),
         migrations.AlterField(
             model_name='order',

@@ -15,12 +15,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='seller',
             name='primary_currency',
-            field=models.CharField(blank=True, choices=[(b'AUDCNH', '\u6fb3\u5143'), (b'USDCNH', '\u7f8e\u5143'), (b'NZDCNH', '\u7ebd\u5143'), (b'EURCNH', '\u6b27\u5143'), (b'GBPCNH', '\u82f1\u9551'), (b'CADCNH', '\u52a0\u5143'), (b'JPYCNH', '\u65e5\u5143')], default=b'AUDCNH', max_length=128, verbose_name='\u9996\u9009\u8d27\u5e01'),
+            field=models.CharField(blank=True, choices=[('AUDCNH', '\u6fb3\u5143'), ('USDCNH', '\u7f8e\u5143'), ('NZDCNH', '\u7ebd\u5143'), ('EURCNH', '\u6b27\u5143'), ('GBPCNH', '\u82f1\u9551'), ('CADCNH', '\u52a0\u5143'), ('JPYCNH', '\u65e5\u5143')], default='AUDCNH', max_length=128, verbose_name='\u9996\u9009\u8d27\u5e01'),
         ),
         migrations.AlterField(
             model_name='seller',
             name='country',
-            field=models.CharField(blank=True, choices=[(b'AU', '\u6fb3\u6d32'), (b'US', '\u5317\u7f8e'), (b'EU', '\u6fb3\u6d32'), (b'GB', '\u82f1\u56fd'), (b'JP', '\u65e5\u672c'), (b'KR', '\u97e9\u56fd'), (b'TW', '\u53f0\u6e7e'), (b'SEA', '\u4e1c\u5357\u4e9a')], default=b'AU', max_length=128, verbose_name='\u56fd\u5bb6'),
+            field=models.CharField(blank=True, choices=[('AU', '\u6fb3\u6d32'), ('US', '\u5317\u7f8e'), ('EU', '\u6fb3\u6d32'), ('G', '\u82f1\u56fd'), ('JP', '\u65e5\u672c'), ('KR', '\u97e9\u56fd'), ('TW', '\u53f0\u6e7e'), ('SEA', '\u4e1c\u5357\u4e9a')], default='AU', max_length=128, verbose_name='\u56fd\u5bb6'),
         ),
         migrations.AlterField(
             model_name='seller',

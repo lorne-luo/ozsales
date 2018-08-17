@@ -30,6 +30,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='wxpayment',
             name='sign_type',
-            field=models.CharField(default=b'MD5', max_length=32, null=True, blank=True),
+            field=models.CharField(default='MD5', max_length=32, null=True, blank=True),
         ),
     ]

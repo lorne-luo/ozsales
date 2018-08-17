@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='sitemailreceive',
             name='receive',
-            field=models.ForeignKey(related_name=b'sitemailreceive_receive', verbose_name='\u6536\u4ef6\u4eba', blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='sitemailreceive_receive', verbose_name='\u6536\u4ef6\u4eba', blank=True, to=settings.AUTH_USER_MODEL, null=True),
         ),
         migrations.AlterField(
             model_name='sitemailreceive',

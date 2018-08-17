@@ -39,10 +39,10 @@ class Migration(migrations.Migration):
                 ('last_login', models.DateTimeField(default=django.utils.timezone.now, verbose_name='last login')),
                 ('name', models.CharField(max_length=30, verbose_name='name')),
                 ('email', models.EmailField(max_length=254, null=True, verbose_name='email address', blank=True)),
-                ('mobile', models.CharField(blank=True, max_length=15, null=True, verbose_name='mobile number', validators=[django.core.validators.RegexValidator(b'^[\\d-]+$', 'plz input validated mobile number', b'invalid')])),
+                ('mobile', models.CharField(blank=True, max_length=15, null=True, verbose_name='mobile number', validators=[django.core.validators.RegexValidator('^[\\d-]+$', 'plz input validated mobile number', 'invalid')])),
                 ('remarks', models.CharField(max_length=128, null=True, verbose_name='remarks', blank=True)),
                 ('date_joined', models.DateTimeField(auto_now_add=True, verbose_name='date joined', null=True)),
-                ('groups', models.ManyToManyField(related_query_name=b'customer', related_name=b'customer_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A customer will get all permissions granted to each of his/her group.', verbose_name='customer groups')),
+                ('groups', models.ManyToManyField(related_query_name='customer', related_name='customer_set', to='auth.Group', blank=True, help_text='The groups this user belongs to. A customer will get all permissions granted to each of his/her group.', verbose_name='customer groups')),
                 ('primary_address', models.ForeignKey(related_name='primary address', verbose_name='primary address', blank=True, to='customer.Address', null=True)),
             ],
             options={
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='customer',
             name='user_permissions',
-            field=models.ManyToManyField(related_query_name=b'customer', related_name=b'customer_set', to='auth.Permission', blank=True, help_text='Specific permissions for this customer.', verbose_name='customer permissions'),
+            field=models.ManyToManyField(related_query_name='customer', related_name='customer_set', to='auth.Permission', blank=True, help_text='Specific permissions for this customer.', verbose_name='customer permissions'),
             preserve_default=True,
         ),
         migrations.AddField(

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='customer',
             name='groups',
-            field=models.ManyToManyField(related_query_name=b'customer', related_name=b'customer_set', verbose_name='groups', to=b'auth.Group', blank=True),
+            field=models.ManyToManyField(related_query_name='customer', related_name='customer_set', verbose_name='groups', to='auth.Group', blank=True),
         ),
     ]
