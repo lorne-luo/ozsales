@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.contrib.auth.decorators import login_required
 from rest_framework.routers import DefaultRouter
 from core.api.routers import PostHackedRouter
-import views
+from . import views
 
 
 urlpatterns = []

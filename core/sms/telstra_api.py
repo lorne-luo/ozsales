@@ -4,8 +4,8 @@ import datetime
 import json
 import redis
 import logging
-from urllib import urlencode
-from StringIO import StringIO
+from urllib.parse import urlencode
+from io import StringIO
 from django.conf import settings
 from .models import Sms
 
@@ -30,7 +30,7 @@ class MessageSender(object):
         return cls._instance
 
     def clean_content(self, content):
-        content = unicode(content)
+        content = str(content)
         content = content.replace('%', 'percent')
         if len(content) > MessageSender.LENGTH_PER_SMS:
             content = content[:MessageSender.LENGTH_PER_SMS]
@@ -73,7 +73,7 @@ class MessageSender(object):
 
         content = self.clean_content(content)
         c.setopt(pycurl.HTTPHEADER, ['Authorization: Bearer %s' % MessageSender.TOKEN])
-        post_dict = {'to': unicode(to), 'body': unicode(content)}
+        post_dict = {'to': str(to), 'body': str(content)}
         post_data = json.dumps(post_dict)
         c.setopt(pycurl.POST, 1)
         c.setopt(c.POSTFIELDS, post_data)

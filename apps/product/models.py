@@ -1,4 +1,5 @@
 # coding=utf-8
+
 import logging
 import os
 import uuid
@@ -26,8 +27,8 @@ from apps.store.models import Page
 
 log = logging.getLogger(__name__)
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 @python_2_unicode_compatible
 class Brand(models.Model):
@@ -114,12 +115,12 @@ class ProductManager(models.Manager):
 @python_2_unicode_compatible
 class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    code = models.CharField(_(u'code'), max_length=32, blank=True)
-    name_en = models.CharField(_(u'name_en'), max_length=128, blank=True)
-    name_cn = models.CharField(_(u'name_cn'), max_length=128, blank=True)
-    brand_en = models.CharField(_(u'brand_en'), max_length=128, blank=True)
-    brand_cn = models.CharField(_(u'brand_cn'), max_length=128, blank=True)
-    alias = models.CharField(_(u'alias'), max_length=255, blank=True)
+    code = models.CharField(_('code'), max_length=32, blank=True)
+    name_en = models.CharField(_('name_en'), max_length=128, blank=True)
+    name_cn = models.CharField(_('name_cn'), max_length=128, blank=True)
+    brand_en = models.CharField(_('brand_en'), max_length=128, blank=True)
+    brand_cn = models.CharField(_('brand_cn'), max_length=128, blank=True)
+    alias = models.CharField(_('alias'), max_length=255, blank=True)
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
@@ -128,29 +129,29 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
                             'thumbnail': (400, 400, True)
                         })
     brand = models.ForeignKey(Brand, blank=True, null=True, verbose_name=_('brand'))
-    spec = models.CharField(_(u'spec'), max_length=128, blank=True)
+    spec = models.CharField(_('spec'), max_length=128, blank=True)
     # deliver weight unit: KG
-    weight = models.DecimalField(_(u'weight'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sold_count = models.IntegerField(_(u'Sold Count'), default=0, null=False, blank=False)
+    weight = models.DecimalField(_('weight'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sold_count = models.IntegerField(_('Sold Count'), default=0, null=False, blank=False)
 
-    last_sell_price = models.DecimalField(_(u'last sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    avg_sell_price = models.DecimalField(_(u'avg sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    min_sell_price = models.DecimalField(_(u'min sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    max_sell_price = models.DecimalField(_(u'max sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    avg_cost = models.DecimalField(_(u'avg cost'), max_digits=8, decimal_places=2, blank=True, null=True)
-    min_cost = models.DecimalField(_(u'min cost'), max_digits=8, decimal_places=2, blank=True, null=True)
-    max_cost = models.DecimalField(_(u'max cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+    last_sell_price = models.DecimalField(_('last sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    avg_sell_price = models.DecimalField(_('avg sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    min_sell_price = models.DecimalField(_('min sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    max_sell_price = models.DecimalField(_('max sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    avg_cost = models.DecimalField(_('avg cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+    min_cost = models.DecimalField(_('min cost'), max_digits=8, decimal_places=2, blank=True, null=True)
+    max_cost = models.DecimalField(_('max cost'), max_digits=8, decimal_places=2, blank=True, null=True)
 
-    safe_sell_price = models.DecimalField(_(u'safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    tb_url = models.URLField(_(u'TB URL'), null=True, blank=True)
-    wd_url = models.URLField(_(u'WD URL'), null=True, blank=True)
-    wx_url = models.URLField(_(u'WX URL'), null=True, blank=True)
+    safe_sell_price = models.DecimalField(_('safe sell price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    tb_url = models.URLField(_('TB URL'), null=True, blank=True)
+    wd_url = models.URLField(_('WD URL'), null=True, blank=True)
+    wx_url = models.URLField(_('WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
     uuid = models.CharField(max_length=36, unique=True, null=True, blank=True)
 
-    summary = models.TextField(_(u'summary'), null=True, blank=True)
-    description = models.TextField(_(u'description'), null=True, blank=True)
-    is_active = models.BooleanField(_(u'is active'), default=True, null=False, blank=False)
+    summary = models.TextField(_('summary'), null=True, blank=True)
+    description = models.TextField(_('description'), null=True, blank=True)
+    is_active = models.BooleanField(_('is active'), default=True, null=False, blank=False)
 
     tags = TaggableManager()
     pinyin_fields_conf = [
@@ -170,7 +171,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def __str__(self):
         brand = self.brand or self.brand_cn or self.brand_en
         name = self.name_cn or self.name_en
-        return u'%s %s' % (brand, name)
+        return '%s %s' % (brand, name)
 
     def __init__(self, *args, **kwargs):
         super(Product, self).__init__(*args, **kwargs)
@@ -195,13 +196,13 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
 
     def get_edit_link(self):
         url = reverse('product:product-update-view', args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+        return '<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
         url = reverse('product:product-detail-view', args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.name_cn)
+        return '<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_detail_link.short_description = 'Name'
 

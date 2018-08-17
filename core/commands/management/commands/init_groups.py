@@ -43,7 +43,7 @@ class Command(BaseCommand):
         management.call_command('validate_permissions')
         not_found = []
 
-        for group_name, permission_set in self.permissions.items():
+        for group_name, permission_set in list(self.permissions.items()):
             group, _created = Group.objects.get_or_create(name=group_name)
 
             permissions = []
@@ -58,14 +58,14 @@ class Command(BaseCommand):
                     except Permission.DoesNotExist:
                         not_found.append(perm_code)
 
-            print("\nGroup '%s', adding permissions: \n%s\n" % (
-            group_name, '\t' + '\n\t'.join([p.codename for p in permissions])))
+            print(("\nGroup '%s', adding permissions: \n%s\n" % (
+            group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))))
 
             group.permissions.clear()
             group.permissions.add(*permissions)
 
         if not_found:
-            print("Warning: Unable to find these permissions: %s" % ', '.join(not_found))
+            print(("Warning: Unable to find these permissions: %s" % ', '.join(not_found)))
 
     def get_perm_list(self, view, add, change, delete, app_label, model_name):
         perm_list = []

@@ -26,11 +26,11 @@ SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 @python_2_unicode_compatible
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
-    name = models.CharField(_(u'姓名'), max_length=30, blank=True)
-    country = models.CharField(_(u'国家'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
+    name = models.CharField(_('姓名'), max_length=30, blank=True)
+    country = models.CharField(_('国家'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     expire_at = models.DateField(_('member expire at'), auto_now_add=False, editable=True, null=True, blank=True)
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
-    primary_currency = models.CharField(_(u'首选货币'), max_length=128, choices=CURRENCY_CHOICES, default='AUDCNH',
+    primary_currency = models.CharField(_('首选货币'), max_length=128, choices=CURRENCY_CHOICES, default='AUDCNH',
                                         blank=True)
 
     def __str__(self):

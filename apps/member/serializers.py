@@ -107,4 +107,4 @@ class SellerSerializer(serializers.ModelSerializer):
         read_only_fields = (
             'id', 'username', 'is_active', 'date_joined'
         )
-        extra_kwargs = {'password': {u'write_only': True}}
+        extra_kwargs = {'password': {'write_only': True}}

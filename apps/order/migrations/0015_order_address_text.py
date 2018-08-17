@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 from django.db import migrations, models
 
@@ -8,7 +8,7 @@ def forward(apps, schema_editor):
     Order = apps.get_model('order', 'Order')
     for o in Order.objects.all():
         if o.address:
-            o.address_text = u'%s,%s,%s' % (o.address.name, o.address.mobile, o.address.address)
+            o.address_text = '%s,%s,%s' % (o.address.name, o.address.mobile, o.address.address)
             o.save()
 
 

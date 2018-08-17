@@ -57,7 +57,7 @@ def member_login(request):
 
             return HttpResponseRedirect(next_page)
         else:
-            form.add_error(None, u'密码错误，请重试')
+            form.add_error(None, '密码错误，请重试')
             form.data = {'mobile': mobile}
             return render_to_response('adminlte/login.html', {'form': form})
 
@@ -112,7 +112,7 @@ class ProfileView(PermissionRequiredMixin, FormView):
         if password:
             self.request.user.set_password(password)
         self.request.user.save()
-        messages.success(self.request, u'个人资料已更新')
+        messages.success(self.request, '个人资料已更新')
         return super(ProfileView, self).form_valid(form)
 
 

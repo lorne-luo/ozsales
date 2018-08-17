@@ -1,7 +1,7 @@
 import os
 from PIL import Image, ImageOps
 from wand.image import Image as WandImage
-from StringIO import StringIO
+from io import StringIO
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.storage import default_storage
 

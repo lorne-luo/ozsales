@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import ExpressOrder, ExpressCarrier
+from .models import ExpressOrder, ExpressCarrier
 
 admin.site.register(ExpressCarrier)
 

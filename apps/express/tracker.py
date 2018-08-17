@@ -12,15 +12,15 @@ from .verify.one_express.parser import OneExpressParser
 
 def check_delivery(text):
     text = ' '.join(text.replace('\n', ' ').replace('\r', '').split())
-    if any([u'签收' in text,
-            u'投妥' in text,
-            u'妥投' in text,
-            u'投到' in text,
-            u'收件人已取走' in text]) and all([
-                u'未签收' not in text,
-                u'未投妥' not in text,
-                u'未妥投' not in text,
-                u'未投到' not in text]):
+    if any(['签收' in text,
+            '投妥' in text,
+            '妥投' in text,
+            '投到' in text,
+            '收件人已取走' in text]) and all([
+                '未签收' not in text,
+                '未投妥' not in text,
+                '未妥投' not in text,
+                '未投到' not in text]):
         return True, text
     return False, text.strip()
 

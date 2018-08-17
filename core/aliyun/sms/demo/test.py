@@ -6,6 +6,7 @@ from ..aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
 from django.conf import settings
+import imp
 
 """
 短信业务调用接口示例，版本号：v20170525
@@ -14,7 +15,7 @@ Created on 2017-06-12
 
 """
 
-reload(sys)
+imp.reload(sys)
 sys.setdefaultencoding('utf8')
 
 # 注意：不要更改
@@ -79,11 +80,11 @@ def query_send_detail(biz_id, phone_number, page_size, current_page, send_date):
 __name__ = 'send'
 if __name__ == 'send':
     __business_id = uuid.uuid1()
-    print __business_id
+    print(__business_id)
     # params = "{\"code\":\"12345\",\"product\":\"云通信\"}"
     # print send_sms(__business_id, "13707437028", "云通信测试", "SMS_5250008", params)
     params = "{\"code\":\"12345\"}"
-    print send_sms(__business_id, "13707437028", "海马爸爸澳洲代购", "SMS_116567674", params)
+    print(send_sms(__business_id, "13707437028", "海马爸爸澳洲代购", "SMS_116567674", params))
 
 if __name__ == 'query':
-    print query_send_detail("718519833769273197^0", "13707437028", 10, 1, "20180809")
+    print(query_send_detail("718519833769273197^0", "13707437028", 10, 1, "20180809"))

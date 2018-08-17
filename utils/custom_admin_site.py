@@ -17,13 +17,13 @@ from django.contrib.admin.sites import AdminSite
 
 class CustomAdminSite(AdminSite):
     # Text to put at the end of each page's <title>.
-    site_title = ugettext_lazy(u'OZ商品管理系统')
+    site_title = ugettext_lazy('OZ商品管理系统')
 
     # Text to put in each page's <h1>.
-    site_header = ugettext_lazy(u'OZ商品管理系统')
+    site_header = ugettext_lazy('OZ商品管理系统')
 
     # Text to put at the top of the admin index page.
-    index_title = ugettext_lazy(u'OZ商品管理系统')
+    index_title = ugettext_lazy('OZ商品管理系统')
 
     login_form = None
     index_template = None
@@ -165,7 +165,7 @@ class CustomAdminSite(AdminSite):
         """
         app_dict = {}
         user = request.user
-        for model, model_admin in self._registry.items():
+        for model, model_admin in list(self._registry.items()):
             app_label = model._meta.app_label
             has_module_perms = user.has_module_perms(app_label)
 
@@ -174,7 +174,7 @@ class CustomAdminSite(AdminSite):
 
                 # Check whether user has any perm for this module.
                 # If so, add the module to the model_list.
-                if True in perms.values():
+                if True in list(perms.values()):
                     info = (app_label, model._meta.model_name)
                     model_dict = {
                         'name': capfirst(model._meta.verbose_name_plural),
@@ -231,13 +231,13 @@ class CustomAdminSite(AdminSite):
         if not has_module_perms:
             raise PermissionDenied
         app_dict = {}
-        for model, model_admin in self._registry.items():
+        for model, model_admin in list(self._registry.items()):
             if app_label == model._meta.app_label:
                 perms = model_admin.get_model_perms(request)
 
                 # Check whether user has any perm for this module.
                 # If so, add the module to the model_list.
-                if True in perms.values():
+                if True in list(perms.values()):
                     info = (app_label, model._meta.model_name)
                     model_dict = {
                         'name': capfirst(model._meta.verbose_name_plural),

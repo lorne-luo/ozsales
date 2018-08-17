@@ -6,7 +6,7 @@ __author__ = 'Lorne'
 
 class MessageAppConfig(AppConfig):
     name = "core.messageset"
-    verbose_name = u"消息中心"
+    verbose_name = "消息中心"
 
     def ready(self):
         pass

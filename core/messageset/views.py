@@ -22,7 +22,7 @@ class NotificationListView(MultiplePermissionsRequiredMixin, CommonContextMixin,
 
     def get_context_data(self, **kwargs):
         context = super(NotificationListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'标题', u'内容', u'状态']
+        context['table_titles'] = ['标题', '内容', '状态']
         context['table_fields'] = ['link', 'content', 'status']
         return context
 
@@ -153,7 +153,7 @@ class SiteMailReceiveListView(MultiplePermissionsRequiredMixin, CommonContextMix
 
     def get_context_data(self, **kwargs):
         context = super(SiteMailReceiveListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'主题', u'发件人', u'读取状态', u'收件时间'] + ['']
+        context['table_titles'] = ['主题', '发件人', '读取状态', '收件时间'] + ['']
         context['table_fields'] = ['title', 'sender', 'status', 'send_time'] + ['id']
         return context
 
@@ -188,7 +188,7 @@ class TaskListView(MultiplePermissionsRequiredMixin, CommonContextMixin, ListVie
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        context['table_titles'] = [u'名称', u'状态', u'进度', u'开始时间']
+        context['table_titles'] = ['名称', '状态', '进度', '开始时间']
         context['table_fields'] = ['link', 'status', 'percent', 'start_time']
         return context
 

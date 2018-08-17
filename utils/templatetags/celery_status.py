@@ -17,7 +17,7 @@ def get_celery_data():
     if not stats:
         return {}
 
-    server = stats.itervalues().next() # go to first (and only) entry in the dict
+    server = next(iter(stats.values())) # go to first (and only) entry in the dict
 
     server_data = {'name': server}
     server_data['broker_hostname'] = server['broker']['hostname']

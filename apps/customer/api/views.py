@@ -18,7 +18,7 @@ from core.api.views import CommonViewSet
 from ..models import Customer, Address, CustomerCart, CartProduct
 from ...product.models import Product
 
-import serializers
+from . import serializers
 
 log = logging.getLogger(__name__)
 

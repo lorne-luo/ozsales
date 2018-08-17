@@ -8,6 +8,7 @@ from aliyunsdkcore.profile import region_provider
 from aliyunsdkcore.http import method_type as MT
 from aliyunsdkcore.http import format_type as FT
 import const
+import imp
 
 """
 短信业务调用接口示例，版本号：v20170525
@@ -16,7 +17,7 @@ Created on 2017-06-12
 
 """
 try:
-    reload(sys)
+    imp.reload(sys)
     sys.setdefaultencoding('utf8')
 except NameError:
     pass
@@ -69,7 +70,7 @@ if __name__ == '__main__':
     #print(__business_id)
     params = "{\"code\":\"12345\",\"product\":\"云通信\"}"
 	#params = u'{"name":"wqb","code":"12345678","address":"bz","phone":"13000000000"}'
-    print(send_sms(__business_id, "13707437028", "云通信测试", "SMS_5250008", params))
+    print((send_sms(__business_id, "13707437028", "云通信测试", "SMS_5250008", params)))
 
     # SMS_116567674
 

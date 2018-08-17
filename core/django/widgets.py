@@ -5,8 +5,8 @@ from django import forms
 
 class ThumbnailImageInput(forms.ClearableFileInput):
     template_name = 'widgets/thumbnail_image_file_input.html'
-    input_text = u'更换'
-    initial_text = u'当前'
+    input_text = '更换'
+    initial_text = '当前'
     width = None
     height = None
     size = None
@@ -50,7 +50,7 @@ class ThumbnailImageInput(forms.ClearableFileInput):
 class IDThumbnailImageInput(ThumbnailImageInput):
     def get_download_filename(self, value):
         if value:
-            side = u'正面' if 'front' in value.field.name else u'反面'
+            side = '正面' if 'front' in value.field.name else '反面'
             filename, file_ext = os.path.splitext(value.name)
             return '%s_%s%s' % (value.instance.name, side, file_ext)
         return super(IDThumbnailImageInput, self).get_download_filename(value)

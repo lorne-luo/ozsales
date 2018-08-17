@@ -26,7 +26,7 @@ from apps.product.models import Product
 
 @python_2_unicode_compatible
 class InterestTag(models.Model):
-    name = models.CharField(_(u'name'), unique=True, max_length=30, null=False, blank=False)
+    name = models.CharField(_('name'), unique=True, max_length=30, null=False, blank=False)
     remarks = models.CharField(_('remarks'), max_length=254, null=True, blank=True)
 
     # tags = models.ManyToManyField(Customer, verbose_name=_('mobile number'), null=True, blank=True)
@@ -42,8 +42,8 @@ class InterestTag(models.Model):
 class CustomerCart(models.Model):
     customer = models.OneToOneField('Customer', blank=False, null=False, verbose_name=_('Customer'))
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
-    origin_price = models.DecimalField(_(u'Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    payment_price = models.DecimalField(_(u'Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    origin_price = models.DecimalField(_('Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_('Price'), max_digits=8, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return '%s' % self.customer.name
@@ -105,14 +105,14 @@ class CustomerManager(Manager):
 class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
-    name = models.CharField(_(u'姓名'), max_length=30, null=False, blank=False)
-    remark = models.CharField(_(u'备注'), max_length=255, blank=True)
+    name = models.CharField(_('姓名'), max_length=30, null=False, blank=False)
+    remark = models.CharField(_('备注'), max_length=255, blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     email = models.EmailField(_('Email'), max_length=255, blank=True)
-    mobile = models.CharField(_(u'手机'), max_length=15, blank=True)
-    order_count = models.PositiveIntegerField(_(u'订单数'), blank=True, default=0)
+    mobile = models.CharField(_('手机'), max_length=15, blank=True)
+    order_count = models.PositiveIntegerField(_('订单数'), blank=True, default=0)
     last_order_time = models.DateTimeField(_('Last order time'), auto_now_add=True, null=True)
-    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_(u'默认地址'),
+    primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('默认地址'),
                                         related_name='primary_address')
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
 
@@ -154,17 +154,17 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
 
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.name)
+        return '<a href="%s">%s</a>' % (url, self.name)
 
     def get_edit_link(self):
         url = reverse('customer:customer-update', args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.name)
+        return '<a href="%s">%s</a>' % (url, self.name)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
         url = reverse('customer:customer-detail', args=[self.id])
-        return u'<a href="%s">%s</a>' % (url, self.name)
+        return '<a href="%s">%s</a>' % (url, self.name)
 
     get_detail_link.short_description = 'Name'
 

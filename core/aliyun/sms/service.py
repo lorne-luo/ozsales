@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
-import uuid
 import json
-from aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
-from aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
+from .aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
+from .aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
 from django.conf import settings
@@ -17,8 +16,8 @@ Created on 2017-06-12
 
 """
 
-reload(sys)
-sys.setdefaultencoding('utf8')
+# reload(sys)
+# sys.setdefaultencoding('utf8')
 
 # 注意：不要更改
 REGION = "cn-hangzhou"

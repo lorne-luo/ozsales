@@ -25,7 +25,7 @@ class ChangePasswordView(CommonPageViewMixin, TemplateView):
         return self.render_to_response(context)
 
     def render_to_response(self, context, **response_kwargs):
-        context['page_title'] = u'修改密码'
+        context['page_title'] = '修改密码'
         template_response = password_change(
             self.request,
             template_name='adminlte/change-password.html',

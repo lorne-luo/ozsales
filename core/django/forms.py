@@ -11,7 +11,7 @@ class NoManytoManyHintModelForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NoManytoManyHintModelForm, self).__init__(*args, **kwargs)
-        remove_message = unicode(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
+        remove_message = str(_('Hold down "Control", or "Command" on a Mac, to select more than one.'))
         for field_name in self.base_fields:
             if self.base_fields[field_name].help_text:
                 help_text = self.base_fields[field_name].help_text
@@ -20,14 +20,14 @@ class NoManytoManyHintModelForm(forms.ModelForm):
 
             field = self.fields.get(field_name)
             if type(field.widget) in [forms.SelectMultiple]:
-                field.widget.attrs['placeholder'] = u'可多选'
+                field.widget.attrs['placeholder'] = '可多选'
             else:
                 if field.help_text:
                     field.widget.attrs['placeholder'] = field.help_text
                 elif field.required:
-                    field.widget.attrs['placeholder'] = u'必填'
+                    field.widget.attrs['placeholder'] = '必填'
                 else:
-                    field.widget.attrs['placeholder'] = u'可选'
+                    field.widget.attrs['placeholder'] = '可选'
 
 
 class ReadonlyModelFormMixin(object):
@@ -45,7 +45,7 @@ class ReadonlyModelFormMixin(object):
 
     def __init__(self, *args, **kwargs):
         super(ReadonlyModelFormMixin, self).__init__(*args, **kwargs)
-        for key, field in self.fields.items():
+        for key, field in list(self.fields.items()):
             if key in self.readonly_exclude:
                 continue
 

@@ -1,6 +1,6 @@
 # coding=utf-8
 from core.django.forms import NoManytoManyHintModelForm
-from models import Page, Store
+from .models import Page, Store
 
 
 class PageAddForm(NoManytoManyHintModelForm):

@@ -79,7 +79,7 @@ class BreadcrumbNode(Node):
         """
         First var is title, second var is url context variable
         """
-        self.vars = map(Variable, vars)
+        self.vars = list(map(Variable, vars))
         self.last = last
 
     def render(self, context):

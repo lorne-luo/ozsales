@@ -119,9 +119,9 @@ class CancelSubscriptionView(SellerRequiredMixin, RedirectView):
 
         subscription = sub.cancel(at_period_end=True)
         if subscription.status == SubscriptionStatus.canceled:
-            messages.info(self.request, u'会员资格已取消.')
+            messages.info(self.request, '会员资格已取消.')
             return reverse_lazy('payments:view_card')
         elif subscription.cancel_at_period_end:
             # If pro-rate, they get some time to stay.
-            messages.info(self.request, u'会员资格将在%s到期后取消.' % subscription.current_period_end)
+            messages.info(self.request, '会员资格将在%s到期后取消.' % subscription.current_period_end)
         return reverse_lazy('payments:view_card')

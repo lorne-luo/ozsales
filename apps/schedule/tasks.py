@@ -3,7 +3,7 @@ import os
 import datetime
 import logging
 import shlex
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import pytz
 import redis
 import python_forex_quotes
@@ -33,15 +33,15 @@ ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
 
 
 def get_rss(url):
-    return urllib2.urlopen(urllib2.Request(url))
+    return urllib.request.urlopen(urllib.request.Request(url))
 
 
 def utf8len(s):
-    return len(s.encode('utf-8')) if isinstance(s, unicode) else len(s)
+    return len(s.encode('utf-8')) if isinstance(s, str) else len(s)
 
 
 def utf8sub(s, length):
-    length = int(length / 3) if isinstance(s, unicode) else length
+    length = int(length / 3) if isinstance(s, str) else length
     return s[:length]
 
 
@@ -53,7 +53,7 @@ def ozbargin_task():
     if not subscribe_list.count():
         return
 
-    data = urllib2.urlopen(urllib2.Request(url))
+    data = urllib.request.urlopen(urllib.request.Request(url))
     soup = BeautifulSoup(data, "lxml-xml")
     items = soup.find_all("item")
     last_date_str = r.get(ozbargin_last_date)
@@ -138,8 +138,8 @@ def smzdm_task():
     if not smzdm_keywords:
         return
 
-    req = urllib2.Request(haitao_url, headers={'User-Agent': "Magic Browser"})
-    data = urllib2.urlopen(req)
+    req = urllib.request.Request(haitao_url, headers={'User-Agent': "Magic Browser"})
+    data = urllib.request.urlopen(req)
     soup = BeautifulSoup(data, "html.parser")
     items = soup.find_all("item")
     last_date_str = r.get(smzdm_last_date)

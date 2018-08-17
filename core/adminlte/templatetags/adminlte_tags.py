@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, print_function, unicode_literals
+
 from datetime import datetime
 import django
 import django.db.models.fields.related as related
 from django import template
 from django.db.models import ImageField
 from utils.converter import format_datetime
+from functools import reduce
 
 register = template.Library()
 
@@ -39,9 +40,9 @@ def render_field_label(obj, field_name):
             if mf.name == field_name:
                 return mf.verbose_name
 
-        return u'未知'
+        return '未知'
     else:
-        return u''
+        return ''
 
 
 @register.filter(name='render_field_value')
@@ -67,7 +68,7 @@ def render_field_value(obj, a):
                 pass
             elif hasattr(value, 'through'):
                 objects = value.all()
-                ret = ', '.join([unicode(o) for o in objects])
+                ret = ', '.join([str(o) for o in objects])
                 return ret
 
     return value

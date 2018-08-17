@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Brand, Product
+from .models import Brand, Product
 from utils.custom_admin_site import member_site
 
 admin.site.register(Brand)

@@ -12,7 +12,7 @@ from django.utils.http import urlunquote
 from weixin.base import Map
 from weixin.login import WeixinLogin
 
-import conf
+from . import conf
 from apps.customer.models import Customer
 from apps.member.models import Seller
 from core.auth_user.models import AuthUser

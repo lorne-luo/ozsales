@@ -2,7 +2,7 @@
 import datetime
 import time
 import logging
-import conf as wx_conf
+from . import conf as wx_conf
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.utils.http import urlquote, urlunquote
@@ -21,18 +21,18 @@ log = logging.getLogger(__name__)
 
 @python_2_unicode_compatible
 class WxApp(models.Model):
-    name = models.CharField(_(u'name'), max_length=30, null=False, blank=False)
-    app_id = models.CharField(_(u'App ID'), max_length=128, null=False, blank=False)
-    app_secret = models.CharField(_(u'App Secret'), max_length=128, null=False, blank=False)
-    mch_id = models.CharField(_(u'MCH ID'), max_length=128, null=True, blank=True)  # 商户ID
-    mch_key = models.CharField(_(u'MCH Key'), max_length=128, null=True, blank=True)  # 商户API密钥 只参与签名 不需要上传
-    access_token = models.CharField(_(u'Access Token'), max_length=512, null=True, blank=True)
+    name = models.CharField(_('name'), max_length=30, null=False, blank=False)
+    app_id = models.CharField(_('App ID'), max_length=128, null=False, blank=False)
+    app_secret = models.CharField(_('App Secret'), max_length=128, null=False, blank=False)
+    mch_id = models.CharField(_('MCH ID'), max_length=128, null=True, blank=True)  # 商户ID
+    mch_key = models.CharField(_('MCH Key'), max_length=128, null=True, blank=True)  # 商户API密钥 只参与签名 不需要上传
+    access_token = models.CharField(_('Access Token'), max_length=512, null=True, blank=True)
     token_expiry = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                        verbose_name=_(u'Token Expiry'))
-    jsapi_ticket = models.CharField(_(u'JsApi Ticket'), max_length=512, null=True, blank=True)
+                                        verbose_name=_('Token Expiry'))
+    jsapi_ticket = models.CharField(_('JsApi Ticket'), max_length=512, null=True, blank=True)
     ticket_expiry = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                         verbose_name=_(u'Ticket Expiry'))
-    update_at = models.DateTimeField(auto_now=True, editable=True, blank=True, null=True, verbose_name=_(u'Update At'))
+                                         verbose_name=_('Ticket Expiry'))
+    update_at = models.DateTimeField(auto_now=True, editable=True, blank=True, null=True, verbose_name=_('Update At'))
 
     class Meta:
         verbose_name_plural = _('Weixin Apps')

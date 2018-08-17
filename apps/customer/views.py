@@ -7,7 +7,7 @@ from django.views.generic import ListView, CreateView, UpdateView
 from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
 from core.django.views import CommonContextMixin
 from . import forms
-from models import Address, Customer
+from .models import Address, Customer
 
 
 # views for Address

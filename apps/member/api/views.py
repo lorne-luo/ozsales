@@ -6,7 +6,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-import serializers
+from . import serializers
 from core.api.permission import AdminOnlyPermissions
 from ..models import Seller
 from utils.api.views import PaginateMaxModelViewSet

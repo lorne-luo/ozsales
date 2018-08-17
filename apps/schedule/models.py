@@ -7,12 +7,12 @@ from core.sms.telstra_api_v2 import send_au_sms
 
 
 class DealSubscribe(models.Model):
-    includes = models.CharField(_(u'includes'), max_length=255, null=False, blank=False)
-    excludes = models.CharField(_(u'excludes'), max_length=255, null=True, blank=True)
-    mobile = models.CharField(_(u'mobile'), max_length=15, null=True, blank=True)
-    is_active = models.BooleanField(_(u'is_active'), default=True, blank=False, null=False)
-    msg_count = models.IntegerField(_(u'message count'), default=0, blank=True, null=True)
-    create_at = models.DateTimeField(_(u'create at'), auto_now_add=True, null=True)
+    includes = models.CharField(_('includes'), max_length=255, null=False, blank=False)
+    excludes = models.CharField(_('excludes'), max_length=255, null=True, blank=True)
+    mobile = models.CharField(_('mobile'), max_length=15, null=True, blank=True)
+    is_active = models.BooleanField(_('is_active'), default=True, blank=False, null=False)
+    msg_count = models.IntegerField(_('message count'), default=0, blank=True, null=True)
+    create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     def get_keyword_list(self):
         includes = self.includes.replace(',', ' ')

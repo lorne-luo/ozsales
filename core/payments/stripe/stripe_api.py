@@ -1,7 +1,7 @@
+
 import stripe as base_stripe
 from django.conf import settings
 from django.db import transaction
-from stripe import InvalidRequestError
 
 STRIPE_LIVE_MODE = getattr(settings, "STRIPE_LIVE_MODE", False)
 

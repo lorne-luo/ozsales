@@ -7,7 +7,7 @@ from django.forms.models import inlineformset_factory
 
 from core.django.forms import NoManytoManyHintModelForm
 from core.django.autocomplete import FormsetModelSelect2
-from models import Order, OrderProduct, ORDER_STATUS_CHOICES
+from .models import Order, OrderProduct, ORDER_STATUS_CHOICES
 from ..customer.models import Customer, Address
 from ..product.models import Product
 
@@ -66,7 +66,7 @@ class OrderAddForm(NoManytoManyHintModelForm):
     customer = forms.ModelChoiceField(
         queryset=Customer.objects.all(),
         widget=FormsetModelSelect2(url='api:customer-autocomplete',
-                                   attrs={'data-placeholder': u'任意姓名、手机号...'})
+                                   attrs={'data-placeholder': '任意姓名、手机号...'})
     )
 
     class Meta:
@@ -78,14 +78,14 @@ class OrderAddForm(NoManytoManyHintModelForm):
 
 
 class OrderUpdateForm(NoManytoManyHintModelForm):
-    address = forms.ModelChoiceField(label=u'地址', queryset=Address.objects.all(),
+    address = forms.ModelChoiceField(label='地址', queryset=Address.objects.all(),
                                      widget=FormsetModelSelect2(url='api:address-autocomplete',
                                                                 forward=['customer'],
-                                                                attrs={'data-placeholder': u'任意姓名、地址、手机号...'})
+                                                                attrs={'data-placeholder': '任意姓名、地址、手机号...'})
                                      )
-    status = forms.ChoiceField(label=u'状态', choices=ORDER_STATUS_CHOICES, required=False)
-    cost_aud = forms.CharField(label=u'成本', required=False)
-    sell_rmb = forms.CharField(label=u'利润', required=False)
+    status = forms.ChoiceField(label='状态', choices=ORDER_STATUS_CHOICES, required=False)
+    cost_aud = forms.CharField(label='成本', required=False)
+    sell_rmb = forms.CharField(label='利润', required=False)
 
     class Meta:
         model = Order
@@ -183,20 +183,20 @@ class OrderProductDetailForm(NoManytoManyHintModelForm):
 
 
 class OrderProductInlineForm(NoManytoManyHintModelForm):
-    sum_price = forms.DecimalField(label=u'小计', required=False, help_text=u'小计',
+    sum_price = forms.DecimalField(label='小计', required=False, help_text='小计',
                                    widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    product = forms.ModelChoiceField(label=u'产品', queryset=Product.objects.filter(is_active=True), required=False,
+    product = forms.ModelChoiceField(label='产品', queryset=Product.objects.filter(is_active=True), required=False,
                                      widget=FormsetModelSelect2(url='api:product-autocomplete',
-                                                                attrs={'data-placeholder': u'搜索或输入"品牌@品名"新建',
+                                                                attrs={'data-placeholder': '搜索或输入"品牌@品名"新建',
                                                                        'class': 'form-control'})
                                      )
-    description = forms.CharField(label=u'备注', max_length=128, required=False, help_text=u'名称或备注(可选)',
+    description = forms.CharField(label='备注', max_length=128, required=False, help_text='名称或备注(可选)',
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
-    amount = forms.IntegerField(label=u'数量', min_value=1, required=False, help_text=u'数 量',
+    amount = forms.IntegerField(label='数量', min_value=1, required=False, help_text='数 量',
                                 widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    sell_price_rmb = forms.DecimalField(label=u'售价', max_digits=10, decimal_places=2, required=False, help_text=u'单 价',
+    sell_price_rmb = forms.DecimalField(label='售价', max_digits=10, decimal_places=2, required=False, help_text='单 价',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cost_price_aud = forms.DecimalField(label=u'成本', max_digits=8, decimal_places=2, required=False, help_text=u'成 本',
+    cost_price_aud = forms.DecimalField(label='成本', max_digits=8, decimal_places=2, required=False, help_text='成 本',
                                         widget=forms.NumberInput(attrs={'class': 'form-control'}))
 
     class Meta:

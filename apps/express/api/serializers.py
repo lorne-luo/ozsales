@@ -26,5 +26,5 @@ class ExpressOrderSerializer(serializers.ModelSerializer):
         carrier = attrs.get('carrier')
         track_id = attrs.get('track_id')
         if not carrier and not ExpressCarrier.identify_carrier(track_id):
-            raise serializers.ValidationError(u'未能自动识别物流公司，请手动选择')
+            raise serializers.ValidationError('未能自动识别物流公司，请手动选择')
         return super(ExpressOrderSerializer, self).validate(attrs)

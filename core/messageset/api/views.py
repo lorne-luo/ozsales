@@ -20,7 +20,7 @@ def sitemail_markall(request):
     SiteMailReceive.objects.exclude(
         status=SiteMailReceive.DELETED
     ).filter(receiver=request.user).update(status=SiteMailReceive.READ)
-    return JsonResponse({'message': u'ok'}, status=200)
+    return JsonResponse({'message': 'ok'}, status=200)
 
 
 @login_required
@@ -29,7 +29,7 @@ def notification_markall(request):
     Notification.objects.exclude(
         status=Notification.DELETED
     ).filter(receiver=request.user).update(status=Notification.READ)
-    return JsonResponse({'message': u'ok'}, status=200)
+    return JsonResponse({'message': 'ok'}, status=200)
 
 
 class OwnerMessageViewSetMixin(object):

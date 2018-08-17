@@ -36,15 +36,15 @@ Created on 2014-11-24
 import json
 import time
 import random
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import hashlib
 import threading
-from urllib import quote
+from urllib.parse import quote
 import xml.etree.ElementTree as ET
 
 try:
     import pycurl
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
     pycurl = None
 
@@ -108,7 +108,7 @@ class UrllibClient(object):
 
     def postXml(self, xml, url, second=30):
         """不使用证书"""
-        data = urllib2.urlopen(url, xml, timeout=second).read()
+        data = urllib.request.urlopen(url, xml, timeout=second).read()
         return data
 
     def postXmlSSL(self, xml, url, second=30):
@@ -206,7 +206,7 @@ class Common_util_pub(object):
     def arrayToXml(self, arr):
         """array转xml"""
         xml = ["<xml>"]
-        for k, v in arr.iteritems():
+        for k, v in arr.items():
             if v.isdigit():
                 xml.append("<{0}>{1}</{0}>".format(k, v))
             else:
@@ -385,7 +385,7 @@ class OrderQuery_pub(Wxpay_client_pub):
         """生成接口参数xml"""
 
         #检测必填参数
-        if all(key not in self.parameters.keys() or self.parameters[key] is None for key in ("out_trade_no", "transaction_id")):
+        if all(key not in list(self.parameters.keys()) or self.parameters[key] is None for key in ("out_trade_no", "transaction_id")):
             raise ValueError("missing parameter")
 
         self.parameters["appid"] = WxPayConf_pub.APPID  #公众账号ID
@@ -613,6 +613,6 @@ if __name__ == "__main__":
     # test()
     oq=OrderQuery_pub()
     oq.setParameter('out_trade_no','000698320161115')
-    print oq.parameters
+    print(oq.parameters)
     result=oq.getResult()
-    print result
+    print(result)

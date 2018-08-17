@@ -1,6 +1,6 @@
 from django.contrib import admin
-from models import Order, OrderProduct
-from forms import OrderForm
+from .models import Order, OrderProduct
+from .forms import OrderForm
 from ..express.forms import ExpressOrderAddInline, ExpressOrderChangeInline
 
 class OrderProductAddInline(admin.TabularInline):

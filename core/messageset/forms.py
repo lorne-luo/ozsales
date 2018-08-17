@@ -3,7 +3,7 @@ from django import forms
 
 from core.auth_user.models import AuthUser
 from core.django.forms import NoManytoManyHintModelForm
-from models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
+from .models import Notification, NotificationContent, SiteMailContent, SiteMailReceive, SiteMailSend, Task
 
 
 class NotificationUpdateForm(NoManytoManyHintModelForm):
@@ -25,7 +25,7 @@ class NotificationContentAddForm(NoManytoManyHintModelForm):
 
     def __init__(self, *args, **kwargs):
         super(NotificationContentAddForm, self).__init__(*args, **kwargs)
-        self.fields['receivers'].widget.attrs['data-placeholder'] = u'选择目标用户，留空将发送所有用户...'
+        self.fields['receivers'].widget.attrs['data-placeholder'] = '选择目标用户，留空将发送所有用户...'
 
 
 class NotificationContentUpdateForm(NoManytoManyHintModelForm):
@@ -47,7 +47,7 @@ class SiteMailContentAddForm(NoManytoManyHintModelForm):
 
     def __init__(self, *args, **kwargs):
         super(SiteMailContentAddForm, self).__init__(*args, **kwargs)
-        self.fields['receivers'].widget.attrs['data-placeholder'] = u'选择收件用户，留空将发送所有用户...'
+        self.fields['receivers'].widget.attrs['data-placeholder'] = '选择收件用户，留空将发送所有用户...'
 
 
 class SiteMailContactAdminForm(SiteMailContentAddForm):

@@ -9,6 +9,7 @@ from aliyunsdkcore.http import method_type as MT
 from aliyunsdkcore.http import format_type as FT
 from aliyunsdkdybaseapi.request.v20170525.QueryTokenForMnsQueueRequest import QueryTokenForMnsQueueRequest
 import const
+import imp
 
 sys.path.append("./mns_python_sdk/")
 from mns.mns_account import Account
@@ -28,7 +29,7 @@ Modified on 2017-10-13
 """
 
 try:
-    reload(sys)
+    imp.reload(sys)
     sys.setdefaultencoding('utf8')
 except NameError:
     pass
@@ -117,8 +118,8 @@ class Token():
         self.__tmp_access_id = response_body.get("MessageTokenDTO").get("AccessKeyId")
         self.__expire_time = response_body.get("MessageTokenDTO").get("ExpireTime")
         self.__token = response_body.get("MessageTokenDTO").get("SecurityToken")
-        print("key=%s, id=%s, expire_time=%s, token=%s" \
-                % (self.__tmp_access_key, self.__tmp_access_id, self.__expire_time, self.__token))
+        print(("key=%s, id=%s, expire_time=%s, token=%s" \
+                % (self.__tmp_access_key, self.__tmp_access_id, self.__expire_time, self.__token)))
 
         print("finsh refresh token...")
 
@@ -137,8 +138,8 @@ my_queue = my_account.get_queue(qname)
 ### 当队列中没有消息时，请求在MNS服务器端挂3秒钟，在这期间，有消息写入队列，请求会立即返回消息，3秒后，请求返回队列没有消息；
 
 wait_seconds = 3
-print("%sReceive And Delete Message From Queue%s\nQueueName:%s\nWaitSeconds:%s\n" % (
-    10 * "=", 10 * "=", qname, wait_seconds))
+print(("%sReceive And Delete Message From Queue%s\nQueueName:%s\nWaitSeconds:%s\n" % (
+    10 * "=", 10 * "=", qname, wait_seconds)))
 while True:
     # 读取消息
     try:
@@ -155,24 +156,24 @@ while True:
 
         # TODO 业务处理
         
-        print("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (
-            recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id))
+        print(("Receive Message Succeed! ReceiptHandle:%s MessageBody:%s MessageID:%s" % (
+            recv_msg.receipt_handle, recv_msg.message_body, recv_msg.message_id)))
         
     #except MNSExceptionBase as e:
     except Exception as e:
-        if e.type == u"QueueNotExist":
+        if e.type == "QueueNotExist":
             print("Queue not exist, please create queue before receive message.")
             sys.exit(0)
-        elif e.type == u"MessageNotExist":
+        elif e.type == "MessageNotExist":
             print("Queue is empty! sleep 10s")
             time.sleep(10)
             continue
-        print("Receive Message Fail! Exception:%s\n" % e)
+        print(("Receive Message Fail! Exception:%s\n" % e))
         continue
 
     # 删除消息
     try:
         my_queue.delete_message(recv_msg.receipt_handle)
-        print("Delete Message Succeed!  ReceiptHandle:%s" % recv_msg.receipt_handle)
+        print(("Delete Message Succeed!  ReceiptHandle:%s" % recv_msg.receipt_handle))
     except MNSExceptionBase as e:
-        print("Delete Message Fail! Exception:%s\n" % e)
+        print(("Delete Message Fail! Exception:%s\n" % e))

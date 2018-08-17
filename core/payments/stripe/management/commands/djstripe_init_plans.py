@@ -11,9 +11,9 @@ class Command(BaseCommand):
         for plan in Plan.api_list():
             stripe_id = plan.get('id')
             if Plan.objects.filter(stripe_id=stripe_id).exists():
-                print('Plan id=%s updated.' % stripe_id)
+                print(('Plan id=%s updated.' % stripe_id))
             else:
-                print('Plan id=%s created.' % stripe_id)
+                print(('Plan id=%s created.' % stripe_id))
             existed_ids.append(stripe_id)
             Plan.sync_from_stripe_data(plan)
 

@@ -50,7 +50,7 @@ class PremiumSellerRequiredMixin(ProfileRequiredMixin):
             return False
 
     def handle_no_permission(self):
-        messages.warning(self.request, u'没有权限访问，请加入高级会员.')
+        messages.warning(self.request, '没有权限访问，请加入高级会员.')
         return HttpResponseRedirect(reverse_lazy('payments:add_card'))
 
 

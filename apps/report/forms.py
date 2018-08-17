@@ -1,6 +1,6 @@
 # coding=utf-8
 from core.django.forms import NoManytoManyHintModelForm
-from models import MonthlyReport
+from .models import MonthlyReport
 
 
 class MonthlyReportAddForm(NoManytoManyHintModelForm):

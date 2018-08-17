@@ -6,11 +6,11 @@ from django.forms.models import inlineformset_factory
 from apps.order.models import Order
 from core.django.forms import NoManytoManyHintModelForm
 from core.django.autocomplete import FormsetModelSelect2
-from models import ExpressCarrier, ExpressOrder
+from .models import ExpressCarrier, ExpressOrder
 
 
 class ExpressCarrierAddForm(NoManytoManyHintModelForm):
-    website = forms.URLField(label=u'官网地址', max_length=30, required=True, help_text=u'官方网站地址')  # make mandatory
+    website = forms.URLField(label='官网地址', max_length=30, required=True, help_text='官方网站地址')  # make mandatory
 
     class Meta:
         model = ExpressCarrier
@@ -53,16 +53,16 @@ class ExpressOrderChangeInline(admin.TabularInline):
 
 
 class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
-    carrier = forms.ModelChoiceField(label=u'物流', queryset=ExpressCarrier.objects.all(), required=False,
+    carrier = forms.ModelChoiceField(label='物流', queryset=ExpressCarrier.objects.all(), required=False,
                                      widget=FormsetModelSelect2(url='api:carrier-autocomplete',
-                                                                attrs={'data-placeholder': u'物流中英文名称...',
+                                                                attrs={'data-placeholder': '物流中英文名称...',
                                                                        'class': 'form-control'})
                                      )
-    track_id = forms.CharField(label=u'单号', max_length=30, required=False, help_text=u'单 号',
+    track_id = forms.CharField(label='单号', max_length=30, required=False, help_text='单 号',
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-    fee = forms.DecimalField(label=u'运费', max_digits=8, decimal_places=2, required=False, help_text=u'运 费',
+    fee = forms.DecimalField(label='运费', max_digits=8, decimal_places=2, required=False, help_text='运 费',
                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    id_upload = forms.BooleanField(label=u'身份证', required=False)
+    id_upload = forms.BooleanField(label='身份证', required=False)
 
     class Meta:
         model = ExpressOrder
@@ -80,7 +80,7 @@ class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
         carrier = self.cleaned_data.get('carrier')
         track_id = self.cleaned_data.get('track_id')
         if not carrier and not ExpressCarrier.identify_carrier(track_id):
-            self.add_error('carrier', u'未能自动识别物流公司，请手动选择')
+            self.add_error('carrier', '未能自动识别物流公司，请手动选择')
 
         return self.cleaned_data
 

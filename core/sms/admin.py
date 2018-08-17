@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 from django.contrib import admin
-from models import Sms
+from .models import Sms
 
 
 class SmsAdmin(admin.ModelAdmin):

@@ -103,13 +103,13 @@ class DisplayNestedFKField(serializers.Field):
                 foreign_key = foreign_key.all()
                 fk_objs = self.serializer(foreign_key, many=True).data
                 for obj in fk_objs:
-                    if obj.get(u'content_type'):
-                        del(obj[u'content_type'])
+                    if obj.get('content_type'):
+                        del(obj['content_type'])
                 return fk_objs
             else:
                 obj = self.serializer(foreign_key).data
-                if obj.get(u'content_type'):
-                    del(obj[u'content_type'])
+                if obj.get('content_type'):
+                    del(obj['content_type'])
                 return obj
 
 
@@ -175,7 +175,7 @@ class VariationImageAPIField(serializers.ImageField):
         # where it's a bit hacky to achive the same (would work for
         # InMemoryUploadedFile too though):
         field_name = getattr(value, 'field_name',
-                             self.root.fields.keys()[self.root.fields.values().index(self)])
+                             list(self.root.fields.keys())[list(self.root.fields.values()).index(self)])
 
         super(VariationImageAPIField, self).validate(value)
         if value:
@@ -188,7 +188,7 @@ class VariationUrlField(serializers.Field):
     def to_native(value):
         variations = {}
         if value:
-            for name, _specs in settings.THUMBNAIL_VARIATIONS.items():
+            for name, _specs in list(settings.THUMBNAIL_VARIATIONS.items()):
                 variations[name] = getattr(value, name).url
         return variations
 
@@ -270,7 +270,7 @@ class JSONField(serializers.Field):
         json_data = {}
         try:
             json_data = json.loads(data)
-        except ValueError, e:
+        except ValueError as e:
             pass
         finally:
             return json_data

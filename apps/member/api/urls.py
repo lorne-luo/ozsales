@@ -1,7 +1,7 @@
 from django.conf.urls import url
 from rest_framework.authtoken.views import obtain_auth_token
 from core.api.routers import PostHackedRouter
-import views
+from . import views
 
 urlpatterns = [
     url(r'^profile/$', views.Profile.as_view(), name='profile'),

@@ -23,7 +23,7 @@ env_file = os.path.join(BASE_DIR, '.env')
 if os.path.exists(env_file):
     # Operating System Environment variables have precedence over variables defined in the .env file,
     # that is to say variables from the .env files will only be used if not defined as environment variables.
-    print('[environ] Loading : {}'.format(env_file))
+    print(('[environ] Loading : {}'.format(env_file)))
     env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production

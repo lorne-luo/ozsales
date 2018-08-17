@@ -28,13 +28,13 @@ log = logging.getLogger(__name__)
 ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED', 'CLOSED')
 
 ORDER_STATUS_CHOICES = (
-    (ORDER_STATUS.CREATED, u'创建'),
+    (ORDER_STATUS.CREATED, '创建'),
     # (ORDER_STATUS.CONFIRMED, u'确认'),
-    (ORDER_STATUS.SHIPPING, u'在途'),
-    (ORDER_STATUS.DELIVERED, u'寄达'),
-    (ORDER_STATUS.FINISHED, u'完成'),
+    (ORDER_STATUS.SHIPPING, '在途'),
+    (ORDER_STATUS.DELIVERED, '寄达'),
+    (ORDER_STATUS.FINISHED, '完成'),
     # (ORDER_STATUS.CANCELED, u'取消'),
-    (ORDER_STATUS.CLOSED, u'关闭')
+    (ORDER_STATUS.CLOSED, '关闭')
 )
 
 
@@ -54,39 +54,39 @@ class OrderManager(models.Manager):
 @python_2_unicode_compatible
 class Order(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    order_id = models.CharField(_(u'编号'), max_length=32, null=True, blank=True)
-    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_(u'客户'))
-    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_(u'地址'))
-    address_text = models.CharField(_(u'地址'), max_length=255, null=True, blank=True)
-    is_paid = models.BooleanField(default=False, verbose_name=_(u'已支付'))
+    order_id = models.CharField(_('编号'), max_length=32, null=True, blank=True)
+    customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('客户'))
+    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('地址'))
+    address_text = models.CharField(_('地址'), max_length=255, null=True, blank=True)
+    is_paid = models.BooleanField(default=False, verbose_name=_('已支付'))
     paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'支付时间'))
+                                     verbose_name=_('支付时间'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
-                              verbose_name=_(u'状态'))
-    total_amount = models.IntegerField(_(u'数量'), default=0, blank=False, null=False)
-    product_cost_aud = models.DecimalField(_(u'货物成本'), max_digits=8, decimal_places=2, blank=True,
+                              verbose_name=_('状态'))
+    total_amount = models.IntegerField(_('数量'), default=0, blank=False, null=False)
+    product_cost_aud = models.DecimalField(_('货物成本'), max_digits=8, decimal_places=2, blank=True,
                                            null=True)
-    product_cost_rmb = models.DecimalField(_(u'货物成本'), max_digits=8,
+    product_cost_rmb = models.DecimalField(_('货物成本'), max_digits=8,
                                            decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_('快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
     ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_(u'寄出时间'))
-    currency = models.CharField(_(u'货币'), max_length=128, choices=CURRENCY_CHOICES, blank=True)
-    total_cost_aud = models.DecimalField(_(u'总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
-    total_cost_rmb = models.DecimalField(_(u'总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
-    origin_sell_rmb = models.DecimalField(_(u'原价'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sell_price_rmb = models.DecimalField(_(u'售价'), max_digits=8, decimal_places=2, blank=True, null=True)
-    payment_price = models.DecimalField(_(u'Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
+                                     verbose_name=_('寄出时间'))
+    currency = models.CharField(_('货币'), max_length=128, choices=CURRENCY_CHOICES, blank=True)
+    total_cost_aud = models.DecimalField(_('总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
+    total_cost_rmb = models.DecimalField(_('总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
+    origin_sell_rmb = models.DecimalField(_('原价'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_('售价'), max_digits=8, decimal_places=2, blank=True, null=True)
+    payment_price = models.DecimalField(_('Payment Price'), max_digits=8, decimal_places=2, blank=True, null=True)
     remark = models.CharField(max_length=512, blank=True, null=True, verbose_name=_('remark'))
-    profit_rmb = models.DecimalField(_(u'利润'), max_digits=8, decimal_places=2, blank=True, null=True)
-    aud_rmb_rate = models.DecimalField(_(u'下单汇率'), max_digits=8, decimal_places=4, blank=True, null=True)
-    create_time = models.DateTimeField(_(u'创建时间'), auto_now_add=True, editable=False)
-    finish_time = models.DateTimeField(_(u'完成时间'), editable=True, blank=True, null=True)
+    profit_rmb = models.DecimalField(_('利润'), max_digits=8, decimal_places=2, blank=True, null=True)
+    aud_rmb_rate = models.DecimalField(_('下单汇率'), max_digits=8, decimal_places=4, blank=True, null=True)
+    create_time = models.DateTimeField(_('创建时间'), auto_now_add=True, editable=False)
+    finish_time = models.DateTimeField(_('完成时间'), editable=True, blank=True, null=True)
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
-    app_id = models.CharField(_(u'App ID'), max_length=128, null=True, blank=True)
+    app_id = models.CharField(_('App ID'), max_length=128, null=True, blank=True)
 
-    send_msg_sent = models.BooleanField(_(u'send msg'), default=False, null=False, blank=False)  # 寄出通知
-    delivery_msg_sent = models.BooleanField(_(u'delivery msg'), default=False, null=False, blank=False)  # 寄达通知
+    send_msg_sent = models.BooleanField(_('send msg'), default=False, null=False, blank=False)  # 寄出通知
+    delivery_msg_sent = models.BooleanField(_('delivery msg'), default=False, null=False, blank=False)  # 寄达通知
 
     objects = OrderManager()
 
@@ -152,25 +152,25 @@ class Order(models.Model):
     def get_product_summary(self):
         result = ''
         for product in self.products.all():
-            result += u'%s <br/>' % product.get_summary()
+            result += '%s <br/>' % product.get_summary()
         return result
 
     def get_summary(self):
         """ plain text summary for order """
         if self.customer:
             url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
-            result = '<br/><a href="%s">%s</a>' % (url, unicode(self.address))
+            result = '<br/><a href="%s">%s</a>' % (url, str(self.address))
         else:
             result = 'None'
 
         if self.address:
             if self.address.id_number:
-                result += u'<br/><br/>  <span>%s %s</span>' % (self.address.name, self.address.id_number)
+                result += '<br/><br/>  <span>%s %s</span>' % (self.address.name, self.address.id_number)
         result += '<br/><br/>'
 
         if self.products.count():
             result += self.get_product_summary()
-            result += u'总计: %d<br/>' % self.sell_price_rmb
+            result += '总计: %d<br/>' % self.sell_price_rmb
             result = '%s<br/><br/><br/>' % result
         return result
 
@@ -249,13 +249,13 @@ class Order(models.Model):
     def get_link(self):
         url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
         name = '[#%s]%s' % (self.id, self.customer.name)
-        return u'<a href="%s">%s</a>' % (url, name)
+        return '<a href="%s">%s</a>' % (url, name)
 
     def get_public_link(self):
         return reverse('order-detail-short', args=[self.customer.id, self.id])
 
     def get_id_link(self):
-        return u'<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
+        return '<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
 
     get_id_link.allow_tags = True
     get_id_link.short_description = 'ID'
@@ -380,8 +380,8 @@ class Order(models.Model):
 
     def email_delivered(self):
         link = reverse('order-detail-short', args=[self.customer.id, self.id])
-        subject = u'%s 全部寄达.' % self
-        content = u'<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
+        subject = '%s 全部寄达.' % self
+        content = '<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
 
         self.seller.send_notification(subject, content)
         self.seller.send_email(subject, content)
@@ -462,14 +462,14 @@ class Order(models.Model):
 class OrderProduct(models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
-    name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text=u'产品名称')
-    description = models.CharField(_('Description'), max_length=128, null=True, blank=True, help_text=u'备注')
-    amount = models.IntegerField(_('Amount'), default=1, blank=False, null=False, help_text=u'数量')
+    name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text='产品名称')
+    description = models.CharField(_('Description'), max_length=128, null=True, blank=True, help_text='备注')
+    amount = models.IntegerField(_('Amount'), default=1, blank=False, null=False, help_text='数量')
     sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, default=0, blank=False,
-                                         null=False, help_text=u'单价')
+                                         null=False, help_text='单价')
     total_price_rmb = models.DecimalField(_('Total RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     cost_price_aud = models.DecimalField(_('Cost Price AUD'), max_digits=8, decimal_places=2, default=0, blank=False,
-                                         null=False, help_text=u'成本')
+                                         null=False, help_text='成本')
     total_price_aud = models.DecimalField(_('Total AUD'), max_digits=8, decimal_places=2, blank=True, null=True)
     store = models.ForeignKey(Store, blank=True, null=True, verbose_name=_('Store'))
     is_purchased = models.BooleanField(default=False)
@@ -510,7 +510,7 @@ class OrderProduct(models.Model):
 
     def get_summary(self):
         description = ' %s' % self.description if self.description else ''
-        return u'%s%s = ¥%d x %d' % (self.name, description, self.sell_price_rmb, self.amount)
+        return '%s%s = ¥%d x %d' % (self.name, description, self.sell_price_rmb, self.amount)
 
     def get_link(self):
         if self.product:

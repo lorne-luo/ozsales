@@ -81,18 +81,18 @@ class ExpressCarrierManager(models.Manager):
 @python_2_unicode_compatible
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
-    name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
-    website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
+    name_cn = models.CharField(_(u'中文名称'), max_length=255, blank=False, help_text=u'中文名称')
+    name_en = models.CharField(_(u'英文名称'), max_length=255, blank=True, help_text=u'英文名称')
+    pinyin = models.TextField(_(u'pinyin'), max_length=512, blank=True)
+    website = models.URLField(_(u'官网地址'), blank=True, help_text=u'官方网站地址')
     # page to track parcel
-    search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
+    search_url = models.URLField(_(u'查询网址'), blank=True, help_text=u'查询网页地址')
     # some carrier need post to track parcel
-    post_search_url = models.URLField(_('查询提交网址'), blank=True, help_text='查询提交网址')
-    id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
-    rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
-    is_default = models.BooleanField('默认', default=False, help_text='是否默认')
-    track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
+    post_search_url = models.URLField(_(u'查询提交网址'), blank=True, help_text=u'查询提交网址')
+    id_upload_url = models.URLField(_(u'证件上传地址'), blank=True, help_text=u'证件上传地址')
+    rate = models.DecimalField(_(u'费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text=u'每公斤费率')
+    is_default = models.BooleanField(u'默认', default=False, help_text=u'是否默认')
+    track_id_regex = models.CharField(_(u'单号正则'), max_length=512, blank=True, help_text=u'订单号正则表达式')
 
     objects = ExpressCarrierManager()
     pinyin_fields_conf = [
@@ -170,17 +170,17 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
 @python_2_unicode_compatible
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
-    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
+    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text=u'运单号')
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, default=0, blank=False, null=False,
-                              help_text='运费')
-    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True, help_text='重量')
+                              help_text=u'运费')
+    weight = models.DecimalField(_('Weight'), max_digits=8, decimal_places=2, blank=True, null=True, help_text=u'重量')
     id_upload = models.BooleanField(_('ID uploaded'), default=False, null=False, blank=False)
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
-    delivery_sms_sent = models.BooleanField(_('delivery sms'), default=False, null=False, blank=False)  # 寄达通知
+    delivery_sms_sent = models.BooleanField(_(u'delivery sms'), default=False, null=False, blank=False)  # 寄达通知
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
     class Meta:
@@ -192,7 +192,7 @@ class ExpressOrder(models.Model):
         if self.carrier:
             return '[%s]%s' % (self.carrier.name_cn, self.track_id)
         else:
-            return '[未知物流]%s' % (self.track_id)
+            return u'[未知物流]%s' % (self.track_id)
 
     def identify_track_id(self):
         if self.carrier and self.carrier.track_id_regex:
@@ -252,8 +252,8 @@ class ExpressOrder(models.Model):
     def email_delivered(self):
         if self.is_delivered:
             link = reverse('order-detail-short', args=[self.order.customer.id, self.order.id])
-            subject = '%s in %s 已寄达.' % (self, self.order)
-            content = '%s in <a target="_blank" href="%s">%s</a> 已寄达.' % (self, link, self.order)
+            subject = u'%s in %s 已寄达.' % (self, self.order)
+            content = u'%s in <a target="_blank" href="%s">%s</a> 已寄达.' % (self, link, self.order)
 
             self.order.seller.send_notification(subject, content)
             self.order.customer.send_email(subject, content)

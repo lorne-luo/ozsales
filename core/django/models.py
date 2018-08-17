@@ -49,7 +49,7 @@ class PinYinFieldModelMixin(object):
     def get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):
         if not value:
             return ''
-        value = unicode(value)
+        value = str(value)
         pylist = pinyin(value, style=style, heteronym=heteronym, strict=True)
         # example [[u'di', u'zhai'], [u'xiao'], [u'fei']]
         combinations = cls.get_combinations(pylist)

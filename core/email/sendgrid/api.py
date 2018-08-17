@@ -26,6 +26,6 @@ def send_email(from_addr, to_addr, subject, content, content_type='text/html'):
         ]
     }
     response = sg.client.mail.send.post(request_body=data)
-    print(response.status_code)
-    print(response.body)
-    print(response.headers)
+    print((response.status_code))
+    print((response.body))
+    print((response.headers))

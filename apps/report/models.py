@@ -19,14 +19,14 @@ from apps.order.models import Order, ORDER_STATUS
 class MonthlyReport(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
-                             verbose_name=_(u'Month'))
+                             verbose_name=_('Month'))
     order_count = models.PositiveIntegerField(blank=True, null=True)
     parcel_count = models.PositiveIntegerField(blank=True, null=True)
-    cost_aud = models.DecimalField(_(u'Cost AUD'), max_digits=8, decimal_places=2, default=0)
-    cost_rmb = models.DecimalField(_(u'Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    shipping_fee = models.DecimalField(_(u'Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
-    sell_price_rmb = models.DecimalField(_(u'Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
-    profit_rmb = models.DecimalField(_(u'Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    cost_aud = models.DecimalField(_('Cost AUD'), max_digits=8, decimal_places=2, default=0)
+    cost_rmb = models.DecimalField(_('Cost RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    shipping_fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, blank=True, null=True)
+    sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
+    profit_rmb = models.DecimalField(_('Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
         return '[%s]%s' % (self.month.strftime('%Y-%b'), self.profit_rmb)

@@ -8,6 +8,7 @@ from rest_framework import filters, pagination
 from rest_framework.compat import distinct
 
 from core.django.helpers import include_non_asc
+from functools import reduce
 
 
 class AjaxDatatableOrderingFilter(OrderingFilter):

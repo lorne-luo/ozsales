@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import uuid
 from django.db import migrations, models
 
@@ -14,11 +14,11 @@ def forwards_func(apps, schema_editor):
 
             p.uuid = uuid_str
             p.save()
-        print p.id, p.uuid
+        print(p.id, p.uuid)
 
 
 def backwarad_func(apps, schema_editor):
-    print "nothing to migrate"
+    print("nothing to migrate")
 
 
 class Migration(migrations.Migration):

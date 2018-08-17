@@ -1,6 +1,6 @@
 from django.conf.urls import url
 from djstripe.views import WebHook
-import views
+from . import views
 
 urlpatterns = [
     url(r"^webhook/$", WebHook.as_view(), name="webhook"),

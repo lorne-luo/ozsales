@@ -19,8 +19,9 @@ from .templates.api_urls import API_URLS_HEADER, API_URLS_BODY, API_URLS_FOOTER
 from .templates.api_views import API_VIEWS_HEADER, API_VIEWS_BODY
 from .templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE, TABLE_HEAD_TEMPLATES, \
     TABLE_ROW_TEMPLATES
+import imp
 
-reload(sys)
+imp.reload(sys)
 sys.setdefaultencoding('utf-8')
 
 
@@ -126,7 +127,7 @@ class Command(BaseCommand):
                 if mf.auto_now_add or mf.auto_now:
                     continue
             fields.append(mf.name)
-            title = unicode(mf.verbose_name)
+            title = str(mf.verbose_name)
             if title and title[0].islower():
                 title = title.title()
             titles.append(title)
@@ -135,7 +136,7 @@ class Command(BaseCommand):
     def get_chinese_titles(self, titles):
         result = ''
         for t in titles:
-            if u'\u4e00' <= t <= u'\u9fff':
+            if '\u4e00' <= t <= '\u9fff':
                 item = "u'%s'" % t.encode('gb2312')
             else:
                 item = "'%s'" % t.encode('gb2312')

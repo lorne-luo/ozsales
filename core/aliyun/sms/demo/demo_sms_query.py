@@ -8,6 +8,7 @@ from aliyunsdkcore.profile import region_provider
 from aliyunsdkcore.http import method_type as MT
 from aliyunsdkcore.http import format_type as FT
 import const
+import imp
 
 """
 短信业务调用接口示例，版本号：v20170525
@@ -16,7 +17,7 @@ Created on 2017-06-12
 
 """
 try:
-    reload(sys)
+    imp.reload(sys)
     sys.setdefaultencoding('utf8')
 except NameError:
     pass
@@ -59,4 +60,4 @@ def query_send_detail(biz_id, phone_number, page_size, current_page, send_date):
 
 
 if __name__ == '__main__':
-    print(query_send_detail("141324518542671592^0", "13000000000", 10, 1, "20180214"))
+    print((query_send_detail("141324518542671592^0", "13000000000", 10, 1, "20180214")))

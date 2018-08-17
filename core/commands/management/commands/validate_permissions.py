@@ -16,6 +16,7 @@ from django.apps import apps
 from django.contrib.auth import management
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
+from functools import reduce
 
 
 class Command(BaseCommand):
@@ -33,8 +34,8 @@ class Command(BaseCommand):
                 _all_permissions = management._get_all_permissions(model._meta)
             except ValueError as e:
                 if str(e) == 'too many values to unpack':
-                    print "Error: Check permissions tuple of '%s', missing a comma? " % model.__name__, \
-                          "Make sure the surrounding tuple has a trailing comma if it holds only a single permission."
+                    print("Error: Check permissions tuple of '%s', missing a comma? " % model.__name__, \
+                          "Make sure the surrounding tuple has a trailing comma if it holds only a single permission.")
                     return
                 else:
                     raise
@@ -73,7 +74,7 @@ class Command(BaseCommand):
             if created:
                 permission.name = name
                 permission.save()
-                print "Created permission '%s' on model %s" % (codename, model)
+                print("Created permission '%s' on model %s" % (codename, model))
 
     def _delete_stale_permissions(self, model, content_type):
         '''
@@ -95,8 +96,8 @@ class Command(BaseCommand):
 
         if stale_permissions:
             for p in stale_permissions:
-                print "Deleted stale permission '%s' on model %s" % (p.codename,
-                                                                     model)
+                print("Deleted stale permission '%s' on model %s" % (p.codename,
+                                                                     model))
             stale_permissions.delete()
 
     def _update_changed_names(self, model, content_type):
@@ -112,5 +113,5 @@ class Command(BaseCommand):
                 permission.name = name
                 permission.save()
 
-                print "Updated name for '%s' on model %s to '%s'" \
-                    % (permission.codename, model, name)
+                print("Updated name for '%s' on model %s to '%s'" \
+                    % (permission.codename, model, name))

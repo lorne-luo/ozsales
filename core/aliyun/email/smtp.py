@@ -63,19 +63,19 @@ def _send_email(receivers, subject, html_content, text_content=None):
         client.quit()
         print ('邮件发送成功！')
     except smtplib.SMTPConnectError as e:
-        print ('邮件发送失败，连接失败:', e.smtp_code, e.smtp_error)
+        print(('邮件发送失败，连接失败:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPAuthenticationError as e:
-        print ('邮件发送失败，认证错误:', e.smtp_code, e.smtp_error)
+        print(('邮件发送失败，认证错误:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPSenderRefused as e:
-        print ('邮件发送失败，发件人被拒绝:', e.smtp_code, e.smtp_error)
+        print(('邮件发送失败，发件人被拒绝:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPRecipientsRefused as e:
-        print ('邮件发送失败，收件人被拒绝:', e.recipients, e.args)
+        print(('邮件发送失败，收件人被拒绝:', e.recipients, e.args))
     except smtplib.SMTPDataError as e:
-        print ('邮件发送失败，数据接收拒绝:', e.smtp_code, e.smtp_error)
+        print(('邮件发送失败，数据接收拒绝:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPException as e:
-        print ('邮件发送失败, ', e.message)
+        print(('邮件发送失败, ', e.message))
     except Exception as e:
-        print ('邮件发送异常, ', str(e))
+        print(('邮件发送异常, ', str(e)))
 
 
 def send_email(receivers, subject, html_content, text_content=None):

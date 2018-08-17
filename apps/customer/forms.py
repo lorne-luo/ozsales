@@ -5,7 +5,7 @@ from django.forms.models import modelformset_factory, inlineformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from core.django.forms import NoManytoManyHintModelForm
-from models import Address, Customer, InterestTag
+from .models import Address, Customer, InterestTag
 from core.django.widgets import IDThumbnailImageInput
 
 
