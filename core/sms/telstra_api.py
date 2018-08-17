@@ -10,7 +10,7 @@ from django.conf import settings
 from .models import Sms
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 
 
