@@ -2,8 +2,9 @@
 import logging
 
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework import filters
+from rest_framework.response import Response
 from django_filters import FilterSet
 from django.db.models import Q
 
@@ -67,17 +68,26 @@ class OrderViewSet(CommonViewSet):
             return queryset
         return queryset.filter(seller=self.request.profile).select_related('address', 'customer')
 
-    @list_route(methods=['post', 'get'])
+    @list_route(methods=['get'])
     def new(self, request, *args, **kwargs):
         # status==CREATED or is_paid=False
         self.filter_class = NewOrderFilter
         return super(OrderViewSet, self).list(self, request, *args, **kwargs)
 
-    @list_route(methods=['post', 'get'])
+    @list_route(methods=['get'])
     def shipping(self, request, *args, **kwargs):
         # status==SHIPPING or DELIVERD and is_paid=True
         self.filter_class = ShippingOrderFilter
         return super(OrderViewSet, self).list(self, request, *args, **kwargs)
+
+    @detail_route(methods=['post'])
+    def set_status(self, request, *args, **kwargs):
+        order = self.get_object()
+        status = request.POST.get('status', None)
+        if status:
+            order.set_status(status)
+
+        return Response({'success': True})
 
 
 class OrderProductViewSet(CommonViewSet):

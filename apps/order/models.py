@@ -105,9 +105,9 @@ class Order(models.Model):
             return self.address.mobile
         return None
 
-    def sms_send(self):
+    def sms_shipping(self):
         mobile = self.get_mobile()
-        if not mobile or self.send_msg_sent:
+        if not mobile or self.shipping_msg_sent:
             return
 
         bz_id = 'Order#%s-sent' % self.id
@@ -116,8 +116,8 @@ class Order(models.Model):
         template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
         success, detail = send_cn_sms(bz_id, mobile, template, data)
         if success:
-            self.send_msg_sent = True
-            self.save(update_fields=['send_msg_sent'])
+            self.shipping_msg_sent = True
+            self.save(update_fields=['shipping_msg_sent'])
 
     def sms_delivered(self):
         mobile = self.get_mobile()
@@ -202,6 +202,8 @@ class Order(models.Model):
 
         self.set_finish_time()
         self.save()
+        if status_value == ORDER_STATUS.SHPPING:
+            self.sms_shipping()
         self.update_price()
 
     def update_monthly_report(self):

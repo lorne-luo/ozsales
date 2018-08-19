@@ -199,7 +199,7 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         next_ship_status: function (pk, next_status, next, event) {
             var self = this;
-            var url = Urls[self.detail_api_tag](pk);
+            var url = Urls[self.detail_api_tag](pk)+'set_status/';
             swal({
                 title: "确认物流变更",
                 text: "确认将物流状态变更为\"" + next + "\"?",
