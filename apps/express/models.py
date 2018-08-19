@@ -246,15 +246,6 @@ class ExpressOrder(models.Model):
     def get_address(self):
         return self.order.address
 
-    def email_delivered(self):
-        if self.is_delivered:
-            link = reverse('order-detail-short', args=[self.order.customer.id, self.order.id])
-            subject = '%s in %s 已寄达.' % (self, self.order)
-            content = '%s in <a target="_blank" href="%s">%s</a> 已寄达.' % (self, link, self.order)
-
-            self.order.seller.send_notification(subject, content)
-            self.order.customer.send_email(subject, content)
-
     def sms_delivered(self):
         mobile = self.order.get_mobile()
         if not mobile or self.delivery_sms_sent:

@@ -386,13 +386,13 @@ class Order(models.Model):
     get_customer_link.allow_tags = True
     get_customer_link.short_description = 'Customer'
 
-    def email_delivered(self):
+    def notify_delivered(self):
         link = reverse('order-detail-short', args=[self.customer.id, self.id])
         subject = '%s 全部寄达.' % self
         content = '<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
 
         self.seller.send_notification(subject, content)
-        self.seller.send_email(subject, content)
+        # self.seller.send_email(subject, content)
         # self.customer.send_email(subject, content)
 
     def update_track(self):
@@ -410,6 +410,7 @@ class Order(models.Model):
             self.set_status(ORDER_STATUS.DELIVERED)
             # notify seller and customer
             self.sms_delivered()
+            self.notify_delivered()
 
     @cached_property
     def is_all_delivered(self):
