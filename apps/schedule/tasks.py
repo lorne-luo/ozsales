@@ -6,7 +6,6 @@ import shlex
 import urllib.request, urllib.error, urllib.parse
 import pytz
 import redis
-import python_forex_quotes
 import subprocess
 from django.utils import timezone
 from django.conf import settings
@@ -20,6 +19,7 @@ from dateutil.relativedelta import relativedelta
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
+from core.forex.client import ForexDataClient
 from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS,TELSTRA_SMS_MONTHLY_COUNTER
 from ..express.models import ExpressOrder
 from .models import DealSubscribe, forex
@@ -195,7 +195,7 @@ def smzdm_task():
 @periodic_task(run_every=crontab(minute=0, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
 def get_forex_quotes():
     api_key = settings.ONE_FORGE_API_KEY
-    client = python_forex_quotes.ForexDataClient(api_key)
+    client = ForexDataClient(api_key)
     currency_pairs = ['AUDCNH', 'USDCNH', 'NZDCNH', 'EURCNH', 'GBPCNH', 'CADCNH', 'JPYCNH']
     quotes = client.getQuotes(currency_pairs)
     msg = ''
@@ -206,8 +206,7 @@ def get_forex_quotes():
         setattr(forex, quote['symbol'], value)
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
-    # todo china sms instead of australia
-    # telstra_sender.send_to_admin(msg.strip())
+    send_to_admin(msg.strip())
 
 
 @periodic_task(run_every=crontab(hour=20, minute=30))
