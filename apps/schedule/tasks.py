@@ -19,7 +19,7 @@ from dateutil.relativedelta import relativedelta
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
-from core.forex.client import ForexDataClient
+from core.utils.forext_1forge import ForexDataClient
 from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS,TELSTRA_SMS_MONTHLY_COUNTER
 from ..express.models import ExpressOrder
 from .models import DealSubscribe, forex
