@@ -83,8 +83,8 @@ class Order(models.Model):
     coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
     app_id = models.CharField(_('App ID'), max_length=128, null=True, blank=True)
 
-    send_msg_sent = models.BooleanField(_('send msg'), default=False, null=False, blank=False)  # 寄出通知
-    delivery_msg_sent = models.BooleanField(_('delivery msg'), default=False, null=False, blank=False)  # 寄达通知
+    shipping_msg_sent = models.BooleanField(_(u'send msg'), default=False, null=False, blank=False)  # 寄出通知
+    delivery_msg_sent = models.BooleanField(_(u'delivery msg'), default=False, null=False, blank=False)  # 寄达通知
 
     objects = OrderManager()
 
