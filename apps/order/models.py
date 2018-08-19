@@ -208,7 +208,7 @@ class Order(models.Model):
             else:
                 return
 
-        self.set_finish_time()
+            self.set_finish_time()
         self.save()
         if status_value == ORDER_STATUS.SHIPPING:
             self.sms_shipping()

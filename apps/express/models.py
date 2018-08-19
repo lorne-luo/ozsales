@@ -179,6 +179,7 @@ class ExpressOrder(models.Model):
     remarks = models.CharField(_('Remarks'), max_length=128, null=True, blank=True)
     delivery_sms_sent = models.BooleanField(_('delivery sms'), default=False, null=False, blank=False)  # 寄达通知
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
+    delivered_time = models.DateTimeField(_('寄达时间'), editable=True, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = _('Express Order')
@@ -270,7 +271,9 @@ class ExpressOrder(models.Model):
         if delivered in [True, False]:
             self.is_delivered = delivered
             self.last_track = last_info[:512]
-            self.save(update_fields=['last_track', 'is_delivered'])
+            if delivered:
+                self.delivered_time = timezone.now()
+            self.save(update_fields=['last_track', 'is_delivered', 'delivered_time'])
 
     def test_tracker(self):
         if self.is_delivered and self.carrier:
@@ -278,6 +281,13 @@ class ExpressOrder(models.Model):
             if delivered is None:
                 # deliverd is None = error
                 log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
+
+    @property
+    def shipping_days(self):
+        if self.delivered_time and self.create_time:
+            diff = self.delivered_time - self.create_time
+            return diff.days
+        return -1
 
 
 @receiver(post_save, sender=ExpressOrder)
