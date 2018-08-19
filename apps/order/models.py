@@ -210,7 +210,7 @@ class Order(models.Model):
 
         self.set_finish_time()
         self.save()
-        if status_value == ORDER_STATUS.SHPPING:
+        if status_value == ORDER_STATUS.SHIPPING:
             self.sms_shipping()
         self.update_price()
 
