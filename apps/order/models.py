@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 from decimal import Decimal
-
+from enum import Enum
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -15,7 +15,6 @@ from django.utils import timezone
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
 from core.aliyun.sms.service import send_cn_sms
-from utils.enum import enum
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
@@ -24,7 +23,16 @@ from ..store.models import Store
 
 log = logging.getLogger(__name__)
 
-ORDER_STATUS = enum('CREATED', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'FINISHED', 'CANCELED', 'CLOSED')
+
+class ORDER_STATUS(object):
+    CREATED = 'CREATED'
+    CONFIRMED = 'CONFIRMED'
+    SHIPPING = 'SHIPPING'
+    DELIVERED = 'DELIVERED'
+    FINISHED = 'FINISHED'
+    CANCELED = 'CANCELED'
+    CLOSED = 'CLOSED'
+
 
 ORDER_STATUS_CHOICES = (
     (ORDER_STATUS.CREATED, '创建'),

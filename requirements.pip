@@ -32,7 +32,7 @@ pycurl==7.43.0.1  --global-option="--with-nss"
 python-dateutil
 gunicorn==18.0
 Wand==0.4.3
-enum34
+#enum34
 django-tinymce4-lite==1.6.0
 pyenchant
 weixin-python
