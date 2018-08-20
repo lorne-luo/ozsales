@@ -72,6 +72,12 @@ def validate_mobile_number(mobile):
 
 
 def send_au_sms(to, body, app_name=None):
+    counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
+    counter = int(counter)
+    if not counter < 1000:
+        log.info('[SMS] Telstra SMS reach 1000 free limitation.')
+        return False, 'Telstra SMS reach 1000 free limitation.'
+
     to = validate_mobile_number(to)
     if not to:
         return False, 'INVALID_PHONE_NUMBER'
@@ -106,6 +112,13 @@ def send_au_sms(to, body, app_name=None):
         sms.save()
 
         if success:
+            counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
+            counter = int(counter)
+            counter += 1
+            r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter)
+            if counter == 999:
+                send_to_admin('[Warning] Telstra sms meet monthly limitation.')
+
             return True, 'MessageWaiting'
     except ApiException as e:
         log.error("Exception when calling MessagingApi->send_sms: %s\n" % e)
