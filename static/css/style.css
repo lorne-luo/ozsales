@@ -189,3 +189,7 @@ div.tab-content .pagination > li > a:focus {
 aside.messagesetVue div.menu li {
     padding: 0 0 0 15px;
 }
+
+.track_table_page .table ul{
+    padding-left: 20px;
+}

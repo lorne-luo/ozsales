@@ -1,137 +1,154 @@
 {% extends "adminlte/common_detail_new.html" %}
 {% load static adminlte_tags %}
 
+{% block base_body_class %}
+    {{ block.super }} track_table_page
+{% endblock %}
+
 {% block breadcrumb %}
-  <ol class="breadcrumb">
-    <li>
-      <a href="#">
-        <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
-      </a>
-    </li>
-    {% if page_title != default_dashboard_title %}
-      <li class="active">
-        <a href="{% url 'order:order-list-short' %}">
-          {{ page_model_verbose_name }}
-        </a>
-      </li>
-    {% endif %}
-    {% if object != None %}
-      <li class="active">{{ page_title }}详情</li>
-    {% endif %}
-  </ol>
+    <ol class="breadcrumb">
+        <li>
+            <a href="#">
+                <i class="fa fa-dashboard"></i> {{ default_dashboard_title }}
+            </a>
+        </li>
+        {% if page_title != default_dashboard_title %}
+            <li class="active">
+                <a href="{% url 'order:order-list-short' %}">
+                    {{ page_model_verbose_name }}
+                </a>
+            </li>
+        {% endif %}
+        {% if object != None %}
+            <li class="active">{{ page_title }}详情</li>
+        {% endif %}
+    </ol>
 {% endblock %}
 
 {% block table_content %}
-  <tr>
-    <th style="min-width: 44px">姓名</th>
-    <td>
-      <a href="{% url 'customer:customer-update' object.customer.pk %}">{{ object.customer }}</a>
-      {% if object.customer.remark %}
-        ({{ object.customer.remark }})
-      {% endif %}
-    </td>
-  </tr>
-  <tr>
-    <th>证件</th>
-    <td>{{ object.address.id_number }}</td>
-  </tr>
-  <tr>
-    <th>地址</th>
-    <td>
-      <a href="{% url 'customer:customer-update' object.customer.pk %}#address_set_table">{{ object.address_text }}</a>
-    </td>
-  </tr>
-  <tr>
-    <th>产品</th>
-    <td>
-      {% for prod in object.products.all %}
-        {% if prod.get_link %}
-          <a target="_blank" href="{{ prod.get_link }}">
-            {% if prod.name %}
-              {{ prod.name }}
-            {% else %}
-              {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}
+    <tr>
+        <th style="min-width: 44px">姓名</th>
+        <td>
+            <a href="{% url 'customer:customer-update' object.customer.pk %}">{{ object.customer }}</a>
+            {% if object.customer.remark %}
+                ({{ object.customer.remark }})
             {% endif %}
-          </a>
-          = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
-        {% else %}
-          {{ prod.name }} = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
-        {% endif %}
-      {% endfor %}
-    </td>
-  </tr>
-  <tr>
-    <th>总价</th>
-    <td>
-      ¥{{ object.sell_price_rmb }}
-      {% if object.is_paid %}
-        (已支付)
-      {% else %}
-        (<a href="{% url 'order:change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
-      {% endif %}
-      {% ifnotequal object.origin_sell_rmb object.sell_price_rmb %}
-        (原价: {{ object.origin_sell_rmb }})
-      {% endifnotequal %}
-      <br/>
-      ${{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
-      ¥{{ object.sell_price_rmb }} - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
-    </td>
-  </tr>
-  <tr>
-    <th>状态</th>
-    <td>
-      {% if object.status == 'CREATED' %}
-        <span class="label label-info">{{ object.status }}</span> >>
-      {% elif object.status == 'SHIPPING' %}
-        <span class="label label-success">{{ object.status }}</span> >>
-      {% elif object.status == 'DELIVERED' %}
-        <span class="label label-warning">{{ object.status }}</span> >>
-      {% elif object.status == 'FINISHED' %}
-        <span class="label label-danger">{{ object.status }}</span>
-      {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <th>证件</th>
+        <td>{{ object.address.id_number }}</td>
+    </tr>
+    <tr>
+        <th>地址</th>
+        <td>
+            <a href="{% url 'customer:customer-update' object.customer.pk %}#address_set_table">{{ object.address_text }}</a>
+        </td>
+    </tr>
+    <tr>
+        <th>产品</th>
+        <td>
+            {% for prod in object.products.all %}
+                {% if prod.get_link %}
+                    <a target="_blank" href="{{ prod.get_link }}">
+                        {% if prod.name %}
+                            {{ prod.name }}
+                        {% else %}
+                            {{ prod.product.brand.name_en }} {{ prod.product.name_cn }}
+                        {% endif %}
+                    </a>
+                    = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% else %}
+                    {{ prod.name }} = ¥{{ prod.sell_price_rmb }} X {{ prod.amount }}<br/>
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <th>总价</th>
+        <td>
+            ¥{{ object.sell_price_rmb }}
+            {% if object.is_paid %}
+                (已支付)
+            {% else %}
+                (<a href="{% url 'order:change-order-paid' order_id=object.pk %}"><b>未支付</b></a>)
+            {% endif %}
+            {% ifnotequal object.origin_sell_rmb object.sell_price_rmb %}
+                (原价: {{ object.origin_sell_rmb }})
+            {% endifnotequal %}
+            <br/>
+            ${{ object.product_cost_aud }} + {{ object.shipping_fee }} = {{ object.total_cost_aud }}<br/>
+            ¥{{ object.sell_price_rmb }} - {{ object.total_cost_rmb }} = {{ object.profit_rmb }}
+        </td>
+    </tr>
+    <tr>
+        <th>状态</th>
+        <td>
+            {% if object.status == 'CREATED' %}
+                <span class="label label-info">{{ object.status }}</span> >>
+            {% elif object.status == 'SHIPPING' %}
+                <span class="label label-success">{{ object.status }}</span> >>
+            {% elif object.status == 'DELIVERED' %}
+                <span class="label label-warning">{{ object.status }}</span> >>
+            {% elif object.status == 'FINISHED' %}
+                <span class="label label-danger">{{ object.status }}</span>
+            {% endif %}
 
-      {% if object.next_status %}
-        <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">
-        {% if object.next_status == 'CREATED' %}
-          <span class="label label-info">{{ object.next_status }}</span>
-        {% elif object.next_status == 'SHIPPING' %}
-          <span class="label label-success">{{ object.next_status }}</span>
-        {% elif object.next_status == 'DELIVERED' %}
-          <span class="label label-warning">{{ object.next_status }}</span>
-        {% elif object.next_status == 'FINISHED' %}
-          <span class="label label-danger">{{ object.next_status }}</span>
-        {% endif %}
-      {% endif %}
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <th>物流</th>
-    <td>{% if object.ship_time %}寄出日期: {{ object.ship_time|date }}{% endif %}</td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <table>
-      {% for ex in object.express_orders.all %}
-        <tr><td>
-        [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
-        {% if ex.get_track_url %}
-          <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a>  {% if ex.is_delivered %}(已寄达){% endif %}
-        {% else %}
-          {{ ex.track_id }} (<a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
-        {% endif %}
-        </td></tr>
-        {% if ex.last_track %}
-        <tr><td>
-            <ul><li>{{ ex.last_track }}</li></ul>
-        </td></tr>
-      {% endif %}
-      {% endfor %}
-      </table>
-    </td>
-  </tr>
+            {% if object.next_status %}
+                <a href="{% url 'order:change-order-status' order_id=object.pk status_value=object.next_status %}">
+                {% if object.next_status == 'CREATED' %}
+                    <span class="label label-info">{{ object.next_status }}</span>
+                {% elif object.next_status == 'SHIPPING' %}
+                    <span class="label label-success">{{ object.next_status }}</span>
+                {% elif object.next_status == 'DELIVERED' %}
+                    <span class="label label-warning">{{ object.next_status }}</span>
+                {% elif object.next_status == 'FINISHED' %}
+                    <span class="label label-danger">{{ object.next_status }}</span>
+                {% endif %}
+            {% endif %}
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <th>物流</th>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <table>
+                {% for ex in object.express_orders.all %}
+                    <tr>
+                        <td>
+                            [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
+                            {% if ex.get_track_url %}
+                                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a> [
+                                {{ ex.create_time|date:"m/d"|default:"" }}{% if ex.is_delivered %} -
+                                    {{ ex.delivered_time|date:"m/d"|default:"" }}已寄达{% endif %}]
+                            {% else %}
+                                {{ ex.track_id }} (
+                                <a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if ex.order.seller.is_premium %}
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>{{ ex.last_track|default:"暂无物流跟踪信息" }}</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
 {% endblock %}
 
+
 {% block page_footer %}
-    <span style="font-size: 11px">* 本页部分敏感信息仅登陆的卖家可见，放心发送本页面给客户。</span>
+    <p style="font-size: 11px">* 本页部分敏感价格信息仅登陆卖家可见，可放心发送本页面给客户。</p>
+    {% if not request.user.seller.is_premium %}
+        <p style="font-size: 11px">* 加入高级会员可开启物流跟踪及短信提醒,<a href="#">了解详情</a>.</p>
+    {% endif %}
 {% endblock %}
