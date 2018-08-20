@@ -10,8 +10,8 @@ class ProfileAuthenticationMiddleware(AuthenticationMiddleware):
     def process_request(self, request):
         super(ProfileAuthenticationMiddleware, self).process_request(request)
         profile = getattr(request.user, 'profile', None)
+        setattr(request, 'profile', profile)
         if profile:
-            setattr(request, 'profile', profile)
             if request.user.is_seller:
                 setattr(request, 'seller', profile)
             if request.user.is_customer:
