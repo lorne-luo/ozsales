@@ -66,11 +66,11 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
 
     @property
     def is_seller(self):
-        return getattr(self, 'seller') is not None
+        return getattr(self, 'seller', None) is not None
 
     @property
     def is_customer(self):
-        return getattr(self, 'customer') is not None
+        return getattr(self, 'customer', None) is not None
 
     def get_username(self):
         return self.mobile or self.email or self.username
@@ -99,7 +99,7 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
             email_send_task.apply_async(args=([self.email], subject, message))
 
     def send_au_sms(self, content, app_name=None):
-        send_au_sms(self.mobile,content, app_name)
+        send_au_sms(self.mobile, content, app_name)
 
     def send_notification(self, title, content, sender=None):
         notification_content = NotificationContent(creator=sender, title=title, contents=content)
