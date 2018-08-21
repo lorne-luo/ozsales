@@ -14,6 +14,7 @@ TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 TELSTRA_SMS_ACCESS_TOKEN = 'TELSTRA_SMS_ACCESS_TOKEN'
 TELSTRA_SMS_DESTINATION_ADDRESS = 'TELSTRA_SMS_DESTINATION_ADDRESS'
 TELSTRA_LENGTH_PER_SMS = 160
+TELSTRA_MONTHLY_FREE_LIMIT = 1000
 
 
 def get_token():
@@ -74,7 +75,7 @@ def validate_mobile_number(mobile):
 def send_au_sms(to, body, app_name=None):
     counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0
     counter = int(counter)
-    if not counter < 1000:
+    if not counter < TELSTRA_MONTHLY_FREE_LIMIT:
         log.info('[SMS] Telstra SMS reach 1000 free limitation.')
         return False, 'Telstra SMS reach 1000 free limitation.'
 
@@ -116,8 +117,9 @@ def send_au_sms(to, body, app_name=None):
             counter = int(counter)
             counter += 1
             r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter)
-            if counter == 999:
+            if counter == TELSTRA_MONTHLY_FREE_LIMIT - 1:
                 send_to_admin('[Warning] Telstra sms meet monthly limitation.')
+                r.set(TELSTRA_SMS_MONTHLY_COUNTER, counter + 1)
 
             return True, 'MessageWaiting'
     except ApiException as e:

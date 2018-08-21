@@ -61,7 +61,7 @@ def _send_email(receivers, subject, html_content, text_content=None):
         #      使用SMTP.mail/SMTP.rcpt/SMTP.data方法
         client.sendmail(username, receivers, msg.as_string())
         client.quit()
-        print ('邮件发送成功！')
+        print('邮件发送成功！')
     except smtplib.SMTPConnectError as e:
         print(('邮件发送失败，连接失败:', e.smtp_code, e.smtp_error))
     except smtplib.SMTPAuthenticationError as e:
@@ -81,13 +81,15 @@ def _send_email(receivers, subject, html_content, text_content=None):
 def send_email(receivers, subject, html_content, text_content=None):
     counter = r.get(ALIYUN_EMAIL_DAILY_COUNTER) or 0
     counter = int(counter)
-    if counter == ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
-        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
-        _send_email([ADMIN_EMAIL], msg, msg)
-        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
-    elif counter < ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
+    if counter < ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:
         _send_email(receivers, subject, html_content, text_content)
-        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
+        counter += 1
+        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter)
     else:
         msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
         log.warning('[EMAIL SENDER] %s' % msg)
+
+    if counter == ALIYUN_EMAIL_DAILY_FREE_LIMIT - 1:  # 999
+        msg = 'Aliyun email exceed %s daily free limitation.' % ALIYUN_EMAIL_DAILY_FREE_LIMIT
+        _send_email([ADMIN_EMAIL], msg, msg)
+        r.set(ALIYUN_EMAIL_DAILY_COUNTER, counter + 1)
