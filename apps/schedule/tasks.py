@@ -7,6 +7,8 @@ import urllib.request, urllib.error, urllib.parse
 import pytz
 import redis
 import subprocess
+
+from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
@@ -17,10 +19,12 @@ from celery.task.schedules import crontab
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
+from apps.member.models import Seller
+from apps.order.models import ORDER_STATUS, Order
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.utils.forext_1forge import ForexDataClient
-from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS,TELSTRA_SMS_MONTHLY_COUNTER
+from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS, TELSTRA_SMS_MONTHLY_COUNTER
 from ..express.models import ExpressOrder
 from .models import DealSubscribe, forex
 
@@ -211,11 +215,19 @@ def get_forex_quotes():
 
 @periodic_task(run_every=crontab(hour=20, minute=30))
 def express_id_upload_task():
-    unupload_order = ExpressOrder.objects.filter(id_upload=False)
-    if unupload_order.exists():
-        ids = ','.join([o.track_id for o in unupload_order])
-        # todo china sms instead of australia
-        #  telstra_sender.send_to_admin('Upload ID for %s' % ids)
+    for order in Order.objects.exclude(status=ORDER_STATUS.FINISHED).exclude(status=ORDER_STATUS.DELIVERED):
+        unuploads = order.express_orders.filter(id_upload=False)
+        if unuploads.exists():
+            ids = ','.join([o.track_id for o in unuploads])
+            if order.seller.is_admin:
+                content = 'Upload ID for %s' % ids
+                subject = 'Upload ID for %s' % order
+                order.seller.send_email(subject, content)
+                # send_to_admin(content)
+            else:
+                link = reverse('order-detail-short', args=[unuploads.order.customer.id, unuploads.order.id])
+                content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unuploads.order)
+                order.seller.send_notification('上传身份证', content)
 
     log.info('[Express] Daily id upload checking.')
 
