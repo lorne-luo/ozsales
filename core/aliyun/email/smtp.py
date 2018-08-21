@@ -35,8 +35,8 @@ def _send_email(receivers, subject, html_content, text_content=None):
 
     # 构建alternative结构
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = Header(subject.decode('utf-8')).encode()
-    msg['From'] = '%s <%s>' % (Header(SITE_NAME.decode('utf-8')).encode(), username)
+    msg['Subject'] = Header(subject).encode()
+    msg['From'] = '%s <%s>' % (Header(SITE_NAME).encode(), username)
     msg['To'] = ';'.join(receivers) if isinstance(receivers, list) else receivers
     msg['Reply-to'] = ADMIN_EMAIL
     msg['Message-id'] = email.utils.make_msgid()
