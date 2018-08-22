@@ -92,9 +92,8 @@
                         <td>
                             [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
                             {% if ex.get_track_url %}
-                                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a> [
-                                {{ ex.create_time|date:"m/d"|default:"" }}寄出 {% if ex.is_delivered %} -
-                                {{ ex.delivered_time|date:"m/d"|default:"" }}已寄达{% endif %}]
+                                <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a>
+                                [{{ ex.create_time|date:"m/d"|default:"" }}{% if ex.is_delivered %} - {{ ex.delivered_time|date:"m/d"|default:"" }}已寄达{% endif %}]
                             {% else %}
                                 {{ ex.track_id }} (
                                 <a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
@@ -118,7 +117,7 @@
 
 
 {% block menu %}
-    
+
 {% endblock %}
 
 {% block page_footer %}
