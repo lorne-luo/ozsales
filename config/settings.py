@@ -74,9 +74,7 @@ INSTALLED_APPS = (
     'django_webtest',
     'django_nose',
     'dbsettings',
-    'djcelery',
     'tinymce',
-    'kombu.transport.django',
 
     # common app
     'core.commands',  # customized django commands
@@ -236,27 +234,23 @@ SOUTH_TESTS_MIGRATE = False
 
 # CELERY
 # ------------------------------------------------------------------------------
-import djcelery
-
-djcelery.setup_loader()
-
 CELERY_BROKER_URL = BROKER_URL = 'redis://127.0.0.1:6379'
-CELERY_BROKER_TRANSPORT = BROKER_TRANSPORT = 'redis'
-CELERY_BROKER_TRANSPORT_OPTIONS = BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+CELERY_BROKER_TRANSPORT = 'redis'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 
-CELERY_TASK_RESULT_EXPIRES = datetime.timedelta(days=1)  # Take note of the CleanUp task in middleware/tasks.py
-CELERY_MAX_CACHED_RESULTS = 1000
-CELERYBEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
-CELERY_TRACK_STARTED = True
-CELERY_SEND_EVENTS = True
-CELERY_ACCEPT_CONTENT = ['pickle', 'json', 'msgpack', 'yaml']
+CELERY_RESULT_EXPIRES = datetime.timedelta(days=1)  # Take note of the CleanUp task in middleware/tasks.py
+CELERY_RESULT_CACHE_MAX = 1000
+# CELERY_BEAT_SCHEDULER = "djcelery.schedulers.DatabaseScheduler"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_WORKER_SEND_TASK_EVENTS = True
 
-CELERY_REDIS_CONNECT_RETRY = REDIS_CONNECT_RETRY = True
+CELERY_REDIS_CONNECT_RETRY = True
 CELERY_REDIS_DB = REDIS_DB = 0
-CELERY_BROKER_POOL_LIMIT = BROKER_POOL_LIMIT = 2
-CELERYD_CONCURRENCY = 1
-CELERYD_TASK_TIME_LIMIT = 600
+CELERY_BROKER_POOL_LIMIT = 2
+CELERY_WORKER_CONCURRENCY = 1
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://127.0.0.1:6379/1"
 
 # TINYMCE
 # ------------------------------------------------------------------------------

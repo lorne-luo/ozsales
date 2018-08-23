@@ -1,9 +1,6 @@
 import json
 import urllib.request
 
-with urllib.request.urlopen("http://www.python.org") as url:
-    s = url.read()
-
 
 class ForexDataClient:
     def __init__(self, api_key):
