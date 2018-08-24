@@ -350,14 +350,13 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
                     if existed:
                         self.id_photo_back = existed.id_photo_back
 
-
-@receiver(post_delete, sender=CartProduct)
-def cart_product_deleted(sender, **kwargs):
-    cart_product = kwargs['instance']
-    cart_product.cart.update_price()
-
-
-@receiver(post_save, sender=CartProduct)
-def cart_product_post_save(sender, instance=None, created=False, update_fields=None, **kwargs):
-    if instance.cart:
-        instance.cart.update_price()
+# @receiver(post_delete, sender=CartProduct)
+# def cart_product_deleted(sender, **kwargs):
+#     cart_product = kwargs['instance']
+#     cart_product.cart.update_price()
+#
+#
+# @receiver(post_save, sender=CartProduct)
+# def cart_product_post_save(sender, instance=None, created=False, update_fields=None, **kwargs):
+#     if instance.cart:
+#         instance.cart.update_price()

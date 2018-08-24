@@ -12,6 +12,7 @@ from django.db.models import Sum, F, Avg, Min, Max
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django.core.files.storage import default_storage
 from pypinyin import Style
 from stdimage import StdImageField
 from taggit.managers import TaggableManager
@@ -280,6 +281,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
 @receiver(post_delete, sender=Product)
 def product_deleted(sender, **kwargs):
     instance = kwargs['instance']
+    default_storage.delete(instance.pic.path)
     if instance.seller is None:  # default carrier, clean cache
         Product.objects.clean_cache()
 
