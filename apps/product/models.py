@@ -23,6 +23,7 @@ from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
 
 from apps.member.models import Seller
 from apps.store.models import Page
+from core.django.storage import OverwriteStorage
 
 log = logging.getLogger(__name__)
 
@@ -119,6 +120,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
+                        storage=OverwriteStorage(),
                         variations={
                             'medium': (800, 800, True),
                             'thumbnail': (400, 400, True)

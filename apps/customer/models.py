@@ -21,6 +21,7 @@ from config.settings import ID_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
 
 from apps.member.models import Seller
 from apps.product.models import Product
+from core.django.storage import OverwriteStorage
 
 
 class InterestTag(models.Model):
@@ -249,10 +250,12 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
+                                   storage=OverwriteStorage(),
                                    variations={
                                        'thumbnail': (150, 150, False)
                                    })
     id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
+                                  storage=OverwriteStorage(),
                                   variations={
                                       'thumbnail': (150, 150, False)
                                   })
