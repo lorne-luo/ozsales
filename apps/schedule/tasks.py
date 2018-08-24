@@ -249,9 +249,11 @@ def run_shell_command(command_line):
     command_line_args = shlex.split(command_line)
     log.info('Subprocess: "' + ' '.join(command_line_args) + '"')
 
+    work_dir = os.path.abspath(os.path.join(settings.MEDIA_ROOT, '..'))
+
     try:
         command_line_process = subprocess.Popen(
-            command_line_args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            command_line_args, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=work_dir
         )
 
         command_line_process.communicate()
@@ -268,7 +270,9 @@ def run_shell_command(command_line):
 
 @task
 def guetzli_compress_image(image_path):
-    GUETZLI_CMD = '/opt/guetzli/bin/Release/guetzli'
+    # create guetzli link under /usr/local/bin
+    GUETZLI_CMD = '/usr/local/bin/guetzli'
+    log.info('guetzli_compress_image: image_path=%s' % image_path)
 
     if os.path.exists(GUETZLI_CMD):
         cmd = '%s --quality 84 %s %s' % (GUETZLI_CMD, image_path, image_path)

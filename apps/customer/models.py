@@ -10,6 +10,7 @@ from django.db.models import Manager
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
@@ -17,7 +18,6 @@ from stdimage import StdImageField
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
-from config.settings import ID_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
 
 from apps.member.models import Seller
 from apps.product.models import Product
@@ -203,10 +203,10 @@ def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
-    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+    file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
-    full_path = os.path.join(MEDIA_ROOT, file_path)
+    full_path = os.path.join(settings.MEDIA_ROOT, file_path)
     guetzli_compress_image.apply_async(args=[full_path], countdown=10)
     return file_path
 
@@ -215,11 +215,11 @@ def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
     filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
-    file_path = os.path.join(ID_PHOTO_FOLDER, filename)
+    file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
-    full_path = os.path.join(MEDIA_ROOT, file_path)
-    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    full_path = os.path.join(settings.MEDIA_ROOT, file_path)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=230)
     return file_path
 
 
@@ -299,9 +299,9 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def id_photo_front_link(self):
         if self.id_photo_front:
             file_path = str(self.id_photo_front)
-            # base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
-            # url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
-            url = '%s%s' % (MEDIA_URL, file_path)
+            # base, file_path = file_path.split('/%s' % settings.ID_PHOTO_FOLDER)
+            # url = '/%s%s' % (settings.ID_PHOTO_FOLDER, file_path)
+            url = '%s%s' % (settings.MEDIA_URL, file_path)
             return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
             return ''
@@ -312,9 +312,9 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def id_photo_back_link(self):
         if self.id_photo_back:
             file_path = str(self.id_photo_back)
-            # base, file_path = file_path.split('/%s' % ID_PHOTO_FOLDER)
-            # url = '/%s%s' % (ID_PHOTO_FOLDER, file_path)
-            url = '%s%s' % (MEDIA_URL, file_path)
+            # base, file_path = file_path.split('/%s' % settings.ID_PHOTO_FOLDER)
+            # url = '/%s%s' % (settings.ID_PHOTO_FOLDER, file_path)
+            url = '%s%s' % (settings.MEDIA_URL, file_path)
             return '<a target="_blank" href="%s"><img width="90px" src="%s"></a>' % (url, url)
         else:
             return ''
