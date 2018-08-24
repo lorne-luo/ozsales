@@ -15,7 +15,7 @@ from decimal import Decimal
 from bs4 import BeautifulSoup
 from celery.task import periodic_task, task
 
-from celery.task.schedules import crontab
+from celery.schedules import crontab
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
@@ -49,7 +49,8 @@ def utf8sub(s, length):
     return s[:length]
 
 
-@periodic_task(run_every=crontab(minute='*/15', hour='7-0'))
+# @periodic_task(run_every=crontab(minute='*/15', hour='7-0'))
+@task
 def ozbargin_task():
     url = 'https://www.ozbargain.com.au/deals/feed'
 
@@ -134,7 +135,8 @@ smzdm_last_date = 'schedule.smzdm.last_date'
 smzdm_keywords = []
 
 
-@periodic_task(run_every=crontab(minute='*/20', hour='7-0'))
+# @periodic_task(run_every=crontab(minute='*/20', hour='7-0'))
+@task
 def smzdm_task():
     url = 'http://feed.smzdm.com/'
     haitao_url = 'http://haitao.smzdm.com/feed'
@@ -196,7 +198,8 @@ def smzdm_task():
     r.set(smzdm_last_date, new_last_date)
 
 
-@periodic_task(run_every=crontab(minute=3, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
+# @periodic_task(run_every=crontab(minute=3, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
+@task
 def get_forex_quotes():
     api_key = settings.ONE_FORGE_API_KEY
     client = ForexDataClient(api_key)
@@ -213,7 +216,8 @@ def get_forex_quotes():
     send_to_admin(msg.strip())
 
 
-@periodic_task(run_every=crontab(hour=20, minute=30))
+# @periodic_task(run_every=crontab(hour=20, minute=30))
+@task
 def express_id_upload_task():
     for order in Order.objects.exclude(status=ORDER_STATUS.FINISHED).exclude(status=ORDER_STATUS.DELIVERED):
         unuploads = order.express_orders.filter(id_upload=False)
@@ -232,13 +236,15 @@ def express_id_upload_task():
     log.info('[Express] Daily id upload checking.')
 
 
-@periodic_task(run_every=crontab(hour=0, minute=5))
+# @periodic_task(run_every=crontab(hour=0, minute=5))
+@task
 def reset_email_daily_counter():
     r.set(ALIYUN_EMAIL_DAILY_COUNTER, 0)
     log.info('[EMAIL] Reset aliyun email daily counter.')
 
 
-@periodic_task(run_every=crontab(hour=1, minute=13, day_of_month=1))
+# @periodic_task(run_every=crontab(hour=1, minute=13, day_of_month=1))
+@task
 def reset_sms_monthly_counter():
     r.set(TELSTRA_SMS_MONTHLY_COUNTER, 0)
     log.info('[SMS] Reset Telstra sms monthly counter.')

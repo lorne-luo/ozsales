@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import environ
 import datetime
+
+from celery.schedules import crontab
 from django.utils.translation import ugettext_lazy as _
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
@@ -251,6 +253,45 @@ CELERY_BROKER_POOL_LIMIT = 2
 CELERY_WORKER_CONCURRENCY = 1
 CELERY_TASK_TIME_LIMIT = 600
 CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://127.0.0.1:6379/1"
+
+CELERY_BEAT_SCHEDULE = {
+   'update_delivery_tracking': {
+       'task': 'apps.express.tasks.update_delivery_tracking',
+       'schedule': crontab(minute=7, hour='9,12,15,18,21,0')
+   },
+   'send_delivery_sms': {
+       'task': 'apps.express.tasks.send_delivery_sms',
+       'schedule': crontab(minute=5, hour='11,14,17,19,23')
+   },
+   'cleanup_sms_history' : {
+       'task': 'apps.sms.tasks.cleanup_sms_history',
+       'schedule': crontab(hour=3, minute=7, day_of_month=2)
+   },
+   'ozbargin_task' : {
+       'task': 'apps.schedule.tasks.ozbargin_task',
+       'schedule': crontab(minute='*/15', hour='7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23')
+   },
+   'smzdm_task' : {
+       'task': 'apps.schedule.tasks.smzdm_task',
+       'schedule': crontab(minute='*/20', hour='7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23')
+   },
+   'get_forex_quotes' : {
+       'task': 'apps.schedule.tasks.get_forex_quotes',
+       'schedule': crontab(minute=3, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri')
+   },
+   'express_id_upload_task' : {
+       'task': 'apps.schedule.tasks.express_id_upload_task',
+       'schedule': crontab(hour=20, minute=30)
+   },
+   'reset_email_daily_counter' : {
+       'task': 'apps.schedule.tasks.reset_email_daily_counter',
+       'schedule': crontab(hour=0, minute=5)
+   },
+   'reset_sms_monthly_counter' : {
+       'task': 'apps.schedule.tasks.reset_sms_monthly_counter',
+       'schedule': crontab(hour=1, minute=13, day_of_month=1)
+   },
+}
 
 # TINYMCE
 # ------------------------------------------------------------------------------
