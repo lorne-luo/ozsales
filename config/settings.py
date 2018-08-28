@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 import environ
 import datetime
+import time
 
 from celery.schedules import crontab
 from django.utils.translation import ugettext_lazy as _
@@ -41,6 +42,7 @@ INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 ADMIN_EMAIL = env('ADMIN_EMAIL', default='dev@luotao.net')  # 管理员email地址
 ADMINS = [('Admin', ADMIN_EMAIL)]
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
+STARTUP_TIMESTAMP= int(time.time())
 
 # Application definition
 INSTALLED_APPS = (
@@ -236,7 +238,7 @@ SOUTH_TESTS_MIGRATE = False
 
 # CELERY
 # ------------------------------------------------------------------------------
-CELERY_BROKER_URL = BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_BROKER_URL = BROKER_URL = 'redis://127.0.0.1:6379/1'
 CELERY_BROKER_TRANSPORT = 'redis'
 CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
