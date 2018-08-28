@@ -1,5 +1,5 @@
-{% load static %}
-<script type="text/javascript" src="{% static 'build/core_bundle.js' %}"></script>
+{% load static custom_static %}
+<script type="text/javascript" src="{% static 'build/core_bundle.js' %}?v={% startup_timestamp %}"></script>
 
 <!-- Header Script -->
 {# jQuery 2.1.4 #}
