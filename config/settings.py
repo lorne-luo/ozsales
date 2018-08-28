@@ -42,7 +42,7 @@ INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 ADMIN_EMAIL = env('ADMIN_EMAIL', default='dev@luotao.net')  # 管理员email地址
 ADMINS = [('Admin', ADMIN_EMAIL)]
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
-STARTUP_TIMESTAMP= int(time.time())
+STARTUP_TIMESTAMP = int(time.time())
 
 # Application definition
 INSTALLED_APPS = (
@@ -236,18 +236,23 @@ SESSION_COOKIE_AGE = 604800 * 4  # 4 weeks
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 SOUTH_TESTS_MIGRATE = False
 
+# REIDS
+# ------------------------------------------------------------------------------
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+CUSTOM_DB_CHANNEL = 0
+REDBEAT_DB_CHANNEL = 1
+CELERY_DB_CHANNEL = 2
+
 # CELERY
 # ------------------------------------------------------------------------------
-BROKER_URL = 'redis://127.0.0.1:6379'
-BROKER_TRANSPORT = 'redis'
-CELERY_REDIS_DB = 2
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+CELERY_BROKER_URL = 'redis://%s:%s/%s' % (REDIS_HOST, REDIS_PORT, CELERY_DB_CHANNEL)
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 604800}
+CELERY_BROKER_POOL_LIMIT = 2
 CELERY_TIMEZONE = TIME_ZONE
-CELERY_TASK_RESULT_EXPIRES = 3600 # 1 hour
-BROKER_CONNECTION_RETRY = True
-BROKER_POOL_LIMIT = 2
-CELERYD_TASK_TIME_LIMIT = 600
-CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://127.0.0.1:6379/1"
+CELERY_RESULT_EXPIRES = 3600  # 1 hour
+CELERY_TASK_TIME_LIMIT = 600
+CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://%s:%s/%s" % (REDIS_HOST, REDIS_PORT, REDBEAT_DB_CHANNEL)
 
 CELERY_BEAT_SCHEDULE = {
     'update_delivery_tracking': {

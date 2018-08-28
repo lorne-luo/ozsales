@@ -40,8 +40,8 @@ class RedisStatus(template.Node):
     def render (self, context):
         server_stats = []
         try:
-            client = redis.Redis(port=settings.REDIS_PORT, host=settings.REDIS_HOST)
-            server_data = {'url' : '%s/%s' % (settings.BROKER_URL, settings.REDIS_DB)}
+            client = redis.Redis(port=settings.REDIS_PORT, host=settings.REDIS_HOST, decode_responses=True)
+            server_data = {'url' : '%s' % settings.CELERY_BROKER_URL}
             server_data['max_memory'] = client.config_get()['maxmemory']
             stats = client.info()
             stats['max_memory_human'] = _human_bytes(server_data['max_memory'])
