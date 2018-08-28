@@ -16,7 +16,7 @@ class OrderProductSerializer(BaseSerializer):
         fields = ['id', 'detail_url'] + \
                  ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
                   'total_price_aud', 'store', 'order_display', 'order_url', 'product_url', 'store_display',
-                  'is_purchased']
+                  'is_purchased', 'create_time']
         read_only_fields = ['id']
 
     def get_order_url(self, obj):
