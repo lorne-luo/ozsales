@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.dispatch import receiver
 from django.db.models.signals import post_save, post_delete
 from django.utils import timezone
-
+from django.utils.crypto import get_random_string
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
 from core.aliyun.sms.service import send_cn_sms
@@ -59,8 +59,8 @@ class OrderManager(models.Manager):
 
 
 class Order(models.Model):
+    uuid = models.CharField(unique=True, max_length=12, null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True)
-    order_id = models.CharField(_('编号'), max_length=32, null=True, blank=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('客户'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('地址'))
     address_text = models.CharField(_('地址'), max_length=255, null=True, blank=True)
@@ -105,6 +105,20 @@ class Order(models.Model):
     def __init__(self, *args, **kwargs):
         super(Order, self).__init__(*args, **kwargs)
         self._currency_original = self.currency
+
+    @classmethod
+    def generate_uuid(cls):
+        # 3 alphabet and 3 number
+        alphabets = get_random_string(3, 'abcdefghijklmnopqrstuvwxyz')
+        numbers = get_random_string(3, '1234567890')
+        return alphabets + numbers
+
+    def set_uuid(self):
+        if not self.uuid:
+            uid = self.generate_uuid()
+            while Order.objects.filter(uuid=uid).exists():
+                uid = self.generate_uuid()
+            self.uuid = uid
 
     def get_mobile(self):
         if self.customer and self.customer.mobile:
@@ -224,6 +238,7 @@ class Order(models.Model):
             MonthlyReport.stat_month(self.seller, self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        self.set_uuid()
         if not self.address and self.customer.primary_address:
             self.address = self.customer.primary_address
 
@@ -244,11 +259,6 @@ class Order(models.Model):
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
         super(Order, self).save()
-
-        if self.id and not self.order_id:
-            order_id = '0%s' % self.id
-            self.order_id = '%s%s%s%s' % (self.create_time.year, self.create_time.month, self.create_time.day, order_id)
-            self.save(update_fields=['order_id'])
 
     def get_total_fee(self):
         # 微信支付金额单位:分
@@ -437,8 +447,8 @@ class Order(models.Model):
 
         # request weixin unified order api
         try:
-            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.order_id,
-                                             out_trade_no=self.order_id,
+            raw = self.app.pay.unified_order(trade_type=trade_type, openid=self.openid, body=self.uuid,
+                                             out_trade_no=self.uuid,
                                              total_fee=self.get_total_fee(), spbill_create_ip=user_ip)
         except WeixinError as e:
             log.info(e.message)
