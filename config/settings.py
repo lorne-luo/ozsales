@@ -114,12 +114,14 @@ INSTALLED_APPS = (
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'core.django.middleware.ProfileAuthenticationMiddleware',
+    'tenant_schemas.middleware.TenantMiddleware',
+
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'core.django.middleware.ProfileAuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -127,8 +129,8 @@ MIDDLEWARE_CLASSES = (
     # 'core.libs.middleware.MenuMiddleware',
 
     # wagtail
-    'wagtail.wagtailcore.middleware.SiteMiddleware',
-    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    # 'wagtail.wagtailcore.middleware.SiteMiddleware',
+    # 'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 )
 
 ROOT_URLCONF = 'config.urls'
@@ -138,12 +140,15 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 DATABASES = {
-    'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales')
+    # 'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales'),
+    'default': env.db('POSTGRES_URL', default='postgres://ozsales:ozsales@lorne-luo-dev:5433/ozsales')
 }
 
-DATABASES['default']['OPTIONS'] = {
-    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-}
+DATABASES['default']['ENGINE'] = 'tenant_schemas.postgresql_backend'
+
+DATABASE_ROUTERS = (
+    'tenant_schemas.routers.TenantSyncRouter',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -200,8 +205,8 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 # 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
                 'django.template.context_processors.media',
                 'django.template.context_processors.static',

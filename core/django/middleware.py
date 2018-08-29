@@ -1,9 +1,6 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from django.contrib.auth.middleware import AuthenticationMiddleware
-
-__author__ = 'lorne'
+from tenant_schemas.middleware import DefaultTenantMiddleware
+from tenant_schemas.utils import get_public_schema_name
 
 
 class ProfileAuthenticationMiddleware(AuthenticationMiddleware):
@@ -17,3 +14,18 @@ class ProfileAuthenticationMiddleware(AuthenticationMiddleware):
             if request.user.is_customer:
                 setattr(request, 'customer', profile)
 
+
+class MyTenantMiddleware(DefaultTenantMiddleware):
+    DEFAULT_SCHEMA_NAME = 'public'
+
+    def get_tenant(self, model, hostname, request):
+        # todo entry for login, register etc.
+        try:
+            return super(DefaultTenantMiddleware, self).get_tenant(
+                model, hostname, request)
+        except model.DoesNotExist:
+            schema_name = self.DEFAULT_SCHEMA_NAME
+            if not schema_name:
+                schema_name = get_public_schema_name()
+
+            return model.objects.get(schema_name=schema_name)

@@ -139,7 +139,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         seller.save()
 
 
-class MembershipOrder(models.Model):
+class PremiumOrder(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     start_at = models.DateField(_('membership start at'), auto_now_add=False, editable=True, null=True, blank=True)
     end_at = models.DateField(_('membership expire at'), auto_now_add=False, editable=True, null=True, blank=True)
