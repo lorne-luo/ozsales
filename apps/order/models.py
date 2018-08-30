@@ -109,9 +109,10 @@ class Order(models.Model):
     @classmethod
     def generate_uuid(cls):
         # 3 alphabet and 3 number
-        alphabets = get_random_string(3, 'abcdefghijklmnopqrstuvwxyz')
+        alphabets = get_random_string(2, 'abcdefghijklmnopqrstuvwxyz')
+        mid = get_random_string(1, 'abcdefghijklmnopqrstuvwxyz1234567890')
         numbers = get_random_string(3, '1234567890')
-        return alphabets + numbers
+        return alphabets + mid + numbers
 
     def set_uuid(self):
         if not self.uuid:
