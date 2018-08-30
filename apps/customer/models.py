@@ -59,7 +59,7 @@ class CustomerCart(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.update_price()
-        super(CustomerCart, self).save()
+        super(CustomerCart, self).save(force_insert, force_update, using, update_fields)
 
 
 class CartProduct(models.Model):

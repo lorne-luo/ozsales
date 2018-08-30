@@ -18,7 +18,7 @@ class Sms(models.Model):
 
     # def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
     #     # todo extract url from content
-    #     super(Sms, self).save()
+    #     super(Sms, self).save(force_insert, force_update, using, update_fields)
 
     def query_sms(self):
         if self.biz_id:

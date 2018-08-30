@@ -240,7 +240,7 @@ class Order(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.set_uuid()
-        if not self.address and self.customer.primary_address:
+        if not self.address and self.customer and self.customer.primary_address:
             self.address = self.customer.primary_address
 
         if self.address:
@@ -259,7 +259,7 @@ class Order(models.Model):
         if self.sell_price_rmb is not None and self.total_cost_rmb is not None:
             self.profit_rmb = self.sell_price_rmb - self.total_cost_rmb
 
-        super(Order, self).save()
+        super(Order, self).save(force_insert, force_update, using, update_fields)
 
     def get_total_fee(self):
         # 微信支付金额单位:分
@@ -525,7 +525,7 @@ class OrderProduct(models.Model):
         if self.description:
             self.name += ' %s' % self.description
 
-        return super(OrderProduct, self).save()
+        return super(OrderProduct, self).save(force_insert, force_update, using, update_fields)
 
     def get_summary(self):
         description = ' %s' % self.description if self.description else ''

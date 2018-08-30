@@ -214,7 +214,7 @@ class ExpressOrder(models.Model):
                 self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
                                                              address=self.address,
                                                              id_upload=True).exists()
-        return super(ExpressOrder, self).save()
+        return super(ExpressOrder, self).save(force_insert, force_update, using, update_fields)
 
     def get_track_url(self):
         if not self.carrier:
