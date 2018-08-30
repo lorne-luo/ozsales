@@ -91,7 +91,7 @@ INSTALLED_APPS = (
     'core.payments.stripe',
 
     'apps.member',
-    'apps.express',
+    'apps.express_carrier',
     'apps.customer',
     'apps.product',
     'apps.order',
@@ -279,11 +279,11 @@ CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://%s:%s/%s" % (REDIS_HOST,
 
 CELERY_BEAT_SCHEDULE = {
     'update_delivery_tracking': {
-        'task': 'apps.express.tasks.update_delivery_tracking',
+        'task': 'apps.express_carrier.tasks.update_delivery_tracking',
         'schedule': crontab(minute=7, hour='9,12,15,18,21,0')
     },
     'send_delivery_sms': {
-        'task': 'apps.express.tasks.send_delivery_sms',
+        'task': 'apps.express_carrier.tasks.send_delivery_sms',
         'schedule': crontab(minute=5, hour='11,14,17,19,23')
     },
     'cleanup_sms_history': {

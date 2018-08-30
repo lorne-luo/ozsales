@@ -2,7 +2,7 @@ from dal import autocomplete
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from apps.express.models import ExpressCarrier, ExpressOrder
+from apps.express_carrier.models import ExpressCarrier, ExpressOrder
 from core.api.filters import PinyinSearchFilter
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet

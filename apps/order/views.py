@@ -9,12 +9,12 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
-from apps.express.views import CarrierInfoRequiredMixin
 from core.django.permission import SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
-from ..express.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
+from ..express_carrier.views import CarrierInfoRequiredMixin
+from ..express_carrier.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
 from ..member.models import Seller
 from . import forms
 
