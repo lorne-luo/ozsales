@@ -20,7 +20,6 @@ from core.django.models import PinYinFieldModelMixin
 from . import tracker as tracker
 from ..member.models import Seller
 from ..customer.models import Customer
-from ..order.models import Order
 
 log = logging.getLogger(__name__)
 
@@ -39,35 +38,12 @@ class ExpressCarrierManager(models.Manager):
             24 * 60 * 60)
         return default_carrier
 
-    def all_for_seller(self, obj):
-        if isinstance(obj, Seller):
-            seller_id = obj.id
-        elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
-        else:
-            return ExpressCarrier.objects.none()
-
-        default_carrier = self.default()
-        qs = default_carrier | super(ExpressCarrierManager, self).get_queryset().filter(seller_id=seller_id)
-        return self.order_by_usage_for_seller(qs, seller_id)
-
     def order_by_usage_for_seller(self, qs, seller_id):
         return qs.annotate(use_counter=models.Count(models.Case(
             models.When(expressorder__order__seller_id=seller_id, then=1),
             default=0,
             output_field=models.IntegerField()
         ))).order_by('-use_counter')
-
-    def all_for_customer(self, obj):
-        if isinstance(obj, Customer):
-            customer_id = obj.id
-        elif isinstance(obj, AuthUser) and obj.is_customer:
-            customer_id = obj.profile.id
-        else:
-            return ExpressCarrier.objects.none()
-
-        qs = super(ExpressCarrierManager, self).get_queryset()
-        return self.order_by_usage_for_customer(qs, customer_id)
 
     def order_by_usage_for_customer(self, qs, customer_id):
         return qs.annotate(use_counter=models.Count(models.Case(
@@ -78,7 +54,7 @@ class ExpressCarrierManager(models.Manager):
 
 
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
-    # seller = models.ForeignKey('member.Seller', blank=True, null=True)
+    seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
@@ -168,7 +144,7 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
 class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
-    order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
+    order = models.ForeignKey('order.Order', blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
     # address = models.ForeignKey('customer.Address', blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
@@ -314,39 +290,3 @@ def express_carrier_deleted(sender, **kwargs):
     instance = kwargs['instance']
     if instance.seller is None:  # default carrier, clean cache
         ExpressCarrier.objects.clean_cache()
-
-
-# ========================= carrier sub model ==================================
-
-class DefaultCarrierManager(models.Manager):
-    def get_queryset(self):
-        return super(DefaultCarrierManager, self).get_queryset().filter(seller__isnull=True)
-
-
-class DefaultCarrier(ExpressCarrier):
-    objects = DefaultCarrierManager()
-
-    class Meta:
-        proxy = True
-
-
-class CustomCarrierManager(models.Manager):
-    def get_queryset(self):
-        return super(CustomCarrierManager, self).get_queryset().filter(seller__isnull=False)
-
-    def belong_to(self, obj):
-        if isinstance(obj, Seller):
-            seller_id = obj.id
-        elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
-        else:
-            return CustomCarrier.objects.none()
-
-        return super(CustomCarrierManager, self).get_queryset().filter(seller_id=seller_id)
-
-
-class CustomCarrier(ExpressCarrier):
-    objects = CustomCarrierManager()
-
-    class Meta:
-        proxy = True
