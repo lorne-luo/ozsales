@@ -44,8 +44,10 @@ ADMINS = [('Admin', ADMIN_EMAIL)]
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
 STARTUP_TIMESTAMP = int(time.time())
 
+TENANT_MODEL = "member.Tenant"
 # Application definition
 INSTALLED_APPS = (
+    'tenant_schemas',
     # WAGTAIL_APPS
     'wagtail.wagtailforms',
     'wagtail.wagtailredirects',
@@ -111,6 +113,22 @@ INSTALLED_APPS = (
     'rest_framework_swagger',
     'robots',
 )
+
+TENANT_APPS = (
+    # your tenant-specific apps
+    'apps.member',
+    'apps.customer',
+    'apps.product',
+    'apps.order',
+    'apps.store',
+    'apps.report',
+    # 'apps.schedule',
+    'apps.weixin',
+    'core.sms',
+)
+
+SHARED_APPS = tuple(frozenset(INSTALLED_APPS).difference(frozenset(TENANT_APPS)))
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -19,7 +19,7 @@ from core.aliyun.sms.service import send_cn_sms
 from core.django.models import PinYinFieldModelMixin
 from . import tracker as tracker
 from ..member.models import Seller
-from ..customer.models import Address, Customer
+from ..customer.models import Customer
 from ..order.models import Order
 
 log = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ class ExpressCarrierManager(models.Manager):
 
 
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
-    seller = models.ForeignKey(Seller, blank=True, null=True)
+    # seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
@@ -169,7 +169,7 @@ class ExpressOrder(models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('order'), related_name='express_orders')
-    address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('address'))
+    # address = models.ForeignKey('customer.Address', blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, default=0, blank=False, null=False,
@@ -204,9 +204,6 @@ class ExpressOrder(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
-
-        if not self.address and self.order and self.order.address:
-            self.address = self.order.address
 
         if not self.pk:
             self.track_id = self.track_id.upper()
@@ -244,8 +241,11 @@ class ExpressOrder(models.Model):
     get_order_link.allow_tags = True
     get_order_link.short_description = 'Order'
 
-    def get_address(self):
-        return self.order.address
+    @property
+    def address(self):
+        if self.order:
+            return self.order.address
+        return None
 
     def sms_delivered(self):
         mobile = self.order.get_mobile()

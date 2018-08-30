@@ -10,7 +10,6 @@ router.register(r'customer', views.CustomerViewSet, base_name='customer')
 router.register(r'address', views.AddressViewSet, base_name='address')
 
 urlpatterns = [
-    url(r'^add_cart', views.AddCart.as_view(), name='add-cart'),
     url(r'^customer/autocomplete/$', views.CustomerAutocomplete.as_view(), name='customer-autocomplete'),
     url(r'^address/autocomplete/$', views.AddressAutocomplete.as_view(), name='address-autocomplete'),
 ]

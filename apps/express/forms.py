@@ -32,7 +32,7 @@ class ExpressCarrierAdminForm(ExpressCarrierUpdateForm):
     class Meta:
         model = ExpressCarrier
         fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
-                  'seller', 'is_default']
+                  'is_default']
 
 
 class ExpressOrderAddInline(admin.TabularInline):

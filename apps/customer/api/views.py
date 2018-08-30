@@ -15,8 +15,7 @@ from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
-from ..models import Customer, Address, CustomerCart, CartProduct
-from ...product.models import Product
+from ..models import Customer, Address
 
 from . import serializers
 
@@ -103,30 +102,3 @@ class AddressAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplet
                 qs = qs.filter(pinyin__contains=self.q.lower())
         return qs
 
-
-class AddCart(APIView):
-    model = CartProduct
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        product_id = request.POST.get('product_id', None)
-        amount = request.POST.get('amount', 1)
-        try:
-            product = Product.objects.get(pk=product_id)
-        except Product.DoesNotExist:
-            return Response({'success': False, 'detail': 'Product #%s does not existed.' % product_id}, status=400)
-        try:
-            customer = Customer.objects.get(seller=request.user)
-        except Customer.DoesNotExist:
-            raise Http404
-
-        cart, created = CustomerCart.objects.get_or_create(customer=customer)
-        cart_product = cart.products.all().filter(product=product).first()
-        if cart_product:
-            cart_product.amount += amount
-            cart_product.save(update_fields=['amount'])
-        else:
-            cart_product = CartProduct(product=product, amount=amount, cart=cart)
-            cart_product.save()
-
-        return Response({'success': True}, status=200)

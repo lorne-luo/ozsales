@@ -37,45 +37,6 @@ class InterestTag(models.Model):
     def __str__(self):
         return '%s' % self.name
 
-
-class CustomerCart(models.Model):
-    customer = models.OneToOneField('Customer', blank=False, null=False, verbose_name=_('Customer'))
-    coupon = models.CharField(_('Coupon'), max_length=30, null=True, blank=True)
-    origin_price = models.DecimalField(_('Origin Price'), max_digits=8, decimal_places=2, blank=True, null=True)
-    payment_price = models.DecimalField(_('Price'), max_digits=8, decimal_places=2, blank=True, null=True)
-
-    def __str__(self):
-        return '%s' % self.customer.name
-
-    def update_price(self):
-        self.origin_price = 0
-        self.payment_price = 0
-        for p in self.products:
-            self.origin_price += p.product.safe_sell_price * p.amount
-
-        # todo coupon
-        self.payment_price = self.origin_price
-        self.save(update_fields=['payment_price', 'origin_price'])
-
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.update_price()
-        super(CustomerCart, self).save(force_insert, force_update, using, update_fields)
-
-
-class CartProduct(models.Model):
-    cart = models.ForeignKey('CustomerCart', blank=True, null=True, verbose_name=_('Cart'), related_name='products')
-    product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
-    amount = models.IntegerField(_('Amount'), blank=True, null=True, )
-
-    class Meta:
-        verbose_name_plural = _('CartProducts')
-        verbose_name = _('CartProduct')
-        unique_together = ('cart', 'product')
-
-    def __str__(self):
-        return '[%s]%s x %s' % (self.cart.customer.name, self.product.get_name_cn(), self.amount)
-
-
 class CustomerManager(Manager):
     def belong_to(self, obj):
         if isinstance(obj, Seller):

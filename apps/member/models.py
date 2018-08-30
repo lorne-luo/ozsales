@@ -8,6 +8,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
+from tenant_schemas.models import TenantMixin
 
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
@@ -21,6 +22,19 @@ MONTHLY_FREE_ORDER = 10
 SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
+class Tenant(TenantMixin):
+    """include domain_url and schema_name"""
+    # name = models.CharField(max_length=100)
+    # paid_until = models.DateField()
+    # on_trial = models.BooleanField(default=False)
+    # created_on = models.DateField(auto_now_add=True)
+    seller = models.OneToOneField('Seller', on_delete=models.CASCADE, related_name='tenant', null=False, blank=False)
+    enable = models.BooleanField(default=True)
+    create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
+
+    auto_create_schema = True  # default true, schema will be automatically created and synced when it is saved
+
+
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)
@@ -29,6 +43,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     start_at = models.DateField(_('member start at'), auto_now_add=False, editable=True, null=True, blank=True)
     primary_currency = models.CharField(_('首选货币'), max_length=128, choices=CURRENCY_CHOICES, default='AUDCNH',
                                         blank=True)
+    create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     def __str__(self):
         return '%s' % self.name
