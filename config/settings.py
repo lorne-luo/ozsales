@@ -44,7 +44,7 @@ ADMINS = [('Admin', ADMIN_EMAIL)]
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
 STARTUP_TIMESTAMP = int(time.time())
 
-TENANT_MODEL = "member.Tenant"
+TENANT_MODEL = "tenant.Tenant"
 # Application definition
 INSTALLED_APPS = (
     'tenant_schemas',
@@ -90,6 +90,7 @@ INSTALLED_APPS = (
     'core.autocode',
     'core.payments.stripe',
 
+    'apps.tenant',
     'apps.member',
     'apps.express_carrier',
     'apps.express_order',
