@@ -54,6 +54,7 @@ apps_urlpatterns = [
 api_urlpatterns = [
     url(r'^customer/', include('apps.customer.api.urls')),
     url(r'^express_carrier/', include('apps.express_carrier.api.urls')),
+    url(r'^express_order/', include('apps.express_order.api.urls')),
     url(r'^member/', include('apps.member.api.urls')),
     url(r'^order/', include('apps.order.api.urls')),
     url(r'^product/', include('apps.product.api.urls')),

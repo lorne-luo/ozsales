@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import Order, OrderProduct
 from .forms import OrderForm
-from ..express_carrier.forms import ExpressOrderAddInline, ExpressOrderChangeInline
+from ..express_order.forms import ExpressOrderAddInline, ExpressOrderChangeInline
 
 class OrderProductAddInline(admin.TabularInline):
     exclude = ['total_price_aud', 'total_price_rmb']

@@ -92,6 +92,7 @@ INSTALLED_APPS = (
 
     'apps.member',
     'apps.express_carrier',
+    'apps.express_order',
     'apps.customer',
     'apps.product',
     'apps.order',
@@ -116,10 +117,11 @@ INSTALLED_APPS = (
 
 TENANT_APPS = (
     # your tenant-specific apps
-    'apps.member',
+    # 'apps.member',
     'apps.customer',
     'apps.product',
     'apps.order',
+    'apps.express_order',
     'apps.store',
     'apps.report',
     # 'apps.schedule',

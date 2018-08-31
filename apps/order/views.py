@@ -14,7 +14,7 @@ from core.django.views import CommonContextMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
 from ..express_carrier.views import CarrierInfoRequiredMixin
-from ..express_carrier.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
+from ..express_order.forms import ExpressOrderFormSet, ExpressOrderInlineEditForm
 from ..member.models import Seller
 from . import forms
 

@@ -8,7 +8,7 @@ from django.db.models import F, Sum, Count
 from django.utils import timezone
 
 from apps.customer.models import Customer, Address
-from apps.express_carrier.models import ExpressOrder
+from apps.express_order.models import ExpressOrder
 from apps.member.models import Seller
 from apps.order.models import Order, ORDER_STATUS
 
