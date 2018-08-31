@@ -23,6 +23,7 @@ SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
+    tenant = models.OneToOneField('tenant.Tenant', on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)
     country = models.CharField(_('国家'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)

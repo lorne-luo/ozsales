@@ -9,8 +9,11 @@ class Tenant(TenantMixin):
     # paid_until = models.DateField()
     # on_trial = models.BooleanField(default=False)
     # created_on = models.DateField(auto_now_add=True)
-    seller = models.OneToOneField('member.Seller', on_delete=models.CASCADE, related_name='tenant', null=False, blank=False)
+    # seller = models.OneToOneField('member.Seller', on_delete=models.CASCADE, related_name='tenant', null=False, blank=False)
     enable = models.BooleanField(default=True)
     create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     auto_create_schema = True  # default true, schema will be automatically created and synced when it is saved
+
+    class Meta():
+        db_table = u'public.tenant_tenant'

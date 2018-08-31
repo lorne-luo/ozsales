@@ -45,6 +45,8 @@ BASE_URL = env('BASE_URL', default='http://localhost:8000')
 STARTUP_TIMESTAMP = int(time.time())
 
 TENANT_MODEL = "tenant.Tenant"
+DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
+MULTITENANT_MAPPER_CLASS = 'apps.tenant.mapper.TenantMapper'
 # Application definition
 INSTALLED_APPS = (
     'tenant_schemas',
@@ -118,14 +120,14 @@ INSTALLED_APPS = (
 
 TENANT_APPS = (
     # your tenant-specific apps
-    # 'apps.member',
+    'apps.member',
     'apps.customer',
     'apps.product',
     'apps.order',
     'apps.express_order',
     'apps.store',
     'apps.report',
-    # 'apps.schedule',
+    'apps.schedule',
     'apps.weixin',
     'core.sms',
 )
@@ -136,6 +138,7 @@ SHARED_APPS = tuple(frozenset(INSTALLED_APPS).difference(frozenset(TENANT_APPS))
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'core.django.middleware.ProfileAuthenticationMiddleware',
+    # 'db_multitenant.middleware.MultiTenantMiddleware',
     'tenant_schemas.middleware.TenantMiddleware',
 
     'django.middleware.locale.LocaleMiddleware',
@@ -160,12 +163,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
+PUBLIC_SCHEMA_NAME = env('PUBLIC_SCHEMA_NAME', default='public')
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales'),
-    'default': env.db('POSTGRES_URL', default='postgres://ozsales:ozsales@lorne-luo-dev:5433/ozsales')
+    'default': env.db('POSTGRES_URL', default='postgres://ozsales:ozsales@lorne-luo-dev:5433/ozsales2')
 }
 
 DATABASES['default']['ENGINE'] = 'tenant_schemas.postgresql_backend'
+# DATABASES['default']['ENGINE'] = 'db_multitenant.db.backends.postgresql'
 
 DATABASE_ROUTERS = (
     'tenant_schemas.routers.TenantSyncRouter',
@@ -451,8 +456,9 @@ ALIYUN_BATCH_EMAIL_PASSWORD = env('ALIYUN_BATCH_EMAIL_PASSWORD', default='')
 # ------------------------------------------------------------------------------
 CACHES = {
     "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/0",
+        "BACKEND": "django_redis.cache.RedisCache",
+        # 'KEY_FUNCTION': 'db_multitenant.cache.helper.multitenant_key_func',
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -482,6 +488,11 @@ WAGTAIL_ENABLE_UPDATE_CHECK = False  # Wagtail update notifications
 WAGTAIL_ALLOW_UNICODE_SLUGS = False
 WAGTAIL_DATE_FORMAT = '%Y/%m/%d'
 WAGTAIL_DATETIME_FORMAT = '%Y/%m/%d %H:%M'
+
+# from db_multitenant.utils import update_from_env
+#
+# update_from_env(database_settings=DATABASES['default'],
+#                 cache_settings=CACHES['default'])
 
 # LOCAL.PY
 # ------------------------------------------------------------------------------

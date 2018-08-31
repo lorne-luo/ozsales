@@ -46,7 +46,8 @@ class ExpressCarrierManager(models.Manager):
 
 
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
-    seller = models.ForeignKey('member.Seller', blank=True, null=True)
+    #todo find another way to store create by seller
+    # seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
