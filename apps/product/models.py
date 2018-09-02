@@ -281,7 +281,8 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
 @receiver(post_delete, sender=Product)
 def product_deleted(sender, **kwargs):
     instance = kwargs['instance']
-    default_storage.delete(instance.pic.path)
+    if instance.pic and os.path.exists(instance.pic.path):
+        default_storage.delete(instance.pic.path)
     if instance.seller is None:  # default carrier, clean cache
         Product.objects.clean_cache()
 
