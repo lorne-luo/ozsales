@@ -40,6 +40,12 @@ class Brand(models.Model):
         verbose_name = _('Brand')
 
     def __str__(self):
+        if self.name_en and self.name_cn:
+            return '%s/%s' % (self.name_cn, self.name_en)
+        return self.name_cn or self.name_en
+
+    @property
+    def name(self):
         return self.name_cn or self.name_en
 
 
@@ -167,7 +173,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
         verbose_name = _('Product')
 
     def __str__(self):
-        brand = self.brand or self.brand_cn or self.brand_en
+        brand = self.brand.name if self.brand else self.brand_cn or self.brand_en
         name = self.name_cn or self.name_en
         return '%s %s' % (brand, name)
 
@@ -219,7 +225,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
 
     def get_name_cn(self):
         if self.brand and self.brand.name_en.lower() != 'none':
-            return '%s %s' % (self.brand.name_cn, self.name_cn)
+            return '%s %s' % (self.brand.name, self.name_cn)
         else:
             return self.name_cn
 
