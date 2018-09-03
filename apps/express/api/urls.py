@@ -10,6 +10,8 @@ router.register(r'expressorder', views.ExpressOrderViewSet, base_name='expressor
 router.register(r'expresscarrier', views.ExpressCarrierViewSet, base_name='expresscarrier')
 
 urlpatterns = [
+    url(r'^express_carrier/autocomplete/$', views.ExpressCarrierAutocomplete.as_view(),
+        name='express_carrier-autocomplete'),
 
 ]
 

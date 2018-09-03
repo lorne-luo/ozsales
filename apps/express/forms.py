@@ -54,7 +54,7 @@ class ExpressOrderChangeInline(admin.TabularInline):
 
 class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     carrier = forms.ModelChoiceField(label='物流', queryset=ExpressCarrier.objects.all(), required=False,
-                                     widget=FormsetModelSelect2(url='api:carrier-autocomplete',
+                                     widget=FormsetModelSelect2(url='api:express_carrier-autocomplete',
                                                                 attrs={'data-placeholder': '物流中英文名称...',
                                                                        'class': 'form-control'})
                                      )

@@ -5,6 +5,7 @@ import re
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 
 class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     # todo find another way to store create by seller
-    # seller = models.ForeignKey('member.Seller', blank=True, null=True)
+    seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
@@ -41,6 +42,11 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
 
     def __str__(self):
         return self.name_cn
+
+    @staticmethod
+    def get_incomplete_carrier_by_user(seller):
+        # return first update required carrier
+        return ExpressCarrier.objects.filter(seller=seller).filter(Q(website__isnull=True) | Q(website='')).first()
 
     @staticmethod
     def get_default_carrier():
