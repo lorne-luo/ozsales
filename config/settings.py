@@ -41,6 +41,7 @@ ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = ('0.0.0.0', '127.0.0.1')
 ADMIN_EMAIL = env('ADMIN_EMAIL', default='dev@luotao.net')  # 管理员email地址
 ADMINS = [('Admin', ADMIN_EMAIL)]
+DOMAIN_NAME = env('DOMAIN_NAME', default='youdan.com.au')
 BASE_URL = env('BASE_URL', default='http://localhost:8000')
 STARTUP_TIMESTAMP = int(time.time())
 
@@ -135,18 +136,18 @@ TENANT_APPS = (
 
 SHARED_APPS = tuple(frozenset(INSTALLED_APPS).difference(frozenset(TENANT_APPS)))
 
-
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'core.django.middleware.ProfileAuthenticationMiddleware',
+    # 'core.django.middleware.ProfileAuthenticationMiddleware',
     # 'db_multitenant.middleware.MultiTenantMiddleware',
-    'tenant_schemas.middleware.TenantMiddleware',
+    # 'tenant_schemas.middleware.TenantMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'apps.tenant.middleware.ProfileTenantMiddleware',
 
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -232,6 +233,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 # 'django.template.context_processors.debug',
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',

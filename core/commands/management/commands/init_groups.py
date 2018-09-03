@@ -2,10 +2,13 @@
  Create initial groups + their default permissions
  Run 'manage.py validate_permissions' prior to this one if you just added new permissions.
 '''
+from django.conf import settings
 from django.contrib.auth.models import Permission, Group
 from django.core import management
 from django.core.management.base import BaseCommand
+from tenant_schemas.utils import get_public_schema_name
 
+from apps.tenant.models import Tenant
 from core.auth_user.constant import ADMIN_GROUP, MEMBER_GROUP, CUSTOMER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 
 
@@ -20,8 +23,8 @@ class Command(BaseCommand):
         ],
         MEMBER_GROUP: [
             ('y', 'y', 'y', 'n', 'member', 'seller'),
-            ('y', 'y', 'y', 'y','order', 'order'),
-            ('y', 'y', 'y', 'y','order', 'orderproduct'),
+            ('y', 'y', 'y', 'y', 'order', 'order'),
+            ('y', 'y', 'y', 'y', 'order', 'orderproduct'),
             ('y', 'y', 'y', 'y', 'customer', 'customer'),
             ('y', 'y', 'y', 'y', 'customer', 'address'),
             ('y', 'y', 'y', 'y', 'product', 'product'),
@@ -40,7 +43,15 @@ class Command(BaseCommand):
     permissions.update({PREMIUM_MEMBER_GROUP: permissions[MEMBER_GROUP]})
     permissions.update({FREE_PREMIUM_GROUP: permissions[MEMBER_GROUP]})
 
+    def set_public_tenant(self):
+        public_schema = get_public_schema_name()
+        if not Tenant.objects.filter(schema_name=public_schema).exists():
+            tenant = Tenant(domain_url=settings.DOMAIN_NAME, schema_name=public_schema)
+            tenant.save()
+
     def handle(self, *args, **options):
+        self.set_public_tenant()
+
         management.call_command('validate_permissions')
         not_found = []
 
@@ -60,7 +71,7 @@ class Command(BaseCommand):
                         not_found.append(perm_code)
 
             print(("\nGroup '%s', adding permissions: \n%s\n" % (
-            group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))))
+                group_name, '\t' + '\n\t'.join([p.codename for p in permissions]))))
 
             group.permissions.clear()
             group.permissions.add(*permissions)
