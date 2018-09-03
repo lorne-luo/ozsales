@@ -46,7 +46,8 @@ STARTUP_TIMESTAMP = int(time.time())
 
 TENANT_MODEL = "tenant.Tenant"
 DEFAULT_FILE_STORAGE = 'tenant_schemas.storage.TenantFileSystemStorage'
-MULTITENANT_MAPPER_CLASS = 'apps.tenant.mapper.TenantMapper'
+# MULTITENANT_MAPPER_CLASS = 'apps.tenant.mapper.TenantMapper'
+
 # Application definition
 INSTALLED_APPS = (
     'tenant_schemas',

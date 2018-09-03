@@ -4,11 +4,12 @@ import time
 
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
-from django.db import models
+from django.db import models, connection
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
 
+from apps.tenant.models import Tenant
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES, CURRENCY_CHOICES
@@ -21,9 +22,9 @@ MONTHLY_FREE_ORDER = 10
 SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
-
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
-    tenant = models.OneToOneField('tenant.Tenant', on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
+    tenant = models.OneToOneField('tenant.Tenant', on_delete=models.CASCADE, related_name='seller', null=True,
+                                  blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)
     country = models.CharField(_('国家'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
@@ -134,12 +135,29 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
 
     @staticmethod
     def create_seller(mobile, email, password, premium_account=False):
+        tenant = Tenant.create_tenant()
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
-        group = Group.objects.get(name=PREMIUM_MEMBER_GROUP) if premium_account else Group.objects.get(
-            name=MEMBER_GROUP)
-        user.groups.add(group)
-        seller = Seller(auth_user=user, name=mobile or email)
+        member_group = Group.objects.get(name=MEMBER_GROUP)
+        user.groups.add(member_group)
+        if premium_account:
+            premium_member_group = Group.objects.get(name=PREMIUM_MEMBER_GROUP)
+            user.groups.add(premium_member_group)
+        user.save()
+
+        connection.set_schema(tenant.schema_name)
+        seller = Seller(auth_user=user, tenant=tenant, name=mobile or email)
         seller.save()
+        return seller
+
+    def set_schema(self):
+        if self.tenant and self.tenant.schema_name:
+            connection.set_schema(self.tenant.schema_name)
+
+    @property
+    def entry_url(self):
+        if self.tenant and self.tenant.domain_url:
+            return 'http://%s' % self.tenant.domain_url
+        return ''
 
 
 class PremiumOrder(models.Model):
