@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
+from apps.tenant.models import Tenant
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.constant import ADMIN_GROUP
 from core.payments.stripe.models import StripePaymentUserMixin
@@ -47,6 +49,7 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
     )
     mobile = models.CharField(_('mobile'), max_length=128, unique=True, blank=True)
     type = models.CharField(_('type'), max_length=32, choices=USER_TYPE_CHOICES, blank=True, default=WEBSITE)
+    tenant_id = models.CharField(_('tenant_id'), max_length=128, unique=True, blank=True)
     # if type is WEBSIT mobile field is mobile, if type is WEIXIN mobile field is openid
 
     objects = AuthUserManager()
@@ -56,7 +59,11 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
     class Meta(AbstractUser.Meta):
         swappable = 'AUTH_USER_MODEL'
 
-    @property
+    @cached_property
+    def tenant(self):
+        return Tenant.objects.filter(id=self.tenant_id).first()
+
+    @cached_property
     def profile(self):
         if getattr(self, 'seller', None):
             return getattr(self, 'seller')
@@ -64,11 +71,11 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
             return getattr(self, 'customer')
         return None
 
-    @property
+    @cached_property
     def is_seller(self):
         return getattr(self, 'seller', None) is not None
 
-    @property
+    @cached_property
     def is_customer(self):
         return getattr(self, 'customer', None) is not None
 
@@ -85,12 +92,12 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
         intersection = set(group_names).intersection(set(user_groups))
         return bool(intersection)
 
-    @property
+    @cached_property
     def subscriber(self):
         # for StripePaymentUserMixin, return correct djstripe subscriber
         return self
 
-    @property
+    @cached_property
     def is_admin(self):
         return self.is_superuser or self.in_group(ADMIN_GROUP)
 
@@ -115,23 +122,23 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
 
 
 class UserProfileMixin(object):
-    @property
+    @cached_property
     def profile(self):
         return self
 
-    @property
+    @cached_property
     def username(self):
         return self.auth_user.get_username()
 
-    @property
+    @cached_property
     def date_joined(self):
         return self.auth_user.date_joined
 
-    @property
+    @cached_property
     def is_admin(self):
         return self.auth_user.is_superuser or self.in_group(ADMIN_GROUP)
 
-    @property
+    @cached_property
     def is_active(self):
         return self.auth_user.is_active
 

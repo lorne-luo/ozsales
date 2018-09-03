@@ -14,7 +14,7 @@
                  class="img-circle hidden-phone" alt="User Image">
             <p>
                 您好： {{ request.user.profile.get_name }}
-                <small>最近一次登录:{{ request.user.last_login }}</small>
+                <small>上`一次登录:{{ request.user.last_login }}</small>
             </p>
         </li>
         <!-- Menu Body -->

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
+
+from django.db import connection
 from django.template.context_processors import csrf
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import permission_required
@@ -42,6 +44,9 @@ def member_login(request):
             form.data = {'mobile': form.data.get('mobile')}
             return render_to_response('adminlte/login.html', {'form': form})
 
+        # old_schema=connection.schema_name
+        # connection.set_schema_to_public()
+
         mobile = form.cleaned_data.get('mobile')
         password = form.cleaned_data.get('password')
         user = authenticate(username=mobile, password=password)
@@ -55,10 +60,12 @@ def member_login(request):
                 # Redirect chefs to meals page
                 next_page = resolve_url(settings.LOGIN_REDIRECT_URL)
 
+            # connection.set_schema(old_schema)
             return HttpResponseRedirect(next_page)
         else:
             form.add_error(None, '密码错误，请重试')
             form.data = {'mobile': mobile}
+            # connection.set_schema(old_schema)
             return render_to_response('adminlte/login.html', {'form': form})
 
 
@@ -67,6 +74,7 @@ def member_home(request):
 
 
 def member_logout(request):
+    connection.set_schema_to_public()
     logout(request)
     return redirect('member-login')
 

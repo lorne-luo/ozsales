@@ -9,25 +9,18 @@ from core.django.db import get_next_id
 
 class Tenant(TenantMixin):
     """include domain_url and schema_name"""
-    # name = models.CharField(max_length=100)
-    # paid_until = models.DateField()
-    # on_trial = models.BooleanField(default=False)
-    # created_on = models.DateField(auto_now_add=True)
-    # seller = models.OneToOneField('member.Seller', on_delete=models.CASCADE, related_name='tenant', null=False, blank=False)
     uuid = models.CharField(unique=True, max_length=12, null=True, blank=True)
     create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     auto_create_schema = True  # default true, schema will be automatically created and synced when it is saved
     DOMAIN_ROOT = 'youdan.com.au'
 
-    # class Meta():
-    #     db_table = 'public.tenant_tenant'
+    def __str__(self):
+        return '%s' % self.id
 
     def _generate_uuid(cls):
-        # 3 alphabet and 3 number
-        alphabets = get_random_string(2, 'abcdefghijklmnopqrstuvwxyz1234567890')
-        numbers = get_random_string(2, '1234567890')
-        return alphabets + numbers
+        # 3 alphabet and number
+        return get_random_string(3, 'abcdefghijklmnopqrstuvwxyz1234567890')
 
     def set_uuid(self):
         if not self.uuid:

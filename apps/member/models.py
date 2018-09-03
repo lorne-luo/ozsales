@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group
 from django.db import models, connection
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from djstripe.models import Plan
 
@@ -23,8 +24,7 @@ SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
 class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
-    tenant = models.OneToOneField('tenant.Tenant', on_delete=models.CASCADE, related_name='seller', null=True,
-                                  blank=True)
+    tenant_id = models.CharField(_('tenant_id'), max_length=128, unique=True, blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)
     country = models.CharField(_('国家'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
@@ -37,11 +37,11 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
     def __str__(self):
         return '%s' % self.name
 
-    @property
+    @cached_property
     def email(self):
         return self.auth_user.email
 
-    @property
+    @cached_property
     def mobile(self):
         return self.auth_user.mobile
 
@@ -95,7 +95,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         card = super(Seller, self).add_card(source, remove_old=False, set_default=True)
         return card
 
-    @property
+    @cached_property
     def is_premium(self):
         if self.auth_user.is_superuser:
             return True  # always True
@@ -125,6 +125,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         self.auth_user.save(update_fields=['is_active'])
 
     def add_membership(self, charge, months=1):
+        return
         membership = MembershipOrder(seller=self)
         membership.start_at = timezone.now().date() if timezone.now().date() > self.expire_at else self.expire_at
         membership.end_at = membership.start_at + relativedelta(months=months)
@@ -133,10 +134,17 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         membership.save()
         self.save(update_fields=['expire_at'])
 
+    @cached_property
+    def tenant(self):
+        return Tenant.objects.filter(id=self.tenant_id).first()
+
     @staticmethod
     def create_seller(mobile, email, password, premium_account=False):
         tenant = Tenant.create_tenant()
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
+        user.tenant_id = tenant.id
+        user.save(update_fields=['tenant_id'])
+
         member_group = Group.objects.get(name=MEMBER_GROUP)
         user.groups.add(member_group)
         if premium_account:
@@ -144,8 +152,8 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
             user.groups.add(premium_member_group)
         user.save()
 
-        connection.set_schema(tenant.schema_name)
-        seller = Seller(auth_user=user, tenant=tenant, name=mobile or email)
+        seller = Seller(auth_user=user, tenant_id=tenant.id, name=mobile or email)
+        seller.set_schema()
         seller.save()
         return seller
 
@@ -153,7 +161,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         if self.tenant and self.tenant.schema_name:
             connection.set_schema(self.tenant.schema_name)
 
-    @property
+    @cached_property
     def entry_url(self):
         if self.tenant and self.tenant.domain_url:
             return 'http://%s' % self.tenant.domain_url

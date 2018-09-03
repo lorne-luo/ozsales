@@ -29,7 +29,7 @@ class SellerProfileForm(forms.ModelForm):
 
     class Meta:
         model = Seller
-        exclude = ['expire_at', 'start_at', 'auth_user', 'country']
+        exclude = ['expire_at', 'start_at', 'auth_user', 'country','tenant_id']
 
     def clean(self):
         mobile = self.cleaned_data.get('mobile')
