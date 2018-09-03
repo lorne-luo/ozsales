@@ -4,7 +4,7 @@ from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
 from tenant_schemas.models import TenantMixin
 
-from core.django.db import get_postgres_next_id
+from core.django.db import get_next_id
 
 
 class Tenant(TenantMixin):
@@ -43,7 +43,7 @@ class Tenant(TenantMixin):
     @staticmethod
     def create_tenant():
         connection.set_schema_to_public()
-        id = get_postgres_next_id(Tenant)
+        id = get_next_id(Tenant)
         tenant = Tenant(id=id)
 
         schema_name = 't%s' % id
