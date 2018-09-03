@@ -10,11 +10,50 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from pypinyin import Style
 
 from core.aliyun.sms.service import send_cn_sms
-from ..express_carrier.models import ExpressCarrier
+from core.django.models import PinYinFieldModelMixin
 
 log = logging.getLogger(__name__)
+
+
+class ExpressCarrier(PinYinFieldModelMixin, models.Model):
+    # todo find another way to store create by seller
+    # seller = models.ForeignKey('member.Seller', blank=True, null=True)
+    name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
+    name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
+    domain = models.CharField(_('domain'), max_length=512, blank=True, help_text='domain')
+    website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
+    # page to track parcel
+    search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
+    # some carrier need post to track parcel
+    post_search_url = models.URLField(_('查询提交网址'), blank=True, help_text='查询提交网址')
+    id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
+    rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
+    is_default = models.BooleanField('默认', default=False, help_text='是否默认')
+
+    pinyin_fields_conf = [
+        ('name_cn', Style.NORMAL, False),
+        ('name_cn', Style.FIRST_LETTER, False),
+    ]
+
+    def __str__(self):
+        return self.name_cn
+
+    @staticmethod
+    def get_default_carrier():
+        return ExpressCarrier.objects.filter(is_default=True).first()
+
+    @staticmethod
+    def identify_carrier(track_id):
+        for carrier in ExpressCarrier.objects.all():
+            if carrier.track_id_regex:
+                m = re.match(carrier.track_id_regex, track_id, re.IGNORECASE)
+                if m and m.group():
+                    return carrier
+        return None
 
 
 class ExpressOrder(models.Model):
@@ -127,13 +166,6 @@ class ExpressOrder(models.Model):
             if delivered:
                 self.delivered_time = timezone.now()
             self.save(update_fields=['last_track', 'is_delivered', 'delivered_time'])
-
-    def test_tracker(self):
-        if self.is_delivered and self.carrier:
-            delivered, last_info = self.carrier.update_track(self)
-            if delivered is None:
-                # deliverd is None = error
-                log.info('%s tracker test failed. error = %s' % (self.carrier.name_en, last_info))
 
     @property
     def shipping_days(self):

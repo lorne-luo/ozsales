@@ -42,7 +42,8 @@ apps_urlpatterns = [
     url(r'^product/', include('apps.product.urls', namespace='product')),
     url(r'^order/', include('apps.order.urls', namespace='order')),
     url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', OrderDetailView.as_view(), name='order-detail-short'),
-    url(r'^express_carrier/', include('apps.express_carrier.urls', namespace='express_carrier')),
+    url(r'^express/', include('apps.express.urls', namespace='express')),
+    url(r'^default_carrier/', include('apps.default_carrier.urls', namespace='default_carrier')),
     url(r'^report/', include('apps.report.urls', namespace='report')),
     url(r'^wx/', include('apps.weixin.urls', namespace='weixin')),
     url(r'^schedule/', include('apps.schedule.urls', namespace='schedule')),
@@ -53,8 +54,8 @@ apps_urlpatterns = [
 # REST API
 api_urlpatterns = [
     url(r'^customer/', include('apps.customer.api.urls')),
-    url(r'^express_carrier/', include('apps.express_carrier.api.urls')),
-    url(r'^express_order/', include('apps.express_order.api.urls')),
+    url(r'^default_carrier/', include('apps.default_carrier.api.urls')),
+    url(r'^express/', include('apps.express.api.urls')),
     url(r'^member/', include('apps.member.api.urls')),
     url(r'^order/', include('apps.order.api.urls')),
     url(r'^product/', include('apps.product.api.urls')),

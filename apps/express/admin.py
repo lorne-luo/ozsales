@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ExpressOrder
+from .models import ExpressOrder, ExpressCarrier
 
 
 class ExpressOrderAdmin(admin.ModelAdmin):
@@ -11,3 +11,5 @@ class ExpressOrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ExpressOrder, ExpressOrderAdmin)
+
+admin.site.register(ExpressCarrier)

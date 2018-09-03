@@ -17,7 +17,7 @@ class CarrierInfoRequiredMixin(object):
             incomplete_carrier = ExpressCarrier.get_incomplete_carrier_by_user(self.request.profile)
             if incomplete_carrier:
                 msg = '物流公司信息不完整，<a href="%s">更新完整信息</a>程序员哥哥才能提供更好帮助.' % reverse(
-                    'express_carrier:expresscarrier-update', args=[incomplete_carrier.id])
+                    'express:expresscarrier-update', args=[incomplete_carrier.id])
                 messages.warning(self.request, msg)
 
 
@@ -25,9 +25,9 @@ class CarrierInfoRequiredMixin(object):
 
 class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
     model = ExpressCarrier
-    template_name_suffix = '_list'  # express_carrier/expresscarrier_list.html
+    template_name_suffix = '_list'  # express/expresscarrier_list.html
     permissions = {
-        "all": ("express_carrier.view_expresscarrier",)
+        "all": ("express.view_expresscarrier",)
     }
 
     def get_context_data(self, **kwargs):
@@ -40,7 +40,7 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
     model = ExpressCarrier
     template_name = 'adminlte/common_form.html'
     permissions = {
-        "all": ("express_carrier.add_expresscarrier",)
+        "all": ("express.add_expresscarrier",)
     }
 
     def get_form_class(self):
