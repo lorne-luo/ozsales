@@ -5,7 +5,6 @@ import logging
 from . import conf as wx_conf
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.utils.http import urlquote, urlunquote
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from wechat_sdk import WechatConf, WechatBasic
@@ -13,7 +12,7 @@ from wechat_sdk.exceptions import OfficialAPIError
 from weixin.login import WeixinLogin
 from weixin.base import Map
 from weixin.mp import WeixinMP
-from weixin.pay import WeixinPay, WeixinError, WeixinPayError
+from weixin.pay import WeixinPay
 
 log = logging.getLogger(__name__)
 
@@ -154,7 +153,7 @@ class PaymentStatus(object):
 
 
 class WxOrder(models.Model):
-    order = models.OneToOneField('order.Order')
+    # order = models.OneToOneField('order.Order')
     return_code = models.CharField(max_length=16, blank=True, null=True,
                                    choices=WxReturnCode.CHOICES)  # 返回状态码 SUCCESS/FAIL
     return_msg = models.CharField(max_length=128, blank=True, null=True)  # 返回信息，如非空，为错误原因
@@ -214,7 +213,7 @@ class WxOrder(models.Model):
 
 class WxPayment(models.Model):
     # https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=9_2
-    order = models.OneToOneField('order.Order')
+    # order = models.OneToOneField('order.Order')
     transaction_id = models.CharField(max_length=32, blank=True, null=True)  # 微信支付订单号
     return_code = models.CharField(max_length=16, blank=True, null=True,
                                    choices=WxReturnCode.CHOICES)  # 返回状态码 SUCCESS/FAIL

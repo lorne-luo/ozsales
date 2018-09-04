@@ -49,7 +49,7 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
     )
     mobile = models.CharField(_('mobile'), max_length=128, unique=True, blank=True)
     type = models.CharField(_('type'), max_length=32, choices=USER_TYPE_CHOICES, blank=True, default=WEBSITE)
-    tenant_id = models.CharField(_('tenant_id'), max_length=128, unique=True, blank=True)
+    tenant_id = models.CharField(_('tenant_id'), max_length=128, blank=True)
     # if type is WEBSIT mobile field is mobile, if type is WEIXIN mobile field is openid
 
     objects = AuthUserManager()

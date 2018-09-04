@@ -130,7 +130,6 @@ TENANT_APPS = (
     'apps.store',
     'apps.report',
     'apps.schedule',
-    'apps.weixin',
     'core.sms',
 )
 

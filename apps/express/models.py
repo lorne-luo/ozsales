@@ -139,12 +139,6 @@ class ExpressOrder(models.Model):
     get_order_link.allow_tags = True
     get_order_link.short_description = 'Order'
 
-    @property
-    def address(self):
-        if self.order:
-            return self.order.address
-        return None
-
     def sms_delivered(self):
         mobile = self.order.get_mobile()
         if not mobile or self.delivery_sms_sent:
