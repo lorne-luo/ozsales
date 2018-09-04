@@ -25,7 +25,6 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
-    domain = models.CharField(_('domain'), max_length=512, blank=True, help_text='domain')
     website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
     # page to track parcel
     search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
@@ -34,6 +33,7 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
     id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
     rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
     is_default = models.BooleanField('默认', default=False, help_text='是否默认')
+    track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -67,7 +67,7 @@ class ExpressOrder(models.Model):
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
     order = models.ForeignKey('order.Order', blank=False, null=False, verbose_name=_('order'),
                               related_name='express_orders')
-    # address = models.ForeignKey('customer.Address', blank=True, null=True, verbose_name=_('address'))
+    address = models.ForeignKey('customer.Address', blank=True, null=True, verbose_name=_('address'))
     is_delivered = models.BooleanField(_('is delivered'), default=False, null=False, blank=False)
     last_track = models.CharField(_('last track'), max_length=512, null=True, blank=True)
     fee = models.DecimalField(_('Shipping Fee'), max_digits=8, decimal_places=2, default=0, blank=False, null=False,

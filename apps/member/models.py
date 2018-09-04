@@ -125,7 +125,6 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         self.auth_user.save(update_fields=['is_active'])
 
     def add_membership(self, charge, months=1):
-        return
         membership = MembershipOrder(seller=self)
         membership.start_at = timezone.now().date() if timezone.now().date() > self.expire_at else self.expire_at
         membership.end_at = membership.start_at + relativedelta(months=months)
@@ -168,7 +167,7 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         return ''
 
 
-class PremiumOrder(models.Model):
+class MembershipOrder(models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     start_at = models.DateField(_('membership start at'), auto_now_add=False, editable=True, null=True, blank=True)
     end_at = models.DateField(_('membership expire at'), auto_now_add=False, editable=True, null=True, blank=True)
