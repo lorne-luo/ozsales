@@ -3,7 +3,7 @@ __author__ = 'Lorne'
 SCOPE_USERINFO = 'snsapi_userinfo'
 SCOPE_BASE = 'snsapi_base'
 
-BIND_DOMAIN = 'luotao.net'
+BIND_DOMAIN = 'youdan.com.au'
 
 APP_NAME = 'hmbb'
 APP_ID = 'wxf82bd745389170d0'
