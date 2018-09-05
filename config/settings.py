@@ -165,6 +165,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 PUBLIC_SCHEMA_NAME = env('PUBLIC_SCHEMA_NAME', default='public')
+SUPER_SCHEMA_NAME = env('SUPER_SCHEMA_NAME', default='super')
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales'),
     'default': env.db('DATABASE_URL', default='postgres://youdan:youdan@localhost:5432/youdan')

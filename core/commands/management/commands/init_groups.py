@@ -43,14 +43,21 @@ class Command(BaseCommand):
     permissions.update({PREMIUM_MEMBER_GROUP: permissions[MEMBER_GROUP]})
     permissions.update({FREE_PREMIUM_GROUP: permissions[MEMBER_GROUP]})
 
-    def set_public_tenant(self):
+    def create_public_tenant(self):
         public_schema = get_public_schema_name()
         if not Tenant.objects.filter(schema_name=public_schema).exists():
             tenant = Tenant(domain_url=settings.DOMAIN_NAME, schema_name=public_schema)
             tenant.save()
 
+    def create_super_tenant(self):
+        super_schema = settings.SUPER_SCHEMA_NAME
+        if super_schema and not Tenant.objects.filter(schema_name=super_schema).exists():
+            tenant = Tenant(domain_url='%s/%s' % (settings.DOMAIN_NAME, super_schema), schema_name=super_schema)
+            tenant.save()
+
     def handle(self, *args, **options):
-        self.set_public_tenant()
+        self.create_public_tenant()
+        self.create_super_tenant()
 
         management.call_command('validate_permissions')
         not_found = []

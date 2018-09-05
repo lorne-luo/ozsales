@@ -156,9 +156,16 @@ class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
         seller.save()
         return seller
 
-    def set_schema(self):
+
+    @cached_property
+    def schema_name(self):
         if self.tenant and self.tenant.schema_name:
-            connection.set_schema(self.tenant.schema_name)
+            return self.tenant.schema_name
+        return None
+
+    def set_schema(self):
+        if self.schema_name:
+            connection.set_schema(self.schema_name)
 
     @cached_property
     def entry_url(self):

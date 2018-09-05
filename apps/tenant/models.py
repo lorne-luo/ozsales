@@ -2,6 +2,7 @@ from django.db import models
 from django.db import connection
 from django.utils.crypto import get_random_string
 from django.utils.translation import ugettext_lazy as _
+from django.utils.functional import cached_property
 from tenant_schemas.models import TenantMixin
 
 from core.django.db import get_next_id
@@ -15,8 +16,10 @@ class Tenant(TenantMixin):
     auto_create_schema = True  # default true, schema will be automatically created and synced when it is saved
     DOMAIN_ROOT = 'youdan.com.au'
 
+    SCHEMA_NAME_PREFIX = 't'
+
     def __str__(self):
-        return '%s' % self.id
+        return '%s' % self.schema_name
 
     def _generate_uuid(cls):
         # 3 alphabet and number
@@ -39,7 +42,7 @@ class Tenant(TenantMixin):
         id = get_next_id(Tenant)
         tenant = Tenant(id=id)
 
-        schema_name = 't%s' % id
+        schema_name = '%s%s' % (Tenant.SCHEMA_NAME_PREFIX, id)
         domain_url = '%s/%s' % (Tenant.DOMAIN_ROOT, id)
         tenant.schema_name = schema_name
         tenant.domain_url = domain_url
@@ -47,3 +50,6 @@ class Tenant(TenantMixin):
         tenant.create_schema(check_if_exists=True, verbosity=1)
         print('Tenant #%s created.' % tenant.id)
         return tenant
+
+    def set_schema(self):
+        connection.set_schema(self.schema_name)
