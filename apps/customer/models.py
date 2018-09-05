@@ -153,7 +153,7 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
 
 @receiver(post_save, sender=Customer)
 def customer_post_save(sender, instance=None, created=False, **kwargs):
-    if not instance.primary_address:
+    if not instance.primary_address_id:
         addr_set = instance.address_set.all()
         if addr_set.count():
             instance.primary_address = addr_set[0]

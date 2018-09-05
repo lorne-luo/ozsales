@@ -66,17 +66,6 @@ def get_product_pic_path(instance, filename):
 class ProductManager(models.Manager):
     DEFAULT_CACHE_KEY = 'QUERYSET_CACHE_DEFAULT_PRODUCT'
 
-    def clean_cache(self):
-        log.info('[QUERYSET_CACHE] clean carriers.')
-        cache.delete(self.DEFAULT_CACHE_KEY)
-
-    def default(self):
-        default_product = cache.get_or_set(
-            self.DEFAULT_CACHE_KEY,
-            super(ProductManager, self).get_queryset().filter(is_active=True, seller__isnull=True),
-            24 * 60 * 60)
-        return default_product
-
     def all_for_seller(self, obj):
         if isinstance(obj, Seller):
             seller_id = obj.id
@@ -85,8 +74,7 @@ class ProductManager(models.Manager):
         else:
             return Product.objects.none()
 
-        default_product = self.default()
-        qs = default_product | super(ProductManager, self).get_queryset().filter(is_active=True, seller_id=seller_id)
+        qs = super(ProductManager, self).get_queryset().filter(is_active=True, seller_id=seller_id)
         return qs
 
     def order_by_usage_for_seller(self, qs, seller_id):
@@ -262,7 +250,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
             self.min_cost = None
             self.max_cost = None
 
-        self.save(update_cache=False)
+        self.save()
 
     def assign_brand(self):
         if self.brand:
@@ -277,11 +265,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     def save(self, *args, **kwargs):
         self.assign_brand()
         self.resize_image('pic')  # resize images when first uploaded
-
-        update_cache = kwargs.pop('update_cache', True)  # default to update cache
         super(Product, self).save(*args, **kwargs)
-        if update_cache:
-            Product.objects.clean_cache()
 
 
 @receiver(post_delete, sender=Product)
@@ -289,8 +273,6 @@ def product_deleted(sender, **kwargs):
     instance = kwargs['instance']
     if instance.pic and os.path.exists(instance.pic.path):
         default_storage.delete(instance.pic.path)
-    if instance.seller is None:  # default carrier, clean cache
-        Product.objects.clean_cache()
 
 
 # ========================= product sub model ==================================

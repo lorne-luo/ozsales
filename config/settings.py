@@ -68,7 +68,7 @@ INSTALLED_APPS = (
     'wagtail.contrib.settings',
 
     'django.contrib.sites',
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     # 'material',
     # 'material.frontend',
     # 'material.admin',
@@ -167,7 +167,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 PUBLIC_SCHEMA_NAME = env('PUBLIC_SCHEMA_NAME', default='public')
 DATABASES = {
     # 'default': env.db('DATABASE_URL', default='mysql://root:root@localhost:3306/ozsales'),
-    'default': env.db('POSTGRES_URL', default='postgres://ozsales:ozsales@lorne-luo-dev:5433/ozsales2')
+    'default': env.db('DATABASE_URL', default='postgres://youdan:youdan@localhost:5432/youdan')
 }
 
 DATABASES['default']['ENGINE'] = 'tenant_schemas.postgresql_backend'
