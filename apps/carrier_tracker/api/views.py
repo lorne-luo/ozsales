@@ -8,14 +8,14 @@ from core.api.views import CommonViewSet
 from core.django.autocomplete import HansSelect2ViewMixin
 from core.django.permission import SellerRequiredMixin
 from core.utils.string import include_non_asc
-from ..models import DefaultCarrier
+from ..models import CarrierTracker
 from . import serializers
 
 
-class DefaultCarrierViewSet(CommonViewSet):
-    """ api views for DefaultCarrier """
-    queryset = DefaultCarrier.objects.all()
-    serializer_class = serializers.DefaultCarrierSerializer
+class CarrierTrackerViewSet(CommonViewSet):
+    """ api views for CarrierTracker """
+    queryset = CarrierTracker.objects.all()
+    serializer_class = serializers.CarrierTrackerSerializer
     filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'is_default']
     search_fields = ['name_cn']
     permission_classes = (SellerPermissions,)
@@ -25,7 +25,7 @@ class DefaultCarrierViewSet(CommonViewSet):
                        filters.OrderingFilter)
 
     def get_queryset(self):
-        queryset = super(DefaultCarrierViewSet, self).get_queryset()
+        queryset = super(CarrierTrackerViewSet, self).get_queryset()
         if self.request.user.is_admin or self.request.user.is_superuser:
             return queryset
         if self.action.lower() in ['update', 'delete', 'destroy']:
@@ -33,8 +33,8 @@ class DefaultCarrierViewSet(CommonViewSet):
         return queryset
 
 
-class DefaultCarrierAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
-    model = DefaultCarrier
+class CarrierTrackerAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+    model = CarrierTracker
     paginate_by = 50
     create_field = 'name_cn'
 
@@ -43,7 +43,7 @@ class DefaultCarrierAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, auto
 
     def get_queryset(self):
         # order by carrier usage
-        qs = DefaultCarrier.objects.all()
+        qs = CarrierTracker.objects.all()
 
         if include_non_asc(self.q):
             qs = qs.filter(Q(name_cn__icontains=self.q))

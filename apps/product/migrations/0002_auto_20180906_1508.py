@@ -10,7 +10,7 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('product', '0002_remove_product_uuid'),
+        ('product', '0001_initial'),
     ]
 
     operations = [
@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='schema_name',
             field=models.CharField(blank=True, default=core.django.models.get_schema_name, max_length=32),
         ),
-        migrations.AddField(
+        migrations.AlterField(
             model_name='product',
             name='uuid',
             field=models.UUIDField(default=uuid.uuid4, editable=False),

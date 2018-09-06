@@ -16,7 +16,7 @@ from . import tracker
 log = logging.getLogger(__name__)
 
 
-class DefaultCarrier(PinYinFieldModelMixin, models.Model):
+class CarrierTracker(PinYinFieldModelMixin, models.Model):
     # todo find another way to store create by seller
     # seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
@@ -81,7 +81,7 @@ class DefaultCarrier(PinYinFieldModelMixin, models.Model):
 
     @staticmethod
     def identify_carrier(track_id):
-        for carrier in DefaultCarrier.objects.all():
+        for carrier in CarrierTracker.objects.all():
             if carrier.track_id_regex:
                 m = re.match(carrier.track_id_regex, track_id, re.IGNORECASE)
                 if m and m.group():

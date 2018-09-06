@@ -43,7 +43,7 @@ apps_urlpatterns = [
     url(r'^order/', include('apps.order.urls', namespace='order')),
     url(r'^(?P<customer_id>\d+)/(?P<pk>\d+)/$', OrderDetailView.as_view(), name='order-detail-short'),
     url(r'^express/', include('apps.express.urls', namespace='express')),
-    url(r'^default_carrier/', include('apps.default_carrier.urls', namespace='default_carrier')),
+    url(r'^carrier_tracker/', include('apps.carrier_tracker.urls', namespace='carrier_tracker')),
     url(r'^report/', include('apps.report.urls', namespace='report')),
     url(r'^wx/', include('apps.weixin.urls', namespace='weixin')),
     url(r'^schedule/', include('apps.schedule.urls', namespace='schedule')),
@@ -54,7 +54,7 @@ apps_urlpatterns = [
 # REST API
 api_urlpatterns = [
     url(r'^customer/', include('apps.customer.api.urls')),
-    url(r'^default_carrier/', include('apps.default_carrier.api.urls')),
+    url(r'^carrier_tracker/', include('apps.carrier_tracker.api.urls')),
     url(r'^express/', include('apps.express.api.urls')),
     url(r'^member/', include('apps.member.api.urls')),
     url(r'^order/', include('apps.order.api.urls')),

@@ -13,7 +13,7 @@ class OneExpressParser(BaseParser):
         model_numbers = [8, 9, 3, 0, 2, 4, 6, 5, 7, 1]
         models = {}
         for i in model_numbers:
-            models.update({i: Image.open('./apps/default_carrier/verify/one_express//model/%s.bmp' % i)})
+            models.update({i: Image.open('./apps/carrier_tracker/verify/one_express//model/%s.bmp' % i)})
 
         result = []
         imgArr = np.asarray(img)

@@ -6,10 +6,10 @@ router = PostHackedRouter()
 router.include_root_view = False
 
 # reverse('api:expresscarrier-list'), reverse('api:expresscarrier-detail', kwargs={'pk': 1})
-router.register(r'default_carrier', views.DefaultCarrierViewSet, base_name='default_carrier')
+router.register(r'carrier_tracker', views.CarrierTrackerViewSet, base_name='carrier_tracker')
 
 urlpatterns = [
-    url(r'^default_carrier/autocomplete/$', views.DefaultCarrierAutocomplete.as_view(), name='default_carrier-autocomplete'),
+    url(r'^carrier_tracker/autocomplete/$', views.CarrierTrackerAutocomplete.as_view(), name='carrier_tracker-autocomplete'),
 ]
 
 urlpatterns += router.urls
