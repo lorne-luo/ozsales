@@ -17,7 +17,7 @@ from stdimage import StdImageField
 
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
-from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
+from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin, TenantModelMixin
 
 from apps.member.models import Seller
 from apps.product.models import Product
@@ -36,6 +36,7 @@ class InterestTag(models.Model):
 
     def __str__(self):
         return '%s' % self.name
+
 
 class CustomerManager(Manager):
     def belong_to(self, obj):
@@ -61,7 +62,7 @@ class CustomerManager(Manager):
             item.save(update_fields=['order_count'])
 
 
-class Customer(PinYinFieldModelMixin, UserProfileMixin, models.Model):
+class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models.Model):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('姓名'), max_length=30, null=False, blank=False)
@@ -203,7 +204,7 @@ class AddressManager(Manager):
             raise PermissionDenied
 
 
-class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
+class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelMixin, models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)

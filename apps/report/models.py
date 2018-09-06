@@ -6,6 +6,7 @@ from django.http import Http404
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import F, Sum, Count
 from django.utils import timezone
+from core.django.models import TenantModelMixin
 
 from apps.customer.models import Customer, Address
 from apps.express.models import ExpressOrder
@@ -13,8 +14,7 @@ from apps.member.models import Seller
 from apps.order.models import Order, ORDER_STATUS
 
 
-# Create your models here.
-class MonthlyReport(models.Model):
+class MonthlyReport(TenantModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
                              verbose_name=_('Month'))

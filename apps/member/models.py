@@ -14,6 +14,7 @@ from apps.tenant.models import Tenant
 from core.auth_user.constant import MEMBER_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.constants import COUNTRIES_CHOICES, CURRENCY_CHOICES
+from core.django.models import TenantModelMixin
 from core.payments.stripe.models import StripePaymentUserMixin
 from core.payments.stripe.stripe_api import stripe
 
@@ -23,7 +24,7 @@ MONTHLY_FREE_ORDER = 10
 SELLER_MEMBER_PLAN_ID = 'Seller_Member_1'
 
 
-class Seller(UserProfileMixin, models.Model, StripePaymentUserMixin):
+class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.Model):
     tenant_id = models.CharField(_('tenant_id'), max_length=128, blank=True)
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='seller', null=True, blank=True)
     name = models.CharField(_('姓名'), max_length=30, blank=True)

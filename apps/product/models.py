@@ -19,7 +19,7 @@ from taggit.managers import TaggableManager
 
 from core.auth_user.models import AuthUser
 from core.django.constants import COUNTRIES_CHOICES
-from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin
+from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin, TenantModelMixin
 from config.settings import PRODUCT_PHOTO_FOLDER, MEDIA_URL, MEDIA_ROOT
 
 from apps.member.models import Seller
@@ -29,7 +29,7 @@ from core.django.storage import OverwriteStorage
 log = logging.getLogger(__name__)
 
 
-class Brand(models.Model):
+class Brand(TenantModelMixin, models.Model):
     name_en = models.CharField(_('name_en'), max_length=128, blank=False, unique=True)
     name_cn = models.CharField(_('name_cn'), max_length=128, blank=True)
     short_name = models.CharField(_('Abbr'), max_length=128, blank=True)
@@ -104,7 +104,7 @@ class ProductManager(models.Manager):
         ))).order_by('-use_counter')
 
 
-class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model):
+class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelMixin, models.Model):
     seller = models.ForeignKey(Seller, blank=True, null=True)
     code = models.CharField(_('code'), max_length=32, blank=True)
     name_en = models.CharField(_('name_en'), max_length=128, blank=True)
@@ -139,7 +139,6 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, models.Model
     wd_url = models.URLField(_('WD URL'), null=True, blank=True)
     wx_url = models.URLField(_('WX URL'), null=True, blank=True)
     page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
-    uuid = models.CharField(max_length=36, unique=True, null=True, blank=True)
 
     summary = models.TextField(_('summary'), null=True, blank=True)
     description = models.TextField(_('description'), null=True, blank=True)

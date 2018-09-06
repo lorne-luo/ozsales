@@ -23,3 +23,6 @@ def get_next_id(model_class):
     row = cursor.fetchone()
     cursor.close()
     return row[0]
+
+def get_schema_name():
+    return connection.schema_name

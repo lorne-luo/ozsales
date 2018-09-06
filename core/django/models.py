@@ -1,8 +1,12 @@
 import sys
+import uuid
 from io import BytesIO
 from PIL import Image
+from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from pypinyin import pinyin, Style
+
+from core.django.db import get_schema_name
 
 
 class PinYinFieldModelMixin(object):
@@ -112,3 +116,11 @@ class ResizeUploadedImageModelMixin(object):
                 setattr(self, image_field_name, InMemoryUploadedFile(
                     output, 'ImageField', "%s.jpg" % image.name.split('.')[0],
                     'image/jpeg', sys.getsizeof(output), None))
+
+
+class TenantModelMixin(models.Model):
+    uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
+    schema_name = models.CharField(default=get_schema_name, max_length=32, blank=True)
+
+    class Meta:
+        abstract = True

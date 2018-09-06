@@ -14,12 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
 from core.aliyun.sms.service import send_cn_sms
-from core.django.models import PinYinFieldModelMixin
+from core.django.models import PinYinFieldModelMixin, TenantModelMixin
 
 log = logging.getLogger(__name__)
 
 
-class ExpressCarrier(PinYinFieldModelMixin, models.Model):
+class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     # todo find another way to store create by seller
     seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
@@ -62,7 +62,7 @@ class ExpressCarrier(PinYinFieldModelMixin, models.Model):
         return None
 
 
-class ExpressOrder(models.Model):
+class ExpressOrder(TenantModelMixin, models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
     track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
     order = models.ForeignKey('order.Order', blank=False, null=False, verbose_name=_('order'),

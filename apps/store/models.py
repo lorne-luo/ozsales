@@ -1,8 +1,10 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from core.django.models import TenantModelMixin
 
-class Store(models.Model):
+
+class Store(TenantModelMixin, models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     short_name = models.CharField(_('short name'), max_length=30, null=True, blank=True)
     address = models.CharField(_('address'), max_length=128, null=True, blank=True)

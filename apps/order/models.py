@@ -15,6 +15,7 @@ from django.utils.crypto import get_random_string
 from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
 from core.aliyun.sms.service import send_cn_sms
+from core.django.models import TenantModelMixin
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
@@ -58,25 +59,21 @@ class OrderManager(models.Manager):
         return super(OrderManager, self).get_queryset().filter(status=ORDER_STATUS.FINISHED)
 
 
-class Order(models.Model):
-    uuid = models.CharField(unique=True, max_length=12, null=True, blank=True)
+class Order(TenantModelMixin, models.Model):
+    uid = models.CharField(unique=True, max_length=12, null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('客户'))
     address = models.ForeignKey(Address, blank=True, null=True, verbose_name=_('地址'))
     address_text = models.CharField(_('地址'), max_length=255, null=True, blank=True)
     is_paid = models.BooleanField(default=False, verbose_name=_('已支付'))
-    paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_('支付时间'))
+    paid_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True, verbose_name=_('支付时间'))
     status = models.CharField(max_length=20, choices=ORDER_STATUS_CHOICES, default=ORDER_STATUS.CREATED,
                               verbose_name=_('状态'))
     total_amount = models.IntegerField(_('数量'), default=0, blank=False, null=False)
-    product_cost_aud = models.DecimalField(_('货物成本'), max_digits=8, decimal_places=2, blank=True,
-                                           null=True)
-    product_cost_rmb = models.DecimalField(_('货物成本'), max_digits=8,
-                                           decimal_places=2, blank=True, null=True)
+    product_cost_aud = models.DecimalField(_('货物成本'), max_digits=8, decimal_places=2, blank=True, null=True)
+    product_cost_rmb = models.DecimalField(_('货物成本'), max_digits=8, decimal_places=2, blank=True, null=True)
     shipping_fee = models.DecimalField(_('快递费用'), max_digits=8, decimal_places=2, blank=True, null=True)
-    ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True,
-                                     verbose_name=_('寄出时间'))
+    ship_time = models.DateTimeField(auto_now_add=False, editable=True, blank=True, null=True, verbose_name=_('寄出时间'))
     currency = models.CharField(_('货币'), max_length=128, choices=CURRENCY_CHOICES, blank=True)
     total_cost_aud = models.DecimalField(_('总成本'), max_digits=8, decimal_places=2, blank=True, null=True)
     total_cost_rmb = models.DecimalField(_('总承包'), max_digits=8, decimal_places=2, blank=True, null=True)
@@ -107,19 +104,19 @@ class Order(models.Model):
         self._currency_original = self.currency
 
     @classmethod
-    def generate_uuid(cls):
+    def generate_uid(cls):
         # 3 alphabet and 3 number
         alphabets = get_random_string(2, 'abcdefghijklmnopqrstuvwxyz')
         mid = get_random_string(1, 'abcdefghijklmnopqrstuvwxyz1234567890')
         numbers = get_random_string(3, '1234567890')
         return alphabets + mid + numbers
 
-    def set_uuid(self):
-        if not self.uuid:
-            uid = self.generate_uuid()
-            while Order.objects.filter(uuid=uid).exists():
-                uid = self.generate_uuid()
-            self.uuid = uid
+    def set_uid(self):
+        if not self.uid:
+            uid = self.generate_uid()
+            while Order.objects.filter(uid=uid).exists():
+                uid = self.generate_uid()
+            self.uid = uid
 
     def get_mobile(self):
         if self.customer and self.customer.mobile:
@@ -239,7 +236,7 @@ class Order(models.Model):
             MonthlyReport.stat_month(self.seller, self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        self.set_uuid()
+        self.set_uid()
         if not self.address and self.customer and self.customer.primary_address:
             self.address = self.customer.primary_address
 
@@ -478,7 +475,7 @@ class Order(models.Model):
         return wx_order.get_jsapi()
 
 
-class OrderProduct(models.Model):
+class OrderProduct(TenantModelMixin, models.Model):
     order = models.ForeignKey(Order, blank=False, null=False, verbose_name=_('Order'), related_name='products')
     product = models.ForeignKey(Product, blank=True, null=True, verbose_name=_('Product'))
     name = models.CharField(_('Name'), max_length=128, null=True, blank=True, help_text='产品名称')
