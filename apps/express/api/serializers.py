@@ -1,20 +1,19 @@
 # coding=utf-8
 from rest_framework import serializers
+from core.api.serializers import BaseSerializer
 from ..models import ExpressOrder, ExpressCarrier
 
 
-class ExpressCarrierSerializer(serializers.BaseSerializer):
-    is_owner = serializers.SerializerMethodField()
-
+class ExpressCarrierSerializer(BaseSerializer):
     class Meta:
         model = ExpressCarrier
-        fields = ['id', 'edit_url', 'detail_url', 'is_owner', 'name_cn', 'name_en', 'website', 'search_url',
+        fields = ['id', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url',
                   'id_upload_url', 'track_id_regex', 'is_default']
         read_only_fields = ['id']
 
 
 # Serializer for expressorder
-class ExpressOrderSerializer(serializers.ModelSerializer):
+class ExpressOrderSerializer(BaseSerializer):
     class Meta:
         model = ExpressOrder
         fields = ['id', 'carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']

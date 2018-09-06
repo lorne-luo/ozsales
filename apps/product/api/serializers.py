@@ -3,15 +3,14 @@ from core.api.serializers import BaseSerializer, SellerOwnerSerializerMixin
 from ..models import Product, Brand
 
 
-class ProductSerializer(SellerOwnerSerializerMixin, BaseSerializer):
+class ProductSerializer(BaseSerializer):
     """Serializer for product"""
     brand_display = serializers.SerializerMethodField()
     thumbnail = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'edit_url', 'detail_url', 'is_owner', 'name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en',
+        fields = ['id', 'edit_url', 'detail_url', 'name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en',
                   'brand_display', 'spec', 'max_cost', 'last_sell_price', 'avg_sell_price', 'min_sell_price',
                   'max_sell_price', 'avg_cost', 'min_cost', 'thumbnail']
         read_only_fields = ['id']

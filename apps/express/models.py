@@ -66,12 +66,12 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
         return None
 
     def save(self, *args, **kwargs):
-        if self.domain not in self.website:
+        if not self.domain or self.domain not in self.website:
             parsed_uri = urlparse(self.website)
             ext = tldextract.extract(parsed_uri.netloc)
             self.domain = ext.registered_domain
         super(ExpressCarrier, self).save(*args, **kwargs)
-    
+
 
 class ExpressOrder(TenantModelMixin, models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
