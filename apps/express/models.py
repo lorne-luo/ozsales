@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import re
+from urllib.parse import urlparse
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -34,6 +35,8 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
     is_default = models.BooleanField('默认', default=False, help_text='是否默认')
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
+    domain = models.CharField(_('domain'), max_length=512, blank=True)
+    tracker = models.ForeignKey('carrier_tracker.CarrierTracker', blank=True, null=True)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -60,6 +63,11 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
                 if m and m.group():
                     return carrier
         return None
+
+    def save(self, *args, **kwargs):
+        parsed_uri = urlparse(self.website)
+        self.domain = parsed_uri.netloc
+        super(ExpressCarrier, self).save(*args, **kwargs)
 
 
 class ExpressOrder(TenantModelMixin, models.Model):
