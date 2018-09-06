@@ -9,5 +9,5 @@ class CarrierTrackerSerializer(BaseSerializer):
     class Meta:
         model = CarrierTracker
         fields = ['id', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url',
-                  'id_upload_url', 'track_id_regex', 'is_default']
+                  'id_upload_url', 'track_id_regex', 'need_id']
         read_only_fields = ['id']

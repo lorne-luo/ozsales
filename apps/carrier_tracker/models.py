@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import re
+from urllib.parse import urlparse
 
 from django.core.cache import cache
 from django.db import models
@@ -9,6 +10,7 @@ from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
+from tldextract import tldextract
 
 from core.django.models import PinYinFieldModelMixin
 from . import tracker
@@ -28,11 +30,11 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
     search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
     # some carrier need post to track parcel
     post_search_url = models.URLField(_('查询提交网址'), blank=True, help_text='查询提交网址')
+    need_id = models.BooleanField('需要身份证', default=False, help_text='是否需要身份证')
     id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
-    rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
-    is_default = models.BooleanField('默认', default=False, help_text='是否默认')
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
-    # latest_track_id = models.CharField(_('last track id'), max_length=512, blank=True)
+    last_track_id = models.CharField(_('最新单号'), max_length=512, blank=True)
+    alias = models.CharField(_('alias'), max_length=255, blank=True)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -41,6 +43,13 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
 
     def __str__(self):
         return self.name_cn
+
+    def save(self, *args, **kwargs):
+        if not self.domain or self.domain not in self.website:
+            parsed_uri = urlparse(self.website)
+            ext = tldextract.extract(parsed_uri.netloc)
+            self.domain = ext.registered_domain
+        super(CarrierTracker, self).save(*args, **kwargs)
 
     def update_track(self, track_id, url=None):
         url = self.post_search_url or self.search_url or url
@@ -74,7 +83,7 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
             return None, str(ex)
 
     # def test_tracker(self):
-    #     delivered, last_info = self.update_track(self.latest_track_id)
+    #     delivered, last_info = self.update_track(self.last_track_id)
     #     if delivered is None:
     #         # deliverd is None = error
     #         log.info('%s tracker test failed. error = %s' % (self.name_en, last_info))
