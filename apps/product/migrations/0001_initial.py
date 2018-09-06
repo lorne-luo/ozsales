@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
                 ('tb_url', models.URLField(blank=True, null=True, verbose_name='TB URL')),
                 ('wd_url', models.URLField(blank=True, null=True, verbose_name='WD URL')),
                 ('wx_url', models.URLField(blank=True, null=True, verbose_name='WX URL')),
-                ('uuid', models.CharField(blank=True, max_length=36, null=True, unique=True)),
+                ('uuid', models.CharField(blank=True, max_length=36, null=True)),
                 ('summary', models.TextField(blank=True, null=True, verbose_name='summary')),
                 ('description', models.TextField(blank=True, null=True, verbose_name='description')),
                 ('is_active', models.BooleanField(default=True, verbose_name='is active')),

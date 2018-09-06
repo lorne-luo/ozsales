@@ -35,6 +35,9 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
                                         blank=True)
     create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
+    class Meta:
+        ordering = ['id']
+
     def __str__(self):
         return '%s' % self.name
 
@@ -156,13 +159,6 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
         seller.set_schema()
         seller.save()
         return seller
-
-
-    @cached_property
-    def schema_name(self):
-        if self.tenant and self.tenant.schema_name:
-            return self.tenant.schema_name
-        return None
 
     def set_schema(self):
         if self.schema_name:

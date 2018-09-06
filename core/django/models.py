@@ -119,7 +119,7 @@ class ResizeUploadedImageModelMixin(object):
 
 
 class TenantModelMixin(models.Model):
-    uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(primary_key=False, db_index=True, default=uuid.uuid4, editable=False)
     schema_name = models.CharField(default=get_schema_name, max_length=32, blank=True)
 
     class Meta:
