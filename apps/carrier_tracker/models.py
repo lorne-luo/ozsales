@@ -62,22 +62,27 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
             if not url.startswith('http'):
                 raise Exception('invalid url')
             if 'aupost' in self.website.lower():
-                return None, None
+                success, last_info = None, None
             elif 'emms' in self.website.lower():
-                return tracker.sfx_track(url)
+                success, last_info = tracker.sfx_track(url)
             elif 'blueskyexpress' in self.website.lower():
-                return tracker.bluesky_track(url)
+                success, last_info = tracker.bluesky_track(url)
             elif 'changjiang' in self.website.lower():
-                return tracker.changjiang_track(url)
+                success, last_info = tracker.changjiang_track(url)
             elif 'au.transrush.com' in self.website.lower():
-                return tracker.transrush_au_track(url)
+                success, last_info = tracker.transrush_au_track(url)
             elif 'one-express' in self.website.lower():
-                return tracker.one_express_track(url, track_id)
+                success, last_info = tracker.one_express_track(url, track_id)
             elif 'arkexpress' in self.website.lower():
-                return tracker.arkexpress_track(url)
+                success, last_info = tracker.arkexpress_track(url)
             # todo more tracker
             else:
-                return tracker.table_last_tr(url)
+                success, last_info = tracker.table_last_tr(url)
+
+            if success:
+                self.last_track_id = track_id
+                self.save(update_fields=['last_track_id'])
+            return success, last_info
         except Exception as ex:
             log.info('%s track failed: %s' % (self.name_en, ex))
             return None, str(ex)

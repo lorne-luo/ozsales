@@ -45,7 +45,7 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     ]
 
     def __str__(self):
-        return self.name_cn
+        return self.name_cn or self.name_en
 
     @staticmethod
     def get_incomplete_carrier_by_user(seller):
@@ -71,6 +71,11 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
             ext = tldextract.extract(parsed_uri.netloc)
             self.domain = ext.registered_domain
         super(ExpressCarrier, self).save(*args, **kwargs)
+
+    def update_track(self, track_id, url=None):
+        if self.tracker:
+            return self.tracker.update_track(track_id, url)
+        return None, 'No tracker linked for %s' % self
 
 
 class ExpressOrder(TenantModelMixin, models.Model):
@@ -170,7 +175,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
         if self.create_time > timezone.now() - relativedelta(days=3):
             return  # send less than 3 days, skip
 
-        delivered, last_info = self.carrier.update_track(self)
+        delivered, last_info = self.carrier.update_track(self.track_id)
         if delivered in [True, False]:
             self.is_delivered = delivered
             self.last_track = last_info[:512]
