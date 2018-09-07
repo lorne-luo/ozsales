@@ -233,7 +233,7 @@ class Order(TenantModelMixin, models.Model):
                 self.save(update_fields=['paid_time'])
 
             from ..report.models import MonthlyReport
-            MonthlyReport.stat_month(self.seller, self.create_time.year, self.create_time.month)
+            MonthlyReport.stat_month(self.create_time.year, self.create_time.month)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.set_uid()

@@ -39,18 +39,13 @@ class MonthlyReport(TenantModelMixin, models.Model):
         self.parcel_count = 0
 
     @staticmethod
-    def stat_current_month(user):
-        seller = user.profile
-        if isinstance(seller, Seller):
-            year = datetime.datetime.now().year
-            month = datetime.datetime.now().month
-            MonthlyReport.stat_month(seller, year, month)
+    def stat_current_month():
+        year = datetime.datetime.now().year
+        month = datetime.datetime.now().month
+        MonthlyReport.stat_month(year, month)
 
     @staticmethod
-    def stat_month(user, year, month):
-        seller = user.profile
-        if not isinstance(seller, Seller):
-            return
+    def stat_month(year, month):
         stat_date = datetime.date(year=year, month=month, day=1)
         next_month_future = timezone.now() + relativedelta(months=1)
         next_month_future = datetime.date(year=next_month_future.year, month=next_month_future.month, day=1)
@@ -58,14 +53,14 @@ class MonthlyReport(TenantModelMixin, models.Model):
             # input month still not coming
             return
 
-        report = MonthlyReport.objects.filter(seller=seller, month=stat_date).first()
+        report = MonthlyReport.objects.filter(month=stat_date).first()
         if not report:
-            report = MonthlyReport(seller=seller)
+            report = MonthlyReport()
             report.month = stat_date
 
         report.reset()
 
-        all_orders = Order.objects.filter(seller=seller, is_paid=True, create_time__year=year,
+        all_orders = Order.objects.filter(is_paid=True, create_time__year=year,
                                           create_time__month=month).exclude(status=ORDER_STATUS.CREATED).annotate(
             express_orders_count=Count('express_orders'))
 
@@ -87,18 +82,14 @@ class MonthlyReport(TenantModelMixin, models.Model):
             report.save()
 
     @staticmethod
-    def stat_user_total(user):
-        if not user.is_seller:
-            return Http404
-        seller = user.profile
-
-        if not Order.objects.filter(seller=seller).count():
+    def stat_user_total():
+        if not Order.objects.count():
             return {}
 
-        first_day = Order.objects.filter(seller=seller).order_by('create_time').first().create_time
+        first_day = Order.objects.order_by('create_time').first().create_time
         distance = timezone.now() - first_day
 
-        own_orders = Order.objects.filter(seller=seller)
+        own_orders = Order.objects.all()
         data = own_orders.aggregate(total_amount=Sum('total_amount'), total_sell_price=Sum('sell_price_rmb'),
                                     total_cost_aud=Sum('product_cost_aud'), total_profit_rmb=Sum('profit_rmb'),
                                     total_express_fee=Sum('shipping_fee'))
@@ -106,10 +97,10 @@ class MonthlyReport(TenantModelMixin, models.Model):
         data.update({'first_day': first_day,
                      'total_year': distance.days / 365,
                      'total_day': distance.days % 365,
-                     'total_customer': Customer.objects.filter(seller=seller).count(),
+                     'total_customer': Customer.objects.count(),
                      'total_order': own_orders.count(),
-                     'total_address': Address.objects.filter(customer__seller=seller).count(),
-                     'total_expressorder': ExpressOrder.objects.filter(order__seller=seller).count(),
+                     'total_address': Address.objects.count(),
+                     'total_expressorder': ExpressOrder.objects.count(),
                      })
         data.update(own_orders.filter(is_paid=False).aggregate(total_unpaid_amount=Sum('sell_price_rmb')))
         return data

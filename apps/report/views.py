@@ -16,7 +16,7 @@ class MonthlyReportListView(SellerRequiredMixin, CommonContextMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MonthlyReportListView, self).get_context_data(**kwargs)
-        data = MonthlyReport.stat_user_total(self.request.user)
+        data = MonthlyReport.stat_user_total()
         context.update(data)
         return context
 
