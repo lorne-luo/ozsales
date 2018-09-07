@@ -272,39 +272,3 @@ def product_deleted(sender, **kwargs):
     instance = kwargs['instance']
     if instance.pic and os.path.exists(instance.pic.path):
         default_storage.delete(instance.pic.path)
-
-
-# ========================= product sub model ==================================
-
-class DefaultProductManager(models.Manager):
-    def get_queryset(self):
-        return super(DefaultProductManager, self).get_queryset().filter(seller__isnull=True)
-
-
-class DefaultProduct(Product):
-    objects = DefaultProductManager()
-
-    class Meta:
-        proxy = True
-
-
-class CustomProductManager(models.Manager):
-    def get_queryset(self):
-        return super(CustomProductManager, self).get_queryset().filter(seller__isnull=False)
-
-    def belong_to(self, obj):
-        if isinstance(obj, Seller):
-            seller_id = obj.id
-        elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
-        else:
-            return Product.objects.none()
-
-        return super(CustomProductManager, self).get_queryset().filter(seller_id=seller_id)
-
-
-class CustomProduct(Product):
-    objects = CustomProductManager()
-
-    class Meta:
-        proxy = True

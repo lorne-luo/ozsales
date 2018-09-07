@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
-from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import ExpressCarrier
 from . import forms
@@ -56,7 +56,7 @@ class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin
         return super(ExpressCarrierAddView, self).form_valid(form)
 
 
-class ExpressCarrierUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin,
+class ExpressCarrierUpdateView(SellerRequiredMixin, CommonContextMixin,
                                UpdateView):
     model = ExpressCarrier
     template_name = 'adminlte/common_form.html'

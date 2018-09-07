@@ -102,9 +102,3 @@ class OrderProductViewSet(CommonViewSet):
     filter_backends = (DjangoFilterBackend,
                        PinyinSearchFilter,
                        filters.OrderingFilter)
-
-    def get_queryset(self):
-        queryset = super(OrderProductViewSet, self).get_queryset()
-        if self.request.user.is_admin or self.request.user.is_superuser:
-            return queryset
-        return queryset.filter(order__customer__seller=self.request.profile)

@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, UpdateView
 from braces.views import MultiplePermissionsRequiredMixin, SuperuserRequiredMixin
 
-from core.django.permission import SellerOwnerOrSuperuserRequiredMixin
+from core.django.permission import SellerRequiredMixin
 from core.django.views import CommonContextMixin
 from .models import Product, Brand
 from . import forms
@@ -54,7 +54,7 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
         return super(ProductAddView, self).form_valid(form)
 
 
-class ProductUpdateView(SellerOwnerOrSuperuserRequiredMixin, CommonContextMixin, UpdateView):
+class ProductUpdateView(SellerRequiredMixin, CommonContextMixin, UpdateView):
     model = Product
     template_name = 'adminlte/common_form.html'
 
