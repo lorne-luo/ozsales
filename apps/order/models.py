@@ -211,12 +211,12 @@ class Order(TenantModelMixin, models.Model):
             if self.is_paid:
                 self.products.update(is_purchased=True)
                 self.express_orders.update(is_delivered=True)
-                customer = Customer.objects.get(id=self.customer_id)
+                customer = self.customer
                 customer.last_order_time = self.create_time
                 customer.order_count = customer.order_set.filter(status__in=[ORDER_STATUS.SHIPPING,
                                                                              ORDER_STATUS.DELIVERED,
                                                                              ORDER_STATUS.FINISHED]).count()
-                customer.save()
+                customer.save(update_fields=['last_order_time', 'order_count'])
             else:
                 return
 

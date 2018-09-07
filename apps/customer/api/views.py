@@ -1,13 +1,8 @@
 import logging
 from dal import autocomplete
 from django.db.models import Count, Q
-from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from core.api.filters import PinyinSearchFilter
 from core.django.autocomplete import HansSelect2ViewMixin
@@ -16,7 +11,6 @@ from core.utils.string import include_non_asc
 from core.api.permission import SellerPermissions
 from core.api.views import CommonViewSet
 from ..models import Customer, Address
-
 from . import serializers
 
 log = logging.getLogger(__name__)
@@ -38,7 +32,7 @@ class CustomerViewSet(CommonViewSet):
     """api views for Customer"""
     queryset = Customer.objects.all()
     serializer_class = serializers.CustomerSerializer
-    filter_fields = ['seller', 'name', 'email', 'mobile', 'order_count', 'primary_address',
+    filter_fields = ['name', 'email', 'mobile', 'order_count', 'primary_address',
                      'remark', 'tags']
     search_fields = ['name', 'primary_address__name', 'remark']
     permission_classes = (SellerPermissions,)
@@ -47,23 +41,16 @@ class CustomerViewSet(CommonViewSet):
                        PinyinSearchFilter,
                        filters.OrderingFilter)
 
-    def get_queryset(self):
-        queryset = super(CustomerViewSet, self).get_queryset()
-        if self.request.user.is_admin or self.request.user.is_superuser:
-            return queryset
-        return queryset.filter(seller=self.request.profile)
-
 
 class CustomerAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Customer
     paginate_by = 20
 
     def create_object(self, text):
-        return self.get_queryset().create(**{self.create_field: text, 'seller': self.request.profile})
+        return self.get_queryset().create(**{self.create_field: text})
 
     def get_queryset(self):
-        qs = Customer.objects.belong_to(self.request.user).annotate(
-            order_count_num=Count('order')).order_by('-order_count_num')
+        qs = Customer.objects.order_by('-order_count')
 
         if include_non_asc(self.q):
             qs = qs.filter(name__icontains=self.q)
@@ -101,4 +88,3 @@ class AddressAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplet
             else:
                 qs = qs.filter(pinyin__contains=self.q.lower())
         return qs
-

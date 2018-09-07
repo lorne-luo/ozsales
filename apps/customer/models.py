@@ -38,30 +38,6 @@ class InterestTag(models.Model):
         return '%s' % self.name
 
 
-class CustomerManager(Manager):
-    def belong_to(self, obj):
-        if isinstance(obj, Seller):
-            seller_id = obj.id
-        elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
-        elif isinstance(obj, Customer):
-            customer_id = obj.id
-            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
-        elif isinstance(obj, AuthUser) and obj.is_customer:
-            customer_id = obj.profile.id
-            return super(CustomerManager, self).get_queryset().filter(id=customer_id)
-        else:
-            return Customer.objects.none()
-
-        return super(CustomerManager, self).get_queryset().filter(seller_id=seller_id).order_by('-order_count')
-
-    def update_order_count(self):
-        qs = super(CustomerManager, self).get_queryset()
-        for item in qs:
-            item.order_count = item.order_set.count()
-            item.save(update_fields=['order_count'])
-
-
 class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models.Model):
     auth_user = models.OneToOneField(AuthUser, on_delete=models.CASCADE, related_name='customer', null=True, blank=True)
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
@@ -75,8 +51,6 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('默认地址'),
                                         related_name='primary_address')
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
-
-    objects = CustomerManager()
 
     pinyin_fields_conf = [
         ('name', Style.NORMAL, False),
@@ -187,14 +161,7 @@ def get_id_photo_back_path(instance, filename):
 
 class AddressManager(Manager):
     def belong_to(self, obj):
-
-        if isinstance(obj, Seller):
-            seller_id = obj.id
-            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
-        elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
-            return super(AddressManager, self).get_queryset().filter(customer__seller_id=seller_id)
-        elif isinstance(obj, Customer):
+        if isinstance(obj, Customer):
             customer_id = obj.id
             return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
         elif isinstance(obj, AuthUser) and obj.is_customer:
