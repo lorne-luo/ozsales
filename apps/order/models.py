@@ -93,6 +93,9 @@ class Order(TenantModelMixin, models.Model):
 
     objects = OrderManager()
 
+    class Meta:
+        get_latest_by = "finish_time"
+
     def __str__(self):
         if self.id:
             return '[%s]%s' % (self.id, self.customer.name)
@@ -126,6 +129,9 @@ class Order(TenantModelMixin, models.Model):
         return None
 
     def sms_shipping(self):
+        if not self.seller.is_premium:
+            return
+
         mobile = self.get_mobile()
         if not mobile or self.shipping_msg_sent:
             return
@@ -140,6 +146,9 @@ class Order(TenantModelMixin, models.Model):
             self.save(update_fields=['shipping_msg_sent'])
 
     def sms_delivered(self):
+        if not self.seller.is_premium:
+            return
+
         mobile = self.get_mobile()
         if not mobile or self.delivery_msg_sent:
             return
