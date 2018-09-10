@@ -77,7 +77,7 @@ class Command(BaseCommand):
 
     def loaddata(self, fixture_labels):
         connection = connections[self.using]
-        connection.set_schema('t3')
+        connection.set_schema('t3', True)
         # Keep a count of the installed objects and fixtures
         self.fixture_count = 0
         self.loaded_object_count = 0
