@@ -138,7 +138,6 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     tb_url = models.URLField(_('TB URL'), null=True, blank=True)
     wd_url = models.URLField(_('WD URL'), null=True, blank=True)
     wx_url = models.URLField(_('WX URL'), null=True, blank=True)
-    page = models.ManyToManyField(Page, verbose_name=_('page'), blank=True)
 
     summary = models.TextField(_('summary'), null=True, blank=True)
     description = models.TextField(_('description'), null=True, blank=True)

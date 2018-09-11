@@ -98,7 +98,6 @@ class ExpressOrder(TenantModelMixin, models.Model):
     class Meta:
         verbose_name_plural = _('Express Order')
         verbose_name = _('Express Order')
-        unique_together = ('carrier', 'track_id')
 
     def __str__(self):
         if self.carrier:
