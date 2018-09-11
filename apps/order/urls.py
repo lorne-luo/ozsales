@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^order/add/(?P<customer_id>[-\w]+)/$', views.OrderAddDetailView.as_view(), name='order-add-detail'),
     url(r'^order/list/$', views.OrderListView.as_view(), name='order-list'),
     url(r'^order/(?P<pk>[-\w]+)/edit/$', views.OrderUpdateView.as_view(), name='order-update'),
-    url(r'^order/(?P<customer_id>[-\w]+)/(?P<pk>[-\w]+)/$', views.OrderDetailView.as_view(), name='order-detail'),
+    url(r'^order/(?P<schema_id>[-\w]+)/(?P<uid>[-\w]+)/$', views.OrderDetailView.as_view(), name='order-detail'),
 
     url(r'^order/index/$', views.OrderIndex.as_view(), name="order-index"),
     url(r'^$', views.OrderListView.as_view(), name='order-list-short'),

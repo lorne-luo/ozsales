@@ -59,7 +59,6 @@ class OrderSerializer(BaseSerializer):
     customer_url = serializers.SerializerMethodField()
     shipping_order = serializers.SerializerMethodField()
     paid_url = serializers.SerializerMethodField()
-    public_link = serializers.SerializerMethodField()
     create_time = serializers.DateTimeField(format='%m-%d', input_formats=None)
     next_status_url = serializers.SerializerMethodField()
     next_status = serializers.SerializerMethodField()
@@ -72,7 +71,7 @@ class OrderSerializer(BaseSerializer):
 
     class Meta:
         model = Order
-        fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'public_link',
+        fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
                   'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
@@ -80,7 +79,7 @@ class OrderSerializer(BaseSerializer):
         read_only_fields = ['pk']
 
     def get_detail_url(self, obj):
-        return reverse('order-detail-short', args=[obj.customer.pk, obj.pk])
+        return obj.public_url
 
     def get_customer_display(self, obj):
         return obj.customer.name
@@ -106,5 +105,3 @@ class OrderSerializer(BaseSerializer):
         url = reverse('order:change-order-paid', args=[obj.pk])
         return url
 
-    def get_public_link(self, obj):
-        return obj.get_id_link()

@@ -10,7 +10,7 @@ from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView, ListView, CreateView, UpdateView
 
 from core.django.permission import SellerOwnerOnlyRequiredMixin, SellerRequiredMixin
-from core.django.views import CommonContextMixin
+from core.django.views import CommonContextMixin, TenantPublicViewMixin
 from .models import Order, ORDER_STATUS, OrderProduct
 from ..customer.models import Customer
 from ..express.views import CarrierInfoRequiredMixin
@@ -220,7 +220,7 @@ class OrderAddDetailView(OrderUpdateView):
             return self.render_to_response(context)
 
 
-class OrderDetailView(CommonContextMixin, UpdateView):
+class OrderDetailView(TenantPublicViewMixin, CommonContextMixin, UpdateView):
     model = Order
     form_class = forms.OrderDetailForm
 
@@ -232,11 +232,8 @@ class OrderDetailView(CommonContextMixin, UpdateView):
             return 'order/order_detail.html'
 
     def get_object(self, queryset=None):
-        obj = super(OrderDetailView, self).get_object(queryset)
-        customer_id = self.kwargs.get('customer_id', None)
-        if not obj.customer_id == int(customer_id):
-            raise Http404(_("No order found!"))
-
+        uid = self.kwargs.get('uid', None)
+        obj = self.model.objects.get(uid=uid)
         return obj
 
 

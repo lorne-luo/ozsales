@@ -227,9 +227,10 @@ def express_id_upload_task():
                 order.seller.send_email(subject, content)
                 # send_to_admin(content)
             else:
-                link = reverse('order-detail-short', args=[unuploads.order.customer.pk, unuploads.order.pk])
-                content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unuploads.order)
-                order.seller.send_notification('上传身份证', content)
+                for unupload in unuploads:
+                    link = unupload.order.public_url
+                    content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unupload.order)
+                    order.seller.send_notification('上传身份证', content)
 
     log.info('[Express] Daily id upload checking.')
 

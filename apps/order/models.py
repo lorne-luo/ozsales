@@ -98,7 +98,7 @@ class Order(TenantModelMixin, models.Model):
 
     def __str__(self):
         if self.pk:
-            return '[%s]%s' % (self.pk, self.customer.name)
+            return '[%s]%s' % (self.uid, self.customer.name)
         else:
             return '%s' % (self.customer.name)
 
@@ -137,8 +137,7 @@ class Order(TenantModelMixin, models.Model):
             return
 
         bz_id = 'Order#%s-sent' % self.pk
-        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.pk, 'pk': self.pk})
-        data = "{\"url\":\"%s\"}" % url
+        data = "{\"url\":\"%s\"}" % self.public_url
         template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
         success, detail = send_cn_sms(bz_id, mobile, template, data)
         if success:
@@ -153,11 +152,10 @@ class Order(TenantModelMixin, models.Model):
         if not mobile or self.delivery_msg_sent:
             return
 
-        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.pk, 'pk': self.pk})
         # all delivered, send ORDER_DELIVERED_TEMPLATE
         if self.is_all_delivered:
             bz_id = 'Order#%s-delivered' % self.pk
-            data = "{\"url\":\"%s\"}" % url
+            data = "{\"url\":\"%s\"}" % self.public_url
             success, detail = send_cn_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
             if success:
                 self.delivery_msg_sent = True
@@ -171,7 +169,7 @@ class Order(TenantModelMixin, models.Model):
         if track_ids:
             bz_id = 'OrderParcels#%s-delivered' % self.pk
             track_id = ','.join(track_ids)
-            data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, url)
+            data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, self.public_url)
             success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
             if success:
                 need_sms.update(delivery_sms_sent=True)
@@ -276,14 +274,9 @@ class Order(TenantModelMixin, models.Model):
         name = '[#%s]%s' % (self.pk, self.customer.name)
         return '<a href="%s">%s</a>' % (url, name)
 
-    def get_public_link(self):
-        return reverse('order-detail-short', args=[self.customer.pk, self.pk])
-
-    def get_id_link(self):
-        return '<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
-
-    get_id_link.allow_tags = True
-    get_id_link.short_description = 'PK'
+    @property
+    def public_url(self):
+        return reverse('order-detail-short', args=[self.schema_id, self.uid])
 
     def get_aud_rmb_rate(self):
         if self.aud_rmb_rate:
@@ -404,9 +397,8 @@ class Order(TenantModelMixin, models.Model):
     get_customer_link.short_description = 'Customer'
 
     def notify_delivered(self):
-        link = reverse('order-detail-short', args=[self.customer.pk, self.pk])
         subject = '%s 全部寄达.' % self
-        content = '<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
+        content = '<a target="_blank" href="%s">%s</a> 全部寄达.' % (self.public_url, self)
 
         self.seller.send_notification(subject, content)
         # self.seller.send_email(subject, content)

@@ -38,7 +38,7 @@
                     <div class="box-header with-border">
                         <h3 class="box-title">
                             {% if object.pk %}
-                                <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.pk %}">{{ object.customer.name_and_remarks }}</a>
+                                <a href="{{ object.public_url }}">{{ object.customer.name_and_remarks }}</a>
                             {% else %}
                                 {{ object.customer.name_and_remarks }}
                             {% endif %}
