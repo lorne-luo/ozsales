@@ -125,3 +125,9 @@ class TenantModelMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def schema_id(self):
+        from apps.tenant.models import Tenant
+        return self.schema_name.strip(Tenant.SCHEMA_NAME_PREFIX)
+
