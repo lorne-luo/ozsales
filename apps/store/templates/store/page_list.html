@@ -19,7 +19,7 @@
   <tr>
     <td class="text-center">
       ##[$index+1]
-      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
     </td>
     <td><a href="{!! item.edit_url !!}?from_page={!! currentPage !!}&search={!! search_keyword !!}">{!! item.title !!}</a></td>
     <td>{!! item.url !!}</td>

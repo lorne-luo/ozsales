@@ -87,17 +87,17 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models
         return sum([x.sell_price_rmb for x in self.order_set.all().filter(finish_time__gt=year_before)])
 
     def get_link(self):
-        url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.id])
+        url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.pk])
         return '<a href="%s">%s</a>' % (url, self.name)
 
     def get_edit_link(self):
-        url = reverse('customer:customer-update', args=[self.id])
+        url = reverse('customer:customer-update', args=[self.pk])
         return '<a href="%s">%s</a>' % (url, self.name)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
-        url = reverse('customer:customer-detail', args=[self.id])
+        url = reverse('customer:customer-detail', args=[self.pk])
         return '<a href="%s">%s</a>' % (url, self.name)
 
     get_detail_link.short_description = 'Name'
@@ -105,7 +105,7 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models
     def add_order_link(self):
         # order_root = reverse('admin:app_list', kwargs={'app_label': 'order'})
         url = reverse('admin:%s_%s_add' % ('order', 'order'))
-        url = '%s?customer_id=%s' % (url, self.id)
+        url = '%s?customer_id=%s' % (url, self.pk)
         return '<a href="%s">New Order</a>' % url
 
     add_order_link.allow_tags = True
@@ -138,7 +138,7 @@ def customer_post_save(sender, instance=None, created=False, **kwargs):
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
-    filename = '%s_%s_front.%s' % (instance.customer.id, count + 1, ext)
+    filename = '%s_%s_front.%s' % (instance.customer.pk, count + 1, ext)
     file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
@@ -150,7 +150,7 @@ def get_id_photo_front_path(instance, filename):
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
     count = instance.customer.address_set.count()
-    filename = '%s_%s_back.%s' % (instance.customer.id, count + 1, ext)
+    filename = '%s_%s_back.%s' % (instance.customer.pk, count + 1, ext)
     file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
@@ -162,10 +162,10 @@ def get_id_photo_back_path(instance, filename):
 class AddressManager(Manager):
     def belong_to(self, obj):
         if isinstance(obj, Customer):
-            customer_id = obj.id
+            customer_id = obj.pk
             return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
         elif isinstance(obj, AuthUser) and obj.is_customer:
-            customer_id = obj.profile.id
+            customer_id = obj.profile.pk
             return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
         else:
             raise PermissionDenied
@@ -213,7 +213,7 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
         return text
 
     def get_customer_link(self):
-        url = reverse('admin:customer_customer_change', args=[self.customer.id])
+        url = reverse('admin:customer_customer_change', args=[self.customer.pk])
         return '<a href="%s">%s</a>' % (url, self.customer)
 
     get_customer_link.allow_tags = True

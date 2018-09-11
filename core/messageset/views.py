@@ -153,8 +153,8 @@ class SiteMailReceiveListView(MultiplePermissionsRequiredMixin, CommonContextMix
 
     def get_context_data(self, **kwargs):
         context = super(SiteMailReceiveListView, self).get_context_data(**kwargs)
-        context['table_titles'] = ['主题', '发件人', '读取状态', '收件时间'] + ['']
-        context['table_fields'] = ['title', 'sender', 'status', 'send_time'] + ['id']
+        context['table_titles'] = ['主题', '发件人', '读取状态', '收件时间', '']
+        context['table_fields'] = ['title', 'sender', 'status', 'send_time', 'pk']
         return context
 
 

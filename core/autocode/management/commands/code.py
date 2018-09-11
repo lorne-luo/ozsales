@@ -121,7 +121,7 @@ class Command(BaseCommand):
         # normal fields + many-to-many fields
         meta_fields = model._meta.fields + model._meta.many_to_many
         for mf in meta_fields:
-            if mf.name == 'id':
+            if  mf.name in ['id', 'pk']:
                 continue
             elif isinstance(mf, models.fields.DateTimeField):
                 if mf.auto_now_add or mf.auto_now:

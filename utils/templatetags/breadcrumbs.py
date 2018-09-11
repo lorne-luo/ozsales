@@ -22,7 +22,7 @@ def breadcrumb(parser, token):
     Parameters:
     -First parameter is the title of the crumb,
     -Second (optional) parameter is the url variable to link to, produced by url tag, i.e.:
-        {% url person_detail object.id as person_url %}
+        {% url person_detail object.pk as person_url %}
         then:
         {% breadcrumb person.name person_url %}
 
@@ -42,8 +42,8 @@ def breadcrumb_url(parser, token):
     Same as breadcrumb
     but instead of url context variable takes in all the
     arguments URL tag takes.
-        {% breadcrumb "Title of breadcrumb" person_detail person.id %}
-        {% breadcrumb person.name person_detail person.id %}
+        {% breadcrumb "Title of breadcrumb" person_detail person.pk %}
+        {% breadcrumb person.name person_detail person.pk %}
     """
 
     bits = token.split_contents()

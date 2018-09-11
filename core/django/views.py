@@ -68,7 +68,7 @@ class CommonContextMixin(object):
 
         if '_continue' in self.request.POST and self.object:
             url_tag = '%s:%s-update' % (self.app_name, self.model_name)
-            url = reverse(url_tag, args=[self.object.id])
+            url = reverse(url_tag, args=[self.object.pk])
             page_query = 'from_page=%s' % from_page if from_page else ''
 
             return '%s?%s%s' % (url, page_query, search_query)

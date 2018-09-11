@@ -22,12 +22,12 @@
         </tr>
         </tfoot>
         <tbody v-for="item in created_items">
-        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+        <tr v-on:click="show_detail(item.pk, $event)" data-pk="{!! item.pk !!}">
             <td class="text-center hidden-sm hidden-xs">
-                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
             </td>
             <td>
-                <i class="visible-sm-inline-block visible-xs-inline-block fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.id !!}"></i>
+                <i class="visible-sm-inline-block visible-xs-inline-block fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.pk !!}"></i>
                 <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
             </td>
             <td>
@@ -36,16 +36,16 @@
             <td>
                 <template v-if="item.status == 'CREATED'">
                     <a class="label label-info"
-                       v-on:click="next_ship_status(item.id,item.next_status,'在途', $event)">新建</a>
+                       v-on:click="next_ship_status(item.pk,item.next_status,'在途', $event)">新建</a>
                 </template>
                 <template v-if="item.status == 'SHIPPING'">
-                    <a class="label label-success" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">在途</a>
+                    <a class="label label-success" v-on:click="next_ship_status(item.pk,item.next_status,'寄达', $event)">在途</a>
                 </template>
                 <template v-if="item.status == 'DELIVERED'">
-                    <a class="label label-warning" v-on:click="next_ship_status(item.id,item.next_status,'完成', $event)">寄达</a>
+                    <a class="label label-warning" v-on:click="next_ship_status(item.pk,item.next_status,'完成', $event)">寄达</a>
                 </template>
                 <template v-if="item.status == 'FINISHED'">
-                    <a class="label label-danger" v-on:click="next_ship_status(item.id,item.next_status,'寄达', $event)">完成</a>
+                    <a class="label label-danger" v-on:click="next_ship_status(item.pk,item.next_status,'寄达', $event)">完成</a>
                 </template>
             </td>
             <td class="hidden-sm hidden-xs">
@@ -61,7 +61,7 @@
                 <template v-if="item.is_paid">
                 </template>
                 <template v-else>
-                    <a class="label-as-badge label label-danger pay" v-on:click="pay(item.id, $event)">
+                    <a class="label-as-badge label label-danger pay" v-on:click="pay(item.pk, $event)">
                         <i class="fa fa-jpy"></i>
                     </a>
                 </template>
@@ -73,19 +73,19 @@
                         <template v-if="!item.is_paid">
                             <a type="button" data-toggle="modal" data-target="#add-product"
                                class="btn btn-sm btn-success"
-                               data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                               data-order-id="{!! item.pk !!}" data-order-title="[{!! item.pk !!}]{!! item.customer_display !!}">
                                 <i class="fa fa-cart-plus fa-inverse"></i>
                             </a>
                         </template>
                         <a type="button" data-toggle="modal" data-target="#add-parcel"
                            class="btn btn-sm btn-info"
-                           data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                           data-order-id="{!! item.pk !!}" data-order-title="[{!! item.pk !!}]{!! item.customer_display !!}">
                             <i class="fa fa-truck fa-inverse"></i>
                         </a>
                     </template>
 
                     <template v-if="!item.is_paid">
-                        <a class="btn btn-sm btn-danger pay" v-on:click="pay(item.id, $event)">
+                        <a class="btn btn-sm btn-danger pay" v-on:click="pay(item.pk, $event)">
                             <i class="fa fa-jpy" aria-hidden="true"></i>
                         </a>
                     </template>
@@ -99,11 +99,11 @@
                 {% if page_model_perms.change %}
                     <template v-if="item.status == 'CREATED'">
                         <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"
-                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            data-order-id="{!! item.pk !!}" data-order-title="[{!! item.pk !!}]{!! item.customer_display !!}">
                             <i class="fa fa-lg fa-cart-plus fa-inverse"></i>
                         </button>
                         <button type="button" data-toggle="modal" data-target="#add-parcel" class="btn btn-info btn-sm"
-                            data-order-id="{!! item.id !!}" data-order-title="[{!! item.id !!}]{!! item.customer_display !!}">
+                            data-order-id="{!! item.pk !!}" data-order-title="[{!! item.pk !!}]{!! item.customer_display !!}">
                             <i class="fa fa-lg fa-truck fa-inverse"></i>
                         </button>
                     </template>
@@ -114,14 +114,14 @@
                     </a>
                 {% endif %}
                 {% if page_model_perms.delete %}
-                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]"
+                    <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.pk]"
                        v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                         <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                     </a>
                 {% endif %}
             </td>
         </tr>
-        <tr class="hide" id="detail_{!! item.id !!}">
+        <tr class="hide" id="detail_{!! item.pk !!}">
             <td colspan="4" class="hidden-sm hidden-xs"></td>
             <td colspan="100%">
                 <div>
@@ -132,7 +132,7 @@
                     <span>
                         <template v-if="item.status == 'CREATED'">
                             <input type="checkbox" v-on:click="makr_as_purchased($event)"
-                                   checked="#[product.is_purchased]" name="markPurchased" value="#[product.id]"/>
+                                   checked="#[product.is_purchased]" name="markPurchased" value="#[product.pk]"/>
                         </template>
                         {!! product.name !!} X {!! product.amount !!}
                     </span><br/>

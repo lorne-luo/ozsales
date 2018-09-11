@@ -68,9 +68,9 @@ class ProductManager(models.Manager):
 
     def all_for_seller(self, obj):
         if isinstance(obj, Seller):
-            seller_id = obj.id
+            seller_id = obj.pk
         elif isinstance(obj, AuthUser) and obj.is_seller:
-            seller_id = obj.profile.id
+            seller_id = obj.profile.pk
         else:
             return Product.objects.none()
 
@@ -87,9 +87,9 @@ class ProductManager(models.Manager):
     def all_for_customer(self, obj):
         from apps.customer.models import Customer
         if isinstance(obj, Customer):
-            customer_id = obj.id
+            customer_id = obj.pk
         elif isinstance(obj, AuthUser) and obj.is_customer:
-            customer_id = obj.profile.id
+            customer_id = obj.profile.pk
         else:
             return Product.objects.none()
 
@@ -185,13 +185,13 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
         return os.path.join(PRODUCT_PHOTO_FOLDER, self.uuid)
 
     def get_edit_link(self):
-        url = reverse('product:product-update-view', args=[self.id])
+        url = reverse('product:product-update-view', args=[self.pk])
         return '<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_edit_link.short_description = 'Name'
 
     def get_detail_link(self):
-        url = reverse('product:product-detail-view', args=[self.id])
+        url = reverse('product:product-detail-view', args=[self.pk])
         return '<a href="%s">%s</a>' % (url, self.name_cn)
 
     get_detail_link.short_description = 'Name'
@@ -220,8 +220,8 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
 
     def stat(self):
         from apps.order.models import OrderProduct
-        product_sales = OrderProduct.objects.filter(product_id=self.id).exclude(
-            sell_price_rmb=0).exclude(cost_price_aud=0).order_by('-id')
+        product_sales = OrderProduct.objects.filter(product_id=self.pk).exclude(
+            sell_price_rmb=0).exclude(cost_price_aud=0).order_by('-create_time')
         if product_sales.count():
             data = product_sales.aggregate(sold_count=Sum(F('amount')),
                                            avg_sell_price=Avg(F('sell_price_rmb')),

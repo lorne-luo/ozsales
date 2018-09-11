@@ -8,6 +8,6 @@ from ..models import CarrierTracker
 class CarrierTrackerSerializer(BaseSerializer):
     class Meta:
         model = CarrierTracker
-        fields = ['id', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url',
+        fields = ['pk', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url',
                   'id_upload_url', 'track_id_regex', 'need_id']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

@@ -14,7 +14,7 @@ class MonthlyReportSerializer(BaseSerializer):
 
     class Meta:
         model = MonthlyReport
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['month', 'order_count', 'parcel_count', 'cost_aud', 'cost_rmb', 'shipping_fee', 'sell_price_rmb',
                   'profit_rmb']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

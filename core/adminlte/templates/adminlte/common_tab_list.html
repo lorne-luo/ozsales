@@ -87,7 +87,7 @@
                                         <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]" />
                                     </td>
                                     {% for field in table_fields %}
-                                        {% if field == 'id' %}
+                                        {% if field == 'id' or field == 'pk' or field == 'uuid' %}
                                             <td class="text-right">
 {#                                                {% if page_model_perms.view %}#}
 {#                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="View" href="#[item.detail_url]" class="btn btn-info btn-sm">#}
@@ -144,7 +144,7 @@
                                         <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
                                     </td>
                                     {% for field in table_fields %}
-                                        {% if field == 'id' %}
+                                        {% if field == 'id' or field == 'pk' or field == 'uuid' %}
                                           {% block item_buttons %}
                                             <td class="text-right hidden-sm hidden-xs">
 {#                                                {% if page_model_perms.view %}#}

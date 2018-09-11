@@ -11,8 +11,8 @@ class <% MODEL_NAME %>Serializer(BaseSerializer):
 
     class Meta:
         model = <% MODEL_NAME %>
-        fields = ['id', 'edit_url', 'detail_url'] + \\
+        fields = ['pk', 'edit_url', 'detail_url'] + \\
                  <% fields %>
-        read_only_fields = ['id']
+        read_only_fields = ['pk']
 
 '''

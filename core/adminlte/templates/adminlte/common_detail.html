@@ -12,12 +12,12 @@
                 <div class="box-body table-responsive no-padding">
                     <table class="table">
                     {% for field in object.Config.list_form_fields %}
-                        {% ifnotequal field 'id' %}
+                        {% if not field == 'id' or not field == 'pk' or not field == 'uuid' %}
                             <tr>
                                 <th>{{ object|render_field_label:field }}:</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
-                        {% endifnotequal %}
+                        {% endif %}
                     {% endfor %}
                     </table>
                 </div>

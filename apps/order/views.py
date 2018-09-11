@@ -42,8 +42,8 @@ class OrderIndex(MultiplePermissionsRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)
-        context['processing_orders'] = Order.objects.exclude(status=ORDER_STATUS.FINISHED).order_by('-id')
-        context['finished_orders'] = Order.objects.filter(status=ORDER_STATUS.FINISHED).order_by('-id')
+        context['processing_orders'] = Order.objects.exclude(status=ORDER_STATUS.FINISHED).order_by('-create_time')
+        context['finished_orders'] = Order.objects.filter(status=ORDER_STATUS.FINISHED).order_by('-create_time')
         return self.render_to_response(context)
 
 
@@ -122,7 +122,7 @@ class OrderUpdateView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateVi
 
     def get_success_url(self):
         if '_continue' in self.request.POST and self.object:
-            return reverse('order:order-update', args=[self.object.id])
+            return reverse('order:order-update', args=[self.object.pk])
         else:
             return reverse('order:order-list-short')
 

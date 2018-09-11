@@ -10,10 +10,10 @@ class ProductSerializer(BaseSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'edit_url', 'detail_url', 'name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en',
+        fields = ['pk', 'edit_url', 'detail_url', 'name_en', 'name_cn', 'pic', 'brand_cn', 'brand_en',
                   'brand_display', 'spec', 'max_cost', 'last_sell_price', 'avg_sell_price', 'min_sell_price',
                   'max_sell_price', 'avg_cost', 'min_cost', 'thumbnail']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']
 
     def get_thumbnail(self, obj):
         return obj.pic.thumbnail.url if obj.pic else None
@@ -28,6 +28,6 @@ class BrandSerializer(BaseSerializer):
 
     class Meta:
         model = Brand
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['name_en', 'name_cn', 'short_name', 'remarks']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

@@ -59,7 +59,7 @@ class NotificationViewSet(OwnerMessageViewSetMixin2, CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['title', 'status']
     search_fields = ['title', 'status']
-    ordering_fields = ['id', 'send_time', 'status']
+    ordering_fields = ['send_time', 'status']
     pagination_class = NotificationPaginator
 
     def get_paginated_response(self, data):
@@ -98,7 +98,7 @@ class SiteMailReceiveViewSet(OwnerMessageViewSetMixin2, CommonViewSet):
                      'receiver__seller__name']
     search_fields = ['title', 'content__contents', 'status', 'sender__seller__name', 'creator__seller__name',
                      'receiver__seller__name']
-    ordering_fields = ['id', 'send_time']
+    ordering_fields = ['send_time']
 
     def get_paginated_response(self, data):
         response = super(SiteMailReceiveViewSet, self).get_paginated_response(data)
@@ -125,4 +125,4 @@ class TaskViewSet(CommonViewSet):
     permission_classes = [permissions.DjangoModelPermissions]
     filter_fields = ['name', 'start_app', 'status']
     search_fields = ['name', 'start_app', 'status']
-    ordering_fields = ['id', 'start_time', 'status']
+    ordering_fields = ['start_time', 'status']

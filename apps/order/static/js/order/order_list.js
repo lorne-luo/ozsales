@@ -70,7 +70,7 @@ var OrderListPageVue = CommonListPageVue.extend({
         initOngoingTab: function () {
             if (!this.ongoing_tab_initialized) {
                 var self = this;
-                var data = {page: 1, ordering: "-id"};
+                var data = {page: 1, ordering: "-create_time"};
                 var api_url = this.getApiUrl() + 'shipping/';
                 // console.log('ONGOING init');
                 $.AdminLTE.apiGet(
@@ -90,7 +90,7 @@ var OrderListPageVue = CommonListPageVue.extend({
         initFinishedTab: function () {
             if (!this.finished_tab_initialized) {
                 var self = this;
-                var data = {page: 1, ordering: "-id"};
+                var data = {page: 1, ordering: "-create_time"};
                 var api_url = this.getApiUrl() + '?status=FINISHED';
                 // console.log('Finished init.');
                 $.AdminLTE.apiGet(
@@ -236,9 +236,9 @@ var OrderListPageVue = CommonListPageVue.extend({
                 label_class = 'danger';
 
             if (resp['status'] == 'FINISHED') {
-                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['id'] + ',\'DELIVERED\',\'寄达\', $event)">完成</a>';
+                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['pk'] + ',\'DELIVERED\',\'寄达\', $event)">完成</a>';
             } else {
-                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['id'] + ',\'' + resp['next_status'] + '\',\'' + next_status_name + '\', $event)">' + current_status_name + '</a>';
+                var html = '<a class="label label-' + label_class + '" v-on:click="next_ship_status(' + resp['pk'] + ',\'' + resp['next_status'] + '\',\'' + next_status_name + '\', $event)">' + current_status_name + '</a>';
             }
             td.html(html);
             self.$compile(td.get(0));
@@ -347,7 +347,7 @@ var orderListPageVue = new OrderListPageVue({
             created_totalPage: 1,
             created_perPage: 20,
             created_count: 0,
-            ordering: '-id'
+            ordering: '-create_time'
         }
     }
 );

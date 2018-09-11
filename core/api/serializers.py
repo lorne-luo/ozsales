@@ -15,7 +15,7 @@ class BaseSerializer(serializers.ModelSerializer):
 
         if self.has_perm('view'):
             url_tag = '%s:%s-detail' % (app_label, model_name)
-            return reverse(url_tag, args=[obj.id])
+            return reverse(url_tag, args=[str(obj.pk)])
         return None
 
     def get_edit_url(self, obj):
@@ -24,7 +24,7 @@ class BaseSerializer(serializers.ModelSerializer):
 
         if self.has_perm('change'):
             url_tag = '%s:%s-update' % (app_label, model_name)
-            return reverse(url_tag, args=[obj.id])
+            return reverse(url_tag, args=[str(obj.pk)])
         elif self.has_perm('view'):
             return self.get_detail_url(obj)
         return None

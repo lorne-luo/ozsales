@@ -141,7 +141,7 @@
                                                    value="#[item.id]"/>
                                         </td>
                                         {% for field in table_fields %}
-                                            {% if field == 'id' %}
+                                            {% if field == 'id' or field == 'pk' or field == 'uuid' %}
                                                 <td>
                                                     <a href="javascript:void(0);"
                                                        data-pk="#[item.id]"

@@ -134,7 +134,7 @@
         <tbody v-for="item in finished_items">
         <tr v-if="item.id">
           <td class="text-center hidden-sm hidden-xs">
-            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+            <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
           </td>
           <td>
             <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>

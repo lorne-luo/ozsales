@@ -95,4 +95,3 @@ class AddressInlineForm(NoManytoManyHintModelForm):
 
 
 AddressFormSet = modelformset_factory(Address, form=AddressInlineForm, can_order=False, can_delete=False, extra=1)
-AddressFormSet2 = inlineformset_factory(Customer, Address, form=AddressInlineForm, extra=1)

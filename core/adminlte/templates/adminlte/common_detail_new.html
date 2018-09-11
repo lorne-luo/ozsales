@@ -13,12 +13,12 @@
                     <table class="table">
                     {% block table_content %}
                     {% for field in form.fields %}
-                        {% ifnotequal field 'id' %}
+                        {% if not field == 'id' or not field == 'pk' or not field == 'uuid' %}
                             <tr>
                                 <th>{{ object|render_field_label:field }}</th>
                                 <td>{{ object|render_field_value:field|safe }}</td>
                             </tr>
-                        {% endifnotequal %}
+                        {% endif %}
                     {% endfor %}
                     {% endblock %}
                     </table>

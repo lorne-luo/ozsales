@@ -29,7 +29,7 @@ class OrderForm(forms.ModelForm):
             self.fields['address'].empty_label = None
             self.fields['address'].empty_value = []
         elif 'instance' in kwargs and kwargs['instance']:
-            customer_id = kwargs['instance'].customer.id
+            customer_id = kwargs['instance'].customer.pk
             self.fields['customer'].queryset = Customer.objects.filter(pk=customer_id)
             self.fields['customer'].empty_label = None
             self.fields['customer'].empty_value = []

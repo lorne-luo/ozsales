@@ -36,7 +36,7 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
     create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ['pk']
 
     def __str__(self):
         return '%s' % self.name
@@ -145,7 +145,7 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
     def create_seller(mobile, email, password, premium_account=False):
         tenant = Tenant.create_tenant()
         user = AuthUser.objects.create_user(mobile=mobile, email=email, password=password)
-        user.tenant_id = tenant.id
+        user.tenant_id = tenant.pk
         user.save(update_fields=['tenant_id'])
 
         member_group = Group.objects.get(name=MEMBER_GROUP)
@@ -155,7 +155,7 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
             user.groups.add(premium_member_group)
         user.save()
 
-        seller = Seller(auth_user=user, tenant_id=tenant.id, name=mobile or email)
+        seller = Seller(auth_user=user, tenant_id=tenant.pk, name=mobile or email)
         seller.set_schema()
         seller.save()
         return seller

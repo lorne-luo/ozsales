@@ -9,7 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         existed_ids = []
         for plan in Plan.api_list():
-            stripe_id = plan.get('id')
+            stripe_id = plan.get('pk')
             if Plan.objects.filter(stripe_id=stripe_id).exists():
                 print(('Plan id=%s updated.' % stripe_id))
             else:

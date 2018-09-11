@@ -19,12 +19,12 @@
         </tr>
         </thead>
         <tbody v-for="item in finished_items">
-        <tr v-on:click="show_detail(item.id, $event)" data-pk="{!! item.id !!}">
+        <tr v-on:click="show_detail(item.pk, $event)" data-pk="{!! item.pk !!}">
             <td class="text-center hidden-sm hidden-xs">
-                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+                <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
             </td>
-            <td class="visible-sm visible-xs" data-pk="{!! item.id !!}">
-                <i class="fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.id !!}"></i>
+            <td class="visible-sm visible-xs" data-pk="{!! item.pk !!}">
+                <i class="fa fa-plus-square text-primary show_detail" aria-hidden="true" data-pk="{!! item.pk !!}"></i>
             </td>
             <td>
                 <a target="_blank" href="{!! item.detail_url !!}">{!! item.create_time !!}</a>
@@ -52,7 +52,7 @@
                     <template v-if="item.detail_url">
                         {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
-                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
+                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.pk]">
                                 <i class="fa fa-lg fa-bars fa-inverse"></i>
                             </a>
                         {% endif %}
@@ -60,7 +60,7 @@
                 {% endif %}
             </td>
         </tr>
-        <tr class="hide" id="detail_{!! item.id !!}">
+        <tr class="hide" id="detail_{!! item.pk !!}">
             <td colspan="3" class="hidden-sm hidden-xs"></td>
             <td colspan="100%">
                 <div>{!! item.address_display !!}</div>

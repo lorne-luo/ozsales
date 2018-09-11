@@ -16,7 +16,7 @@ class CarrierTrackerViewSet(CommonViewSet):
     """ api views for CarrierTracker """
     queryset = CarrierTracker.objects.all()
     serializer_class = serializers.CarrierTrackerSerializer
-    filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'rate', 'need_id']
+    filter_fields = ['name_cn', 'name_en', 'website', 'search_url', 'need_id']
     search_fields = ['name_cn']
     permission_classes = (SellerPermissions,)
     pinyin_search_fields = ['pinyin', 'name_en', 'website']  # search only input are all ascii chars

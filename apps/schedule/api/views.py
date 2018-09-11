@@ -8,6 +8,6 @@ class DealSubscribeViewSet(CommonViewSet):
     """ API views for DealSubscribe """
     queryset = DealSubscribe.objects.all()
     serializer_class = serializers.DealSubscribeSerializer
-    filter_fields = ['id'] + ['includes', 'excludes', 'is_active']
+    filter_fields = ['pk'] + ['includes', 'excludes', 'is_active']
     search_fields = ['includes', 'excludes', 'is_active']
 

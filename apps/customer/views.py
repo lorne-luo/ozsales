@@ -84,10 +84,10 @@ class CustomerUpdateView(SellerRequiredMixin, CommonContextMixin, UpdateView):
         for form in address_formset:
             form.is_valid()
             if form.instance.address or form.instance.name:
-                form.fields['customer'].initial = self.object.id
-                form.base_fields['customer'].initial = self.object.id
+                form.fields['customer'].initial = self.object.pk
+                form.base_fields['customer'].initial = self.object.pk
                 form.changed_data.append('customer')
-                form.instance.customer_id = self.object.id
+                form.instance.customer_id = self.object.pk
             else:
                 form._changed_data = []
             if form._errors and 'customer' in form._errors:

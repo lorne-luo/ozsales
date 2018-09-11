@@ -15,7 +15,7 @@ LIST_TEMPLATES = '''
   <tr>
     <td class="text-center hidden-sm hidden-xs">
       ##[$index+1]
-      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+      <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
     </td>
 <% table_row %>
     {% block item_buttons %}

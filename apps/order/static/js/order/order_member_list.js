@@ -9,7 +9,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
                 url = $.AdminLTE.getApiUrl(self.appName, self.modelName);
 
             if ($('.tab-content #pane-FINISHED').hasClass('active')) {
-                url = url + '?ordering=-id&status=FINISHED';
+                url = url + '?ordering=-create_time&status=FINISHED';
                 $.AdminLTE.apiGet(
                     url,
                     data,
@@ -22,7 +22,7 @@ var OrderMemberListPageVue = OrderListPageVue.extend({
                     }
                 );
             } else if ($('.tab-content #pane-ONGOING').hasClass('active')) {
-                url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-id';
+                url = url + '?status__in=CREATED,SHIPPING,DELIVERED&ordering=-create_time';
                 $.AdminLTE.apiGet(
                     url,
                     data,

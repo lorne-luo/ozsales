@@ -11,7 +11,7 @@ var orderproductListPageVue = new CommonListPageVue({
             // update_url_tag: 'order:orderproduct-update',
             detail_url_tag: 'order:orderproduct-detail',
             list_url:       Urls['api:orderproduct-list']() + '?',
-            ordering: '-id'
+            ordering: '-create_time'
         }
     }
 );

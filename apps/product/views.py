@@ -20,7 +20,7 @@ class ProductListView(CommonContextMixin, ListView):
         context = super(ProductListView, self).get_context_data(**kwargs)
         if self.request.user.is_superuser:
             context['table_titles'] = ['Pic', 'Name', 'Brand', 'Last Price', 'Avg Price', '']
-            context['table_fields'] = ['pic', 'link', 'brand', 'last_sell_price', 'avg_sell_price', 'id']
+            context['table_fields'] = ['pic', 'link', 'brand', 'last_sell_price', 'avg_sell_price', 'pk']
         else:
             context['table_titles'] = ['Pic', 'Name', 'Brand', 'Avg Price']
             context['table_fields'] = ['pic', 'link', 'brand', 'avg_sell_price']
@@ -44,7 +44,7 @@ class ProductAddView(MultiplePermissionsRequiredMixin, CommonContextMixin, Creat
     def get_context_data(self, **kwargs):
         context = super(ProductAddView, self).get_context_data(**kwargs)
         context['table_titles'] = ['Pic', 'Name', 'Brand', '']
-        context['table_fields'] = ['pic', 'link', 'brand', 'id']
+        context['table_fields'] = ['pic', 'link', 'brand', 'pk']
         return context
 
     def form_valid(self, form):

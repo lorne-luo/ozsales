@@ -97,8 +97,8 @@ class Order(TenantModelMixin, models.Model):
         get_latest_by = "finish_time"
 
     def __str__(self):
-        if self.id:
-            return '[%s]%s' % (self.id, self.customer.name)
+        if self.pk:
+            return '[%s]%s' % (self.pk, self.customer.name)
         else:
             return '%s' % (self.customer.name)
 
@@ -136,8 +136,8 @@ class Order(TenantModelMixin, models.Model):
         if not mobile or self.shipping_msg_sent:
             return
 
-        bz_id = 'Order#%s-sent' % self.id
-        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
+        bz_id = 'Order#%s-sent' % self.pk
+        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.pk, 'pk': self.pk})
         data = "{\"url\":\"%s\"}" % url
         template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
         success, detail = send_cn_sms(bz_id, mobile, template, data)
@@ -153,10 +153,10 @@ class Order(TenantModelMixin, models.Model):
         if not mobile or self.delivery_msg_sent:
             return
 
-        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.id, 'pk': self.id})
+        url = reverse('order-detail-short', kwargs={'customer_id': self.customer.pk, 'pk': self.pk})
         # all delivered, send ORDER_DELIVERED_TEMPLATE
         if self.is_all_delivered:
-            bz_id = 'Order#%s-delivered' % self.id
+            bz_id = 'Order#%s-delivered' % self.pk
             data = "{\"url\":\"%s\"}" % url
             success, detail = send_cn_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
             if success:
@@ -169,7 +169,7 @@ class Order(TenantModelMixin, models.Model):
         need_sms = self.express_orders.filter(is_delivered=True, delivery_sms_sent=False)
         track_ids = [x.track_id for x in need_sms]
         if track_ids:
-            bz_id = 'OrderParcels#%s-delivered' % self.id
+            bz_id = 'OrderParcels#%s-delivered' % self.pk
             track_id = ','.join(track_ids)
             data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, url)
             success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
@@ -185,7 +185,7 @@ class Order(TenantModelMixin, models.Model):
     def get_summary(self):
         """ plain text summary for order """
         if self.customer:
-            url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.id])
+            url = reverse('admin:%s_%s_change' % ('customer', 'customer'), args=[self.customer.pk])
             result = '<br/><a href="%s">%s</a>' % (url, str(self.address))
         else:
             result = 'None'
@@ -272,18 +272,18 @@ class Order(TenantModelMixin, models.Model):
         return int(self.payment_price * 100)
 
     def get_link(self):
-        url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.id])
-        name = '[#%s]%s' % (self.id, self.customer.name)
+        url = reverse('admin:%s_%s_change' % ('order', 'order'), args=[self.pk])
+        name = '[#%s]%s' % (self.pk, self.customer.name)
         return '<a href="%s">%s</a>' % (url, name)
 
     def get_public_link(self):
-        return reverse('order-detail-short', args=[self.customer.id, self.id])
+        return reverse('order-detail-short', args=[self.customer.pk, self.pk])
 
     def get_id_link(self):
         return '<a target="_blank" href="%s">%s@%s</a>' % (self.get_public_link(), self.customer_id, self.pk)
 
     get_id_link.allow_tags = True
-    get_id_link.short_description = 'ID'
+    get_id_link.short_description = 'PK'
 
     def get_aud_rmb_rate(self):
         if self.aud_rmb_rate:
@@ -333,7 +333,7 @@ class Order(TenantModelMixin, models.Model):
 
     def get_paid_button(self):
         if not self.is_paid:
-            url = reverse('order:change-order-paid', kwargs={'order_id': self.id})
+            url = reverse('order:change-order-paid', kwargs={'order_id': self.pk})
             return '<a href="%s"><b>UNPAID</b></a>' % url
         return 'PAID'
 
@@ -357,7 +357,7 @@ class Order(TenantModelMixin, models.Model):
         return btn
 
     def get_next_status_url(self):
-        url = reverse('order:change-order-status', kwargs={'order_id': self.id, 'status_value': self.next_status})
+        url = reverse('order:change-order-status', kwargs={'order_id': self.pk, 'status_value': self.next_status})
         return url
 
     @property
@@ -404,7 +404,7 @@ class Order(TenantModelMixin, models.Model):
     get_customer_link.short_description = 'Customer'
 
     def notify_delivered(self):
-        link = reverse('order-detail-short', args=[self.customer.id, self.id])
+        link = reverse('order-detail-short', args=[self.customer.pk, self.pk])
         subject = '%s 全部寄达.' % self
         content = '<a target="_blank" href="%s">%s</a> 全部寄达.' % (link, self)
 
@@ -506,7 +506,7 @@ class OrderProduct(TenantModelMixin, models.Model):
     def get_last_sale(self):
         last_sale = OrderProduct.objects.filter(order__seller_id=self.order.seller_id, product_id=self.product_id
                                                 ).exclude(sell_price_rmb=0
-                                                          ).exclude(id=self.id).order_by('-id').first()
+                                                          ).exclude(id=self.pk).order_by('-create_time').first()
         return last_sale
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -549,14 +549,14 @@ def update_price_from_order(sender, instance=None, created=False, update_fields=
     if update_fields:
         if 'status' in update_fields or 'is_paid' in update_fields or 'paid_time' in update_fields:
             instance.update_monthly_report()
-    elif instance.id:
+    elif instance.pk:
         if instance.products.count() or instance.express_orders.count():
             instance.update_price()
 
 
 @receiver(post_save, sender=OrderProduct)
 def update_price_from_orderproduct(sender, instance=None, created=False, update_fields=None, **kwargs):
-    if instance.order and instance.order.id:
+    if instance.order and instance.order.pk:
         instance.order.update_price(update_sell_price=True)
 
 

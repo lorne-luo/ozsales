@@ -37,8 +37,8 @@
                 <div class="box box-info">
                     <div class="box-header with-border">
                         <h3 class="box-title">
-                            {% if object.id %}
-                                <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.id %}">{{ object.customer.name_and_remarks }}</a>
+                            {% if object.pk %}
+                                <a href="{% url 'order-detail-short' customer_id=object.customer_id pk=object.pk %}">{{ object.customer.name_and_remarks }}</a>
                             {% else %}
                                 {{ object.customer.name_and_remarks }}
                             {% endif %}
@@ -66,7 +66,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    {% if object.id %}
+                    {% if object.pk %}
                         <div class="box-footer">
                             <button type="submit" style="width:108px"
                                     class="btn btn-primary col-sm-offset-2 col-xs-offset-0">保 存
@@ -74,13 +74,13 @@
                             <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑
                             </button>
                             <button type="button" style="width:108px" class="btn btn-danger"
-                                    v-on:click="delete({{ object.id }}, $event)">删 除
+                                    v-on:click="delete({{ object.pk }}, $event)">删 除
                             </button>
                         </div>
                     {% endif %}
                 </div>
 
-                <input id="object_id" type="hidden" value="{{ object.id }}">
+                <input id="object_id" type="hidden" value="{{ object.pk }}">
 
                 {#    <pre> {% filter force_escape %} {% debug %} {% endfilter %} </pre>#}
 
@@ -126,7 +126,7 @@
                             <div class="form-group product-form"
                                  id="{{ product_formset.prefix }}-{{ forloop.counter0 }}"{% if product.instance.pk %}
                                  data-pk="{{ product.instance.pk }}"{% endif %}>
-                                {{ product.id }}
+                                {{ product.uuid }}
                                 {{ product.order }}
                                 <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
                                 <div class="col-lg-2 col-md-2 col-xs-10">
@@ -205,7 +205,7 @@
                             <div class="form-group express-form"
                                  id="{{ express_formset.prefix }}-{{ forloop.counter0 }}"{% if express.instance.pk %}
                                  data-pk="{{ express.instance.pk }}"{% endif %}>
-                                {{ express.id }}
+                                {{ express.uuid }}
                                 {{ express.order }}
                                 <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
                                 <div class="col-md-3 col-xs-10">
@@ -252,8 +252,8 @@
                     {% with express_formset.extra_forms|first as new_express_template %}
                         {#          <input id="id_{{ express_formset.prefix }}-id" name="{{ express_formset.prefix }}-id" type="hidden">#}
                         {#          <input id="id_{{ express_formset.prefix }}-order" name="{{ express_formset.prefix }}-order" type="hidden"#}
-                        {#                 value="{{ object.id }}">#}
-                        {{ new_express_template.id }}
+                        {#                 value="{{ object.pk }}">#}
+                        {{ new_express_template.uuid }}
                         {{ new_express_template.order }}
                         <div class="visible-xs visible-sm col-xs-2 ln34">物 流</div>
                         <div class="col-md-3 col-xs-10">
@@ -286,8 +286,8 @@
                     {% with product_formset.extra_forms|first as new_product_template %}
                         {#          <input id="id_{{ product_formset.prefix }}-id" name="{{ product_formset.prefix }}-id" type="hidden">#}
                         {#          <input id="id_{{ product_formset.prefix }}-order" name="{{ product_formset.prefix }}-order" type="hidden"#}
-                        {#                 value="{{ object.id }}">#}
-                        {{ new_product_template.id }}
+                        {#                 value="{{ object.pk }}">#}
+                        {{ new_product_template.uuid }}
                         {{ new_product_template.order }}
                         <div class="visible-xs visible-sm ln34 col-xs-2">产 品</div>
                         <div class="col-lg-2 col-md-2 col-xs-10">

@@ -7,6 +7,6 @@ class DealSubscribeSerializer(BaseSerializer):
 
     class Meta:
         model = DealSubscribe
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['includes', 'excludes', 'is_active']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

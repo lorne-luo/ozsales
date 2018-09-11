@@ -7,15 +7,15 @@ from ..models import Page, Store
 class PageSerializer(BaseSerializer):
     class Meta:
         model = Page
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['title', 'url', 'store', 'price', 'original_price']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']
 
 
 # Serializer for store
 class StoreSerializer(BaseSerializer):
     class Meta:
         model = Store
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['name', 'short_name', 'address', 'domain', 'search_url', 'shipping_rate']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

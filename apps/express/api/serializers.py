@@ -7,17 +7,17 @@ from ..models import ExpressOrder, ExpressCarrier
 class ExpressCarrierSerializer(BaseSerializer):
     class Meta:
         model = ExpressCarrier
-        fields = ['id', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url',
-                  'id_upload_url', 'track_id_regex', 'is_default']
-        read_only_fields = ['id']
+        fields = ['pk', 'edit_url', 'detail_url', 'name_cn', 'name_en', 'website', 'search_url', 'id_upload_url',
+                  'track_id_regex', 'is_default']
+        read_only_fields = ['pk']
 
 
 # Serializer for expressorder
 class ExpressOrderSerializer(BaseSerializer):
     class Meta:
         model = ExpressOrder
-        fields = ['id', 'carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
-        read_only_fields = ['id']
+        fields = ['pk', 'carrier', 'track_id', 'order', 'address', 'fee', 'weight', 'id_upload', 'remarks']
+        read_only_fields = ['pk']
 
     def validate(self, attrs):
         carrier = attrs.get('carrier')

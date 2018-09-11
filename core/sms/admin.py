@@ -5,6 +5,6 @@ from .models import Sms
 
 class SmsAdmin(admin.ModelAdmin):
     list_display = ('time', 'app_name', 'send_to', 'success')
-    ordering = ['-id']
+    ordering = ['-time']
 
 admin.site.register(Sms, SmsAdmin)

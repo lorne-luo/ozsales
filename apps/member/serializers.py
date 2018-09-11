@@ -17,7 +17,7 @@ class GroupSimpleSerializer(serializers.ModelSerializer):
     ''' Serializer for class Group only with name '''
 
     class Meta:
-        fields = ['id', 'name', ]
+        fields = ['pk', 'name', ]
         model = Group
 
 
@@ -97,14 +97,12 @@ class MemberUserNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seller
-        fields = ['id', 'username']
+        fields = ['pk', 'username']
 
 
 class SellerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seller
         fields = ['name', 'email', 'mobile']
-        read_only_fields = (
-            'id', 'username', 'is_active', 'date_joined'
-        )
+        read_only_fields = ['pk', 'username', 'is_active', 'date_joined']
         extra_kwargs = {'password': {'write_only': True}}

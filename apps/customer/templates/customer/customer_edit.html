@@ -5,7 +5,7 @@
 {% block main_form_footer %}
     <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
     <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存&编辑</button>
-    <button type="button" style="width:108px" class="btn btn-danger" v-on:click="delete({{ object.id }}, $event)">删 除</button>
+    <button type="button" style="width:108px" class="btn btn-danger" v-on:click="delete({{ object.pk }}, $event)">删 除</button>
 {% endblock %}
 
 
@@ -45,7 +45,7 @@
         {% for address in address_forms %}
         <div class="form-group {% if forloop.counter0|divisibleby:2 %}even{% else %}odd{% endif %}"
              id="{{ address_forms.prefix }}-{{ forloop.counter0 }}"{% if address.instance.pk %} data-pk="{{ address.instance.pk }}"{% endif %}>
-            {{ address.id }}
+            {{ address.uuid }}
             {{ address.customer }}
             <div class="visible-xs visible-sm col-xs-2 ln34">姓名</div>
             <div class="col-lg-1 col-md-1 col-xs-3">
@@ -99,7 +99,7 @@
 {% block inline_formset_template %}
     <div class="hide" id="{{ address_forms.prefix }}_template">
         <div class="form-group">
-            <input id="id_{{ address_forms.prefix }}-customer" name="{{ address_forms.prefix }}-customer" type="hidden" value="{{ object.id }}">
+            <input id="id_{{ address_forms.prefix }}-customer" name="{{ address_forms.prefix }}-customer" type="hidden" value="{{ object.pk }}">
 {#            {{ new_address_forms.customer }}#}
             <div class="visible-xs visible-sm col-xs-2 ln34">姓名</div>
             <div class="col-lg-1 col-md-1 col-xs-4">

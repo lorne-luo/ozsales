@@ -11,8 +11,8 @@ class <% MODEL_NAME %>ViewSet(CommonViewSet):
     """ API views for <% MODEL_NAME %> """
     queryset = <% MODEL_NAME %>.objects.all()
     serializer_class = serializers.<% MODEL_NAME %>Serializer
-    filter_fields = ['id'] + <% fields %>
+    filter_fields = ['pk'] + <% fields %>
     search_fields = <% fields %>
-    ordering_fields = ['id'] + <% fields %>
+    ordering_fields = <% fields %>
 
 '''

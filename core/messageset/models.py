@@ -155,7 +155,7 @@ class SiteMailSend(AbstractSiteMail):
     class Config:
         detail_template_name = 'messageset/sitemail_detail.html'
         list_display_fields = (
-            'title', 'send_time', 'id'
+            'title', 'send_time', 'pk'
         )
         list_form_fields = (
             'title',
@@ -195,7 +195,7 @@ class SiteMailReceive(AbstractSiteMail):
         form_template_name = 'messageset/sitemail_form.html'
         detail_template_name = 'messageset/sitemail_detail.html'
         list_display_fields = (
-            'title', 'sender', 'status', 'send_time', 'id'
+            'title', 'sender', 'status', 'send_time', 'pk'
         )
         list_form_fields = (
             'title', 'sender'
@@ -325,7 +325,7 @@ class Notification(models.Model, ReadStatus):
     class Config:
         list_template_name = 'messageset/notification_list.html'
         list_display_fields = (
-            'title', 'status', 'send_time', 'id'
+            'title', 'status', 'send_time', 'pk'
         )
         list_form_fields = (
             'title', 'content.contents', 'send_time'
@@ -396,7 +396,7 @@ class Task(models.Model, TaskStatus):
             kwargs={
                 'app_name': self._meta.app_label,
                 'model_name': self._meta.model_name,
-                'pk': self.id
+                'pk': self.pk
             }
         )
 
@@ -409,7 +409,7 @@ class Task(models.Model, TaskStatus):
         # 列表页展现的字段
         list_display_fields = (
             'name', 'percent', 'start_app', 'status',
-            'start_time', 'end_time', 'id'
+            'start_time', 'end_time', 'pk'
         )
         # 表单页需要填写的字段
         list_form_fields = (

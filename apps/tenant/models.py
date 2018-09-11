@@ -40,7 +40,7 @@ class Tenant(TenantMixin):
     def create_tenant():
         connection.set_schema_to_public()
         id = get_next_id(Tenant)
-        tenant = Tenant(id=id)
+        tenant = Tenant(pk=id)
 
         schema_name = '%s%s' % (Tenant.SCHEMA_NAME_PREFIX, id)
         domain_url = '%s/%s' % (Tenant.DOMAIN_ROOT, id)
@@ -48,7 +48,7 @@ class Tenant(TenantMixin):
         tenant.domain_url = domain_url
         tenant.save()
         tenant.create_schema(check_if_exists=True, verbosity=1)
-        print('Tenant #%s created.' % tenant.id)
+        print('Tenant #%s created.' % tenant.pk)
         return tenant
 
     def set_schema(self):

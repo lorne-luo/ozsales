@@ -13,21 +13,21 @@ class OrderProductSerializer(BaseSerializer):
 
     class Meta:
         model = OrderProduct
-        fields = ['id', 'detail_url'] + \
+        fields = ['pk', 'detail_url'] + \
                  ['order', 'product', 'name', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
                   'total_price_aud', 'store', 'order_display', 'order_url', 'product_url', 'store_display',
                   'is_purchased', 'create_time']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']
 
     def get_order_url(self, obj):
         user = self.context['request'].user
 
         if user.has_perm('order.change_order'):
             url_tag = 'order:order-update'
-            return reverse(url_tag, args=[obj.order.id])
+            return reverse(url_tag, args=[obj.order.pk])
         elif user.has_perm('order.view_order'):
             url_tag = 'order:order-detail'
-            return reverse(url_tag, args=[obj.order.id])
+            return reverse(url_tag, args=[obj.order.pk])
         return None
 
     def get_product_url(self, obj):
@@ -36,10 +36,10 @@ class OrderProductSerializer(BaseSerializer):
         if obj.product:
             if user.has_perm('product.change_product'):
                 url_tag = 'product:product-update'
-                return reverse(url_tag, args=[obj.product.id])
+                return reverse(url_tag, args=[obj.product.pk])
             elif user.has_perm('product.view_product'):
                 url_tag = 'product:product-detail'
-                return reverse(url_tag, args=[obj.product.id])
+                return reverse(url_tag, args=[obj.product.pk])
         return None
 
 
@@ -48,7 +48,7 @@ class OrderProductDisplaySerializer(OrderProductSerializer):
 
     class Meta:
         model = OrderProduct
-        fields = ['id', 'name', 'description', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
+        fields = ['pk', 'name', 'description', 'amount', 'sell_price_rmb', 'total_price_rmb', 'cost_price_aud',
                   'total_price_aud', 'is_purchased']
 
 
@@ -76,11 +76,11 @@ class OrderSerializer(BaseSerializer):
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
                   'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
-                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'id', 'products']
-        read_only_fields = ['id']
+                  'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'pk', 'products']
+        read_only_fields = ['pk']
 
     def get_detail_url(self, obj):
-        return reverse('order-detail-short', args=[obj.customer.id, obj.id])
+        return reverse('order-detail-short', args=[obj.customer.pk, obj.pk])
 
     def get_customer_display(self, obj):
         return obj.customer.name
@@ -88,9 +88,9 @@ class OrderSerializer(BaseSerializer):
     def get_customer_url(self, obj):
         user = self.context['request'].user
         if user.has_perm('customer.change_customer'):
-            return reverse('customer:customer-update', args=[obj.customer.id])
+            return reverse('customer:customer-update', args=[obj.customer.pk])
         elif user.has_perm('customer.view_customer'):
-            return reverse('customer:customer-detail', args=[obj.customer.id])
+            return reverse('customer:customer-detail', args=[obj.customer.pk])
         return None
 
     def get_shipping_order(self, obj):
@@ -103,7 +103,7 @@ class OrderSerializer(BaseSerializer):
         return obj.next_status
 
     def get_paid_url(self, obj):
-        url = reverse('order:change-order-paid', args=[obj.id])
+        url = reverse('order:change-order-paid', args=[obj.pk])
         return url
 
     def get_public_link(self, obj):

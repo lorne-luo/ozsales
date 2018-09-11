@@ -29,7 +29,7 @@ class DealSubscribe(models.Model):
 
         if mobile.startswith('04'):
             # australia mobile
-            send_au_sms(self.mobile, msg, 'DealSubscribe #%s' % self.id)
+            send_au_sms(self.mobile, msg, 'DealSubscribe #%s' % self.pk)
         elif mobile.startswith('1'):
             # todo chinese mobile
             pass

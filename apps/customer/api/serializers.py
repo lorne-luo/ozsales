@@ -7,9 +7,9 @@ from ..models import Customer, Address
 class AddressSerializer(BaseSerializer):
     class Meta:
         model = Address
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['name', 'mobile', 'address', 'customer', 'id_number', 'id_photo_front', 'id_photo_back']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']
 
 
 # Serializer for customer
@@ -19,7 +19,7 @@ class CustomerSerializer(BaseSerializer):
 
     class Meta:
         model = Customer
-        fields = ['id', 'edit_url', 'detail_url'] + \
+        fields = ['pk', 'edit_url', 'detail_url'] + \
                  ['name', 'email', 'mobile', 'order_count', 'primary_address', 'remark', 'tags',
                   'primary_address_display', 'address_set']
-        read_only_fields = ['id']
+        read_only_fields = ['pk']

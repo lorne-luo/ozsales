@@ -6,7 +6,7 @@ from .views import CommonListCreateAPIView, CommonRetrieveUpdateAPIView
 
 urlpatterns = [
     # common api for all models
-    url(r'(?P<app_name>\w+)/(?P<model_name>\w+)/(?P<pk>\d+)$',
+    url(r'(?P<app_name>\w+)/(?P<model_name>\w+)/(?P<pk>[-\w]+)$',
         CommonRetrieveUpdateAPIView.as_view(), name='retriveupdate_api'),
 
     url(r'(?P<app_name>\w+)/(?P<model_name>\w+)/$',

@@ -54,7 +54,7 @@ class OrderViewSet(CommonViewSet):
     queryset = Order.objects.all()
     serializer_class = serializers.OrderSerializer
     filter_class = OrderFilter
-    filter_fields = ['id']
+    filter_fields = ['pk']
     search_fields = ['customer__name', 'address__name', 'address__address']
     permission_classes = (SellerPermissions,)
     pinyin_search_fields = ['customer__pinyin', 'address__pinyin']  # search only input are all ascii chars
@@ -94,7 +94,7 @@ class OrderProductViewSet(CommonViewSet):
     """ api views for OrderProduct """
     queryset = OrderProduct.objects.all()
     serializer_class = serializers.OrderProductSerializer
-    filter_fields = ['id']
+    filter_fields = ['pk']
     search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_cn',
                      'product__brand__name_cn']
     permission_classes = [SellerPermissions]

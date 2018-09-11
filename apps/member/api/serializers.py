@@ -9,7 +9,7 @@ class SellerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Seller
-        fields = ['id', 'country', 'auth_user', 'name', 'expire_at', 'start_at', 'groups', 'groups_display']
+        fields = ['pk', 'country', 'auth_user', 'name', 'expire_at', 'start_at', 'groups', 'groups_display']
 
     def get_groups_display(self, obj):
         if obj.auth_user:
@@ -19,6 +19,6 @@ class SellerSerializer(serializers.ModelSerializer):
 
     def get_groups(self, obj):
         if obj.auth_user:
-            return [x.id for x in obj.auth_user.groups.all()]
+            return [x.pk for x in obj.auth_user.groups.all()]
         else:
             return []
