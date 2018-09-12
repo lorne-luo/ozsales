@@ -118,7 +118,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
 
-        if not self.pk:
+        if self._state.adding:
             self.track_id = self.track_id.upper()
             if self.carrier and self.address:
                 self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,

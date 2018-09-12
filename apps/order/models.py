@@ -97,7 +97,7 @@ class Order(TenantModelMixin, models.Model):
         get_latest_by = "finish_time"
 
     def __str__(self):
-        if self.pk:
+        if not self._state.adding:
             return '[%s]%s' % (self.uid, self.customer.name)
         else:
             return '%s' % (self.customer.name)
@@ -250,7 +250,7 @@ class Order(TenantModelMixin, models.Model):
         if self.address:
             self.address_text = self.address.get_text()
 
-        if not self.pk or self._currency_original != self.currency:
+        if self._state.adding or self._currency_original != self.currency:
             # new creating or currency changed, update forex rate
             self.aud_rmb_rate = getattr(forex, self.currency or self.seller.primary_currency)
 
