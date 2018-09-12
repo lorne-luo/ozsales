@@ -47,6 +47,7 @@ def validate_mobile_number(mobile):
         return mobile
     return None
 
+
 def clean_mobile_number(mobile):
     if not mobile:
         return ''
@@ -67,41 +68,44 @@ def clean_mobile_number(mobile):
 
 
 def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
-    phone_numbers = validate_mobile_number(phone_numbers)
-    if not phone_numbers:
-        return False, 'INVALID_PHONE_NUMBER'
+    try:
+        phone_numbers = validate_mobile_number(phone_numbers)
+        if not phone_numbers:
+            return False, 'INVALID_PHONE_NUMBER'
 
-    smsRequest = SendSmsRequest.SendSmsRequest()
-    # 申请的短信模板编码,必填
-    smsRequest.set_TemplateCode(template_code)
+        smsRequest = SendSmsRequest.SendSmsRequest()
+        # 申请的短信模板编码,必填
+        smsRequest.set_TemplateCode(template_code)
 
-    # 短信模板变量参数
-    if template_param is not None:
-        smsRequest.set_TemplateParam(template_param)
+        # 短信模板变量参数
+        if template_param is not None:
+            smsRequest.set_TemplateParam(template_param)
 
-    # 设置业务请求流水号，必填。
-    smsRequest.set_OutId(business_id)
+        # 设置业务请求流水号，必填。
+        smsRequest.set_OutId(business_id)
 
-    # 短信签名
-    smsRequest.set_SignName(SIGN_NAME)
+        # 短信签名
+        smsRequest.set_SignName(SIGN_NAME)
 
-    # 短信发送的号码列表，必填。
-    smsRequest.set_PhoneNumbers(phone_numbers)
+        # 短信发送的号码列表，必填。
+        smsRequest.set_PhoneNumbers(phone_numbers)
 
-    # 调用短信发送接口，返回json
-    smsResponse = acs_client.do_action_with_exception(smsRequest)
+        # 调用短信发送接口，返回json
+        smsResponse = acs_client.do_action_with_exception(smsRequest)
 
-    data = json.loads(smsResponse)
-    # {u'Message': u'OK', u'Code': u'OK', u'RequestId': u'22DB9012-D22D-412A-A27A-816CF80F09AA', u'BizId': u'178515533880148197^0'}
-    success = data.get('Code', None) == 'OK'
-    msg = data.get('Message', '')
-    biz_id = data.get('BizId', '')
+        data = json.loads(smsResponse)
+        # {u'Message': u'OK', u'Code': u'OK', u'RequestId': u'22DB9012-D22D-412A-A27A-816CF80F09AA', u'BizId': u'178515533880148197^0'}
+        success = data.get('Code', None) == 'OK'
+        msg = data.get('Message', '')
+        biz_id = data.get('BizId', '')
 
-    # save sms history
-    sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
-              remark=msg, biz_id=biz_id, success=success)
-    sms.save()
-    return success, data['Message']
+        # save sms history
+        sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
+                  remark=msg, biz_id=biz_id, success=success)
+        sms.save()
+        return success, data['Message']
+    except Exception as ex:
+        return False, str(ex)
 
 
 def query_send_detail(biz_id, phone_number, page_size, current_page, send_date):
