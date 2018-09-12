@@ -62,7 +62,7 @@ class PinyinSearchFilter(SearchFilter):
 
         if getattr(view, 'search_id_for_number', False):
             if len(search_terms) == 1 and search_terms[0].isdigit() and not search_terms[0].startswith('0'):
-                return queryset.filter(id=search_terms[0])
+                return queryset.filter(pk=search_terms[0])
 
         if not search_fields or not search_terms:
             return queryset

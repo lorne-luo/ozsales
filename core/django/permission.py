@@ -72,7 +72,7 @@ class SellerOwnerOrSuperuserRequiredMixin(ProfileRequiredMixin):
                 # equal to ProfileRequiredMixin
                 return True
             else:
-                return self.model.objects.filter(id=pk, seller=self.request.profile).exists()
+                return self.model.objects.filter(pk=pk, seller=self.request.profile).exists()
         return False
 
 

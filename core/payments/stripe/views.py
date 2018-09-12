@@ -54,7 +54,7 @@ class RemoveSingleCardView(SellerRequiredMixin, RedirectView):
 
     def post(self, request, *args, **kwargs):
         card_id = kwargs.get("pk")
-        card = Card.objects.filter(id=card_id).first()
+        card = Card.objects.filter(pk=card_id).first()
         profile = self.request.profile
         if card:
             profile.remove_card(card.stripe_id)

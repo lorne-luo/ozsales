@@ -25,7 +25,7 @@ stripe = base_stripe
 # def sync_subscriber(subscriber):
 #     """Sync a Customer with Stripe api data."""
 #     customer, _created = StCustomer.get_or_create(subscriber=subscriber)
-#     customer = StCustomer.objects.get(id=customer.pk)
+#     customer = StCustomer.objects.get(pk=customer.pk)
 #     try:
 #         customer.sync_from_stripe_data(customer.api_retrieve())
 #         customer._sync_subscriptions()

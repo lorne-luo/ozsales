@@ -139,7 +139,7 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
 
     @cached_property
     def tenant(self):
-        return Tenant.objects.filter(id=self.tenant_id).first()
+        return Tenant.objects.filter(pk=self.tenant_id).first()
 
     @staticmethod
     def create_seller(mobile, email, password, premium_account=False):

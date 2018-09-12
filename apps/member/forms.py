@@ -39,9 +39,9 @@ class SellerProfileForm(forms.ModelForm):
 
         if password1 and password1 != password2:
             self.add_error('password2', '确认密码不匹配，请重新输入')
-        if AuthUser.objects.filter(email=email).exclude(id=self.instance.auth_user.pk).exists():
+        if AuthUser.objects.filter(email=email).exclude(pk=self.instance.auth_user.pk).exists():
             self.add_error('email', '该电子邮件已存在')
-        if AuthUser.objects.filter(mobile=mobile).exclude(id=self.instance.auth_user.pk).exists():
+        if AuthUser.objects.filter(mobile=mobile).exclude(pk=self.instance.auth_user.pk).exists():
             self.add_error('mobile', '该手机号码已存在')
 
         return self.cleaned_data

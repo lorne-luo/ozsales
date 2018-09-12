@@ -12,7 +12,7 @@ class ProfileTenantMiddleware(DefaultTenantMiddleware):
     def get_tenant(self, model, hostname, request):
         tenant = None
         if request.user.is_authenticated() and request.user.tenant_id:
-            tenant = model.objects.filter(id=request.user.tenant_id).first()
+            tenant = model.objects.filter(pk=request.user.tenant_id).first()
 
         schema_name = self.DEFAULT_SCHEMA_NAME or get_public_schema_name()
         return tenant or model.objects.get(schema_name=schema_name)

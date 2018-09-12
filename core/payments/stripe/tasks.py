@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 def process_webhook_event(self, event_id):
     """ Processes events from Stripe asynchronously. """
     from djstripe.models import Event
-    event = Event.objects.filter(id=event_id).first()
+    event = Event.objects.filter(pk=event_id).first()
     if event:
         try:
             event.process(raise_exception=True)

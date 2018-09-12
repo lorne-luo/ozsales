@@ -58,7 +58,7 @@ class OrderAddEdit(MultiplePermissionsRequiredMixin, TemplateView):
         pk = kwargs.get('pk', '')
         context = {'form': forms.OrderForm2(), }
         if pk:
-            order = get_object_or_404(Order, id=pk)
+            order = get_object_or_404(Order, pk=pk)
             context['order'] = order
 
         return self.render_to_response(context)
@@ -185,7 +185,7 @@ class OrderAddDetailView(OrderUpdateView):
 
     def get(self, request, *args, **kwargs):
         customer_id = kwargs['customer_id']
-        if not Customer.objects.filter(id=customer_id).exists():
+        if not Customer.objects.filter(pk=customer_id).exists():
             return HttpResponseRedirect(reverse('order:order-add'))
 
         self.object = Order(customer_id=customer_id, seller=self.request.profile)

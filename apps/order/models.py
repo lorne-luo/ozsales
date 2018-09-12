@@ -498,7 +498,7 @@ class OrderProduct(TenantModelMixin, models.Model):
     def get_last_sale(self):
         last_sale = OrderProduct.objects.filter(order__seller_id=self.order.seller_id, product_id=self.product_id
                                                 ).exclude(sell_price_rmb=0
-                                                          ).exclude(id=self.pk).order_by('-create_time').first()
+                                                          ).exclude(pk=self.pk).order_by('-create_time').first()
         return last_sale
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):

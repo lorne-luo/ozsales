@@ -61,7 +61,7 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
 
     @cached_property
     def tenant(self):
-        return Tenant.objects.filter(id=self.tenant_id).first()
+        return Tenant.objects.filter(pk=self.tenant_id).first()
 
     @cached_property
     def profile(self):
