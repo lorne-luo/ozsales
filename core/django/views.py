@@ -50,7 +50,7 @@ class CommonContextMixin(object):
             'from_page': self.request.GET.get('from_page', ''),
             'search': self.request.GET.get('search', ''),
             'default_dashboard_title': default_dashboard_title,
-            'page_title': page_title.title(),
+            'page_title': page_title.title() if page_title[0].isalpha() else page_title,
             'page_model': getattr(self, 'model', ''),
             'page_app_name': self.app_name,
             'page_model_name': self.model_name,
@@ -118,7 +118,7 @@ class CommonPageViewMixin(object):
 
         common_dict = {
             'default_dashboard_title': default_dashboard_title,
-            'page_title': page_title,
+            'page_title': page_title.title() if page_title[0].isalpha() else page_title,
             'page_model': getattr(self, 'model', ''),
             'page_app_name': getattr(self, 'app_name', ''),
             'page_model_name': getattr(self, 'model_name', ''),
