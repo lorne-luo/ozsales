@@ -15,7 +15,7 @@ from ..product.models import Product
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Order
-        fields = '__all__'
+        exclude = ['id']
 
     def __init__(self, *args, **kwargs):
         super(OrderForm, self).__init__(*args, **kwargs)
@@ -53,13 +53,11 @@ class OrderInline(admin.TabularInline):
 
 class OrderForm2(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        # self.user = kwargs.pop('user')
         super(OrderForm2, self).__init__(*args, **kwargs)
 
     class Meta:
         model = Order
-        fields = '__all__'
-        # exclude = ['epg_events_updated_at']
+        exclude = ['id']
 
 
 class OrderAddForm(NoManytoManyHintModelForm):

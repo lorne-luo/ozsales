@@ -83,7 +83,7 @@ class AddressInlineForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = Address
-        fields = '__all__'
+        exclude=['id']
 
     def __init__(self, *args, **kwargs):
         super(AddressInlineForm, self).__init__(*args, **kwargs)

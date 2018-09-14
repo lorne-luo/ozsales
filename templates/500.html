@@ -1,28 +1,28 @@
 {% extends "adminlte/base.html" %}
 {% load static %}
 
-{% block base_head_title %}404 Errors{% endblock %}
+{% block base_head_title %}500 Errors{% endblock %}
 {% block base_head_title_system_name %}OZSALES{% endblock %}
 
 {% block base_body %}
-<body class="hold-transition">
-  <div id="container" class="row-fluid">
-      <div class="container-fluid">
-        <div class="row-fluid" >
-           <div class="span12">
-               <div class="space20"></div>
-               <div class="space20"></div>
-               <div class="widget-body">
-                  <div class="error-page">
-                    <h1>
-                      <strong>500 Internal Server Error</strong> <br>
-                      OOPS! Something went wrong.
-                    </h1>
-                  </div>
+    <body class="hold-transition">
+    <div id="container" class="row-fluid">
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="space20"></div>
+                    <div class="space20"></div>
+                    <div class="widget-body">
+                        <div class="error-page">
+                            <h1>
+                                <strong>500 Internal Server Error</strong> <br>
+                                OOPS! Something went wrong.
+                            </h1>
+                        </div>
+                    </div>
                 </div>
-           </div>
+            </div>
         </div>
-      </div>
     </div>
-</body>
+    </body>
 {% endblock %}
