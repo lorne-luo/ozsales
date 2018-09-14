@@ -63,7 +63,7 @@ class CustomerAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomple
         return qs
 
 
-class AddressAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
+class AddressAutocomplete(HansSelect2ViewMixin, autocomplete.Select2QuerySetView):
     model = Address
     paginate_by = 20
     create_field = 'address'
@@ -73,7 +73,7 @@ class AddressAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplet
         return self.get_queryset().create(**{self.create_field: text, 'customer_id': self.forwarded.get('customer')})
 
     def get_queryset(self):
-        qs = Address.objects.belong_to(self.request.user)
+        qs = Address.objects.all()
         cid = self.forwarded.get('customer')
 
         if cid:

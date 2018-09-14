@@ -159,18 +159,6 @@ def get_id_photo_back_path(instance, filename):
     return file_path
 
 
-class AddressManager(Manager):
-    def belong_to(self, obj):
-        if isinstance(obj, Customer):
-            customer_id = obj.pk
-            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
-        elif isinstance(obj, AuthUser) and obj.is_customer:
-            customer_id = obj.profile.pk
-            return super(AddressManager, self).get_queryset().filter(customer_id=customer_id)
-        else:
-            raise PermissionDenied
-
-
 class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelMixin, models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
@@ -189,7 +177,6 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
                                       'thumbnail': (150, 150, False)
                                   })
 
-    objects = AddressManager()
     pinyin_fields_conf = [
         ('name', Style.NORMAL, False),
         ('name', Style.FIRST_LETTER, False),
