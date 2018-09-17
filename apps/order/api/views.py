@@ -87,7 +87,8 @@ class OrderViewSet(CommonViewSet):
         if status:
             order.set_status(status)
 
-        return Response({'success': True})
+        data = self.serializer_class(order, context={'request': request}).data
+        return Response(data)
 
 
 class OrderProductViewSet(CommonViewSet):
