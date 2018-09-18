@@ -1,7 +1,7 @@
 
 {% extends "adminlte/common_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/messageset/sitemailcontent_list.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/messageset/sitemailcontent_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}

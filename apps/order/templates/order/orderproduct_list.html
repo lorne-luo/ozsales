@@ -1,6 +1,6 @@
 
 {% extends "adminlte/common_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block common_list_buttons %}{% endblock %}
 
@@ -49,5 +49,5 @@
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/order/orderproduct_list.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/orderproduct_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}

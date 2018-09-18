@@ -1,5 +1,5 @@
 {% extends "adminlte/common_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block content_title %}
     站内信
@@ -197,6 +197,6 @@
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/messageset/sitemail-list-page.min.js' %}"></script>
-{#    <script type="text/javascript" src="{% static 'js/messageset/sitemailreceive_list.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'js/messageset/sitemail-list-page.min.js' %}?v={% startup_timestamp %}"></script>
+{#    <script type="text/javascript" src="{% static 'js/messageset/sitemailreceive_list.js' %}?v={% startup_timestamp %}"></script>#}
 {% endblock %}

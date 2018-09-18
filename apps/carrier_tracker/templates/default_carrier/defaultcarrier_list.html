@@ -1,5 +1,5 @@
 {% extends "adminlte/common_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block table_head %}
   <th class="text-center hidden-sm hidden-xs" style="width:60px;">
@@ -79,5 +79,5 @@
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/carrier_tracker/carriertracker_list.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/carrier_tracker/carriertracker_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}

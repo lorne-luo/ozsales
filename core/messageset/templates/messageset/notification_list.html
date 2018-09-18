@@ -1,5 +1,5 @@
 {% extends "adminlte/common_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block common_list_buttons %}
     {% if request.user and request.user.is_superuser %}
@@ -31,5 +31,5 @@
 
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/messageset/notification_list.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/messageset/notification_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}

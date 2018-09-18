@@ -1,9 +1,9 @@
 {% extends "adminlte/common_tab_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block common_list_footer_page_script %}
-  <script type="text/javascript" src="{% static 'js/order/order_list_base.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/order/order_member_list.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_list_base.min.js' %}?v={% startup_timestamp %}"></script>
+  <script type="text/javascript" src="{% static 'js/order/order_member_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}
 
 {% block tab_nav %}

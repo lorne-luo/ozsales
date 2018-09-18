@@ -1,5 +1,5 @@
 {% extends "product/product_list.html" %}
-{% load static %}
+{% load static custom_static %}
 
 {% block breadcrumb %}
     <ol class="breadcrumb">
@@ -79,7 +79,7 @@
 {% endblock %}
 
 {% block common_list_footer_page_script %}
-    <script type="text/javascript" src="{% static 'js/product/product_list.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/product/product_list.min.js' %}?v={% startup_timestamp %}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $('a.brand_select').off('click').click(function () {
