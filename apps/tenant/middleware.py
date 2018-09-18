@@ -28,3 +28,5 @@ class ProfileTenantMiddleware(DefaultTenantMiddleware):
                     setattr(request, 'seller', profile)
                 if request.user.is_customer:
                     setattr(request, 'customer', profile)
+        else:
+            setattr(request, 'profile', None)
