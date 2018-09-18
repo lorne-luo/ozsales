@@ -61,6 +61,12 @@ def get_last_record(table, tag='tr', index=-1):
 
 
 # =======================================================
+def track_info(url, list_tag='table', id_=None, cls=None, item_tag='tr', item_index=-1):
+    table = get_table(url, list_tag, id_, cls)
+    last_record = get_last_record(table, item_tag, item_index)
+    return check_delivery(last_record)
+
+
 def table_last_tr(url):
     table = get_table(url)
     last_record = get_last_record(table)
