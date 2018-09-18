@@ -41,7 +41,6 @@ apps_urlpatterns = [
     url(r'^store/', include('apps.store.urls', namespace='store')),
     url(r'^product/', include('apps.product.urls', namespace='product')),
     url(r'^order/', include('apps.order.urls', namespace='order')),
-    url(r'^(?P<schema_id>[-\w]+)/(?P<uid>[-\w]+)/$', OrderDetailView.as_view(), name='order-detail-short'),
     url(r'^express/', include('apps.express.urls', namespace='express')),
     url(r'^carrier_tracker/', include('apps.carrier_tracker.urls', namespace='carrier_tracker')),
     url(r'^report/', include('apps.report.urls', namespace='report')),
@@ -49,6 +48,7 @@ apps_urlpatterns = [
     url(r'^schedule/', include('apps.schedule.urls', namespace='schedule')),
     url(r'^messageset/', include('core.messageset.urls', namespace='messageset')),
     url(r'^payments/', include('core.payments.stripe.urls', namespace='payments')),
+    url(r'^(?P<schema_id>[-\w]+)/(?P<uid>[-\w]+)/$', OrderDetailView.as_view(), name='order-detail-short'),
 ]
 
 # REST API

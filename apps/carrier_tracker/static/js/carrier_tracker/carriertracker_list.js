@@ -5,10 +5,10 @@ var expresscarrierListPageVue = new CommonListPageVue({
             delete_api_tag: 'api:carriertracker-delete',
             detail_api_tag: 'api:carriertracker-detail',
 
-            create_url_tag: 'carriertracker:carriertracker-add',
-            list_url_tag:   'carriertracker:carriertracker-list',
-            detail_url_tag: 'carriertracker:carriertracker-detail',
-            update_url_tag: 'carriertracker:carriertracker-update',
+            create_url_tag: 'carrier_tracker:carriertracker-add',
+            list_url_tag:   'carrier_tracker:carriertracker-list',
+            detail_url_tag: 'carrier_tracker:carriertracker-detail',
+            update_url_tag: 'carrier_tracker:carriertracker-update',
             list_url:       Urls['api:carriertracker-list']()+ '?ordering=-is_default'
         }
     }

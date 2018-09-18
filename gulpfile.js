@@ -45,6 +45,7 @@ let _apps = [];
  */
 
 // Register your django apps here!
+registerApp('apps/carrier_tracker');
 registerApp('apps/customer');
 registerApp('apps/express');
 registerApp('apps/member');
@@ -53,6 +54,8 @@ registerApp('apps/product');
 registerApp('apps/report');
 registerApp('apps/schedule');
 registerApp('apps/store');
+registerApp('apps/weixin');
+registerApp('apps/carrier_tracker');
 registerApp('core/messageset');
 
 

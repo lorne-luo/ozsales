@@ -14,7 +14,7 @@ class CarrierTrackerListView(SuperuserRequiredMixin, CommonContextMixin, ListVie
     template_name_suffix = '_list'  # carrier_tracker/CarrierTracker_list.html
 
     def get_context_data(self, **kwargs):
-        return super(CarrierTracker, self).get_context_data(**kwargs)
+        return super(CarrierTrackerListView, self).get_context_data(**kwargs)
 
 
 class CarrierTrackerAddView(SuperuserRequiredMixin, CommonContextMixin, CreateView):
