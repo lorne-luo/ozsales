@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import sys
 import json
+
+from django.db import connection
+from django.conf import settings
 from .aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
 from .aliyunsdkdysmsapi.request.v20170525 import QuerySendDetailsRequest
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.profile import region_provider
-from django.conf import settings
+from apps.tenant.models import Tenant
 
 from core.sms.models import Sms
 
@@ -99,10 +102,11 @@ def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
         msg = data.get('Message', '')
         biz_id = data.get('BizId', '')
 
-        # save sms history
-        sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
-                  remark=msg, biz_id=biz_id, success=success)
-        sms.save()
+        if connection.schema_name.starts_with(Tenant.SCHEMA_NAME_PREFIX):
+            # save sms history
+            sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
+                      remark=msg, biz_id=biz_id, success=success)
+            sms.save()
         return success, data['Message']
     except Exception as ex:
         return False, str(ex)

@@ -4,8 +4,10 @@ import Telstra_Messaging
 import datetime
 import redis
 from django.conf import settings
+from django.db import connection
 from Telstra_Messaging.rest import ApiException
 
+from apps.tenant.models import Tenant
 from core.sms.models import Sms
 
 log = logging.getLogger(__name__)
@@ -107,10 +109,11 @@ def send_au_sms(to, body, app_name=None):
         #  'number_segments': 1}
         api_response = api_instance.send_sms(send_sms_request)
         success = api_response.messages[0].delivery_status == 'MessageWaiting'
-        sms = Sms(app_name=app_name, send_to=to, content=body, success=success,
-                  template_code=api_response.messages[0].delivery_status,
-                  remark=api_response.messages[0].message_status_url, biz_id=api_response.messages[0].delivery_status)
-        sms.save()
+        if connection.schema_name.starts_with(Tenant.SCHEMA_NAME_PREFIX):
+            sms = Sms(app_name=app_name, send_to=to, content=body, success=success,
+                      template_code=api_response.messages[0].delivery_status,
+                      remark=api_response.messages[0].message_status_url, biz_id=api_response.messages[0].delivery_status)
+            sms.save()
 
         if success:
             counter = r.get(TELSTRA_SMS_MONTHLY_COUNTER) or 0

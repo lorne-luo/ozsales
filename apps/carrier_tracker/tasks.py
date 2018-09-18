@@ -3,6 +3,7 @@ import logging
 from celery.task import periodic_task, task
 from celery.schedules import crontab
 from apps.order.models import Order, ORDER_STATUS
+from apps.tenant.models import Tenant
 
 log = logging.getLogger(__name__)
 
@@ -19,17 +20,19 @@ def update_delivery_tracking():
 # @periodic_task(run_every=crontab(minute=5, hour='11,14,17,19,23'))
 @task
 def send_delivery_sms():
-    for order in Order.objects.filter(status=ORDER_STATUS.DELIVERED):
-        if not order.seller.is_premium:
-            continue
-        if not order.delivery_msg_sent:
-            order.sms_delivered()
-        order.set_status(ORDER_STATUS.FINISHED)
-
-    for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
-        if not order.seller.is_premium:
-            continue
-        order.sms_delivered()
-        if order.is_all_delivered:
+    for tenant in Tenant.objects.normal():
+        tenant.set_schema()
+        for order in Order.objects.filter(status=ORDER_STATUS.DELIVERED):
+            if not order.seller.is_premium:
+                continue
+            if not order.delivery_msg_sent:
+                order.sms_delivered()
             order.set_status(ORDER_STATUS.FINISHED)
-            order.express_orders.update(delivery_sms_sent=True)
+
+        for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
+            if not order.seller.is_premium:
+                continue
+            order.sms_delivered()
+            if order.is_all_delivered:
+                order.set_status(ORDER_STATUS.FINISHED)
+                order.express_orders.update(delivery_sms_sent=True)

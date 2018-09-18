@@ -7,6 +7,10 @@ from tenant_schemas.models import TenantMixin
 
 from core.django.db import get_next_id
 
+class TenantManager(models.Manager):
+    def normal(self):
+        qs = super(TenantManager, self).get_queryset().filter(schema_name__startswith=Tenant.SCHEMA_NAME_PREFIX)
+        return qs
 
 class Tenant(TenantMixin):
     """include domain_url and schema_name"""
@@ -17,6 +21,7 @@ class Tenant(TenantMixin):
     DOMAIN_ROOT = 'youdan.com.au'
 
     SCHEMA_NAME_PREFIX = 't'
+    objects = TenantManager()
 
     def __str__(self):
         return '%s' % self.schema_name

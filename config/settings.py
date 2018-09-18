@@ -301,10 +301,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.sms.tasks.cleanup_sms_history',
         'schedule': crontab(hour=0, minute=7, day_of_month=2)
     },
-    'ozbargin_task': {
-        'task': 'apps.schedule.tasks.ozbargin_task',
-        'schedule': crontab(minute='*/15', hour='7-23')
-    },
+    # 'ozbargin_task': {
+    #     'task': 'apps.schedule.tasks.ozbargin_task',
+    #     'schedule': crontab(minute='*/15', hour='7-23')
+    # },
     # 'smzdm_task': {
     #     'task': 'apps.schedule.tasks.smzdm_task',
     #     'schedule': crontab(minute='*/20', hour='7-23')
