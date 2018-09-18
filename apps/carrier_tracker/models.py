@@ -35,6 +35,11 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
     last_track_id = models.CharField(_('最新单号'), max_length=512, blank=True)
     alias = models.CharField(_('alias'), max_length=255, blank=True)
+    list_tag = models.CharField(_('list_tag'), max_length=255, blank=True, default='table')
+    list_id = models.CharField(_('list_id'), max_length=255, blank=True)
+    list_class = models.CharField(_('list_class'), max_length=255, blank=True)
+    item_tag = models.CharField(_('item_tag'), max_length=255, blank=True, default='tr')
+    item_index = models.IntegerField(_('item_index'), blank=True, default=-1)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -77,7 +82,8 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
                 success, last_info = tracker.arkexpress_track(url)
             # todo more tracker
             else:
-                success, last_info = tracker.table_last_tr(url)
+                success, last_info = tracker.track_info(url, self.list_tag, self.list_id, self.list_class,
+                                                        self.item_tag, self.item_index)
 
             if success:
                 self.last_track_id = track_id
