@@ -102,7 +102,7 @@ def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
         msg = data.get('Message', '')
         biz_id = data.get('BizId', '')
 
-        if connection.schema_name.starts_with(Tenant.SCHEMA_NAME_PREFIX):
+        if connection.schema_name.startswith(Tenant.SCHEMA_NAME_PREFIX):
             # save sms history
             sms = Sms(app_name=business_id, send_to=phone_numbers, content=str(template_param), template_code=template_code,
                       remark=msg, biz_id=biz_id, success=success)

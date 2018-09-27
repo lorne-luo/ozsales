@@ -109,7 +109,7 @@ def send_au_sms(to, body, app_name=None):
         #  'number_segments': 1}
         api_response = api_instance.send_sms(send_sms_request)
         success = api_response.messages[0].delivery_status == 'MessageWaiting'
-        if connection.schema_name.starts_with(Tenant.SCHEMA_NAME_PREFIX):
+        if connection.schema_name.startswith(Tenant.SCHEMA_NAME_PREFIX):
             sms = Sms(app_name=app_name, send_to=to, content=body, success=success,
                       template_code=api_response.messages[0].delivery_status,
                       remark=api_response.messages[0].message_status_url, biz_id=api_response.messages[0].delivery_status)
