@@ -58,3 +58,13 @@ class Tenant(TenantMixin):
 
     def set_schema(self):
         connection.set_schema(self.schema_name)
+
+    @cached_property
+    def seller(self):
+        from apps.member.models import Seller
+        return Seller.objects.filter(tenant_id=str(self.id)).first()
+
+    @cached_property
+    def user(self):
+        from core.auth_user.models import AuthUser
+        return AuthUser.objects.filter(tenant_id=str(self.id)).first()

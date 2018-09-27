@@ -36,7 +36,7 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
     create_at = models.DateTimeField(_('create at'), auto_now_add=True, null=True)
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-create_at']
 
     def __str__(self):
         return '%s' % self.name

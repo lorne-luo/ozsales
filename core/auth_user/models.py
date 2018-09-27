@@ -4,9 +4,8 @@ from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import AbstractUser, PermissionsMixin, UserManager
 
-from apps.tenant.models import Tenant
 from core.aliyun.email.tasks import email_send_task
-from core.auth_user.constant import ADMIN_GROUP
+from core.auth_user.constant import ADMIN_GROUP, PREMIUM_MEMBER_GROUP, FREE_PREMIUM_GROUP
 from core.payments.stripe.models import StripePaymentUserMixin
 from core.sms.telstra_api_v2 import send_au_sms
 from ..messageset.models import NotificationContent, SiteMailContent
@@ -61,7 +60,14 @@ class AuthUser(AbstractUser, StripePaymentUserMixin):
 
     @cached_property
     def tenant(self):
+        from apps.tenant.models import Tenant
         return Tenant.objects.filter(pk=self.tenant_id).first()
+
+    @cached_property
+    def is_premium(self):
+        if self.is_superuser:
+            return True  # always True
+        return self.in_group(PREMIUM_MEMBER_GROUP) or self.in_group(FREE_PREMIUM_GROUP)
 
     @cached_property
     def profile(self):
