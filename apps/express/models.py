@@ -120,9 +120,9 @@ class ExpressOrder(TenantModelMixin, models.Model):
 
         if self._state.adding:
             self.track_id = self.track_id.upper()
-            if self.carrier and self.address:
+            if self.carrier and self.order.address:
                 self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
-                                                             address=self.address,
+                                                             address=self.order.address,
                                                              id_upload=True).exists()
         return super(ExpressOrder, self).save(force_insert, force_update, using, update_fields)
 
