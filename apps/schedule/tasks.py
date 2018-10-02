@@ -20,6 +20,7 @@ from dateutil import parser
 from dateutil.relativedelta import relativedelta
 
 from apps.order.models import ORDER_STATUS, Order
+from apps.tenant.models import Tenant
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.utils.forext_1forge import ForexDataClient
@@ -217,20 +218,24 @@ def get_forex_quotes():
 # @periodic_task(run_every=crontab(hour=20, minute=30))
 @task
 def express_id_upload_task():
-    for order in Order.objects.exclude(status=ORDER_STATUS.FINISHED).exclude(status=ORDER_STATUS.DELIVERED):
-        unuploads = order.express_orders.filter(id_upload=False)
-        if unuploads.exists():
-            ids = ','.join([o.track_id for o in unuploads])
-            if order.seller.is_admin:
-                content = 'Upload ID for %s' % ids
-                subject = 'Upload ID for %s' % order
-                order.seller.send_email(subject, content)
-                # send_to_admin(content)
-            else:
-                for unupload in unuploads:
-                    link = unupload.order.public_url
-                    content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unupload.order)
-                    order.seller.send_notification('上传身份证', content)
+    for tenant in Tenant.objects.normal():
+        tenant.set_schema()
+        if not tenant.seller or not tenant.seller.is_premium:
+            continue
+        for order in Order.objects.exclude(status=ORDER_STATUS.FINISHED).exclude(status=ORDER_STATUS.DELIVERED):
+            unuploads = order.express_orders.filter(id_upload=False)
+            if unuploads.exists():
+                ids = ','.join([o.track_id for o in unuploads])
+                if order.seller.is_admin:
+                    content = 'Upload ID for %s' % ids
+                    subject = 'Upload ID for %s' % order
+                    order.seller.send_email(subject, content)
+                    # send_to_admin(content)
+                else:
+                    for unupload in unuploads:
+                        link = unupload.order.public_url
+                        content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unupload.order)
+                        order.seller.send_notification('上传身份证', content)
 
     log.info('[Express] Daily id upload checking.')
 

@@ -12,10 +12,10 @@ log = logging.getLogger(__name__)
 @task
 def update_delivery_tracking():
     for tenant in Tenant.objects.normal():
+        tenant.set_schema()
         if not tenant.seller or not tenant.seller.is_premium:
             continue
 
-        tenant.set_schema()
         for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
             if not order.seller.is_premium:
                 continue
@@ -26,10 +26,10 @@ def update_delivery_tracking():
 @task
 def send_delivery_sms():
     for tenant in Tenant.objects.normal():
+        tenant.set_schema()
         if not tenant.seller or not tenant.seller.is_premium:
             continue
 
-        tenant.set_schema()
         for order in Order.objects.filter(status=ORDER_STATUS.DELIVERED):
             if not order.delivery_msg_sent:
                 order.sms_delivered()
