@@ -121,18 +121,16 @@ class Order(TenantModelMixin, models.Model):
                 uid = self.generate_uid()
             self.uid = uid
 
-    def get_mobile(self):
+    def get_customer_mobile(self):
         if self.customer and self.customer.mobile:
             return self.customer.mobile
-        elif self.address and self.address.mobile:
-            return self.address.mobile
         return None
 
     def sms_shipping(self):
         if not self.seller.is_premium:
             return
 
-        mobile = self.get_mobile()
+        mobile = self.get_customer_mobile()
         if not mobile or self.shipping_msg_sent:
             return
 
@@ -148,7 +146,7 @@ class Order(TenantModelMixin, models.Model):
         if not self.seller.is_premium:
             return
 
-        mobile = self.get_mobile()
+        mobile = self.get_customer_mobile()
         if not mobile or self.delivery_msg_sent:
             return
 

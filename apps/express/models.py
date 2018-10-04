@@ -155,7 +155,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
     get_order_link.short_description = 'Order'
 
     def sms_delivered(self):
-        mobile = self.order.get_mobile()
+        mobile = self.order.get_customer_mobile()
         if not mobile or self.delivery_sms_sent:
             return
 

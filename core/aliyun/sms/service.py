@@ -2,6 +2,7 @@
 import sys
 import json
 
+import logging
 from django.db import connection
 from django.conf import settings
 from .aliyunsdkdysmsapi.request.v20170525 import SendSmsRequest
@@ -35,39 +36,46 @@ ACCESS_KEY_SECRET = settings.ALIYUN_ACCESS_KEY_SECRET
 acs_client = AcsClient(ACCESS_KEY_ID, ACCESS_KEY_SECRET, REGION)
 region_provider.add_endpoint(PRODUCT_NAME, REGION, DOMAIN)
 
+log = logging.getLogger(__name__)
+
 
 def validate_mobile_number(mobile):
     if not mobile:
-        return None
-    if mobile.startswith('+86'):
-        mobile = mobile.replace('+86', '')
-    if mobile.startswith('086'):
-        mobile = mobile.replace('086', '')
-    if mobile.startswith('0086'):
-        mobile = mobile.replace('0086', '')
-    mobile = mobile.strip()
-    if mobile.startswith('1') and len(mobile) == len('13300000000'):
-        return mobile
-    return None
+        return ''
+
+    cleaned_mobile = mobile.strip()
+    if cleaned_mobile.startswith('+86'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('086'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('0086'):
+        cleaned_mobile = cleaned_mobile[4:]
+    if cleaned_mobile.startswith('1') and len(cleaned_mobile) == len('13300000000'):
+        return cleaned_mobile
+
+    log.info("Mobile number %s not valid" % mobile)
+    return ''
 
 
 def clean_mobile_number(mobile):
     if not mobile:
         return ''
-    if mobile.startswith('+86'):
-        mobile = mobile.replace('+86', '')
-    if mobile.startswith('086'):
-        mobile = mobile.replace('086', '')
-    if mobile.startswith('0086'):
-        mobile = mobile.replace('0086', '')
-    if mobile.startswith('+61'):
-        mobile = mobile.replace('+61', '')
-    if mobile.startswith('061'):
-        mobile = mobile.replace('061', '')
-    if mobile.startswith('0061'):
-        mobile = mobile.replace('0061', '')
 
-    return mobile.strip()
+    cleaned_mobile = mobile.strip()
+    if cleaned_mobile.startswith('+86'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('086'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('0086'):
+        cleaned_mobile = cleaned_mobile[4:]
+    if cleaned_mobile.startswith('+61'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('061'):
+        cleaned_mobile = cleaned_mobile[3:]
+    if cleaned_mobile.startswith('0061'):
+        cleaned_mobile = cleaned_mobile[4:]
+
+    return cleaned_mobile
 
 
 def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):

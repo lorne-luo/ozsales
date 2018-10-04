@@ -71,7 +71,7 @@ class OrderSerializer(BaseSerializer):
 
     class Meta:
         model = Order
-        fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount',
+        fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'uid',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
                   'address_display', 'detail_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
@@ -104,4 +104,3 @@ class OrderSerializer(BaseSerializer):
     def get_paid_url(self, obj):
         url = reverse('order:change-order-paid', args=[obj.pk])
         return url
-

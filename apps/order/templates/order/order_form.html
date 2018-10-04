@@ -11,11 +11,7 @@
         </li>
         {% if page_title != default_dashboard_title %}
             <li class="active">
-                {% if user.is_superuser %}
-                    <a href="{% url 'order:order-list' %}">Order</a>
-                {% else %}
-                    {{ page_title }}
-                {% endif %}
+                <a href="{% url 'order:order-list' %}">Order</a>
             </li>
         {% endif %}
         {% if object != None %}
