@@ -295,7 +295,7 @@ CELERY_BEAT_SCHEDULE = {
     },
     'send_delivery_sms': {
         'task': 'apps.carrier_tracker.tasks.send_delivery_sms',
-        'schedule': crontab(minute=5, hour='11,14,17,19,23')
+        'schedule': crontab(minute=5, hour='11,14,17,19,23,1')
     },
     'cleanup_sms_history': {
         'task': 'apps.sms.tasks.cleanup_sms_history',
@@ -311,7 +311,7 @@ CELERY_BEAT_SCHEDULE = {
     # },
     'get_forex_quotes': {
         'task': 'apps.schedule.tasks.get_forex_quotes',
-        'schedule': crontab(minute=1, hour='8,14,20', day_of_week='mon,tue,wed,thu,fri')
+        'schedule': crontab(minute=1, hour='8,23', day_of_week='mon,tue,wed,thu,fri')
     },
     'express_id_upload_task': {
         'task': 'apps.schedule.tasks.express_id_upload_task',
