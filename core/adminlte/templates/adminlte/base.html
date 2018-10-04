@@ -90,7 +90,7 @@
                 {% endblock %}
             </div>
             {% include "adminlte/includes/footer.html" %}
-            {% if user.is_superuser %}
+            {% if user.is_authenticated %}
                 {% include "adminlte/includes/control_sidebar.html" %}
             {% endif %}
         </div>
