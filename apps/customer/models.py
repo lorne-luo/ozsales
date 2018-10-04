@@ -51,6 +51,7 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models
     primary_address = models.ForeignKey('Address', blank=True, null=True, verbose_name=_('默认地址'),
                                         related_name='primary_address')
     tags = models.ManyToManyField(InterestTag, verbose_name=_('Tags'), blank=True)
+    create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=False)
 
     pinyin_fields_conf = [
         ('name', Style.NORMAL, False),
@@ -176,6 +177,7 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
                                   variations={
                                       'thumbnail': (150, 150, False)
                                   })
+    create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=False)
 
     pinyin_fields_conf = [
         ('name', Style.NORMAL, False),
@@ -185,8 +187,7 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     ]
 
     class Meta:
-        verbose_name_plural = _('Address')
-        verbose_name = _('Address')
+        ordering = ['create_time']
 
     def __str__(self):
         return self.get_text()
