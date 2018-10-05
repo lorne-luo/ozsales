@@ -26,6 +26,9 @@ class MonthlyReport(TenantModelMixin, models.Model):
     sell_price_rmb = models.DecimalField(_('Sell Price RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
     profit_rmb = models.DecimalField(_('Profit RMB'), max_digits=8, decimal_places=2, blank=True, null=True)
 
+    class Meta:
+        ordering = ['-month']
+
     def __str__(self):
         return '[%s]%s' % (self.month.strftime('%Y-%b'), self.profit_rmb)
 

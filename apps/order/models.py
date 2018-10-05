@@ -490,6 +490,9 @@ class OrderProduct(TenantModelMixin, models.Model):
     is_purchased = models.BooleanField(default=False)
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=True)
 
+    class Meta:
+        ordering = ['create_time']
+
     def __str__(self):
         return '%s = %d X %s' % (self.name, self.sell_price_rmb, self.amount)
 
