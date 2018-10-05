@@ -10,12 +10,10 @@ from core.django.models import TenantModelMixin
 
 from apps.customer.models import Customer, Address
 from apps.express.models import ExpressOrder
-from apps.member.models import Seller
 from apps.order.models import Order, ORDER_STATUS
 
 
 class MonthlyReport(TenantModelMixin, models.Model):
-    seller = models.ForeignKey(Seller, blank=True, null=True)
     month = models.DateField(auto_now_add=False, editable=True, blank=False, null=False,
                              verbose_name=_('Month'))
     order_count = models.PositiveIntegerField(blank=True, null=True)
