@@ -96,8 +96,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
     delivered_time = models.DateTimeField(_('寄达时间'), editable=True, blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = _('Express Order')
-        verbose_name = _('Express Order')
+        ordering = ["create_time"]
 
     def __str__(self):
         if self.carrier:
