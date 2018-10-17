@@ -2,6 +2,8 @@
 import logging
 from decimal import Decimal
 from enum import Enum
+
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -402,8 +404,16 @@ class Order(TenantModelMixin, models.Model):
         # self.seller.send_email(subject, content)
         # self.customer.send_email(subject, content)
 
+    def get_track_express(self):
+        """get express order need to be track"""
+        skip_days = 2  # skip recent creation
+        two_days_ago = timezone.now() - relativedelta(days=skip_days)
+        return self.express_orders.filter(create_time__lt=two_days_ago,
+                                          is_delivered=False,
+                                          carrier__isnull=False)
+
     def update_track(self):
-        express_all = self.express_orders.all()
+        express_all = self.get_track_express()
         if express_all.count() == 0:
             return
 
