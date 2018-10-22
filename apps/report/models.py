@@ -96,7 +96,7 @@ class MonthlyReport(TenantModelMixin, models.Model):
                                     total_express_fee=Sum('shipping_fee'))
 
         data.update({'first_day': first_day,
-                     'total_year': distance.days / 365,
+                     'total_year': int(distance.days / 365),
                      'total_day': distance.days % 365,
                      'total_customer': Customer.objects.count(),
                      'total_order': own_orders.count(),
