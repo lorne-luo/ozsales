@@ -11,7 +11,6 @@ from django.db.models import Q
 from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
@@ -22,22 +21,12 @@ log = logging.getLogger(__name__)
 
 
 class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
-    # todo find another way to store create by seller
-    seller = models.ForeignKey('member.Seller', blank=True, null=True)
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
-    # page to track parcel
-    search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
-    # some carrier need post to track parcel
-    post_search_url = models.URLField(_('查询提交网址'), blank=True, help_text='查询提交网址')
-    id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
-    rate = models.DecimalField(_('费率'), max_digits=6, decimal_places=2, blank=True, null=True, help_text='每公斤费率')
+    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     is_default = models.BooleanField('默认', default=False, help_text='是否默认')
-    track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
-    domain = models.CharField(_('domain'), max_length=512, blank=True)
-    tracker = models.ForeignKey('carrier_tracker.CarrierTracker', blank=True, null=True)
+    tracker = models.OneToOneField('carrier_tracker.CarrierTracker', blank=True, null=True)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -47,10 +36,30 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     def __str__(self):
         return self.name_cn or self.name_en
 
+    @property
+    def track_id_regex(self):
+        return self.tracker.track_id_regex if self.tracker else None
+
+    @property
+    def id_upload_url(self):
+        return self.tracker.id_upload_url if self.tracker else None
+
+    @property
+    def post_search_url(self):
+        return self.tracker.post_search_url if self.tracker else None
+
+    @property
+    def search_url(self):
+        return self.tracker.search_url if self.tracker else None
+
+    @property
+    def domain(self):
+        return self.tracker.domain if self.tracker else None
+
     @staticmethod
-    def get_incomplete_carrier_by_user(seller):
+    def get_incomplete_carrier():
         # return first update required carrier
-        return ExpressCarrier.objects.filter(seller=seller).filter(Q(website__isnull=True) | Q(website='')).first()
+        return ExpressCarrier.objects.filter(Q(website__isnull=True) | Q(website='')).first()
 
     @staticmethod
     def get_default_carrier():
@@ -64,13 +73,6 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
                 if m and m.group():
                     return carrier
         return None
-
-    def save(self, *args, **kwargs):
-        if not self.domain or self.domain not in self.website:
-            parsed_uri = urlparse(self.website)
-            ext = tldextract.extract(parsed_uri.netloc)
-            self.domain = ext.registered_domain
-        super(ExpressCarrier, self).save(*args, **kwargs)
 
     def update_track(self, track_id, url=None):
         if self.tracker:
@@ -102,7 +104,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
         if self.carrier:
             return '[%s]%s' % (self.carrier.name_cn, self.track_id)
         else:
-            return '[未知物流]%s' % (self.track_id)
+            return '[未知物流]%s' % self.track_id
 
     def identify_track_id(self):
         if self.carrier and self.carrier.track_id_regex:
