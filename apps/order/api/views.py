@@ -96,10 +96,9 @@ class OrderProductViewSet(CommonViewSet):
     queryset = OrderProduct.objects.all()
     serializer_class = serializers.OrderProductSerializer
     filter_fields = ['uuid']
-    search_fields = ['order__customer__name', 'order__address__name', 'name', 'product__name_cn',
-                     'product__brand__name_cn']
+    search_fields = ['order__customer__name', 'name', 'product__name_cn', 'product__brand__name_cn']
     permission_classes = [SellerPermissions]
-    pinyin_search_fields = ['product__name_en', 'product__brand__name_en']  # search only input are all ascii chars
+    pinyin_search_fields = ['product__name_en', 'product__brand__name_en', 'order__customer__pinyin']
     filter_backends = (DjangoFilterBackend,
                        PinyinSearchFilter,
                        filters.OrderingFilter)
