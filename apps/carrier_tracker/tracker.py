@@ -17,10 +17,10 @@ def check_delivery(text):
             '妥投' in text,
             '投到' in text,
             '收件人已取走' in text]) and all([
-                '未签收' not in text,
-                '未投妥' not in text,
-                '未妥投' not in text,
-                '未投到' not in text]):
+            '未签收' not in text,
+            '未投妥' not in text,
+            '未妥投' not in text,
+            '未投到' not in text]):
         return True, text
     return False, text.strip()
 
@@ -145,3 +145,20 @@ def arkexpress_track(url):
     table = get_table(url, cls='trackContentTable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
+
+
+def ewe_track(url):
+    r = requests.get(url)
+    if 300 > r.status_code > 199:
+        try:
+            data = r.json()
+            last_item = data['Payload'][0]['Details'][-1]
+            msgs = []
+            for col in last_item.values():
+                if isinstance(col, str):
+                    msgs.append(col)
+            return True, ', '.join(msgs)
+        except Exception as ex:
+            return False, str(ex)
+    else:
+        return False, r.text

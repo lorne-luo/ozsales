@@ -74,9 +74,9 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
                     return carrier
         return None
 
-    def update_track(self, track_id, url=None):
+    def update_track(self, track_id):
         if self.tracker:
-            return self.tracker.update_track(track_id, url)
+            return self.tracker.update_track(track_id)
         return None, 'No tracker linked for %s' % self
 
 
@@ -175,8 +175,8 @@ class ExpressOrder(TenantModelMixin, models.Model):
         if self.is_delivered or not self.carrier:
             return
 
-        if self.create_time > timezone.now() - relativedelta(days=3):
-            return  # send less than 3 days, skip
+        if self.create_time > timezone.now() - relativedelta(days=2):
+            return  # send less than 2 days, skip
 
         delivered, last_info = self.carrier.update_track(self.track_id)
         if delivered in [True, False]:

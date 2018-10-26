@@ -56,8 +56,8 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
             self.domain = ext.registered_domain
         super(CarrierTracker, self).save(*args, **kwargs)
 
-    def update_track(self, track_id, url=None):
-        url = self.post_search_url or self.search_url or url
+    def update_track(self, track_id):
+        url = self.post_search_url or self.search_url
         if not url:
             return None, 'No track url provided.'
         if '%s' in url:
@@ -80,6 +80,8 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
                 success, last_info = tracker.one_express_track(url, track_id)
             elif 'arkexpress' in self.website.lower():
                 success, last_info = tracker.arkexpress_track(url)
+            elif 'ewe.com.au' in self.website.lower():
+                success, last_info = tracker.ewe_track(url)
             # todo more tracker
             else:
                 success, last_info = tracker.track_info(url, self.list_tag, self.list_id, self.list_class,
