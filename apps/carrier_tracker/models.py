@@ -82,6 +82,8 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
                 success, last_info = tracker.arkexpress_track(url)
             elif 'ewe.com.au' in self.website.lower():
                 success, last_info = tracker.ewe_track(url)
+            elif 'aus-express.com' in self.website.lower():
+                success, last_info = tracker.aus_express_track(url)
             # todo more tracker
             else:
                 success, last_info = tracker.track_info(url, self.list_tag, self.list_id, self.list_class,

@@ -43,7 +43,6 @@ def post_table(url, headers, data, tag='table', id_=None, cls=None):
     s = requests.session()
     r = s.post(url, data=data, headers=headers)
     data = r.text
-    # print(data)
     soup = BeautifulSoup(data, "html5lib")
     if id_ is None and cls is None:
         return soup.find(tag)
@@ -162,3 +161,19 @@ def ewe_track(url):
             return False, str(ex)
     else:
         return False, r.text
+
+
+def aus_express_track(url, track_id):
+    s = requests.session()
+    r = s.get(url, stream=True)
+    data = r.text
+    soup = BeautifulSoup(data, "html5lib")
+    __VIEWSTATE = soup.find('input', id='__VIEWSTATE').attrs['value']
+    __EVENTVALIDATION = soup.find('input', id='__EVENTVALIDATION').attrs['value']
+    code = soup.find('table', class_='code').find('font').get_text().strip()
+    data = {'__VIEWSTATE': __VIEWSTATE, '__EVENTVALIDATION': __EVENTVALIDATION, 'txtYzm': code, 'txtNo': track_id}
+    r = s.post(url, data=data,headers={'Content-Type':'application/x-www-form-urlencoded'})
+    soup = BeautifulSoup(r.text, "html5lib")
+    print(r.text)
+    table = soup.find('ul', id='HRsfq1')
+    return False, None
