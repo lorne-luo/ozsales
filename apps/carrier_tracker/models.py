@@ -3,11 +3,8 @@ import logging
 import re
 from urllib.parse import urlparse
 
-from django.core.cache import cache
 from django.db import models
-from django.db.models import Q
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from tldextract import tldextract
@@ -33,12 +30,10 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
     need_id = models.BooleanField('需要身份证', default=False, help_text='是否需要身份证')
     id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
-    last_track_id = models.CharField(_('最新单号'), max_length=512, blank=True)
+    last_track_id = models.CharField(_('最后单号'), max_length=512, blank=True)
+    last_succeed_date = models.DateTimeField(_('最后成功'), auto_now_add=False, editable=True, blank=True, null=True)
     alias = models.CharField(_('alias'), max_length=255, blank=True)
-    list_tag = models.CharField(_('list_tag'), max_length=255, blank=True, default='table')
-    list_id = models.CharField(_('list_id'), max_length=255, blank=True)
-    list_class = models.CharField(_('list_class'), max_length=255, blank=True)
-    item_tag = models.CharField(_('item_tag'), max_length=255, blank=True, default='tr')
+    selector = models.CharField(_('selector'), max_length=255, blank=True, default='table tr')
     item_index = models.IntegerField(_('item_index'), blank=True, default=-1)
 
     pinyin_fields_conf = [
@@ -56,12 +51,16 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
             self.domain = ext.registered_domain
         super(CarrierTracker, self).save(*args, **kwargs)
 
-    def update_track(self, track_id):
+    def get_track_url(self, track_id):
         url = self.post_search_url or self.search_url
-        if not url:
-            return None, 'No track url provided.'
         if '%s' in url:
             url = url % track_id
+        return url
+
+    def update_track(self, track_id):
+        url = self.get_track_url(track_id)
+        if not url:
+            return None, 'No track url provided.'
 
         try:
             if not url.startswith('http'):
