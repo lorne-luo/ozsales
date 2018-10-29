@@ -63,24 +63,6 @@ def table_last_tr(url):
     return check_delivery(last_record)
 
 
-def sfx_track(url):
-    table = get_track_items(url, id_='oTHtable')
-    last_record = get_last_record(table)
-    return check_delivery(last_record)
-
-
-def bluesky_track(url):
-    table = get_track_items(url, id_='oTHtable')
-    last_record = get_last_record(table)
-    return check_delivery(last_record)
-
-
-def changjiang_track(url):
-    table = get_track_items(url, cls='table')
-    last_record = get_last_record(table)
-    return check_delivery(last_record)
-
-
 def transrush_au_track(url):
     resp = requests.get(url=url)
     data = resp.json()
@@ -127,12 +109,6 @@ def one_express_track(url, track_id):
     soup = BeautifulSoup(html, "html5lib")
     table = soup.find('table')
 
-    last_record = get_last_record(table)
-    return check_delivery(last_record)
-
-
-def arkexpress_track(url):
-    table = get_track_items(url, cls='trackContentTable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
