@@ -156,7 +156,7 @@ def ewe_track(url):
             for col in last_item.values():
                 if isinstance(col, str):
                     msgs.append(col)
-            return True, ', '.join(msgs)
+            return check_delivery(', '.join(msgs))
         except Exception as ex:
             return False, str(ex)
     else:
