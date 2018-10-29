@@ -67,30 +67,22 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
                 raise Exception('invalid url')
             if 'aupost' in self.website.lower():
                 success, last_info = None, None
-            elif 'emms' in self.website.lower():
-                success, last_info = tracker.sfx_track(url)
-            elif 'blueskyexpress' in self.website.lower():
-                success, last_info = tracker.bluesky_track(url)
-            elif 'changjiang' in self.website.lower():
-                success, last_info = tracker.changjiang_track(url)
             elif 'au.transrush.com' in self.website.lower():
                 success, last_info = tracker.transrush_au_track(url)
             elif 'one-express' in self.website.lower():
                 success, last_info = tracker.one_express_track(url, track_id)
-            elif 'arkexpress' in self.website.lower():
-                success, last_info = tracker.arkexpress_track(url)
             elif 'ewe.com.au' in self.website.lower():
                 success, last_info = tracker.ewe_track(url)
             elif 'aus-express.com' in self.website.lower():
-                success, last_info = tracker.aus_express_track(url)
+                success, last_info = tracker.aus_express_track(url, track_id)
             # todo more tracker
             else:
-                success, last_info = tracker.track_info(url, self.list_tag, self.list_id, self.list_class,
-                                                        self.item_tag, self.item_index)
+                success, last_info = tracker.track_info(url, self.selector, self.item_index)
 
             if success:
                 self.last_track_id = track_id
-                self.save(update_fields=['last_track_id'])
+                self.last_succeed_date = timezone.now()
+                self.save(update_fields=['last_track_id', 'last_succeed_date'])
             return success, last_info
         except Exception as ex:
             log.info('%s track failed: %s' % (self.name_en, ex))

@@ -25,33 +25,21 @@ def check_delivery(text):
     return False, text.strip()
 
 
-def get_table(url, tag='table', id_=None, cls=None):
+def get_track_items(url, selector):
     r = requests.get(url)
     data = r.text
     soup = BeautifulSoup(data, "html5lib")
-    if id_ is None and cls is None:
-        return soup.find(tag)
-    elif id_:
-        return soup.find(tag, id=id_)
-    elif cls:
-        return soup.find(tag, class_=cls)
-    else:
-        return None
+    items = soup.select(selector)
+    return items
 
 
-def post_table(url, headers, data, tag='table', id_=None, cls=None):
+def post_table(url, headers, data, selector):
     s = requests.session()
     r = s.post(url, data=data, headers=headers)
     data = r.text
     soup = BeautifulSoup(data, "html5lib")
-    if id_ is None and cls is None:
-        return soup.find(tag)
-    elif id_:
-        return soup.find(tag, id=id_)
-    elif cls:
-        return soup.find(tag, class_=cls)
-    else:
-        return None
+    items = soup.select('selector')
+    return items
 
 
 def get_last_record(table, tag='tr', index=-1):
@@ -60,32 +48,35 @@ def get_last_record(table, tag='tr', index=-1):
 
 
 # =======================================================
-def track_info(url, list_tag='table', id_=None, cls=None, item_tag='tr', item_index=-1):
-    table = get_table(url, list_tag, id_, cls)
-    last_record = get_last_record(table, item_tag, item_index)
+def track_info(url, selector='table', item_index=-1):
+    items = get_track_items(url, selector)
+    # last_record = get_last_record(items, item_tag, item_index)
+    last_record = ''
+    if (items and items[item_index]):
+        last_record = items[item_index].get_text()
     return check_delivery(last_record)
 
 
 def table_last_tr(url):
-    table = get_table(url)
+    table = get_track_items(url)
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
 
 def sfx_track(url):
-    table = get_table(url, id_='oTHtable')
+    table = get_track_items(url, id_='oTHtable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
 
 def bluesky_track(url):
-    table = get_table(url, id_='oTHtable')
+    table = get_track_items(url, id_='oTHtable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
 
 def changjiang_track(url):
-    table = get_table(url, cls='table')
+    table = get_track_items(url, cls='table')
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
@@ -141,17 +132,17 @@ def one_express_track(url, track_id):
 
 
 def arkexpress_track(url):
-    table = get_table(url, cls='trackContentTable')
+    table = get_track_items(url, cls='trackContentTable')
     last_record = get_last_record(table)
     return check_delivery(last_record)
 
 
-def ewe_track(url):
+def ewe_track(url, latest_index=-1):
     r = requests.get(url)
     if 300 > r.status_code > 199:
         try:
             data = r.json()
-            last_item = data['Payload'][0]['Details'][-1]
+            last_item = data['Payload'][0]['Details'][latest_index]
             msgs = []
             for col in last_item.values():
                 if isinstance(col, str):
