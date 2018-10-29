@@ -163,17 +163,26 @@ def ewe_track(url):
         return False, r.text
 
 
-def aus_express_track(url, track_id):
-    s = requests.session()
-    r = s.get(url, stream=True)
-    data = r.text
-    soup = BeautifulSoup(data, "html5lib")
-    __VIEWSTATE = soup.find('input', id='__VIEWSTATE').attrs['value']
-    __EVENTVALIDATION = soup.find('input', id='__EVENTVALIDATION').attrs['value']
-    code = soup.find('table', class_='code').find('font').get_text().strip()
-    data = {'__VIEWSTATE': __VIEWSTATE, '__EVENTVALIDATION': __EVENTVALIDATION, 'txtYzm': code, 'txtNo': track_id}
-    r = s.post(url, data=data,headers={'Content-Type':'application/x-www-form-urlencoded'})
-    soup = BeautifulSoup(r.text, "html5lib")
-    print(r.text)
-    table = soup.find('ul', id='HRsfq1')
-    return False, None
+def aus_express_track(url, track_id, latest_index=-1):
+    try:
+        s = requests.session()
+        r = s.get(url, stream=True)
+        data = r.text
+        soup = BeautifulSoup(data, "html5lib")
+        viewstate = soup.find('input', id='__VIEWSTATE').attrs['value']
+        eventvalidation = soup.find('input', id='__EVENTVALIDATION').attrs['value']
+        code = soup.find('table', class_='code').find('font').get_text().strip()
+        data = {'__VIEWSTATE': viewstate,
+                '__EVENTVALIDATION': eventvalidation,
+                'txtYzm': code,
+                'txtNo': track_id,
+                'btnSearch': '查询'}
+
+        r = s.post(url, data=data, headers={'content-type': 'application/x-www-form-urlencoded',
+                                            'referer': 'http://www.aus-express.com/Search.aspx'})
+        soup = BeautifulSoup(r.text, "html5lib")
+        trs = soup.select('div#main_left_depot ul table tr')
+        if (trs and trs[latest_index]):
+            return check_delivery(trs[latest_index].text)
+    except Exception as ex:
+        return False, str(ex)
