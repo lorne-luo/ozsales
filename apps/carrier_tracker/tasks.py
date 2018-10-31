@@ -16,7 +16,7 @@ def update_delivery_tracking():
         if not tenant.seller or not tenant.seller.is_premium:
             continue
 
-        for order in Order.objects.filter(status=ORDER_STATUS.SHIPPING):
+        for order in Order.objects.filter(status__in=[ORDER_STATUS.SHIPPING, ORDER_STATUS.CREATED]):
             if not order.seller.is_premium:
                 continue
             order.update_track()
