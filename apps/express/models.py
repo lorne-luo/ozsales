@@ -14,6 +14,7 @@ from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
+from apps.carrier_tracker.models import CarrierTracker
 from core.aliyun.sms.service import send_cn_sms
 from core.django.models import PinYinFieldModelMixin, TenantModelMixin
 
@@ -74,6 +75,16 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
                     return carrier
         return None
 
+    @staticmethod
+    def get_or_create_by_tracker(tracker):
+        carrier = ExpressCarrier.objects.filter(tracker=tracker).first()
+        if not carrier:
+            # no carrier associate with this tracker, create new
+            carrier = ExpressCarrier(tracker=tracker, name_cn=tracker.name_cn, name_en=tracker.name_en,
+                                     website=tracker.website)
+            carrier.save()
+        return carrier
+
     def update_track(self, track_id):
         if self.tracker:
             return self.tracker.update_track(track_id)
@@ -107,14 +118,15 @@ class ExpressOrder(TenantModelMixin, models.Model):
             return '[未知物流]%s' % self.track_id
 
     def identify_track_id(self):
-        if self.carrier and self.carrier.track_id_regex:
+        if self.carrier and self.carrier.tracker and self.carrier.tracker.track_id_regex:
             # check track_id match current regex or not
-            m = re.match(self.carrier.track_id_regex, self.track_id, re.IGNORECASE)
+            m = re.match(self.carrier.tracker.track_id_regex, self.track_id, re.IGNORECASE)
             if not m:
                 msg = '%s not match %s regex=%s' % (self.track_id, self.carrier.name_cn, self.carrier.track_id_regex)
                 log.info('[AUTO_TRACK_ID.NEW_FORMAT_FOUND] %s' % msg)
         elif not self.carrier and self.track_id:
-            self.carrier = ExpressCarrier.identify_carrier(self.track_id) or ExpressCarrier.get_default_carrier()
+            tracker = CarrierTracker.identify_carrier(self.track_id)
+            self.carrier = ExpressCarrier.get_or_create_by_tracker(tracker) or ExpressCarrier.get_default_carrier()
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()

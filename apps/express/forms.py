@@ -3,6 +3,7 @@ from django import forms
 from django.contrib import admin
 from django.forms.models import inlineformset_factory
 
+from apps.carrier_tracker.models import CarrierTracker
 from apps.order.models import Order
 from core.django.forms import NoManytoManyHintModelForm
 from core.django.autocomplete import FormsetModelSelect2
@@ -77,7 +78,7 @@ class ExpressOrderInlineEditForm(NoManytoManyHintModelForm):
     def clean(self):
         carrier = self.cleaned_data.get('carrier')
         track_id = self.cleaned_data.get('track_id')
-        if not carrier and not ExpressCarrier.identify_carrier(track_id):
+        if not carrier and not CarrierTracker.identify_carrier(track_id):
             self.add_error('carrier', '未能自动识别物流公司，请手动选择')
 
         return self.cleaned_data

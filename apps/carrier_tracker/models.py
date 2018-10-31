@@ -85,7 +85,7 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
                 self.save(update_fields=['last_track_id', 'last_succeed_date'])
             return success, last_info
         except Exception as ex:
-            log.info('%s#%s track failed: %s' % (self.name_en, track_id, ex))
+            log.error('%s#%s track failed: %s' % (self.name_en, track_id, ex))
             return None, str(ex)
 
     # def test_tracker(self):
