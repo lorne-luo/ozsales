@@ -24,6 +24,8 @@
 
             {% include "report/_menu.html" %}
 
+            {% include "carrier_tracker/_menu.html" %}
+
             {% if request.user.is_superuser %}
                 {% include "schedule/_menu.html" %}
             {% endif %}

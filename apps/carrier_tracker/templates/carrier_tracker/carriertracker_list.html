@@ -10,8 +10,6 @@
   <th class="hidden-sm hidden-xs">Website</th>
   <th>证件上传</th>
   <th class="hidden-sm hidden-xs">单号正则</th>
-  <th>Default</th>
-
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
 
@@ -37,11 +35,6 @@
         </template>
     </td>
     <td class="hidden-sm hidden-xs">{!! item.track_id_regex !!}</td>
-    <td>
-      <template v-if="item.is_default">
-        <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
-      </template>
-    </td>
 
       {% block item_buttons %}
           <td class="text-right hidden-sm hidden-xs">

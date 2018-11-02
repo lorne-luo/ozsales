@@ -21,7 +21,7 @@ class ExpressCarrierAddForm(NoManytoManyHintModelForm):
 class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'is_default']
+        fields = ['name_cn', 'name_en', 'website']
 
 
 class ExpressCarrierUpdateForm(ExpressCarrierAddForm):
@@ -31,7 +31,7 @@ class ExpressCarrierUpdateForm(ExpressCarrierAddForm):
 class ExpressCarrierAdminForm(ExpressCarrierUpdateForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website', 'is_default']
+        fields = ['name_cn', 'name_en', 'website']
 
 
 class ExpressOrderAddInline(admin.TabularInline):

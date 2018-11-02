@@ -9,7 +9,7 @@ var expresscarrierListPageVue = new CommonListPageVue({
             list_url_tag:   'express:expresscarrier-list',
             detail_url_tag: 'express:expresscarrier-detail',
             update_url_tag: 'express:expresscarrier-update',
-            list_url:       Urls['api:expresscarrier-list']()+ '?ordering=-is_default'
+            list_url:       Urls['api:expresscarrier-list']()
         }
     }
 );

@@ -39,7 +39,6 @@ class ExpressCarrierViewSet(CommonViewSet):
     """ api views for ExpressCarrier """
     queryset = ExpressCarrier.objects.all()
     serializer_class = serializers.ExpressCarrierSerializer
-    filter_fields = ['is_default']
     search_fields = ['name_cn']
     permission_classes = (SellerPermissions,)
     pinyin_search_fields = ['pinyin', 'name_en', 'website']  # search only input are all ascii chars

@@ -26,7 +26,6 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
-    is_default = models.BooleanField('默认', default=False, help_text='是否默认')
     tracker = models.OneToOneField('carrier_tracker.CarrierTracker', blank=True, null=True)
 
     pinyin_fields_conf = [
@@ -61,10 +60,6 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     def get_incomplete_carrier():
         # return first update required carrier
         return ExpressCarrier.objects.filter(Q(website__isnull=True) | Q(website='')).first()
-
-    @staticmethod
-    def get_default_carrier():
-        return ExpressCarrier.objects.filter(is_default=True).first()
 
     @staticmethod
     def identify_carrier(track_id):
@@ -126,7 +121,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
                 log.info('[AUTO_TRACK_ID.NEW_FORMAT_FOUND] %s' % msg)
         elif not self.carrier and self.track_id:
             tracker = CarrierTracker.identify_carrier(self.track_id)
-            self.carrier = ExpressCarrier.get_or_create_by_tracker(tracker) or ExpressCarrier.get_default_carrier()
+            self.carrier = ExpressCarrier.get_or_create_by_tracker(tracker)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
