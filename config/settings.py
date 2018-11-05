@@ -405,7 +405,7 @@ REST_FRAMEWORK = {
 
 # CONSTANTS SETTINGS
 # ------------------------------------------------------------------------------
-SITE_NAME = env('SITE_NAME', default='YouDan')
+SITE_NAME = env('SITE_NAME', default='澳洲有单')
 # Others
 ID_PHOTO_FOLDER = 'id'
 PRODUCT_PHOTO_FOLDER = 'product'

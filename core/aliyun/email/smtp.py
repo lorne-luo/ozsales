@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL, decode_responses=True)  # todo move it into settings
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL, decode_responses=True)
 ALIYUN_EMAIL_DAILY_COUNTER = 'ALIYUN_EMAIL_DAILY_COUNTER'
 
 ALIYUN_EMAIL_HOST = settings.ALIYUN_EMAIL_HOST  # smtp server address
