@@ -11,7 +11,8 @@ from apps.tenant.models import Tenant
 from core.sms.models import Sms
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL, decode_responses=True)
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL,
+                      decode_responses=True)
 TELSTRA_SMS_MONTHLY_COUNTER = 'TELSTRA_SMS_MONTHLY_COUNTER'
 TELSTRA_SMS_ACCESS_TOKEN = 'TELSTRA_SMS_ACCESS_TOKEN'
 TELSTRA_SMS_DESTINATION_ADDRESS = 'TELSTRA_SMS_DESTINATION_ADDRESS'
@@ -61,17 +62,19 @@ def get_from_number():
 
 def validate_mobile_number(mobile):
     if not mobile:
-        return None
+        return ''
+    mobile = mobile.strip()
     if mobile.startswith('+61'):
         mobile = mobile.replace('+61', '')
     if mobile.startswith('061'):
         mobile = mobile.replace('061', '')
     if mobile.startswith('0061'):
         mobile = mobile.replace('0061', '')
-    mobile = mobile.strip()
+    if mobile.startswith('4'):
+        mobile = '0' + mobile
     if mobile.startswith('04') and len(mobile) == len('0413725868'):
         return mobile
-    return None
+    return ''
 
 
 def send_au_sms(to, body, app_name=None):
@@ -112,7 +115,8 @@ def send_au_sms(to, body, app_name=None):
         if connection.schema_name.startswith(Tenant.SCHEMA_NAME_PREFIX):
             sms = Sms(app_name=app_name, send_to=to, content=body, success=success,
                       template_code=api_response.messages[0].delivery_status,
-                      remark=api_response.messages[0].message_status_url, biz_id=api_response.messages[0].delivery_status)
+                      remark=api_response.messages[0].message_status_url,
+                      biz_id=api_response.messages[0].delivery_status)
             sms.save()
 
         if success:

@@ -278,6 +278,7 @@ REDIS_PORT = 6379
 CUSTOM_DB_CHANNEL = 0
 REDBEAT_DB_CHANNEL = 1
 CELERY_DB_CHANNEL = 2
+VERIFICATION_CODE_DB_CHANNEL = 3
 
 # CELERY
 # ------------------------------------------------------------------------------

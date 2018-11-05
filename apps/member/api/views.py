@@ -3,9 +3,11 @@ import logging
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
+from core.sms.verification import send_verification_code
 from . import serializers
 from core.api.permission import AdminOnlyPermissions
 from ..models import Seller
@@ -35,3 +37,15 @@ class Profile(generics.GenericAPIView):
 
     def get(self, request):
         return Response(serializers.SellerSerializer(request.profile).data)
+
+
+class SendVerificationCode(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, **kwargs):
+        mobile = request.POST.get('mobile')
+        if mobile:
+            success, detail = send_verification_code(mobile)
+            return Response({'success': success, 'detail': detail})
+        else:
+            return Response({'success': False, 'detail': '请提供中国或澳洲手机号码'})
