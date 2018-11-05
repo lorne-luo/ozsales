@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from core.api.serializers import BaseSerializer, SellerOwnerSerializerMixin
+from core.api.serializers import BaseSerializer
 from ..models import Product, Brand
 
 

@@ -6,11 +6,10 @@
     <input type="checkbox" name="checkboxAllRow" class="checkboxAllRow" v-on:click="toggleAllBox"/>
   </th>
   <th>名称</th>
-  <th class="hidden-sm hidden-xs">Name</th>
-  <th class="hidden-sm hidden-xs">Website</th>
+  <th class="hidden-sm hidden-xs">英文名称</th>
+  <th class="hidden-sm hidden-xs">官方网站</th>
   <th>证件上传</th>
-  <th class="hidden-sm hidden-xs">单号正则</th>
-  <th>Count</th>
+  <th>包裹数量</th>
 
   <th class="hidden-sm hidden-xs"></th>
 {% endblock %}
@@ -36,7 +35,6 @@
             <a href="{!! item.id_upload_url !!}" target="_blank">前往</a>
         </template>
     </td>
-    <td class="hidden-sm hidden-xs">{!! item.track_id_regex !!}</td>
     <td>{!! item.parcel_count !!}</td>
 
       {% block item_buttons %}
@@ -50,7 +48,7 @@
                   {% endif %}
               </template>
 
-              <template v-if="update_url_tag && item.is_owner">
+              <template v-if="update_url_tag">
                   {% if page_model_perms.change %}
                       <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
                          href="#[item.edit_url]?from_page={!! currentPage !!}&search={!! search_keyword !!}" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.pk]">
@@ -59,7 +57,7 @@
                   {% endif %}
               </template>
 
-              <template v-if="delete_api_tag && item.is_owner">
+              <template v-if="delete_api_tag">
                   {% if page_model_perms.delete %}
                       <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
                          data-pk="#[item.pk]" v-on:click="removeOne" href="javascript:void(0);"

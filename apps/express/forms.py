@@ -21,7 +21,7 @@ class ExpressCarrierAddForm(NoManytoManyHintModelForm):
 class ExpressCarrierDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = ExpressCarrier
-        fields = ['name_cn', 'name_en', 'website']
+        fields = ['name_cn', 'name_en', 'website', 'parcel_count']
 
 
 class ExpressCarrierUpdateForm(ExpressCarrierAddForm):

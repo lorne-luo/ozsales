@@ -27,7 +27,7 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     tracker = models.OneToOneField('carrier_tracker.CarrierTracker', blank=True, null=True)
-    parcel_count = models.PositiveIntegerField(blank=True, null=True, default=0)
+    parcel_count = models.PositiveIntegerField(_('包裹数量'), blank=True, null=True, default=0)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
