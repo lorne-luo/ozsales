@@ -27,6 +27,7 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     tracker = models.OneToOneField('carrier_tracker.CarrierTracker', blank=True, null=True)
+    parcel_count = models.PositiveIntegerField(blank=True, null=True, default=0)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
@@ -85,6 +86,10 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
             return self.tracker.update_track(track_id)
         return None, 'No tracker linked for %s' % self
 
+    def update_count(self):
+        self.parcel_count = ExpressOrder.objects.filter(carrier=self).count()
+        self.save(update_fields=['parcel_count'])
+
 
 class ExpressOrder(TenantModelMixin, models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
@@ -125,6 +130,9 @@ class ExpressOrder(TenantModelMixin, models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
+
+        if not self.id and self.carrier:
+            self.carrier.update_count()
 
         if not self.id and not self.address:
             self.address = self.order.address
