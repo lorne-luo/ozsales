@@ -180,7 +180,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
             return
 
         bz_id = 'ExpressOrder#%s-delivered' % self.track_id
-        data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (self.track_id, self.order.public_url)
+        data = '''{"track_id":"%s", "url":"%s"}''' % (self.track_id, self.order.public_url)
         success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
         if success:
             self.delivery_sms_sent = True

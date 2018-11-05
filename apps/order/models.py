@@ -137,7 +137,7 @@ class Order(TenantModelMixin, models.Model):
             return
 
         bz_id = 'Order#%s-sent' % self.pk
-        data = "{\"url\":\"%s\"}" % self.public_url
+        data = '''{"url":"%s", "count":"%s"}''' % (self.public_url, self.express_orders.count())
         template = settings.ORDER_SENT_PAID_TEMPLATE if self.is_paid else settings.ORDER_SENT_UNPAID_TEMPLATE
         success, detail = send_cn_sms(bz_id, mobile, template, data)
         if success:
@@ -155,7 +155,7 @@ class Order(TenantModelMixin, models.Model):
         # all delivered, send ORDER_DELIVERED_TEMPLATE
         if self.is_all_delivered:
             bz_id = 'Order#%s-delivered' % self.pk
-            data = "{\"url\":\"%s\"}" % self.public_url
+            data = '''{"url":"%s"}''' % self.public_url
             success, detail = send_cn_sms(bz_id, mobile, settings.ORDER_DELIVERED_TEMPLATE, data)
             if success:
                 self.delivery_msg_sent = True
@@ -169,7 +169,7 @@ class Order(TenantModelMixin, models.Model):
         if track_ids:
             bz_id = 'OrderParcels#%s-delivered' % self.pk
             track_id = ','.join(track_ids)
-            data = "{\"track_id\":\"%s\", \"url\":\"%s\"}" % (track_id, self.public_url)
+            data = '''{"track_id":"%s", "url":"%s"}''' % (track_id, self.public_url)
             success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
             if success:
                 need_sms.update(delivery_sms_sent=True)
