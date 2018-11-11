@@ -9,13 +9,13 @@ class CarrierTrackerAddForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = CarrierTracker
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'id_upload_url', 'selector', 'item_index']
+        fields = ['name_cn', 'name_en', 'alias', 'website', 'search_url', 'id_upload_url', 'selector', 'item_index']
 
 
 class CarrierTrackerDetailForm(NoManytoManyHintModelForm):
     class Meta:
         model = CarrierTracker
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+        fields = ['name_cn', 'name_en', 'alias', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
                   'need_id']
 
 
@@ -26,5 +26,5 @@ class CarrierTrackerUpdateForm(CarrierTrackerAddForm):
 class CarrierTrackerAdminForm(CarrierTrackerUpdateForm):
     class Meta:
         model = CarrierTracker
-        fields = ['name_cn', 'name_en', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
+        fields = ['name_cn', 'name_en', 'alias', 'website', 'search_url', 'post_search_url', 'id_upload_url', 'track_id_regex',
                   'need_id', 'selector', 'item_index']

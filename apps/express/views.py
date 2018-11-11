@@ -23,25 +23,19 @@ class CarrierInfoRequiredMixin(object):
 
 # views for ExpressCarrier
 
-class ExpressCarrierListView(CarrierInfoRequiredMixin, MultiplePermissionsRequiredMixin, CommonContextMixin, ListView):
+class ExpressCarrierListView(CarrierInfoRequiredMixin, SellerRequiredMixin, CommonContextMixin, ListView):
     model = ExpressCarrier
     template_name_suffix = '_list'  # express/expresscarrier_list.html
-    permissions = {
-        "all": ("express.view_expresscarrier",)
-    }
 
     def get_context_data(self, **kwargs):
         self.prompt_incomplete_carrier()
         return super(ExpressCarrierListView, self).get_context_data(**kwargs)
 
 
-class ExpressCarrierAddView(MultiplePermissionsRequiredMixin, CommonContextMixin,
+class ExpressCarrierAddView(SellerRequiredMixin, CommonContextMixin,
                             CreateView):
     model = ExpressCarrier
     template_name = 'adminlte/common_form.html'
-    permissions = {
-        "all": ("express.add_expresscarrier",)
-    }
 
     def get_form_class(self):
         if self.request.user.is_superuser:

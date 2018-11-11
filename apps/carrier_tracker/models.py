@@ -32,9 +32,9 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
     last_track_id = models.CharField(_('最后单号'), max_length=512, blank=True)
     last_succeed_date = models.DateTimeField(_('最后成功'), auto_now_add=False, editable=True, blank=True, null=True)
-    alias = models.CharField(_('alias'), max_length=255, blank=True)
-    selector = models.CharField(_('selector'), max_length=255, blank=True, default='table tr')
-    item_index = models.IntegerField(_('item_index'), blank=True, default=-1)
+    alias = models.CharField(_('别名'), max_length=255, blank=True)
+    selector = models.CharField(_('CSS'), max_length=255, blank=True, default='table tr')
+    item_index = models.IntegerField(_('顺序'), blank=True, default=-1)
 
     pinyin_fields_conf = [
         ('name_cn', Style.NORMAL, False),
