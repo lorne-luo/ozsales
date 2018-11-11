@@ -208,6 +208,17 @@ class ExpressOrder(TenantModelMixin, models.Model):
             return diff.days
         return -1
 
+    @classmethod
+    def find_not_match(self):
+        res = []
+        for eo in ExpressOrder.objects.all():
+            if not eo.carrier:
+                res.append((eo.id or eo.uuid, eo.track_id, 'no carrier'))
+            else:
+                if not eo.carrier.tracker.identify_carrier(eo.track_id):
+                    res.append((eo.id or eo.uuid, eo.track_id, 'not match'))
+        return res
+
 
 @receiver(post_save, sender=ExpressOrder)
 def express_order_saved(sender, instance=None, created=False, **kwargs):
