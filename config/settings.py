@@ -300,8 +300,8 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute=5, hour='11,14,17,19,23,1')
     },
     'cleanup_sms_history': {
-        'task': 'apps.sms.tasks.cleanup_sms_history',
-        'schedule': crontab(hour=0, minute=7, day_of_month=2)
+        'task': 'core.sms.tasks.cleanup_sms_history',
+        'schedule': crontab(hour=0, minute=9, day_of_month=7)
     },
     # 'ozbargin_task': {
     #     'task': 'apps.schedule.tasks.ozbargin_task',
