@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
     name_cn = models.CharField(_('中文名称'), max_length=255, blank=False, help_text='中文名称')
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
-    website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
+    website = models.URLField(_('官网地址'), max_length=255, blank=True, help_text='官方网站地址')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     tracker = models.OneToOneField('carrier_tracker.CarrierTracker', blank=True, null=True)
     parcel_count = models.PositiveIntegerField(_('包裹数量'), blank=True, null=True, default=0)
@@ -93,7 +93,7 @@ class ExpressCarrier(PinYinFieldModelMixin, TenantModelMixin, models.Model):
 
 class ExpressOrder(TenantModelMixin, models.Model):
     carrier = models.ForeignKey(ExpressCarrier, blank=True, null=True, verbose_name=_('carrier'))
-    track_id = models.CharField(_('Track ID'), max_length=30, null=False, blank=False, help_text='运单号')
+    track_id = models.CharField(_('Track ID'), max_length=255, null=False, blank=False, help_text='运单号')
     order = models.ForeignKey('order.Order', blank=False, null=False, verbose_name=_('order'),
                               related_name='express_orders')
     address = models.ForeignKey('customer.Address', blank=True, null=True, verbose_name=_('address'))

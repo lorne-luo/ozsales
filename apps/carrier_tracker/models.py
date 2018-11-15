@@ -22,13 +22,13 @@ class CarrierTracker(PinYinFieldModelMixin, models.Model):
     name_en = models.CharField(_('英文名称'), max_length=255, blank=True, help_text='英文名称')
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     domain = models.CharField(_('domain'), max_length=512, blank=True, help_text='domain')
-    website = models.URLField(_('官网地址'), blank=True, help_text='官方网站地址')
+    website = models.URLField(_('官网地址'), max_length=255, blank=True, help_text='官方网站地址')
     # page to track parcel
-    search_url = models.URLField(_('查询网址'), blank=True, help_text='查询网页地址')
+    search_url = models.URLField(_('查询网址'), max_length=1024, blank=True, help_text='查询网页地址')
     # some carrier need post to track parcel
-    post_search_url = models.URLField(_('查询提交网址'), blank=True, help_text='查询提交网址')
+    post_search_url = models.URLField(_('查询提交网址'), max_length=1024, blank=True, help_text='查询提交网址')
     need_id = models.BooleanField('需要身份证', default=False, help_text='是否需要身份证')
-    id_upload_url = models.URLField(_('证件上传地址'), blank=True, help_text='证件上传地址')
+    id_upload_url = models.URLField(_('证件上传地址'), max_length=1024, blank=True, help_text='证件上传地址')
     track_id_regex = models.CharField(_('单号正则'), max_length=512, blank=True, help_text='订单号正则表达式')
     last_track_id = models.CharField(_('最后单号'), max_length=512, blank=True)
     last_succeed_date = models.DateTimeField(_('最后成功'), auto_now_add=False, editable=True, blank=True, null=True)
