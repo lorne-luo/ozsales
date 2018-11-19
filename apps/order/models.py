@@ -163,12 +163,12 @@ class Order(TenantModelMixin, models.Model):
                 self.express_orders.all().update(delivery_sms_sent=True)
             return
 
-        # part of parcels delivered, send PACKAGE_DELIVERED_TEMPLATE
+        # part of parcels delivered, send PACKAGE_DELIVERED_TEMPLATE = 直邮包裹${track_id}已寄达，请注意查收。详情http://s.luotao.net${url}
         need_sms = self.express_orders.filter(is_delivered=True, delivery_sms_sent=False)
         track_ids = [x.track_id for x in need_sms]
         if track_ids:
             bz_id = 'OrderParcels#%s-delivered' % self.pk
-            track_id = ','.join(track_ids)
+            track_id = '%s' % track_ids[0] if len(track_ids) == 1 else '%s等%s箱' % (track_ids[0], len(track_ids))
             data = '''{"track_id":"%s", "url":"%s"}''' % (track_id, self.public_url)
             success, detail = send_cn_sms(bz_id, mobile, settings.PACKAGE_DELIVERED_TEMPLATE, data)
             if success:
