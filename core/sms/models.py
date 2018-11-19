@@ -1,6 +1,9 @@
 # coding=utf-8
 import logging
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 from django.utils.translation import ugettext_lazy as _
 
 log = logging.getLogger(__name__)
@@ -26,3 +29,9 @@ class Sms(models.Model):
             from core.aliyun.sms.service import query_send_detail
             return query_send_detail(self.biz_id, self.send_to, 10, 1, self.time.strftime('%Y%m%d'))
         return None
+
+
+@receiver(post_save, sender=Sms)
+def sms_saved(sender, instance=None, created=False, **kwargs):
+    if created and not instance.success:
+        log.error('[SMS failed] %s' % instance.__dict__)
