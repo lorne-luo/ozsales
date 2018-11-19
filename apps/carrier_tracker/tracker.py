@@ -18,7 +18,7 @@ def check_delivery(text):
             '代收' in text,
             '自提' in text,
             '投到' in text,
-            '已取' in text]) and '未' not in text:
+            '已取' in text]) and '未' not in text and '不' not in text:
         return True, text
     return False, text.strip()
 
