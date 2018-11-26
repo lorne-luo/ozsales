@@ -1,0 +1,59 @@
+{% extends "adminlte/common_tab_list.html" %}
+{% load static custom_static %}
+
+{% block content_title %}采购模式{% endblock %}
+
+{% block common_list_header %}{% endblock %}
+
+{% block tab_nav %}
+    {% include "adminlte/includes/messages.html" %}
+    <ul class="nav nav-tabs">
+        <li data-status="PURCHASE" class="active">
+            <a data-toggle="tab" href="#pane-PURCHASE"> 采购模式</a>
+        </li>
+        <li data-status="ORDER">
+            <a href="/order"> 订单模式</a>
+        </li>
+    </ul>
+{% endblock %}
+
+
+{% block tab_content %}
+    <div class="tab-content" id="purchase-mode-table">
+        <div class="tab-pane active" id="pane-CREATED">
+            <table class="table table-hover">
+                <tbody>
+                {% for order in object_list %}
+                    <tr v-on:click="show_detail('{{ order.pk }}', $event)" data-pk="{{ order.pk }}">
+                        <td colspan="5">{{ order.address }}</td>
+                    </tr>
+                    {% if order.products.all.count %}
+                    {% for product in order.products.all %}
+                        <tr class="detail_{{ order.pk }}">
+                            <td class="text-center">
+                                <input type="checkbox" v-on:click="makr_as_purchased($event)"
+                                       {% if product.is_purchased %}checked="true"{% endif %}
+                                       name="markPurchased" value="{{ product.pk }}"/>
+                            </td>
+                            <td>
+                                {{ product.name }}
+                            </td>
+                            <td>
+                                {{ product.amount }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block footer_page_script %}
+    <script type="text/javascript" src="{% static 'adminlte/js/common-list-page-base.js' %}"></script>
+    <input type="hidden" id="csrf-token" value="{{ csrf_token }}">
+    <script type="text/javascript" src="{% static 'js/order/order_purchase.min.js' %}?v={% startup_timestamp %}"></script>
+{% endblock %}

@@ -12,6 +12,7 @@
     <div class="row" id="commonDataTableRow">
         <div class="col-xs-12 full-width">
             <div class="box box-info">
+                {% block common_list_header %}
                 <div class="box-header">
                     <div class="row">
                         <div class="col-xs-5">
@@ -45,6 +46,7 @@
                         </div>
                     </div>
                 </div>
+                {% endblock %}
 
             {% block tab_nav %}
                 <ul class="nav nav-tabs">

@@ -26,6 +26,9 @@
     <li data-status="FINISHED">
       <a data-toggle="tab" href="#pane-FINISHED" v-on:click="initFinishedTab"> 已完成</a>
     </li>
+    <li data-status="FINISHED">
+      <a href="{% url 'order:order-purchase' %}"> 采购模式</a>
+    </li>
   </ul>
 {% endblock %}
 

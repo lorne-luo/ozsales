@@ -190,6 +190,14 @@ aside.messagesetVue div.menu li {
     padding: 0 0 0 15px;
 }
 
-.track_table_page .table ul{
+.track_table_page .table ul {
     padding-left: 20px;
+}
+
+#purchase-mode-table .table input[type="checkbox"] {
+    margin: 0
+}
+
+#purchase-mode-table .table tr td {
+    padding: 3px
 }

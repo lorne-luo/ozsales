@@ -276,3 +276,10 @@ class OrderProductDetailView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, U
     model = OrderProduct
     form_class = forms.OrderProductDetailForm
     template_name = 'adminlte/common_detail_new.html'
+
+
+class OrderPurchaseView(CarrierInfoRequiredMixin, SellerRequiredMixin, CommonContextMixin, ListView):
+    model = Order
+    queryset = Order.objects.filter(status=ORDER_STATUS.CREATED, products__is_purchased=False).distinct().order_by(
+        '-create_time')
+    template_name = 'order/order_purchase.html'
