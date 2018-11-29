@@ -263,15 +263,8 @@
                         <div class="col-md-2 col-xs-3">
                             {{ new_express_template.fee }}
                         </div>
-                        {#          <div class="col-lg-1 col-md-1 col-xs-3">#}
-                        {#            {{ new_express_template.weight }}#}
-                        {#          </div>#}
                         <div class="col-lg-1 col-md-1 col-xs-3 inline ln34">
                             {{ new_express_template.id_upload }}
-                            {% if new_express_template.instance.pk %}{{ new_express_template.DELETE }}{% endif %}
-                            {#            <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express"#}
-                            {#              <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-                            {#            </a>#}
                         </div>
                     {% endwith %}
                 </div><!-- //express_template -->
@@ -293,7 +286,7 @@
                         <div class="col-lg-2 col-md-2 col-xs-10">
                             {{ new_product_template.description }}
                         </div>
-                        <div class="col-lg-1 col-md-2 col-xs-2">
+                        <div class="col-lg-1 col-md-1 col-xs-2">
                             {{ new_product_template.amount }}
                         </div>
                         <div class="col-lg-2 col-md-2 col-xs-3">
@@ -304,16 +297,7 @@
                         </div>
                         <div class="col-lg-2 col-md-2 col-xs-3">
                             {{ new_product_template.cost_price_aud }}
-                            {% if new_product_template.instance.pk %}{{ new_product_template.DELETE }}{% endif %}
                         </div>
-                        {#          <div class="col-lg-2 col-md-4 col-xs-1">#}
-                        {#            <div class="inline hidden-xs hidden-sm">#}
-                        {#              {{ new_product_template.store }}#}
-                        {#            </div>#}
-                        {#            <a href="javascript:void(0)" class="ln34 delete_product">#}
-                        {#              <i style="color:#dd4b39;" class="fa fa-lg fa-trash"></i>#}
-                        {#            </a>#}
-                        {#          </div>#}
                         </div>
                     {% endwith %}
             </div><!-- //product_template -->

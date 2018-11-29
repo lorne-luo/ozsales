@@ -214,7 +214,7 @@ class OrderProductInlineForm(NoManytoManyHintModelForm):
             sum_price = instance.amount * instance.sell_price_rmb
             if sum_price % 1 < Decimal(0.02):
                 sum_price = Decimal(int(sum_price)).quantize(Decimal('.01'))
-            self.initial['sum_price'] = sum_price
+            self.initial['sum_price'] = sum_price or None
 
     def clean_amount(self):
         return self.cleaned_data.get('amount', 1)
