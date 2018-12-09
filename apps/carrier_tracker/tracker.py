@@ -50,8 +50,14 @@ def track_info(url, selector='table', item_index=-1):
     items = get_track_items(url, selector)
     # last_record = get_last_record(items, item_tag, item_index)
     last_record = ''
-    if (items and items[item_index]):
-        last_record = items[item_index].get_text()
+
+    try:
+        if (items and len(items)):
+            last_record = items[item_index].get_text()
+    except IndexError:
+        pass
+
+    last_record = last_record.strip()
     return check_delivery(last_record)
 
 
