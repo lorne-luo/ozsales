@@ -1,7 +1,7 @@
 {% extends "adminlte/base.html" %}
 {% load static custom_static %}
 
-{% block base_head_title %}Login{% endblock %}
+{% block base_head_title %}Register{% endblock %}
 {% block base_head_title_system_name %}OZSALES{% endblock %}
 
 {% block base_body %}
@@ -17,42 +17,48 @@
                 {% csrf_token %}
                 <div class="form-group has-feedback{% if form.mobile.errors %} has-error{% endif %}">
                     <input id="id_mobile" name="mobile" type="text" class="form-control"
-                    placeholder="{{ form.mobile.errors.as_text|default:"澳洲或国内手机号码" }}"{% if form.mobile.value and not form.mobile.errors %} value="{{ form.mobile.value }}"{% endif %} {% if not form.mobile.value or form.mobile.errors %} autofocus{% endif %}>
+                           placeholder="{{ form.mobile.errors.as_text|default:"澳洲或国内手机号码" }}"
+                            {% if form.mobile.value and not form.mobile.errors %}
+                           value="{{ form.mobile.value }}"{% endif %}
+                            {% if not form.mobile.value or form.mobile.errors %} autofocus{% endif %}>
                     <span class="glyphicon glyphicon-phone form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback{% if form.email.errors %} has-error{% endif %}">
                     <input id="id_email" name="email" type="email" class="form-control"
-                    placeholder="{{ form.email.errors.as_text|default:"电子邮件" }}"{% if form.email.value and not form.email.errors %} value="{{ form.email.value }}"{% endif %} {% if not form.email.value or form.email.errors %} autofocus{% endif %}>
+                           placeholder="{{ form.email.errors.as_text|default:"电子邮件" }}"
+                            {% if form.email.value and not form.email.errors %}
+                           value="{{ form.email.value }}"{% endif %} {% if not form.email.value or form.email.errors %}
+                           autofocus{% endif %}>
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback{% if form.password.errors %} has-error{% endif %}">
                     <input id="id_password" name="password" type="password" class="form-control"
-                    placeholder="{{ form.password.errors.as_text|default:"密 码" }}">
+                           placeholder="{{ form.password.errors.as_text|default:"密 码" }}">
                     <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback{% if form.password_confirm.errors %} has-error{% endif %}">
-                    <input  id="id_password_confirm" name="password_confirm" type="password" class="form-control"
-                            placeholder="{{ form.password_confirm.errors.as_text|default:"重复密码" }}">
+                    <input id="id_password_confirm" name="password_confirm" type="password" class="form-control"
+                           placeholder="{{ form.password_confirm.errors.as_text|default:"重复密码" }}">
                     <span class="glyphicon glyphicon-log-in form-control-feedback"></span>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-xs-7">
-                        <input  id="verification_code" name="password_confirm" type="text" class="form-control"
-                                placeholder="请输入验证码">
+                        <input id="verification_code" name="password_confirm" type="text" class="form-control"
+                               placeholder="请输入验证码">
                     </div>
                     <div class="col-xs-5">
                         <button type="button" id="send_code" class="btn btn-primary btn-block btn-flat">发送验证码</button>
                     </div>
                 </div>
 
-                {% if form.non_field_errors %}
-                    <div class="row">
-                        <div class="col-xs-12 text-center">
-                            <span class="alert-error">{{ form.non_field_errors.as_text }}</span>
-                        </div>
+                <div class="form-group row" {% if not form.non_field_errors %}style="display: none"{% endif %}
+                     id="error-alert-div">
+                    <div class="col-xs-12 text-center">
+                        <span class="text-red" id="error-msg">{{ form.non_field_errors.as_text }}</span>
                     </div>
-                {% endif %}
+                    <br>
+                </div>
 
                 <div class="row">
                     <div class="col-xs-3">
