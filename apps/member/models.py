@@ -155,14 +155,18 @@ class Seller(UserProfileMixin, StripePaymentUserMixin, TenantModelMixin, models.
             user.groups.add(premium_member_group)
         user.save()
 
-        seller = Seller(auth_user=user, tenant_id=tenant.pk, name=mobile or email)
+        seller = Seller(auth_user=user,
+                        tenant_id=tenant.pk,
+                        schema_name=tenant.schema_name,
+                        name=mobile or email)
         seller.set_schema()
         seller.save()
         return seller
 
     def set_schema(self):
-        if self.schema_name:
-            connection.set_schema(self.schema_name)
+        schema_name = self.schema_name or self.tenant.schema_name
+        if schema_name:
+            connection.set_schema(schema_name)
 
     @cached_property
     def entry_url(self):

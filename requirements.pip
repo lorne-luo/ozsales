@@ -1,4 +1,3 @@
-#supervisor
 django==1.11.17
 django-extensions
 wechat-sdk
@@ -33,7 +32,6 @@ pycurl==7.43.0.1  --global-option="--with-nss"
 python-dateutil
 gunicorn==18.0
 Wand==0.4.3
-#enum34
 django-tinymce4-lite==1.6.0
 pyenchant
 weixin-python
@@ -43,7 +41,6 @@ dj-stripe==1.0.0.post1
 pyOpenSSL==17.3.0
 pathlib==1.0.1
 jsonfield==2.0.2
-requests==2.18.4
 urlfetch==1.0.2
 django-stdimage==2.4.2
 pypinyin==0.27
@@ -58,3 +55,4 @@ wagtail-robots==0.1.2
 git+https://github.com/Telstra/MessagingAPI-SDK-python.git
 django-tenant-schemas==1.9.0
 tldextract==2.2.0
+requests==2.21.0
