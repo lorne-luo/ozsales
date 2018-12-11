@@ -5,9 +5,9 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 
-from core.aliyun.sms.service import validate_mobile_number as validate_cn_mobile, send_cn_sms
 from core.sms.models import Sms
-from core.sms.telstra_api_v2 import validate_mobile_number as validate_au_mobile, send_au_sms
+from core.aliyun.sms.service import validate_cn_mobile, send_cn_sms
+from core.sms.telstra_api_v2 import validate_au_mobile, send_au_sms
 
 log = logging.getLogger(__name__)
 

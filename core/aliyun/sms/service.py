@@ -39,7 +39,7 @@ region_provider.add_endpoint(PRODUCT_NAME, REGION, DOMAIN)
 log = logging.getLogger(__name__)
 
 
-def validate_mobile_number(mobile):
+def validate_cn_mobile(mobile):
     if not mobile:
         return ''
 
@@ -80,7 +80,7 @@ def clean_mobile_number(mobile):
 
 def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
     try:
-        phone_numbers = validate_mobile_number(phone_numbers)
+        phone_numbers = validate_cn_mobile(phone_numbers)
         if not phone_numbers:
             return False, 'INVALID_PHONE_NUMBER'
 

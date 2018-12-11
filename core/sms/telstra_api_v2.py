@@ -60,7 +60,7 @@ def get_from_number():
     return destination_address
 
 
-def validate_mobile_number(mobile):
+def validate_au_mobile(mobile):
     if not mobile:
         return ''
     mobile = mobile.strip()
@@ -84,7 +84,7 @@ def send_au_sms(to, body, app_name=None):
         log.info('[SMS] Telstra SMS reach 1000 free limitation.')
         return False, 'Telstra SMS reach 1000 free limitation.'
 
-    to = validate_mobile_number(to)
+    to = validate_au_mobile(to)
     if not to:
         return False, 'INVALID_PHONE_NUMBER'
 
