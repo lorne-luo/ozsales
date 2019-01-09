@@ -314,18 +314,16 @@ var OrderListPageVue = CommonListPageVue.extend({
                 return '';
         },
         copyIdInfo: function (event) {
-            var info = $(event.target).data('text');
+            var info = $(event.target).closest('a').data('text');
             this._copyToClipboard(info);
         },
         copyOrderDetail: function (item) {
             var info = $("#sender_info").val();
             info += "\n收件人:" + item.address_display + "\n";
-            info += "\n产品:";
 
             for (var i = 0; i < item.products.length; i++) {
                 product = item.products[i];
                 product_detail = product.name + " X " + product.amount;
-                console.log(product_detail);
                 info += "\n" + product_detail.trim();
             }
             this._copyToClipboard(info);
