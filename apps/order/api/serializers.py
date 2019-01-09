@@ -62,6 +62,7 @@ class OrderSerializer(BaseSerializer):
     create_time = serializers.DateTimeField(format='%m-%d', input_formats=None)
     next_status_url = serializers.SerializerMethodField()
     next_status = serializers.SerializerMethodField()
+    id_info = serializers.SerializerMethodField()
     sell_price_rmb = serializers.IntegerField()
     shipping_fee = serializers.IntegerField()
     total_cost_aud = serializers.IntegerField()
@@ -73,7 +74,7 @@ class OrderSerializer(BaseSerializer):
         model = Order
         fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'uid',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
-                  'address_display', 'detail_url',
+                  'address_display', 'detail_url', 'id_info',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'pk', 'products']
         read_only_fields = ['pk']
@@ -91,6 +92,9 @@ class OrderSerializer(BaseSerializer):
         elif user.has_perm('customer.view_customer'):
             return reverse('customer:customer-detail', args=[obj.customer.pk])
         return None
+
+    def get_id_info(self, obj):
+        return '%s %s %s' % (obj.address.name, obj.address.mobile, obj.address.id_number)
 
     def get_shipping_order(self, obj):
         return obj.get_shipping_orders()
