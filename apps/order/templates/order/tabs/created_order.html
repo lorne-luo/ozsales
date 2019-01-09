@@ -96,6 +96,15 @@
             </td>
 
             <td class="text-right hidden-sm hidden-xs">
+                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
+                   v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-primary btn-sm">
+                    <i class="fa fa-lg fa-id-card fa-inverse"></i>
+                </a>
+                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Copy Order Detail to Clipboard" data-text="#[item.pk]"
+                   v-on:click="copyOrderDetail(item)" href="javascript:void(0);" class="btn btn-default btn-sm">
+                    <i class="fa fa-lg fa-list"></i>
+                </a>
+
                 {% if page_model_perms.change %}
                     <template v-if="item.status == 'CREATED'">
                         <button type="button" data-toggle="modal" data-target="#add-product" class="btn btn-success btn-sm"

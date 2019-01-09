@@ -199,7 +199,7 @@ var OrderListPageVue = CommonListPageVue.extend({
         },
         next_ship_status: function (pk, next_status, next, event) {
             var self = this;
-            var url = Urls[self.detail_api_tag](pk)+'set_status/';
+            var url = Urls[self.detail_api_tag](pk) + 'set_status/';
             swal({
                 title: "确认物流变更",
                 text: "确认将物流状态变更为\"" + next + "\"?",
@@ -312,6 +312,31 @@ var OrderListPageVue = CommonListPageVue.extend({
                 return '完成';
             else
                 return '';
+        },
+        copyIdInfo: function (event) {
+            var info = $(event.target).data('text');
+            this._copyToClipboard(info);
+        },
+        copyOrderDetail: function (item) {
+            var info = $("#sender_info").val();
+            info += "\n收件人:" + item.address_display + "\n";
+            info += "\n产品:";
+
+            for (var i = 0; i < item.products.length; i++) {
+                product = item.products[i];
+                product_detail = product.name + " X " + product.amount;
+                console.log(product_detail);
+                info += "\n" + product_detail.trim();
+            }
+            this._copyToClipboard(info);
+        },
+        _copyToClipboard: function (text) {
+            var el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
         }
     }
 });

@@ -2,42 +2,44 @@
 {% load static custom_static %}
 
 {% block common_list_buttons %}
-  {% if page_model_perms.add %}
-    <a class="btn btn-primary" id="create">
-      <i class="fa fa-plus"></i> 新订单
-    </a>
-  {% endif %}
-  {% if page_model_perms.delete %}
-    <a class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
-      <i class="fa fa-trash-o"></i> 删除
-    </a>
-  {% endif %}
+    {% if page_model_perms.add %}
+        <a class="btn btn-primary" id="create">
+            <i class="fa fa-plus"></i> 新订单
+        </a>
+    {% endif %}
+    {% if page_model_perms.delete %}
+        <a class="btn btn-danger hidden-sm hidden-xs" v-on:click="removeSelected">
+            <i class="fa fa-trash-o"></i> 删除
+        </a>
+    {% endif %}
 {% endblock %}
 
 {% block tab_nav %}
     {% include "adminlte/includes/messages.html" %}
-  <ul class="nav nav-tabs">
-    <li data-status="CREATED" class="active">
-      <a data-toggle="tab" href="#pane-CREATED"> 未完成</a>
-    </li>
-    <li data-status="ONGOING">
-      <a data-toggle="tab" href="#pane-ONGOING" v-on:click="initOngoingTab"> 在途中</a>
-    </li>
-    <li data-status="FINISHED">
-      <a data-toggle="tab" href="#pane-FINISHED" v-on:click="initFinishedTab"> 已完成</a>
-    </li>
-    <li data-status="FINISHED">
-      <a href="{% url 'order:order-purchase' %}"> 采购模式</a>
-    </li>
-  </ul>
+    <ul class="nav nav-tabs">
+        <li data-status="CREATED" class="active">
+            <a data-toggle="tab" href="#pane-CREATED"> 未完成</a>
+        </li>
+        <li data-status="ONGOING">
+            <a data-toggle="tab" href="#pane-ONGOING" v-on:click="initOngoingTab"> 在途中</a>
+        </li>
+        <li data-status="FINISHED">
+            <a data-toggle="tab" href="#pane-FINISHED" v-on:click="initFinishedTab"> 已完成</a>
+        </li>
+        <li data-status="FINISHED">
+            <a href="{% url 'order:order-purchase' %}"> 采购模式</a>
+        </li>
+    </ul>
 {% endblock %}
 
 {% block tab_content %}
-  <div class="tab-content">
-    {% include 'order/tabs/created_order.html' %}
-    {% include 'order/tabs/ongoing_order.html' %}
-    {% include 'order/tabs/finished_order.html' %}
-  </div>
+    <input type="hidden" id="sender_info" value="寄件人: {{ request.user.seller.name }} {{ request.user.seller.mobile }}">
+
+    <div class="tab-content">
+        {% include 'order/tabs/created_order.html' %}
+        {% include 'order/tabs/ongoing_order.html' %}
+        {% include 'order/tabs/finished_order.html' %}
+    </div>
 {% endblock %}
 
 
@@ -49,7 +51,7 @@
         window.need_reload = false;  // reload table or not when modal closed, share for both orderproduct_modal and parcel_modal
     </script>
 
-  {{ expressorder_form.media }}
-  {{ orderproduct_form.media }}
-  <script type="text/javascript" src="{% static 'js/order/order_list.min.js' %}?v={% startup_timestamp %}"></script>
+    {{ expressorder_form.media }}
+    {{ orderproduct_form.media }}
+    <script type="text/javascript" src="{% static 'js/order/order_list.min.js' %}?v={% startup_timestamp %}"></script>
 {% endblock %}
