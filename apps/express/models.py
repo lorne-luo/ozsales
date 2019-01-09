@@ -131,8 +131,9 @@ class ExpressOrder(TenantModelMixin, models.Model):
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
 
+        update_parcel_count = False
         if not self.id and self.carrier:
-            self.carrier.update_count()
+            update_parcel_count = True
 
         if not self.id and not self.address:
             self.address = self.order.address
@@ -144,7 +145,9 @@ class ExpressOrder(TenantModelMixin, models.Model):
                                                              address=self.address,
                                                              id_upload=True).exists()
 
-        return super(ExpressOrder, self).save(force_insert, force_update, using, update_fields)
+        super(ExpressOrder, self).save(force_insert, force_update, using, update_fields)
+        if update_parcel_count:
+            self.carrier.update_count()
 
     def get_track_url(self):
         if not self.carrier:
