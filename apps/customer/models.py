@@ -1,13 +1,11 @@
 # coding:utf-8
 import os
 
+import time
 from dateutil.relativedelta import relativedelta
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, Group, Permission
-from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Manager
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.conf import settings
@@ -20,7 +18,6 @@ from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin, TenantModelMixin
 
 from apps.member.models import Seller
-from apps.product.models import Product
 from core.django.storage import OverwriteStorage
 
 
@@ -138,8 +135,7 @@ def customer_post_save(sender, instance=None, created=False, **kwargs):
 
 def get_id_photo_front_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = instance.customer.address_set.count()
-    filename = '%s_%s_front.%s' % (instance.customer.pk, count + 1, ext)
+    filename = '%s_%s_front.%s' % (instance.customer.pk, int(time.time()), ext)
     file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
@@ -150,8 +146,7 @@ def get_id_photo_front_path(instance, filename):
 
 def get_id_photo_back_path(instance, filename):
     ext = filename.split('.')[-1]
-    count = instance.customer.address_set.count()
-    filename = '%s_%s_back.%s' % (instance.customer.pk, count + 1, ext)
+    filename = '%s_%s_back.%s' % (instance.customer.pk, int(time.time()), ext)
     file_path = os.path.join(settings.ID_PHOTO_FOLDER, filename)
 
     from apps.schedule.tasks import guetzli_compress_image
@@ -170,12 +165,12 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
                                    storage=OverwriteStorage(),
                                    variations={
-                                       'thumbnail': (150, 150, False)
+                                       'thumbnail': (200, 200, False)
                                    })
     id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
                                   storage=OverwriteStorage(),
                                   variations={
-                                      'thumbnail': (150, 150, False)
+                                      'thumbnail': (200, 200, False)
                                   })
     create_time = models.DateTimeField(_('Create Time'), auto_now_add=True, editable=False)
 
