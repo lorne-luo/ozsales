@@ -11,7 +11,8 @@ from apps.tenant.models import Tenant
 
 class Command(BaseCommand):
     help = "This command deletes all media files from the MEDIA_ROOT directory which are no longer referenced by any of the models from installed_apps"
-    ignores = ['.DS_Store', '.gitignore', '.thumbnail.jpg']
+    ignores = ['.DS_Store', '.gitignore', '.thumbnail.jpg', '.thumbnail.jpeg', '.thumbnail.png', '.thumbnail.gif',
+               '.medium.jpg', '.medium.jpeg', '.medium.png', '.medium.gif']
 
     def handle(self, *args, **options):
         all_models = apps.get_models()
@@ -68,8 +69,14 @@ class Command(BaseCommand):
         for pic_ext in pic_exts:
             if path.endswith(pic_ext):
                 thumbnail = path.replace(pic_ext, '.thumbnail' + pic_ext)
-                # os.remove(thumbnail)
-                print('delete file: %s' % thumbnail)
+                if os.path.exists(thumbnail):
+                    print('rm -rf %s' % thumbnail)
+                    # os.remove(thumbnail)
+
+                medium = path.replace(pic_ext, '.medium' + pic_ext)
+                if os.path.exists(medium):
+                    print('rm -rf %s' % medium)
+                    # os.remove(medium)
 
         # os.remove(path)
-        print('delete file: %s' % path)
+        print('rm -rf %s' % path)
