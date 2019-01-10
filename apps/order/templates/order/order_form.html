@@ -304,15 +304,8 @@
         </div>
     </div>
 
-    <div class="row" style="min-height: 140px">
-        <div class="col-xs-12 full-width">
-            {{ object.address.name }} {{ object.address.id_number }} {{ object.address.mobile }}<br/>
-            {{ object.address }}<br/>
-            <br/>
-            {% for product in object.products.all %}
-                {{ product }}<br/>
-            {% endfor %}
-        </div>
+    <div class="row" style="min-height: 40px">
+
     </div>
 {% endblock %}
 
