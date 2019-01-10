@@ -39,7 +39,10 @@
                                 {{ product.name }}
                             </td>
                             <td>
-                                {{ product.amount }}
+                                &nbsp;X {{ product.amount }}
+                            </td>
+                            <td>
+                                &nbsp;￥{{ product.sell_price_rmb }}
                             </td>
                         </tr>
                     {% endfor %}

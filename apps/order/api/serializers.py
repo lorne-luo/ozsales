@@ -55,6 +55,7 @@ class OrderProductDisplaySerializer(OrderProductSerializer):
 class OrderSerializer(BaseSerializer):
     """ Serializer for Order """
     address_display = serializers.CharField(source='address')
+    id_upload_url = serializers.CharField()
     customer_display = serializers.SerializerMethodField()
     customer_url = serializers.SerializerMethodField()
     shipping_order = serializers.SerializerMethodField()
@@ -74,7 +75,7 @@ class OrderSerializer(BaseSerializer):
         model = Order
         fields = ['customer', 'customer_display', 'address', 'is_paid', 'status', 'total_amount', 'uid',
                   'product_cost_aud', 'customer_url', 'shipping_order', 'paid_url', 'next_status_url', 'next_status',
-                  'address_display', 'detail_url', 'id_info',
+                  'address_display', 'detail_url', 'id_info', 'id_upload_url',
                   'product_cost_rmb', 'shipping_fee', 'ship_time', 'total_cost_aud', 'total_cost_rmb', 'edit_url',
                   'origin_sell_rmb', 'sell_price_rmb', 'profit_rmb', 'create_time', 'finish_time', 'pk', 'products']
         read_only_fields = ['pk']

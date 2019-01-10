@@ -314,8 +314,11 @@ var OrderListPageVue = CommonListPageVue.extend({
                 return '';
         },
         copyIdInfo: function (event) {
-            var info = $(event.target).closest('a').data('text');
+            var a = $(event.target).closest('a');
+            var info = a.data('text');
+            var link = a.data('link');
             this._copyToClipboard(info);
+            window.open(link);
         },
         copyOrderDetail: function (item) {
             var info = $("#sender_info").val();

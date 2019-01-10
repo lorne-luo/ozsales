@@ -69,6 +69,10 @@
             <td class="visible-sm visible-xs">
                 <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
                 <div class="pull-right action-button">
+                    <a v-if="item.id_upload_url" data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
+                       data-link="#[item.id_upload_url]" v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                        <i class="fa fa-id-card fa-inverse"></i>
+                    </a>
                     <template v-if="item.status == 'CREATED'">
                         <template v-if="!item.is_paid">
                             <a type="button" data-toggle="modal" data-target="#add-product"
@@ -96,12 +100,12 @@
             </td>
 
             <td class="text-right hidden-sm hidden-xs">
-                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
-                   v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-primary btn-sm">
+                <a v-if="item.id_upload_url" data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
+                   data-link="#[item.id_upload_url]" v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-danger btn-sm">
                     <i class="fa fa-lg fa-id-card fa-inverse"></i>
                 </a>
-                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Copy Order Detail to Clipboard" data-text="#[item.pk]"
-                   v-on:click="copyOrderDetail(item)" href="javascript:void(0);" class="btn btn-default btn-sm">
+                <a v-else data-toggle="tooltip" data-placement="bottom" data-original-title="Copy Order Detail to Clipboard" data-text="#[item.pk]"
+                   v-on:click="copyOrderDetail(item)" href="javascript:void(0);" class="btn btn-primary btn-sm">
                     <i class="fa fa-lg fa-list"></i>
                 </a>
 
@@ -133,20 +137,19 @@
         <tr class="hide" id="detail_{!! item.pk !!}">
             <td colspan="4" class="hidden-sm hidden-xs"></td>
             <td colspan="100%">
-                <div>
-                    {!! item.address_display !!}
-                </div>
-                <div class="pull-left">
+                <table class="pull-left">
                     <template v-for="product in item.products">
-                    <span>
-                        <template v-if="item.status == 'CREATED'">
-                            <input type="checkbox" v-on:click="makr_as_purchased($event)"
-                                   checked="#[product.is_purchased]" name="markPurchased" value="#[product.pk]"/>
-                        </template>
-                        {!! product.name !!} X {!! product.amount !!}
-                    </span><br/>
+                        <tr>
+                            <td v-if="item.status == 'CREATED'">
+                                    <input type="checkbox" v-on:click="makr_as_purchased($event)"
+                                           checked="#[product.is_purchased]" name="markPurchased"
+                                           value="#[product.pk]"/>
+                            </td>
+                            <td>{!! product.name !!}</td>
+                            <td>&nbsp;{!! product.sell_price_rmb !!} X {!! product.amount !!}</td>
+                        </tr>
                     </template>
-                </div>
+                </table>
                 <div class="pull-right visible-sm visible-xs">
                     {!! item.shipping_order !!}
                 </div>
