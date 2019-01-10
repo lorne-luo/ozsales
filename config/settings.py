@@ -315,10 +315,6 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.schedule.tasks.get_forex_quotes',
         'schedule': crontab(minute=1, hour='8,23', day_of_week='mon,tue,wed,thu,fri')
     },
-    'express_id_upload_task': {
-        'task': 'apps.schedule.tasks.express_id_upload_task',
-        'schedule': crontab(hour=20, minute=30)
-    },
     'reset_email_daily_counter': {
         'task': 'apps.schedule.tasks.reset_email_daily_counter',
         'schedule': crontab(hour=0, minute=5)

@@ -28,7 +28,8 @@ from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_P
 from .models import DealSubscribe, forex
 
 log = logging.getLogger(__name__)
-r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL, decode_responses=True)
+r = redis.StrictRedis(host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.CUSTOM_DB_CHANNEL,
+                      decode_responses=True)
 
 ozbargin_last_date = 'schedule.ozbargin.last_date'
 ozbargin_keywords = ['citibank', 'anz', 'cba', 'nab', 'westpac', 'fee for life',
@@ -213,31 +214,6 @@ def get_forex_quotes():
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
     send_to_admin(msg.strip())
-
-
-# @periodic_task(run_every=crontab(hour=20, minute=30))
-@task
-def express_id_upload_task():
-    for tenant in Tenant.objects.normal():
-        tenant.set_schema()
-        if not tenant.seller or not tenant.seller.is_premium:
-            continue
-        for order in Order.objects.exclude(status=ORDER_STATUS.FINISHED).exclude(status=ORDER_STATUS.DELIVERED):
-            unuploads = order.express_orders.filter(id_upload=False)
-            if unuploads.exists():
-                ids = ','.join([o.track_id for o in unuploads])
-                if order.seller.is_admin:
-                    content = 'Upload ID for %s' % ids
-                    subject = 'Upload ID for %s' % order
-                    order.seller.send_email(subject, content)
-                    # send_to_admin(content)
-                else:
-                    for unupload in unuploads:
-                        link = unupload.order.public_url
-                        content = '需要上传身份证，详情<a target="_blank" href="%s">%s</a>.' % (link, unupload.order)
-                        order.seller.send_notification('上传身份证', content)
-
-    log.info('[Express] Daily id upload checking.')
 
 
 # @periodic_task(run_every=crontab(hour=0, minute=5))

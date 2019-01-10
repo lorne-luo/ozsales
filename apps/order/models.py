@@ -230,7 +230,9 @@ class Order(TenantModelMixin, models.Model):
             self.set_finish_time()
         self.save()
         if status_value == ORDER_STATUS.SHIPPING:
-            self.sms_shipping()
+            if self.seller and self.seller.is_premium:
+                self.notify_id_upload()
+                self.sms_shipping()
         self.update_price()
 
     def update_monthly_report(self):
@@ -241,6 +243,22 @@ class Order(TenantModelMixin, models.Model):
 
             from ..report.models import MonthlyReport
             MonthlyReport.stat_month(self.create_time.year, self.create_time.month)
+
+    @cached_property
+    def id_upload_url(self):
+        if not self.seller or not self.seller.is_premium:
+            return None
+        unuploads = self.express_orders.filter(id_upload=False)
+        if unuploads.exists():
+            tracker = unuploads.first().carrier.tracker
+            return tracker.id_upload_url or tracker.website
+        return None
+
+    def notify_id_upload(self):
+        if self.id_upload_url:
+            content = '<a target="_blank" href="%s">%s</a>需上传身份证, <a target="_blank" href="%s">点击上传</a>.' % (
+            self.public_url, self, self.id_upload_url)
+            self.seller.send_notification('上传身份证', content)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.set_uid()
