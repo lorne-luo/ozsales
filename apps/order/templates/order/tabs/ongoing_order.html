@@ -69,19 +69,23 @@
             </td>
             <td class="visible-sm visible-xs">
                 <a href="{!! item.edit_url !!}#orderproduct">{!! item.sell_price_rmb !!}</a>
-                <template v-if="item.is_paid">
-                </template>
-                <template v-else>
-                    <a class="btn btn-sm btn-danger pull-right pay" v-on:click="pay(item.pk, $event)">
-                        <i class="fa fa-jpy" aria-hidden="true"></i>
+
+                <div class="pull-right action-button">
+                    <a v-if="item.id_upload_url" data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
+                       data-link="#[item.id_upload_url]" v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                        <i class="fa fa-id-card fa-inverse"></i>
                     </a>
-                </template>
+                </div>
             </td>
             <td class="hidden-sm hidden-xs">
                 {!! item.shipping_order !!}
             </td>
 
             <td class="text-right hidden-sm hidden-xs">
+                <a v-if="item.id_upload_url" data-toggle="tooltip" data-placement="bottom" data-original-title="Copy ID Detail to Clipboard" data-text="#[item.id_info]"
+                   data-link="#[item.id_upload_url]" v-on:click="copyIdInfo($event)" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                    <i class="fa fa-lg fa-id-card fa-inverse"></i>
+                </a>
                 {% if page_model_perms.view %}
                     <template v-if="item.detail_url">
                         {% if page_model_perms.view %}

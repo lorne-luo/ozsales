@@ -145,8 +145,8 @@
                                            checked="#[product.is_purchased]" name="markPurchased"
                                            value="#[product.pk]"/>
                             </td>
-                            <td>{!! product.name !!}</td>
-                            <td>&nbsp;{!! product.sell_price_rmb !!} X {!! product.amount !!}</td>
+                            <td v-on:click="copyOrderDetail(item)">{!! product.name !!}</td>
+                            <td v-on:click="copyOrderDetail(item)">&nbsp;{!! product.sell_price_rmb !!} X {!! product.amount !!}</td>
                         </tr>
                     </template>
                 </table>
