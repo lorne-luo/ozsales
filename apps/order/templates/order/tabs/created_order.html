@@ -137,6 +137,7 @@
         <tr class="hide" id="detail_{!! item.pk !!}">
             <td colspan="4" class="hidden-sm hidden-xs"></td>
             <td colspan="100%">
+                <div>{!! item.address_display !!}</div>
                 <table class="pull-left">
                     <template v-for="product in item.products">
                         <tr>
