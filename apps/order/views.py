@@ -122,7 +122,7 @@ class OrderUpdateView(SellerOwnerOnlyRequiredMixin, CommonContextMixin, UpdateVi
 
     def get_success_url(self):
         if '_continue' in self.request.POST and self.object:
-            return reverse('order:order-update', args=[self.object.pk])
+            return reverse('order:order-update', args=[self.object.pk]) + '#orderproduct'
         else:
             return reverse('order:order-list-short')
 
