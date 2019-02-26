@@ -1,6 +1,7 @@
 # coding=utf-8
 import os
 import shutil
+import time
 
 from PIL import Image
 from bs4 import BeautifulSoup
@@ -118,6 +119,7 @@ def one_express_track(url, track_id):
 
 
 def ewe_track(url, latest_index=-1):
+    time.sleep(1)
     r = requests.get(url)
     if 300 > r.status_code > 199:
         try:
@@ -129,9 +131,9 @@ def ewe_track(url, latest_index=-1):
                     msgs.append(col)
             return check_delivery(', '.join(msgs))
         except Exception as ex:
-            return False, str(ex)
+            return None, str(ex)
     else:
-        return False, r.text
+        return None, r.text
 
 
 def aus_express_track(url, track_id, latest_index=-1):

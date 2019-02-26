@@ -203,6 +203,8 @@ class ExpressOrder(TenantModelMixin, models.Model):
             if delivered:
                 self.delivered_time = timezone.now()
             self.save(update_fields=['last_track', 'is_delivered', 'delivered_time'])
+        else:
+            log.info('[UPDATE_TRACK_ERROR] #%s %s' % (self.id, last_info))
 
     @property
     def shipping_days(self):
