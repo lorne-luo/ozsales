@@ -77,7 +77,7 @@
                 <tr>
                   <td class="text-center hidden-sm hidden-x">
                     ##[$index+1]
-                    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+                    <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
                   </td>
                   {% for field in table_fields %}
                     {% if field == 'id' or field == 'pk' or field == 'uuid' %}
@@ -86,7 +86,7 @@
                           <template v-if="detail_url_tag">
                           {% if page_model_perms.view %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="View"
-                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.id]">
+                               href="#[item.detail_url]" class="btn btn-info btn-sm detail-btn" data-pk="#[item.pk]">
                               <i class="fa fa-lg fa-bars fa-inverse"></i>
                             </a>
                           {% endif %}
@@ -95,7 +95,7 @@
                           <template v-if="update_url_tag">
                           {% if page_model_perms.change %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Edit"
-                               href="#[item.edit_url]?from_page={!! currentPage !!}&search={!! search_keyword !!}" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.id]">
+                               href="#[item.edit_url]?from_page={!! currentPage !!}&search={!! search_keyword !!}" class="btn btn-warning btn-sm edit-btn" data-pk="#[item.pk]">
                               <i class="fa fa-lg fa-pencil fa-inverse"></i>
                             </a>
                           {% endif %}
@@ -104,7 +104,7 @@
                           <template v-if="delete_api_tag">
                           {% if page_model_perms.delete %}
                             <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete"
-                               data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);"
+                               data-pk="#[item.pk]" v-on:click="removeOne" href="javascript:void(0);"
                                class="btn btn-danger btn-sm delete-btn">
                               <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                             </a>

@@ -84,9 +84,9 @@
                                 </tr>
                             </tfoot>
                             <tbody v-for="item in items">
-                                <tr v-if="item.id">
+                                <tr v-if="item.pk">
                                     <td class="text-center">
-                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]" />
+                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]" />
                                     </td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' or field == 'pk' or field == 'uuid' %}
@@ -102,7 +102,7 @@
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.pk]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
@@ -141,9 +141,9 @@
                                 </tr>
                             </tfoot>
                             <tbody v-for="item in items">
-                                <tr v-if="item.id">
+                                <tr v-if="item.pk">
                                     <td class="text-center">
-                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.id]"/>
+                                        <input type="checkbox" class="minimal" name="checkboxRow" value="#[item.pk]"/>
                                     </td>
                                     {% for field in table_fields %}
                                         {% if field == 'id' or field == 'pk' or field == 'uuid' %}
@@ -160,7 +160,7 @@
                                                 </a>
                                                 {% endif %}
                                                 {% if page_model_perms.delete %}
-                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.id]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
+                                                <a data-toggle="tooltip" data-placement="bottom" data-original-title="Delete" data-pk="#[item.pk]" v-on:click="removeOne" href="javascript:void(0);" class="btn btn-danger btn-sm">
                                                     <i class="fa fa-lg fa-trash-o fa-inverse"></i>
                                                 </a>
                                                 {% endif %}
