@@ -201,3 +201,30 @@ aside.messagesetVue div.menu li {
 #purchase-mode-table .table tr td {
     padding: 3px
 }
+
+@media (min-width: 991px) {
+
+    :root {
+        --left-menu-width: 190px;
+    }
+
+    .content-wrapper, .right-side {
+        margin-left: var(--left-menu-width);
+    }
+
+    .main-sidebar, .left-side {
+        width: var(--left-menu-width);
+    }
+
+    .main-header .logo {
+        width: var(--left-menu-width);
+    }
+
+    .main-header > .navbar {
+        margin-left: var(--left-menu-width);
+    }
+
+    .content-wrapper, .right-side, .main-footer {
+        margin-left: var(--left-menu-width);
+    }
+}
