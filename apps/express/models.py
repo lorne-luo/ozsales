@@ -132,10 +132,10 @@ class ExpressOrder(TenantModelMixin, models.Model):
         self.identify_track_id()
 
         update_parcel_count = False
-        if not self.id and self.carrier:
+        if not self.pk and self.carrier:
             update_parcel_count = True
 
-        if not self.id and not self.address:
+        if not self.pk and not self.address:
             self.address = self.order.address
 
         if self._state.adding:
@@ -206,7 +206,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
                 self.delivered_time = timezone.now()
             self.save(update_fields=['last_track', 'is_delivered', 'delivered_time'])
         else:
-            log.info('[UPDATE_TRACK_ERROR] #%s %s' % (self.id, last_info))
+            log.info('[UPDATE_TRACK_ERROR] #%s %s' % (self.pk, last_info))
 
     @property
     def shipping_days(self):
