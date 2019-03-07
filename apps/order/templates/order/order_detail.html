@@ -93,7 +93,13 @@
                             [<a target="_blank" href="{{ ex.carrier.website }}">{{ ex.carrier.name_cn }}</a>]
                             {% if ex.get_track_url %}
                                 <a target="_blank" href="{{ ex.get_track_url }}">{{ ex.track_id }}</a>
-                                [{{ ex.create_time|date:"m/d"|default:"" }}{% if ex.is_delivered %} - {{ ex.delivered_time|date:"m/d"|default:"" }}已寄达{% endif %}]
+                                <span id="{{ ex.pk }}">
+                                    [{{ ex.create_time|date:"m/d"|default:"" }}{% if ex.is_delivered %}-{{ ex.delivered_time|date:"m/d"|default:"" }}{% endif %}]
+                                    {% if ex.is_delivered %}<span class="label label-danger">已寄达</span>{% endif %}
+                                </span>
+                                {% if request.user.seller == object.seller and not ex.is_delivered %}
+                                    <a data-pk="{{ ex.pk }}" class="label label-info mark-as-delivered">设为寄达</a>
+                                {% endif %}
                             {% else %}
                                 {{ ex.track_id }} (
                                 <a target="_blank" href="{{ ex.carrier.website }}?id={{ ex.track_id }}">请手动查询</a>)
@@ -121,11 +127,42 @@
 {% endblock %}
 
 {% block page_footer %}
-    {% if request.user.seller.is_premium %}
-        <p style="font-size: 11px">* 请保存本页链接,物流跟踪信息将在本页每日更新</p>
-    {% else %}
-        {% if request.user.is_seller %}
-            <p style="font-size: 11px">* 加入高级会员可开启物流跟踪及短信提醒,<a href="#">了解详情</a>.</p>
-        {% endif %}
+    <p style="font-size: 11px">* 请保存本页链接,物流跟踪信息将在本页每日更新</p>
+{% endblock %}
+
+{% block footer_page_script %}
+    {% if request.user.seller == object.seller %}
+        <script type="text/javascript">
+            jQuery(document).ready(function ($) {
+                $(".mark-as-delivered").click(function (event) {
+                    var pk = $(this).data("pk");
+                    var url = Urls['api:expressorder-detail'](pk);
+                    var button = $(this);
+
+                    console.log($.param({'is_delivered': true}));
+                    swal({
+                        title: "物流变更",
+                        text: "确认将物流状态变更为\"已寄达\"?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "确定",
+                        cancelButtonText: "取消",
+                        closeOnConfirm: true,
+                        showLoaderOnConfirm: false,
+                        animation: false
+                    }, function () {
+                        $.AdminLTE.apiPost(
+                            url,
+                            $.param({'is_delivered': true}),
+                            function (resp) {
+                                button.hide();
+                                $("span#" + pk).html($("span#" + pk).text() + '<span class="label label-danger">已寄达</span>');
+                            }
+                        );
+                    });
+                });
+            });
+        </script>
     {% endif %}
 {% endblock %}

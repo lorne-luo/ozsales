@@ -144,6 +144,8 @@ class ExpressOrder(TenantModelMixin, models.Model):
                 self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
                                                              address=self.address,
                                                              id_upload=True).exists()
+        if self.is_delivered and not self.delivered_time:
+            self.delivered_time = timezone.now()
 
         super(ExpressOrder, self).save(force_insert, force_update, using, update_fields)
         if update_parcel_count:
