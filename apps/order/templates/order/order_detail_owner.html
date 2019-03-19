@@ -27,7 +27,7 @@
 
 {% block table_content %}
     <tr>
-        <th style="min-width: 44px">姓名</th>
+        <th style="min-width: 44px">联络人</th>
         <td>
             <a href="{% url 'customer:customer-update' object.customer.pk %}">{{ object.customer }}</a>
             {% if object.customer.remark %}

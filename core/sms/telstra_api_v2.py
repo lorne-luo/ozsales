@@ -131,7 +131,7 @@ def send_au_sms(to, body, app_name=None):
             return True, 'MessageWaiting'
     except ApiException as e:
         log.error("Exception when calling MessagingApi->send_sms: %s\n" % e)
-        return False, e.message
+        return False, str(e)
 
 
 def send_to_admin(body, app_name=None):
