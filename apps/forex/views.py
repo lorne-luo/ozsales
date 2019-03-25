@@ -11,7 +11,7 @@ from . import forms
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
     template_name = 'forex/index.html'
     instruments = ['EURUSD', 'GBPUSD', 'USDJPY', 'USDCHF', 'AUDUSD', 'NZDUSD', 'USDCNH', 'XAUUSD']
-    suffix = ['CS1', 'CS2', 'CS3', 'CR1', 'CR2', 'CR3']
+    suffix = ['CR1', 'CR2', 'CR3', 'CS1', 'CS2', 'CS3']
 
     def get_context_data(self, **kwargs):
         context = super(ForexIndexView, self).get_context_data(**kwargs)
