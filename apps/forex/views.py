@@ -29,11 +29,13 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         context.update({'resistance_support': rs})
 
         heartbeat = forex_redis.get('HEARTBEAT')
-        heartbeat = datetime.strptime(heartbeat, '%Y-%m-%d %H:%M:%S:%f')
+        if heartbeat:
+            heartbeat = datetime.strptime(heartbeat, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'heartbeat': heartbeat})
 
         last_tick_time = price_redis.get('LAST_TICK_TIME')
-        last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
+        if last_tick_time:
+            last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'last_tick_time': last_tick_time})
         return context
 
