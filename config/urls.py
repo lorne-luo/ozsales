@@ -49,6 +49,7 @@ apps_urlpatterns = [
     url(r'^messageset/', include('core.messageset.urls', namespace='messageset')),
     url(r'^payments/', include('core.payments.stripe.urls', namespace='payments')),
     url(r'^(?P<schema_id>[-\w]+)/(?P<uid>[-\w]+)/$', OrderDetailView.as_view(), name='order-detail-short'),
+    url(r'^forex/', include('apps.forex.urls', namespace='forex')),
 ]
 
 # REST API

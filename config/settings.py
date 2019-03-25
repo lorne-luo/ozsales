@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'stdimage',
     'rest_framework_swagger',
     'robots',
+    'apps.forex',
 )
 
 TENANT_APPS = (
