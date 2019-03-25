@@ -11,7 +11,7 @@ from . import forms
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
     template_name = 'forex/index.html'
     instruments = ['EURUSD', 'GBPUSD', 'USDJPY', 'USDCHF', 'AUDUSD', 'NZDUSD', 'USDCNH', 'XAUUSD']
-    suffix = ['CR1', 'CR2', 'CR3', 'CS1', 'CS2', 'CS3']
+    suffix = ['R', 'S']
 
     def get_context_data(self, **kwargs):
         context = super(ForexIndexView, self).get_context_data(**kwargs)
@@ -24,7 +24,7 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
                 if instrument not in rs:
                     rs[instrument] = {}
 
-                rs[instrument].update({s: forex_redis.get(key)})
+                rs[instrument].update({s: price_redis.get(key)})
 
         context.update({'resistance_support': rs})
 
@@ -46,6 +46,6 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
                 if key in request.POST:
                     price = request.POST.get(key)
                     if price:
-                        forex_redis.set(key, price)
+                        price_redis.set(key, price)
 
         return super(ForexIndexView, self).get(request, *args, **kwargs)

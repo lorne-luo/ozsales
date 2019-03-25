@@ -16,7 +16,7 @@
                         {% for name, value in rs.items %}
                             <label for="{{ symbol }}_{{ name }}">{{ name }}</label>
                             <input id="{{ symbol }}_{{ name }}" name="{{ symbol }}_{{ name }}" value="{{ value|default:"" }}">
-                            {% if forloop.counter == 3 %}
+                            {% if forloop.counter == 1 %}
                                 <br/>
                             {% endif %}
                         {% endfor %}
