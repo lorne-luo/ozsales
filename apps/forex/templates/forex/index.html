@@ -2,8 +2,11 @@
 {% load humanize %}
 
 {% block base_body_inner %}
-    <p><label>HEARTBEAT</label>: {{ heartbeat|date:'m-d H:i:s'}} ({{ heartbeat|naturaltime }})</p>
-    <p><label>LAST TICK</label>: {{ last_tick_time|date:'m-d H:i:s'}} ({{ last_tick_time|naturaltime }})</p>
+    <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime }})</p>
+    <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime }})</p>
+    <p><label>TRADE COUNT:</label> {{ trade_count|default:'' }}</p>
+    <p><label>LAST ERROR:</label></p>
+    <p>{{ last_error }}</p>
 
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
@@ -15,7 +18,8 @@
                     <td>
                         {% for name, value in rs.items %}
                             <label for="{{ symbol }}_{{ name }}">{{ name }}</label>
-                            <input id="{{ symbol }}_{{ name }}" name="{{ symbol }}_{{ name }}" value="{{ value|default:"" }}">
+                            <input id="{{ symbol }}_{{ name }}" name="{{ symbol }}_{{ name }}"
+                                   value="{{ value|default:"" }}">
                             {% if forloop.counter == 1 %}
                                 <br/>
                             {% endif %}

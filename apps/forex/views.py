@@ -1,6 +1,7 @@
 # coding=utf-8
 from datetime import datetime
-
+from subprocess import Popen, PIPE
+from shlex import split
 from braces.views import SuperuserRequiredMixin
 from django.views.generic import TemplateView
 
@@ -33,10 +34,14 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
             heartbeat = datetime.strptime(heartbeat, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'heartbeat': heartbeat})
 
+        # grep ERROR /opt/qsforex/log/qsforex.log |tail -n -1
+
         last_tick_time = price_redis.get('LAST_TICK_TIME')
         if last_tick_time:
             last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'last_tick_time': last_tick_time})
+        context.update({'last_error': self._get_last_error()})
+        context.update({'trade_count': self._get_trade_count()})
         return context
 
     def post(self, request, *args, **kwargs):
@@ -49,3 +54,18 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
                         price_redis.set(key, price)
 
         return super(ForexIndexView, self).get(request, *args, **kwargs)
+
+    def _get_last_error(self):
+        log_path = '/opt/qsforex/log/qsforex.log'
+        grep_cmd = 'grep ERROR %s' % log_path
+        tail_cmd = 'tail -n -1'
+
+        p1 = Popen(split(grep_cmd), stdout=PIPE)
+        p2 = Popen(split(tail_cmd), stdin=p1.stdout, stdout=PIPE)
+        output, error = p2.communicate()
+        error = output.decode()
+        return error
+
+    def _get_trade_count(self):
+        OPENING_TRADE_COUNT_KEY = 'OPENING_TRADE_COUNT'
+        return forex_redis.get(OPENING_TRADE_COUNT_KEY)
