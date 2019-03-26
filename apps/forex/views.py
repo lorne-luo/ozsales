@@ -40,8 +40,8 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         if last_tick_time:
             last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'last_tick_time': last_tick_time})
-        error, error_time = self._get_last_error()
-        context.update({'last_error': error})
+        errors, error_time = self._get_last_error()
+        context.update({'errors': errors})
         context.update({'last_error_time': error_time})
         context.update({'trade_count': self._get_trade_count()})
         return context
@@ -61,17 +61,19 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         try:
             log_path = '/opt/qsforex/log/qsforex.log'
             grep_cmd = 'grep ERROR %s' % log_path
-            tail_cmd = 'tail -n -1'
+            tail_cmd = 'tail -n -7'
 
             p1 = Popen(split(grep_cmd), stdout=PIPE)
             p2 = Popen(split(tail_cmd), stdin=p1.stdout, stdout=PIPE)
             output, error = p2.communicate()
             error = output.decode()
 
-            dt_str = error.split('|')[0]
+            errors = [x for x in error.split('\n') if x]
+
+            dt_str = errors[-1].split('|')[0]
             _time = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S,%f')
 
-            return error, _time
+            return errors, _time
         except:
             return 'Cant get error', None
 

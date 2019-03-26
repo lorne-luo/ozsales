@@ -7,7 +7,9 @@
         <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime }})</p>
         <p><label>TRADE COUNT:</label> {{ trade_count|default:'' }}</p>
         <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})</p>
-        <p>{{ last_error }}</p>
+        {% for e in errors %}
+            <span>{{ e }}</span><br/>
+        {% endfor %}
     </div>
     <br/>
 
