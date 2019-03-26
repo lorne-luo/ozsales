@@ -2,11 +2,14 @@
 {% load humanize %}
 
 {% block base_body_inner %}
-    <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime }})</p>
-    <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime }})</p>
-    <p><label>TRADE COUNT:</label> {{ trade_count|default:'' }}</p>
-    <p><label>LAST ERROR:</label></p>
-    <p>{{ last_error }}</p>
+    <div>
+        <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime }})</p>
+        <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime }})</p>
+        <p><label>TRADE COUNT:</label> {{ trade_count|default:'' }}</p>
+        <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})</p>
+        <p>{{ last_error }}</p>
+    </div>
+    <br/>
 
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}

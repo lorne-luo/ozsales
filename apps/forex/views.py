@@ -40,7 +40,9 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         if last_tick_time:
             last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
         context.update({'last_tick_time': last_tick_time})
-        context.update({'last_error': self._get_last_error()})
+        error, error_time = self._get_last_error()
+        context.update({'last_error': error})
+        context.update({'last_error_time': error_time})
         context.update({'trade_count': self._get_trade_count()})
         return context
 
@@ -56,15 +58,22 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         return super(ForexIndexView, self).get(request, *args, **kwargs)
 
     def _get_last_error(self):
-        log_path = '/opt/qsforex/log/qsforex.log'
-        grep_cmd = 'grep ERROR %s' % log_path
-        tail_cmd = 'tail -n -1'
+        try:
+            log_path = '/opt/qsforex/log/qsforex.log'
+            grep_cmd = 'grep ERROR %s' % log_path
+            tail_cmd = 'tail -n -1'
 
-        p1 = Popen(split(grep_cmd), stdout=PIPE)
-        p2 = Popen(split(tail_cmd), stdin=p1.stdout, stdout=PIPE)
-        output, error = p2.communicate()
-        error = output.decode()
-        return error
+            p1 = Popen(split(grep_cmd), stdout=PIPE)
+            p2 = Popen(split(tail_cmd), stdin=p1.stdout, stdout=PIPE)
+            output, error = p2.communicate()
+            error = output.decode()
+
+            dt_str = error.split('|')[0]
+            _time = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S,%f')
+
+            return error, _time
+        except:
+            return 'Cant get error', None
 
     def _get_trade_count(self):
         OPENING_TRADE_COUNT_KEY = 'OPENING_TRADE_COUNT'
