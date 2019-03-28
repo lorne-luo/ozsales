@@ -81,4 +81,4 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
 
     def _get_trade_count(self):
         OPENING_TRADE_COUNT_KEY = 'OPENING_TRADE_COUNT'
-        return forex_redis.get(OPENING_TRADE_COUNT_KEY)
+        return forex_redis.get(OPENING_TRADE_COUNT_KEY) or 0
