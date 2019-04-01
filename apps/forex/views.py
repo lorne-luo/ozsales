@@ -1,12 +1,13 @@
 # coding=utf-8
-from datetime import datetime
-from subprocess import Popen, PIPE
-from shlex import split
 from braces.views import SuperuserRequiredMixin
+from datetime import datetime
+from dateutil import tz
+from django.utils import timezone
 from django.views.generic import TemplateView
+from shlex import split
+from subprocess import Popen, PIPE
 
 from .redis import forex_redis, price_redis
-from . import forms
 
 
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
@@ -38,7 +39,8 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
 
         last_tick_time = price_redis.get('LAST_TICK_TIME')
         if last_tick_time:
-            last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f')
+            last_tick_time = datetime.strptime(last_tick_time, '%Y-%m-%d %H:%M:%S:%f').replace(tzinfo=tz.tzutc())
+            last_tick_time = timezone.localtime(last_tick_time)
         context.update({'last_tick_time': last_tick_time})
         errors, error_time = self._get_last_error()
         context.update({'errors': errors})
