@@ -1,16 +1,13 @@
 # coding=utf-8
 import logging
 import re
-import tldextract
-from urllib.parse import urlparse
-
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.utils import timezone
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 
@@ -130,20 +127,18 @@ class ExpressOrder(TenantModelMixin, models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         self.identify_track_id()
-
         update_parcel_count = False
-        if not self.pk and self.carrier:
-            update_parcel_count = True
-
-        if not self.pk and not self.address:
-            self.address = self.order.address
 
         if self._state.adding:
+            update_parcel_count = True
             self.track_id = self.track_id.upper()
-            if self.carrier and self.address and not self.id_upload:
+            if not self.address:
+                self.address = self.order.address
+            if self.carrier and self.address and self.address.id_number and not self.id_upload:
                 self.id_upload = ExpressOrder.objects.filter(carrier=self.carrier,
-                                                             address=self.address,
+                                                             address__id_number=self.address.id_number,
                                                              id_upload=True).exists()
+
         if self.is_delivered and not self.delivered_time:
             self.delivered_time = timezone.now()
 
