@@ -221,7 +221,7 @@ var OrderListPageVue = CommonListPageVue.extend({
                         self.update_status_button(td, resp);
 
                         var msg = window.location.origin + resp['detail_url'] + "\n已经寄出来了";
-                        this._copyToClipboard(msg)
+                        self._copyToClipboard(msg)
                     }
                 );
             });
