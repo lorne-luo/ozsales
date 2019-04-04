@@ -14,6 +14,7 @@ __pycache__/
 .Python
 node_modules/
 env/
+venv/
 log/
 logs/
 build/
