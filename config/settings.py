@@ -324,6 +324,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.schedule.tasks.reset_sms_monthly_counter',
         'schedule': crontab(hour=0, minute=6, day_of_month=1)
     },
+    'send_daily_weather': {
+        'task': 'apps.schedule.tasks.send_daily_weather',
+        'schedule': crontab(hour=7, minute=20)
+    },
 }
 
 # TINYMCE

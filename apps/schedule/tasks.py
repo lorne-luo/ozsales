@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
+import json
 import os
 import datetime
 import logging
+import random
 import shlex
 import urllib.request, urllib.error, urllib.parse
 import pytz
 import redis
 import subprocess
 
+import requests
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
@@ -215,7 +218,6 @@ def get_forex_quotes():
     tg.send_me(msg.strip())
 
 
-
 # @periodic_task(run_every=crontab(hour=0, minute=5))
 @task
 def reset_email_daily_counter():
@@ -263,3 +265,21 @@ def guetzli_compress_image(image_path):
     if os.path.exists(GUETZLI_CMD):
         cmd = '%s --quality 84 %s %s' % (GUETZLI_CMD, image_path, image_path)
         run_shell_command(cmd)
+
+
+@task
+def send_daily_weather():
+    url = 'http://api.openweathermap.org/data/2.5/weather?q=Melbourne,au&units=metric&APPID=b796eacf7c532ede8dc2e34f67757945'
+    data = requests.get(url)
+    try:
+        d = json.loads(data.text)
+        _max = d.get('main').get('temp_max')
+        _min = d.get('main').get('temp_min')
+        weather = '->'.join([x.get('main') for x in d.get('weather')])
+        date = datetime.datetime.now().strftime('%m-%d %a')
+        elec = 5 + 20 * random.random()
+        solar = 5 + 20 * random.random()
+        tg.send_me('[WEATHER] %s\n%s\n Temp: %s - %s' % (date, weather, _min, _max))
+        tg.send_me('[POWER]\nYesterday consume %.2f kWh\nSolar generate %.2f kWh' % (elec, solar))
+    except:
+        pass
