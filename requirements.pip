@@ -104,3 +104,4 @@ weixin-python==0.5.4
 Willow==1.0
 xhtml2pdf==0.0.6
 xmltodict==0.9.2
+python-telegram-bot==11.1.0

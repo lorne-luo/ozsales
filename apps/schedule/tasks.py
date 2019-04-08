@@ -8,19 +8,16 @@ import pytz
 import redis
 import subprocess
 
-from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
 from decimal import Decimal
 from bs4 import BeautifulSoup
 from celery.task import periodic_task, task
 
-from celery.schedules import crontab
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
+from core.utils import telegram as tg
 
-from apps.order.models import ORDER_STATUS, Order
-from apps.tenant.models import Tenant
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.utils.forext_1forge import ForexDataClient
@@ -192,6 +189,7 @@ def smzdm_task():
             summary = '[%s]%s\n%s\n' % (item_date.strftime('%H:%M'), title, link)
             content = summary + description
             result, detail = send_to_admin(content)
+            tg.send_me(content)
             # print 'sending', content
             log.info('[SMS] success=%s,%s. %s' % (result, detail, summary))
 
@@ -214,6 +212,8 @@ def get_forex_quotes():
         msg += '%s: %.4f\n' % (quote['symbol'], value)
 
     send_to_admin(msg.strip())
+    tg.send_me(msg.strip())
+
 
 
 # @periodic_task(run_every=crontab(hour=0, minute=5))

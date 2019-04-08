@@ -454,6 +454,11 @@ ALIYUN_SINGLE_EMAIL_PASSWORD = env('ALIYUN_SINGLE_EMAIL_PASSWORD', default='')  
 ALIYUN_BATCH_EMAIL_USERNAME = env('ALIYUN_BATCH_EMAIL_USERNAME', default='')
 ALIYUN_BATCH_EMAIL_PASSWORD = env('ALIYUN_BATCH_EMAIL_PASSWORD', default='')
 
+# TELEGRAM
+# ---------------------------------------------------------------
+TELEGRAM_TOKEN = env('TELEGRAM_TOKEN', default='')
+
+
 # CACHES
 # ------------------------------------------------------------------------------
 CACHES = {
