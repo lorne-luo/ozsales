@@ -3,13 +3,20 @@
 
 {% block base_body_inner %}
     <div>
-        <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime }})</p>
-        <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime }})</p>
-        <p><label>TRADE COUNT:</label> {{ trade_count|default:'' }}</p>
-        <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})</p>
-        {% for e in errors %}
-            <span>{{ e }}</span><br/>
+        <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime|default:'' }})</p>
+        <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime|default:'' }})
+        </p>
+        <p><label>TRADE COUNT:</label> {{ trades|length|default:'0' }}</p>
+        {% for key,trade in trades.items %}
+            <p style="padding-left: 20px"><span>{{ key }}@{{ trade.instrument }}:</span>{{ trade }}</p>
         {% endfor %}
+
+        {% if errors %}
+            <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})</p>
+            {% for e in errors %}
+                <span>{{ e }}</span><br/>
+            {% endfor %}
+        {% endif %}
     </div>
     <br/>
 

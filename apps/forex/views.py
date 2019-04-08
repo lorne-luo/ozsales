@@ -1,4 +1,4 @@
-# coding=utf-8
+import json
 from braces.views import SuperuserRequiredMixin
 from datetime import datetime
 from dateutil import tz
@@ -36,6 +36,8 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         context.update({'heartbeat': heartbeat})
 
         # grep ERROR /opt/qsforex/log/qsforex.log |tail -n -1
+        trades = forex_redis.get('TRADES')
+        trades = json.loads(trades) if trades else {}
 
         last_tick_time = price_redis.get('LAST_TICK_TIME')
         if last_tick_time:
@@ -44,6 +46,7 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
         context.update({'last_tick_time': last_tick_time})
         errors, error_time = self._get_last_error()
         context.update({'errors': errors})
+        context.update({'trades': trades})
         context.update({'last_error_time': error_time})
         context.update({'trade_count': self._get_trade_count()})
         return context
@@ -77,7 +80,7 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
 
             return errors, _time
         except:
-            return 'Cant get error', None
+            return [], None
 
     def _get_trade_count(self):
         OPENING_TRADE_COUNT_KEY = 'OPENING_TRADE_COUNT'
