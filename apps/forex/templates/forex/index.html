@@ -2,44 +2,48 @@
 {% load humanize %}
 
 {% block base_body_inner %}
-    <div>
-        <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime|default:'' }})</p>
-        <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }} ({{ last_tick_time|naturaltime|default:'' }})
-        </p>
-        <p><label>TRADE COUNT:</label> {{ trades|length|default:'0' }}</p>
-        {% for key,trade in trades.items %}
-            <p style="padding-left: 20px"><span>{{ key }}@{{ trade.instrument }}:</span>{{ trade }}</p>
-        {% endfor %}
-
-        {% if errors %}
-            <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})</p>
-            {% for e in errors %}
-                <span>{{ e }}</span><br/>
+    <div style="padding:30px;">
+        <div>
+            <p><label>HEARTBEAT:</label> {{ heartbeat|date:'m-d H:i:s' }} ({{ heartbeat|naturaltime|default:'' }})</p>
+            <p><label>LAST TICK:</label> {{ last_tick_time|date:'m-d H:i:s' }}
+                ({{ last_tick_time|naturaltime|default:'' }})
+            </p>
+            <p><label>TRADE COUNT:</label> {{ trades|length|default:'0' }}</p>
+            {% for key,trade in trades.items %}
+                <p style="padding-left: 20px"><span>{{ key }}@{{ trade.instrument }}:</span>{{ trade }}</p>
             {% endfor %}
-        {% endif %}
+
+            {% if errors %}
+                <p><label>LAST ERROR:</label> {{ last_error_time|date:'m-d H:i:s' }} ({{ last_error_time|naturaltime }})
+                </p>
+                {% for e in errors %}
+                    <span>{{ e }}</span><br/>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <br/>
+
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <table>
+                {% for symbol, rs in resistance_support.items %}
+                    <tr style="padding-bottom: 5px">
+                        <td>{{ symbol }}</td>
+                        <td>
+                            {% for name, value in rs.items %}
+                                <label for="{{ symbol }}_{{ name }}">{{ name }}</label>
+                                <input id="{{ symbol }}_{{ name }}" name="{{ symbol }}_{{ name }}"
+                                       value="{{ value|default:"" }}">
+                                {% if forloop.counter == 1 %}
+                                    <br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <input type="submit" value="Submit">
+        </form>
     </div>
-    <br/>
-
-    <form method="post" action="" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <table>
-            {% for symbol, rs in resistance_support.items %}
-                <tr style="padding-bottom: 5px">
-                    <td>{{ symbol }}</td>
-                    <td>
-                        {% for name, value in rs.items %}
-                            <label for="{{ symbol }}_{{ name }}">{{ name }}</label>
-                            <input id="{{ symbol }}_{{ name }}" name="{{ symbol }}_{{ name }}"
-                                   value="{{ value|default:"" }}">
-                            {% if forloop.counter == 1 %}
-                                <br/>
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-        <input type="submit" value="Submit">
-    </form>
 {% endblock %}
