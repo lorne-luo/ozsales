@@ -1,28 +1,21 @@
-import os
 import sys
-import types
-import inspect
-import shutil
-from django.db import models
-from optparse import make_option
-from django.core import management
-from django.utils.module_loading import import_string
-from django.core.management.base import BaseCommand
-from django.conf import settings
-from optparse import make_option
 
-from .templates.urls import URLS_HEADER, URLS_BODY, URLS_FOOTER
-from .templates.views import VIEWS_HEADER, VIEWS_BODY
-from .templates.forms import FORMS_HEADER, FORMS_BODY
+import inspect
+import os
+import types
+from django.core import management
+from django.core.management.base import BaseCommand
+from django.db import models
+from django.utils.module_loading import import_string
+
 from .templates.api_serializers import SERIALIZERS_HEADER, SERIALIZERS_BODY
 from .templates.api_urls import API_URLS_HEADER, API_URLS_BODY, API_URLS_FOOTER
 from .templates.api_views import API_VIEWS_HEADER, API_VIEWS_BODY
+from .templates.forms import FORMS_HEADER, FORMS_BODY
 from .templates.templates import LIST_JS, LIST_TEMPLATES, MENU_TEMPLATE, MENU_APP_TEMPLATE, TABLE_HEAD_TEMPLATES, \
     TABLE_ROW_TEMPLATES
-import imp
-
-imp.reload(sys)
-sys.setdefaultencoding('utf-8')
+from .templates.urls import URLS_HEADER, URLS_BODY, URLS_FOOTER
+from .templates.views import VIEWS_HEADER, VIEWS_BODY
 
 
 class Command(BaseCommand):
@@ -121,7 +114,7 @@ class Command(BaseCommand):
         # normal fields + many-to-many fields
         meta_fields = model._meta.fields + model._meta.many_to_many
         for mf in meta_fields:
-            if  mf.name in ['id', 'pk']:
+            if mf.name in ['id', 'pk']:
                 continue
             elif isinstance(mf, models.fields.DateTimeField):
                 if mf.auto_now_add or mf.auto_now:
@@ -137,16 +130,16 @@ class Command(BaseCommand):
         result = ''
         for t in titles:
             if '\u4e00' <= t <= '\u9fff':
-                item = "u'%s'" % t.encode('gb2312')
+                item = "u'%s'" % t
             else:
-                item = "'%s'" % t.encode('gb2312')
+                item = "'%s'" % t
 
             if result:
                 result = ', '.join([result, item])
             else:
                 result = item
         result = '[%s]' % result
-        return result.decode('gbk')
+        return result
 
     def import_model(self, mod):
         for name, obj in inspect.getmembers(mod, inspect.isclass):
