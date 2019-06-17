@@ -432,7 +432,7 @@ ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
 
 # 1Forge API KEY
 # ------------------------------------------------------------------------------
-ONE_FORGE_API_KEY = env('ONE_FORGE_API_KEY', default='')
+FXMARKETAPI_KEY = env('FXMARKETAPI_KEY', default='')
 
 # SENDGRID EMAIL API
 # ------------------------------------------------------------------------------

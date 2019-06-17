@@ -59,7 +59,7 @@ def get_product_pic_path(instance, filename):
 
     from apps.schedule.tasks import guetzli_compress_image
     full_path = os.path.join(MEDIA_ROOT, file_path)
-    guetzli_compress_image.apply_async(args=[full_path], countdown=10)
+    guetzli_compress_image.apply_async(args=[full_path], countdown=20)
     return file_path
 
 

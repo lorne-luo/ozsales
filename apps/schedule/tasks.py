@@ -23,7 +23,6 @@ from core.utils import telegram as tg
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
-from core.utils.forext_1forge import ForexDataClient
 from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS, TELSTRA_SMS_MONTHLY_COUNTER
 from .models import DealSubscribe, forex
 
@@ -202,18 +201,29 @@ def smzdm_task():
 # @periodic_task(run_every=crontab(minute=3, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
 @task
 def get_forex_quotes():
-    api_key = settings.ONE_FORGE_API_KEY
-    client = ForexDataClient(api_key)
-    currency_pairs = ['AUDCNH', 'USDCNH', 'NZDCNH', 'EURCNH', 'GBPCNH', 'CADCNH', 'JPYCNH']
-    quotes = client.getQuotes(currency_pairs)
-    msg = ''
-    for quote in quotes:
-        if not quote['ask']:
-            continue
-        value = Decimal(str(quote['ask']))
-        setattr(forex, quote['symbol'], value)
-        msg += '%s: %.4f\n' % (quote['symbol'], value)
+    url = "https://fxmarketapi.com/apilive"
+    querystring = {"currency": "AUDUSD,USDCNY,NZDUSD,EURUSD,GBPUSD,CADUSD,JPYUSD",
+                   "api_key": "settings.FXMARKETAPI_KEY"}
+    response = requests.get(url, params=querystring)
+    data = response.json()
+    usdcny = data['price']['USDCNY']
+    audusd = data['price']['AUDUSD']
+    cadusd = data['price']['CADUSD']
+    eurusd = data['price']['EURUSD']
+    gbpusd = data['price']['GBPUSD']
+    # jpyusd = data['price']['JPYUSD']
+    nzdusd = data['price']['NZDUSD']
 
+    res = {
+        'AUDCNY': round(usdcny * audusd, 4),
+        'USDCNY': usdcny,
+        'EURCNY': round(usdcny * eurusd, 4),
+        'GBPCNY': round(usdcny * gbpusd, 4),
+        'NZDCNY': round(usdcny * nzdusd, 4),
+        'CADCNY': round(usdcny * cadusd, 4),
+    }
+
+    msg = '\n'.join([f'{k}: {v}' for k, v in res.items()])
     send_to_admin(msg.strip())
     tg.send_me(msg.strip())
 
