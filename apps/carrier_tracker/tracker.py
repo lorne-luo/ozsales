@@ -13,6 +13,25 @@ from .verify.one_express.parser import OneExpressParser
 
 def check_delivery(text):
     text = ' '.join(text.replace('\n', ' ').replace('\r', '').split())
+    if any(['已签收' in text,
+            '已投妥' in text,
+            '已妥投' in text,
+            '已代收' in text,
+            '已送达' in text,
+            '已自提' in text,
+            '已投到' in text,
+            '已取' in text,
+            '已经签收' in text,
+            '已经投妥' in text,
+            '已经妥投' in text,
+            '已经代收' in text,
+            '已经送达' in text,
+            '已经自提' in text,
+            '已经投到' in text,
+            '已经取' in text
+            ]):
+        return True, text
+
     if any(['签收' in text,
             '投妥' in text,
             '妥投' in text,
