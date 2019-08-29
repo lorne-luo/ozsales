@@ -7,6 +7,7 @@ import uuid
 import sys
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import Sum, F, Avg, Min, Max
 from django.db.models.signals import post_delete
@@ -115,6 +116,7 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
     pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
+                        validators=[FileExtensionValidator(['jpg', 'jpeg', 'gif', 'png'])],
                         storage=OverwriteStorage(),
                         variations={
                             'medium': (800, 800, True),

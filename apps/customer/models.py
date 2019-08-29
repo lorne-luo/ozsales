@@ -12,7 +12,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from pypinyin import Style
 from stdimage import StdImageField
-
+from django.core.validators import FileExtensionValidator
 from core.aliyun.email.tasks import email_send_task
 from core.auth_user.models import AuthUser, UserProfileMixin
 from core.django.models import PinYinFieldModelMixin, ResizeUploadedImageModelMixin, TenantModelMixin
@@ -163,11 +163,13 @@ class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))
     id_number = models.CharField(_('ID number'), max_length=20, blank=True, null=True)
     id_photo_front = StdImageField(_('ID Front'), upload_to=get_id_photo_front_path, blank=True, null=True,
+                                   validators=[FileExtensionValidator(['jpg', 'jpeg', 'gif', 'png'])],
                                    storage=OverwriteStorage(),
                                    variations={
                                        'thumbnail': (200, 200, False)
                                    })
     id_photo_back = StdImageField(_('ID Back'), upload_to=get_id_photo_back_path, blank=True, null=True,
+                                  validators=[FileExtensionValidator(['jpg', 'jpeg', 'gif', 'png'])],
                                   storage=OverwriteStorage(),
                                   variations={
                                       'thumbnail': (200, 200, False)
