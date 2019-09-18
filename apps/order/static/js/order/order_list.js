@@ -200,6 +200,7 @@ var OrderListPageVue = CommonListPageVue.extend({
         next_ship_status: function (pk, next_status, next, event) {
             var self = this;
             var url = Urls[self.detail_api_tag](pk) + 'set_status/';
+            var detail_url = "";
             swal({
                 title: "确认物流变更",
                 text: "确认将物流状态变更为\"" + next + "\"?",
@@ -219,12 +220,12 @@ var OrderListPageVue = CommonListPageVue.extend({
                         var status = resp['status'];
                         var td = $(event.target).closest('td');
                         self.update_status_button(td, resp);
-
-                        var msg = window.location.origin + resp['detail_url'] + "\n已经寄出来了";
-                        self._copyToClipboard(msg)
+                        detail_url = resp['detail_url'];
                     }
                 );
             });
+            var msg = window.location.origin + detail_url + "\n已经寄出来了";
+            self._copyToClipboard(msg)
         },
         update_status_button: function (td, resp) {
             var self = this;
