@@ -314,7 +314,7 @@ CELERY_BEAT_SCHEDULE = {
     # },
     'get_forex_quotes': {
         'task': 'apps.schedule.tasks.get_forex_quotes',
-        'schedule': crontab(minute=1, hour='8,23', day_of_week='mon,tue,wed,thu,fri')
+        'schedule': crontab(minute=1, hour='9', day_of_week='mon,tue,wed,thu,fri')
     },
     'reset_email_daily_counter': {
         'task': 'apps.schedule.tasks.reset_email_daily_counter',
@@ -429,10 +429,6 @@ DJSTRIPE_WEBHOOK_EVENT_CALLBACK = 'core.payments.stripe.tasks.webhook_event_call
 TELSTRA_CLIENT_KEY = env('TELSTRA_CLIENT_KEY', default='')
 TELSTRA_CLIENT_SECRET = env('TELSTRA_CLIENT_SECRET', default='')
 ADMIN_MOBILE_NUMBER = env('ADMIN_MOBILE_NUMBER', default='')
-
-# 1Forge API KEY
-# ------------------------------------------------------------------------------
-FXMARKETAPI_KEY = env('FXMARKETAPI_KEY', default='')
 
 # SENDGRID EMAIL API
 # ------------------------------------------------------------------------------

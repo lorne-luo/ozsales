@@ -1,29 +1,30 @@
 # -*- coding: utf-8 -*-
-import json
-import os
 import datetime
+import json
 import logging
+import os
 import random
 import shlex
-import urllib.request, urllib.error, urllib.parse
+import subprocess
+import urllib.error
+import urllib.parse
+import urllib.request
+from decimal import Decimal
+
 import pytz
 import redis
-import subprocess
-
 import requests
-from django.utils import timezone
-from django.conf import settings
-from decimal import Decimal
 from bs4 import BeautifulSoup
-from celery.task import periodic_task, task
-
+from celery.task import task
 from dateutil import parser
 from dateutil.relativedelta import relativedelta
-from core.utils import telegram as tg
+from django.conf import settings
+from django.utils import timezone
 
 from core.aliyun.email.smtp import ALIYUN_EMAIL_DAILY_COUNTER
 from core.sms.models import Sms
 from core.sms.telstra_api_v2 import send_au_sms, send_to_admin, TELSTRA_LENGTH_PER_SMS, TELSTRA_SMS_MONTHLY_COUNTER
+from core.utils import telegram as tg
 from .models import DealSubscribe, forex
 
 log = logging.getLogger(__name__)
@@ -201,29 +202,15 @@ def smzdm_task():
 # @periodic_task(run_every=crontab(minute=3, hour='8,12,16,20', day_of_week='mon,tue,wed,thu,fri'))
 @task
 def get_forex_quotes():
-    url = "https://fxmarketapi.com/apilive"
-    querystring = {"currency": "AUDUSD,USDCNY,NZDUSD,EURUSD,GBPUSD,CADUSD,JPYUSD",
-                   "api_key": "settings.FXMARKETAPI_KEY"}
-    response = requests.get(url, params=querystring)
+    url = "https://api.exchangeratesapi.io/latest?base=AUD"
+
+    response = requests.get(url)
     data = response.json()
-    usdcny = data['price']['USDCNY']
-    audusd = data['price']['AUDUSD']
-    cadusd = data['price']['CADUSD']
-    eurusd = data['price']['EURUSD']
-    gbpusd = data['price']['GBPUSD']
-    # jpyusd = data['price']['JPYUSD']
-    nzdusd = data['price']['NZDUSD']
+    AUDCNY = data['rates']['CNY']
+    AUDCNY = Decimal(str(AUDCNY)).quantize(Decimal('.001'))
+    forex.AUDCNH = AUDCNY
 
-    res = {
-        'AUDCNY': round(usdcny * audusd, 4),
-        'USDCNY': usdcny,
-        'EURCNY': round(usdcny * eurusd, 4),
-        'GBPCNY': round(usdcny * gbpusd, 4),
-        'NZDCNY': round(usdcny * nzdusd, 4),
-        'CADCNY': round(usdcny * cadusd, 4),
-    }
-
-    msg = '\n'.join([f'{k}: {v}' for k, v in res.items()])
+    msg = f'AUDCNY = {AUDCNY}'
     send_to_admin(msg.strip())
     tg.send_me(msg.strip())
 
