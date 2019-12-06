@@ -6,7 +6,7 @@ input[type='checkbox'] {
 
 .treeview-menu li a.main {
     display: inline-block;
-    width: 150px
+    width: 120px;
 }
 
 @media (max-width: 767px) {
