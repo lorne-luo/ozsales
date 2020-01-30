@@ -1,16 +1,19 @@
 import logging
-from django.db.models import Q
+from functools import reduce
+from urllib.parse import unquote
+
 from dal import autocomplete
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, filters
 
 from core.api.filters import PinyinSearchFilter
-from core.utils.string import include_non_asc
+from core.api.views import CommonViewSet
 from core.django.autocomplete import HansSelect2ViewMixin
 from core.django.permission import SellerRequiredMixin
-from core.api.views import CommonViewSet
-from ..models import Product, Brand
+from core.utils.string import include_non_asc
 from . import serializers
+from ..models import Product, Brand
 
 log = logging.getLogger(__name__)
 
@@ -68,12 +71,19 @@ class ProductAutocomplete(SellerRequiredMixin, HansSelect2ViewMixin, autocomplet
 
     def get_queryset(self):
         qs = Product.objects.all().order_by('brand__name_en', 'name_cn')
+        keywords = unquote(self.q).split(' ')
 
-        if include_non_asc(self.q):
-            qs = qs.filter(Q(name_cn__icontains=self.q) | Q(brand__name_cn__icontains=self.q))
+        condition_list = [self.get_condition(keyword) for keyword in keywords]
+
+        conditions = reduce(lambda a, b: a | b, condition_list)
+
+        qs = qs.filter(*condition_list)
+        return qs
+
+    def get_condition(self, keyword):
+        if include_non_asc(keyword):
+            return Q(name_cn__icontains=keyword) | Q(brand__name_cn__icontains=keyword)
         else:
             # all ascii, number and letter
-            key = self.q.lower()
-            qs = qs.filter(
-                Q(pinyin__contains=key) | Q(name_en__icontains=key) | Q(brand__name_en__icontains=key))
-        return qs
+            keyword = keyword.lower()
+            return Q(pinyin__contains=keyword) | Q(name_en__icontains=keyword) | Q(brand__name_en__icontains=keyword)
