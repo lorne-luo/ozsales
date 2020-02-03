@@ -145,21 +145,11 @@
                                     {{ product.cost_price_aud }}
                                     {% if product.instance.pk %}{{ product.DELETE }}{% endif %}
                                 </div>
-                                {#              <div class="col-lg-2 col-md-4 col-xs-1 hidden-xs hidden-sm inline">#}
-                                {#                  {{ product.store }}#}
-                                {#                <a href="javascript:void(0)" class="ln34 delete_product">#}
-                                {#                  <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-                                {#                </a>#}
-                                {#                <input class="hide" style="visibility: hidden"#}
-                                {#                       id="id_{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE"#}
-                                {#                       name="{{ product_formset.prefix }}-{{ forloop.counter0 }}-DELETE" type="checkbox">#}
-                                {#              </div>#}
                             </div>
                         {% endfor %}
                     </div><!-- //express_table -->
 
                     <div class="box-footer">
-                        {#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
                         <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
                         <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 & 编辑
                         </button>
@@ -183,9 +173,6 @@
                             <div class="col-md-2 col-xs-2">
                                 <b>运费</b>
                             </div>
-                            {#            <div class="col-lg-1 col-md-1 col-sm-2 col-xs-2">#}
-                            {#              <b>重量</b>#}
-                            {#            </div>#}
                             <div class="col-lg-1 col-sm-2 col-xs-2">
                                 <b>证件</b>
                             </div>
@@ -215,24 +202,14 @@
                                 <div class="col-md-2 col-xs-3">
                                     {{ express.fee }}
                                 </div>
-                                {#              <div class="col-lg-1 col-md-1 col-xs-3">#}
-                                {#                {{ express.weight }}#}
-                                {#              </div>#}
                                 <div class="col-lg-1 col-md-1 col-xs-1 inline ln34">
                                     {{ express.id_upload }}
                                     {% if express.instance.pk %}{{ express.DELETE }}{% endif %}
                                 </div>
-                                {#              <div class="col-lg-1 col-md-1 col-xs-3">#}
-                                {#                  <a style="margin-left:35px" href="javascript:void(0)" class="ln34 delete_express">#}
-                                {#                    <i style="color:#dd4b39" class="fa fa-lg fa-trash"></i>#}
-                                {#                  </a>#}
-                                {#                  {% if form.instance.pk %}{{ form.DELETE }}{% endif %}#}
-                                {#              </div>#}
                             </div>
                         {% endfor %}
                     </div>
                     <div class="box-footer">
-                        {#          <button type="button" style="width:108px" class="btn btn-success">增加一项</button>#}
                         <button type="submit" style="width:108px" class="btn btn-primary">保 存</button>
                         <button type="submit" style="width:108px" class="btn btn-primary" name="_continue">保存 &
                             编辑

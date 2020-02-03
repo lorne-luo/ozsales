@@ -94,4 +94,4 @@ class AddressInlineForm(NoManytoManyHintModelForm):
         self.fields['customer'].widget = forms.HiddenInput()
 
 
-AddressFormSet = modelformset_factory(Address, form=AddressInlineForm, can_order=False, can_delete=False, extra=1)
+AddressFormSet = modelformset_factory(Address, form=AddressInlineForm, can_order=False, can_delete=True, extra=1)
