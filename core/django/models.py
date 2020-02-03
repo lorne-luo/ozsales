@@ -1,15 +1,16 @@
 import sys
 import uuid
 from io import BytesIO
+
 from PIL import Image
-from django.db import models
 from django.core.files.uploadedfile import InMemoryUploadedFile
+from django.db import models
 from pypinyin import pinyin, Style
 
 from core.django.db import get_schema_name
 
 
-class PinYinFieldModelMixin(object):
+class PinYinFieldModelMixin(models.Model):
     """
     add `pinyin` field in dest model, then inherit from this mixin, configure `pinyin_fields_conf`
     pinyin_fields_conf = [
@@ -18,56 +19,57 @@ class PinYinFieldModelMixin(object):
     """
     pinyin_field = 'pinyin'
     pinyin_fields_conf = []
-    _original_fields_value = {}
     SPLITER = '|'
+
+    class Meta:
+        abstract = True
 
     def __init__(self, *args, **kwargs):
         super(PinYinFieldModelMixin, self).__init__(*args, **kwargs)
         field_names = [field_name for field_name, style, heteronym in self.pinyin_fields_conf]
         for field_name in set(field_names):
-            current_value = self.get_attr_by_str(field_name)
-            self._original_fields_value.update({field_name: current_value})
+            init_value = self.get_attr_by_str(field_name)
+            setattr(self._state, field_name, init_value)
 
     def save(self, *args, **kwargs):
-        if self.check_update():
-            self.update_pinyin_fields()
+        if self._check_changed():
+            self._update_pinyin_fields()
         super(PinYinFieldModelMixin, self).save(*args, **kwargs)
 
-    def check_update(self):
-        if not getattr(self, self.pinyin_field, None):
-            return True
+    def _check_changed(self):
         for field_name, style, heteronym in self.pinyin_fields_conf:
             current_value = self.get_attr_by_str(field_name)
-            if current_value != self._original_fields_value.get(field_name) != None:
+            init_value = getattr(self._state, field_name)
+            if current_value != init_value:
                 return True
 
-    def update_pinyin_fields(self):
+    def _update_pinyin_fields(self):
         # only update pinyin field when fields updated
         new_pinyin = ''
         for field_name, style, heteronym in self.pinyin_fields_conf:
             current_value = self.get_attr_by_str(field_name)
-            new_pinyin += self.get_pinyin(current_value, style, heteronym)
-            setattr(self, self.pinyin_field, new_pinyin.lower())
+            new_pinyin += self._get_pinyin(current_value, style, heteronym)
+        setattr(self, self.pinyin_field, new_pinyin.lower())
 
     @classmethod
-    def get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):
+    def _get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):
         if not value:
             return ''
         value = str(value)
         pylist = pinyin(value, style=style, heteronym=heteronym, strict=True)
         # example [[u'di', u'zhai'], [u'xiao'], [u'fei']]
-        combinations = cls.get_combinations(pylist)
+        combinations = cls._get_pinyin_combinations(pylist)
 
         full_pinyin = cls.SPLITER.join(combinations)
         result = '%s%s' % (cls.SPLITER, full_pinyin)
         return result
 
     @classmethod
-    def get_combinations(cls, arr):
+    def _get_pinyin_combinations(cls, arr):
         if len(arr) == 1:
             return arr[0]
         result = []
-        rest_combinations = cls.get_combinations(arr[1:])
+        rest_combinations = cls._get_pinyin_combinations(arr[1:])
         for ch in arr[0]:
             for combin in rest_combinations:
                 result.append('%s%s' % (ch, combin))
@@ -130,4 +132,3 @@ class TenantModelMixin(models.Model):
     def schema_id(self):
         from apps.tenant.models import Tenant
         return self.schema_name.strip(Tenant.SCHEMA_NAME_PREFIX)
-

@@ -80,7 +80,8 @@ class CustomerUpdateView(SellerRequiredMixin, CommonContextMixin, UpdateView):
         self.object = self.get_object()
 
         # customer address
-        address_formset = forms.AddressFormSet(request.POST, request.FILES, prefix='address_set')
+        address_formset = forms.AddressFormSet(request.POST, request.FILES, queryset=self.object.address_set.all(),
+                                               prefix='address_set')
         for form in address_formset:
             form.is_valid()
             if form.instance.address or form.instance.name:

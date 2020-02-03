@@ -1,12 +1,12 @@
 # coding=utf-8
 from django import forms
 from django.contrib import admin
-from django.forms.models import modelformset_factory, inlineformset_factory
+from django.forms.models import modelformset_factory
 from django.utils.translation import ugettext_lazy as _
 
 from core.django.forms import NoManytoManyHintModelForm
-from .models import Address, Customer, InterestTag
 from core.django.widgets import IDThumbnailImageInput
+from .models import Address, Customer, InterestTag
 
 
 class AddressAddInline(admin.TabularInline):
@@ -83,7 +83,7 @@ class AddressInlineForm(NoManytoManyHintModelForm):
 
     class Meta:
         model = Address
-        exclude=['id']
+        exclude = ['id', 'pinyin', 'create_time']
 
     def __init__(self, *args, **kwargs):
         super(AddressInlineForm, self).__init__(*args, **kwargs)
