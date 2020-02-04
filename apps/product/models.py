@@ -170,8 +170,8 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
         self.set_uuid()
         field_names = ['seller', 'name_en', 'name_cn', 'brand_id', 'brand_en', 'brand_cn']
         for field_name in set(field_names):
-            current_value = self.get_attr_by_str(field_name)
-            self._original_fields_value.update({field_name: current_value})
+            init_value = self.get_attr_by_str(field_name)
+            setattr(self._state, field_name, init_value)
 
     def set_uuid(self):
         if not self.uuid:
