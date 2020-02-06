@@ -40,7 +40,6 @@ class Customer(PinYinFieldModelMixin, UserProfileMixin, TenantModelMixin, models
     seller = models.ForeignKey(Seller, blank=True, null=True, verbose_name=_('seller'))
     name = models.CharField(_('姓名'), max_length=30, null=False, blank=False)
     remark = models.CharField(_('备注'), max_length=255, blank=True)
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     email = models.EmailField(_('Email'), max_length=255, blank=True)
     mobile = models.CharField(_('手机'), max_length=15, blank=True)
     order_count = models.PositiveIntegerField(_('订单数'), blank=True, default=0)
@@ -157,7 +156,6 @@ def get_id_photo_back_path(instance, filename):
 
 class Address(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelMixin, models.Model):
     name = models.CharField(_('name'), max_length=30, null=False, blank=False)
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     mobile = models.CharField(_('mobile number'), max_length=15, null=True, blank=True)
     address = models.CharField(_('address'), max_length=100, null=False, blank=False)
     customer = models.ForeignKey(Customer, blank=False, null=False, verbose_name=_('customer'))

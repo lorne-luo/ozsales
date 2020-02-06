@@ -5,6 +5,7 @@ from io import BytesIO
 from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 from pypinyin import pinyin, Style
 
 from core.django.db import get_schema_name
@@ -17,7 +18,9 @@ class PinYinFieldModelMixin(models.Model):
             ('name_cn', Style.NORMAL, False), # original field, style,
         ]
     """
-    pinyin_field = 'pinyin'
+    pinyin = models.TextField(_('pinyin'), max_length=1024, blank=True)
+
+    pinyin_field_name = 'pinyin'
     pinyin_fields_conf = []
     SPLITER = '|'
 
@@ -49,7 +52,7 @@ class PinYinFieldModelMixin(models.Model):
         for field_name, style, heteronym in self.pinyin_fields_conf:
             current_value = self.get_attr_by_str(field_name)
             new_pinyin += self._get_pinyin(current_value, style, heteronym)
-        setattr(self, self.pinyin_field, new_pinyin.lower())
+        setattr(self, self.pinyin_field_name, new_pinyin.lower())
 
     @classmethod
     def _get_pinyin(cls, value, style=Style.NORMAL, heteronym=False):

@@ -114,7 +114,6 @@ class Product(ResizeUploadedImageModelMixin, PinYinFieldModelMixin, TenantModelM
     brand_cn = models.CharField(_('brand_cn'), max_length=128, blank=True)
     alias = models.CharField(_('alias'), max_length=255, blank=True)
     country = models.CharField(_('country'), max_length=128, choices=COUNTRIES_CHOICES, default='AU', blank=True)
-    pinyin = models.TextField(_('pinyin'), max_length=512, blank=True)
     pic = StdImageField(upload_to=get_product_pic_path, blank=True, null=True, verbose_name=_('picture'),
                         validators=[FileExtensionValidator(['jpg', 'jpeg', 'gif', 'png'])],
                         storage=OverwriteStorage(),
