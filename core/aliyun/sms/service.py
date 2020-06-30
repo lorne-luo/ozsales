@@ -79,7 +79,7 @@ def clean_mobile_number(mobile):
 
 
 def send_cn_sms(business_id, phone_numbers, template_code, template_param=None):
-    return
+    return True, ''
     try:
         phone_numbers = validate_cn_mobile(phone_numbers)
         if not phone_numbers:
