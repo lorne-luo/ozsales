@@ -7,7 +7,8 @@ from django.views.generic import TemplateView
 from shlex import split
 from subprocess import Popen, PIPE
 
-from .redis import forex_redis, price_redis
+from .redis import forex_redis, price_redis, get_btcusdt_resistance, set_btcusdt_resistance, set_btcusdt_support, \
+    get_btcusdt_support
 
 
 class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
@@ -17,21 +18,21 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(BTCUSDTView, self).get_context_data(**kwargs)
-        resistance = price_redis.get(self.resistance_key)
-        support = price_redis.get(self.support_key)
+        resistance = get_btcusdt_resistance()
+        support = get_btcusdt_support()
 
         context.update({'resistance': resistance,
                         'support': support})
         return context
 
     def post(self, request, *args, **kwargs):
-        resistance = request.POST.get('resistance', None)
+        resistance = request.POST.get('resistance', '')
         if resistance:
-            price_redis.set(self.resistance_key, resistance)
+            set_btcusdt_resistance(resistance)
 
-        support = request.POST.get('support', None)
+        support = request.POST.get('support', '')
         if support:
-            price_redis.set(self.support_key, support)
+            set_btcusdt_support(support)
 
         return super(BTCUSDTView, self).get(request, *args, **kwargs)
 

@@ -292,6 +292,10 @@ CELERY_TASK_TIME_LIMIT = 600
 CELERY_REDBEAT_REDIS_URL = redbeat_redis_url = "redis://%s:%s/%s" % (REDIS_HOST, REDIS_PORT, REDBEAT_DB_CHANNEL)
 
 CELERY_BEAT_SCHEDULE = {
+    'monitor_btcusdt_price': {
+        'task': 'apps.forex.tasks.monitor_btcusdt_price',
+        'schedule': crontab(minute='*')
+    },
     'update_delivery_tracking': {
         'task': 'apps.carrier_tracker.tasks.update_delivery_tracking',
         'schedule': crontab(minute=7, hour='9,12,15,18,21,0')
@@ -458,7 +462,6 @@ ALIYUN_BATCH_EMAIL_PASSWORD = env('ALIYUN_BATCH_EMAIL_PASSWORD', default='')
 # ---------------------------------------------------------------
 TELEGRAM_TOKEN = env('TELEGRAM_TOKEN', default='')
 
-
 # CACHES
 # ------------------------------------------------------------------------------
 CACHES = {
@@ -500,6 +503,10 @@ WAGTAIL_DATETIME_FORMAT = '%Y/%m/%d %H:%M'
 #
 # update_from_env(database_settings=DATABASES['default'],
 #                 cache_settings=CACHES['default'])
+
+# BINANCE
+BINANCE_API_KEY = env('BINANCE_API_KEY', default='')
+BINANCE_API_SECRET = env('BINANCE_API_SECRET', default='')
 
 # LOCAL.PY
 # ------------------------------------------------------------------------------
