@@ -1,0 +1,26 @@
+{% extends "adminlte/base.html" %}
+{% load humanize %}
+
+{% block base_body_inner %}
+    <div style="padding:30px;">
+        <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <table>
+                <tr style="padding-bottom: 5px">
+                    <td>BTC/USDT</td>
+                    <td>
+                        <label for="resistance">Resistance</label>
+                        <input id="resistance" name="resistance"
+                               value="{{ resistance|default:"" }}">
+                        <br/>
+                        <label for="support">Support</label>
+                        <input id="support" name="support"
+                               value="{{ support|default:"" }}">
+                    </td>
+                </tr>
+            </table>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+{% endblock %}

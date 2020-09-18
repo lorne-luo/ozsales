@@ -10,6 +10,31 @@ from subprocess import Popen, PIPE
 from .redis import forex_redis, price_redis
 
 
+class BTCUSDTView(TemplateView):
+    template_name = 'forex/btcusdt.html'
+    resistance_key = 'BTCUSDT_RESISTANCE'
+    support_key = 'BTCUSDT_SUPPORT'
+
+    def get_context_data(self, **kwargs):
+        context = super(BTCUSDTView, self).get_context_data(**kwargs)
+        resistance = price_redis.get(self.resistance_key)
+        support = price_redis.get(self.support_key)
+
+        context.update({'resistance': resistance,
+                        'support': support})
+
+    def post(self, request, *args, **kwargs):
+        resistance = request.POST.get('resistance', None)
+        if resistance:
+            price_redis.set(self.resistance_key, resistance)
+
+        support = request.POST.get('support', None)
+        if support:
+            price_redis.set(self.support_key, support)
+
+        return super(BTCUSDTView, self).get(request, *args, **kwargs)
+
+
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
     template_name = 'forex/index.html'
     instruments = ['EURUSD', 'GBPUSD', 'USDJPY', 'USDCHF', 'AUDUSD', 'NZDUSD', 'USDCNH', 'XAUUSD']
