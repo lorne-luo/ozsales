@@ -22,6 +22,7 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
 
         context.update({'resistance': resistance,
                         'support': support})
+        return context
 
     def post(self, request, *args, **kwargs):
         resistance = request.POST.get('resistance', None)
