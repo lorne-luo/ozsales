@@ -10,7 +10,7 @@ from subprocess import Popen, PIPE
 from .redis import forex_redis, price_redis
 
 
-class BTCUSDTView(TemplateView):
+class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
     template_name = 'forex/btcusdt.html'
     resistance_key = 'BTCUSDT_RESISTANCE'
     support_key = 'BTCUSDT_SUPPORT'
