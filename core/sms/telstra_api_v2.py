@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 import Telstra_Messaging
@@ -58,6 +59,55 @@ def get_from_number():
     expires_in = expiry_timestamp - int(time.mktime(datetime.datetime.now().timetuple()))
     r.setex(TELSTRA_SMS_DESTINATION_ADDRESS, expires_in, destination_address)
     return destination_address
+
+
+def register_free_trial_bnum():
+    configuration = Telstra_Messaging.Configuration()
+    configuration.access_token = get_token()
+    api_client = Telstra_Messaging.ApiClient(configuration)
+
+    url = 'https://tapi.telstra.com/v2/messages/freetrial/bnum'
+    headers = {'Accept': 'application/json',
+               'Content-Type': 'application/json',
+               'User-Agent': 'OpenAPI-Generator/1.0.7/python',
+               'Authorization': 'Bearer JzW3OGXwQMhlXXsRNosuVbG7QHLR'}
+    body = {"bnum": [
+        "+61413725868",
+    ]}
+    response = api_client.rest_client.POST(url,
+                                           query_params=[],
+                                           headers=headers,
+                                           post_params=[],
+                                           _preload_content=True,
+                                           _request_timeout=None,
+                                           body=body)
+
+    data = json.loads(response.data)
+    status = response.status
+    headers = response.getheaders()
+    return data
+
+
+def get_free_trial_bnum():
+    configuration = Telstra_Messaging.Configuration()
+    configuration.access_token = get_token()
+    api_client = Telstra_Messaging.ApiClient(configuration)
+
+    url = 'https://tapi.telstra.com/v2/messages/freetrial/bnum'
+    headers = {'Accept': 'application/json',
+               'Content-Type': 'application/json',
+               'User-Agent': 'OpenAPI-Generator/1.0.7/python',
+               'Authorization': 'Bearer JzW3OGXwQMhlXXsRNosuVbG7QHLR'}
+
+    response = api_client.rest_client.GET(url,
+                                          query_params=[],
+                                          headers=headers,
+                                          _preload_content=True,
+                                          _request_timeout=None)
+    data = json.loads(response.data)
+    status = response.status
+    headers = response.getheaders()
+    return data
 
 
 def validate_au_mobile(mobile):
