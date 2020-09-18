@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from shlex import split
 from subprocess import Popen, PIPE
 
+from apps.forex.binance import get_btcusdt_price
 from .redis import forex_redis, price_redis, get_btcusdt_resistance, set_btcusdt_resistance, set_btcusdt_support, \
     get_btcusdt_support
 
@@ -22,6 +23,7 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
         support = get_btcusdt_support()
 
         context.update({'resistance': resistance,
+                        'current_price': get_btcusdt_price(),
                         'support': support})
         return context
 
