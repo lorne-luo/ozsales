@@ -40,7 +40,7 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
         if support:
             set_btcusdt_support(support)
 
-        return HttpResponseRedirect(reverse('forex:btcusdt'))
+        return HttpResponseRedirect('/forex')
 
 
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
@@ -92,8 +92,8 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
                     price = request.POST.get(key)
                     if price:
                         price_redis.set(key, price)
-
-        return HttpResponseRedirect(reverse('forex:main'))
+        url = reverse('forex:main')
+        return HttpResponseRedirect(url)
 
     def _get_last_error(self):
         try:
