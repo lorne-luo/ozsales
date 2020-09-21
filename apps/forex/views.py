@@ -1,9 +1,13 @@
 import json
+from audioop import reverse
+
 from braces.views import SuperuserRequiredMixin
 from datetime import datetime
 from dateutil import tz
 from django.utils import timezone
 from django.views.generic import TemplateView
+from django.http import HttpResponseRedirect
+
 from shlex import split
 from subprocess import Popen, PIPE
 
@@ -36,7 +40,7 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
         if support:
             set_btcusdt_support(support)
 
-        return super(BTCUSDTView, self).get(request, *args, **kwargs)
+        return HttpResponseRedirect(reverse('forex:btcusdt'))
 
 
 class ForexIndexView(SuperuserRequiredMixin, TemplateView):
@@ -89,7 +93,7 @@ class ForexIndexView(SuperuserRequiredMixin, TemplateView):
                     if price:
                         price_redis.set(key, price)
 
-        return super(ForexIndexView, self).get(request, *args, **kwargs)
+        return HttpResponseRedirect(reverse('forex:main'))
 
     def _get_last_error(self):
         try:
