@@ -2,7 +2,7 @@ import json
 from audioop import reverse
 
 from braces.views import SuperuserRequiredMixin
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import tz
 from django.utils import timezone
 from django.views.generic import TemplateView
@@ -26,9 +26,13 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
         resistance = get_btcusdt_resistance()
         support = get_btcusdt_support()
 
+        next_refresh = timezone.now() + timedelta(seconds=60)
+        next_refresh = next_refresh.replace(second=3)
+        countdown = (next_refresh - timezone.now()).seconds
         context.update({'resistance': resistance,
                         'current_price': get_btcusdt_price(),
-                        'support': support})
+                        'support': support,
+                        'countdown': countdown})
         return context
 
     def post(self, request, *args, **kwargs):

@@ -1,6 +1,10 @@
 {% extends "adminlte/base.html" %}
 {% load humanize %}
 
+{% block blockrobots %}
+<meta http-equiv="refresh" content="{{ countdown }}" >
+{% endblock %}
+
 {% block base_body_inner %}
     <div style="padding:30px;">
         <form method="post" action="" enctype="multipart/form-data">
