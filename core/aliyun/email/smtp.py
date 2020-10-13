@@ -49,9 +49,9 @@ def _send_email(receivers, subject, html_content, text_content=None):
     msg.attach(texthtml)
     # 发送邮件
     try:
-        # 必须使用SSL，端口465
-        client = smtplib.SMTP_SSL()
         host = ALIYUN_EMAIL_HOST
+        # 必须使用SSL，端口465
+        client = smtplib.SMTP_SSL(host)
         client.connect(host, 465)
         # 开启DEBUG模式
         # client.set_debuglevel(0)
