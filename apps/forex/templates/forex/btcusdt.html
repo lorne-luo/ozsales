@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block blockrobots %}
-<meta http-equiv="refresh" content="{{ countdown }}" >
+    <meta http-equiv="refresh" content="{{ countdown }}">
 {% endblock %}
 
 {% block base_body_inner %}
@@ -19,13 +19,41 @@
                         <label for="">Current Price: {{ current_price }}</label>
                         <br/>
                         <br/>
-                        <label for="resistance">Resistance</label>
-                        <input id="resistance" name="resistance"
-                               value="{{ resistance|default:"" }}">
+
+                        <label for="resistance5">Resistance5</label>
+                        <input id="resistance5" name="resistance5" value="{{ resistance5|default:"" }}">
+
+                        <label for="resistance4">Resistance4</label>
+                        <input id="resistance4" name="resistance4" value="{{ resistance4|default:"" }}">
+
+                        <label for="resistance3">Resistance3</label>
+                        <input id="resistance3" name="resistance3" value="{{ resistance3|default:"" }}">
+
+                        <label for="resistance2">Resistance2</label>
+                        <input id="resistance2" name="resistance2" value="{{ resistance2|default:"" }}">
+
+                        <label for="resistance1">Resistance1</label>
+                        <input id="resistance1" name="resistance1" value="{{ resistance1|default:"" }}">
+
                         <br/>
-                        <label for="support">Support</label>
-                        <input id="support" name="support"
-                               value="{{ support|default:"" }}">
+                        <hr/>
+
+                        <label for="support1">Support1</label>
+                        <input id="support1" name="support1" value="{{ support1|default:"" }}">
+
+                        <label for="support2">Support2</label>
+                        <input id="support2" name="support2" value="{{ support2|default:"" }}">
+
+                        <label for="support3">Support3</label>
+                        <input id="support3" name="support3" value="{{ support3|default:"" }}">
+
+                        <label for="support4">Support4</label>
+                        <input id="support4" name="support4" value="{{ support4|default:"" }}">
+
+                        <label for="support5">Support5</label>
+                        <input id="support5" name="support5" value="{{ support5|default:"" }}">
+
+
                     </td>
                 </tr>
             </table>

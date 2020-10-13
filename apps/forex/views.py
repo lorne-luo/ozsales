@@ -29,20 +29,37 @@ class BTCUSDTView(SuperuserRequiredMixin, TemplateView):
         next_refresh = timezone.now() + timedelta(seconds=60)
         next_refresh = next_refresh.replace(second=3)
         countdown = (next_refresh - timezone.now()).seconds
-        context.update({'resistance': resistance,
-                        'current_price': get_btcusdt_price(),
-                        'support': support,
+        context.update({'current_price': get_btcusdt_price(),
+                        'support1': support[0],
+                        'support2': support[1],
+                        'support3': support[2],
+                        'support4': support[3],
+                        'support5': support[4],
+                        'resistance1': resistance[0],
+                        'resistance2': resistance[1],
+                        'resistance3': resistance[2],
+                        'resistance4': resistance[3],
+                        'resistance5': resistance[4],
                         'countdown': countdown})
         return context
 
     def post(self, request, *args, **kwargs):
-        resistance = request.POST.get('resistance', '')
-        if resistance:
-            set_btcusdt_resistance(resistance)
+        resistance1 = request.POST.get('resistance1', '')
+        resistance2 = request.POST.get('resistance2', '')
+        resistance3 = request.POST.get('resistance3', '')
+        resistance4 = request.POST.get('resistance4', '')
+        resistance5 = request.POST.get('resistance5', '')
+        resistances = [resistance1, resistance2, resistance3, resistance4, resistance5]
+        set_btcusdt_resistance(resistances)
 
-        support = request.POST.get('support', '')
-        if support:
-            set_btcusdt_support(support)
+        support1 = request.POST.get('support1', '')
+        support2 = request.POST.get('support2', '')
+        support3 = request.POST.get('support3', '')
+        support4 = request.POST.get('support4', '')
+        support5 = request.POST.get('support5', '')
+
+        supports = [support1, support2, support3, support4, support5]
+        set_btcusdt_support(supports)
 
         return HttpResponseRedirect('/forex')
 
