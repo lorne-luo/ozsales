@@ -150,7 +150,7 @@ class ExpressOrder(TenantModelMixin, models.Model):
             return '#'
         if self.remarks and self.remarks.startswith('http'):
             return self.remarks
-        elif '%s' in self.carrier.search_url:
+        elif self.carrier.search_url and '%s' in self.carrier.search_url:
             return self.carrier.search_url % self.track_id
         else:
             return None
