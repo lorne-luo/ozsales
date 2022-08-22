@@ -18,6 +18,7 @@ from apps.member.models import Seller
 from core.django.constants import CURRENCY_CHOICES
 from core.aliyun.sms.service import send_cn_sms
 from core.django.models import TenantModelMixin
+from ..carrier_tracker.models import CarrierTracker
 from ..schedule.models import forex
 from weixin.pay import WeixinPay, WeixinError, WeixinPayError
 from ..product.models import Product
@@ -250,14 +251,19 @@ class Order(TenantModelMixin, models.Model):
             return None
         unuploads = self.express_orders.filter(id_upload=False)
         if unuploads.exists():
-            tracker = unuploads.first().carrier.tracker
-            return tracker.id_upload_url or tracker.website
+            if unuploads.first().carrier:
+                if unuploads.first().carrier.tracker:
+                    tracker = unuploads.first().carrier.tracker
+                else:
+                    tracker = CarrierTracker.objects.filter(website__startswith=unuploads.first().carrier.website).first()
+                if tracker:
+                    return tracker.id_upload_url or tracker.website
         return None
 
     def notify_id_upload(self):
         if self.id_upload_url:
             content = '<a target="_blank" href="%s">%s</a>需上传身份证, <a target="_blank" href="%s">点击上传</a>.' % (
-            self.public_url, self, self.id_upload_url)
+                self.public_url, self, self.id_upload_url)
             self.seller.send_notification('上传身份证', content)
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
